@@ -1,0 +1,43 @@
+{
+  "name": "recap",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@fortawesome/fontawesome-common-types": "^6.6.0",
+    "@fortawesome/fontawesome-svg-core": "^6.6.0",
+    "@fortawesome/free-solid-svg-icons": "^6.6.0",
+    "@fortawesome/pro-solid-svg-icons": "^6.6.0",
+    "@fortawesome/react-fontawesome": "^0.2.2",
+    "@vercel/postgres": "^0.10.0",
+    "@vercel/postgres-kysely": "^0.10.0",
+    "autoprefixer": "^10.4.20",
+    "kysely": "^0.27.4",
+    "next": "14",
+    "qrcode": "^1.5.4",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-web-layout-components": "^1.0.4",
+    "tailwindcss": "^3.4.14"
+  },
+  "devDependencies": {
+    "@next/bundle-analyzer": "^15.0.1",
+    "@types/next": "^9.0.0",
+    "@types/qrcode": "^1.5.5",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "install": "^0.13.0",
+    "npm": "^10.9.0",
+    "sass": "^1.80.4",
+    "typescript": "5.6.3"
+  }
+}

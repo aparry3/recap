@@ -1,0 +1,238 @@
+// PAGE
+.body {
+    width: 100%;
+    position: relative;
+    min-height: 100vh;
+    text-align: center;
+}
+
+.header {
+    height: 7vh;
+    width: 100%;
+    position: fixed;
+    top:0;
+    left: 0;
+    padding: 0.5rem;
+}
+
+.wordmarkContainer {
+    height: 100%;
+}
+
+.actionButton {
+    background: var(--primary);
+    color: var(--background-light);
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-width: 10vw;
+    border-radius: 0.75rem;
+    padding: 0.75rem 1rem;
+}
+.heading {
+    width: 50vw;
+}
+.subheading {
+    width: 50vw;
+}
+
+
+// HERO
+.hero {
+    margin-top: 7vh;
+}
+.textContainer {
+    width: 70vw;
+}
+.heroHeadingText {
+    text-align: center;
+}
+.heroHeadingText {
+    font-size: 4rem !important;
+}
+
+// HIGHLIGHT
+.highlights {
+    padding: 3rem 0;
+}
+.subheadingText {
+    font-size: 1.4rem !important;
+}
+
+.headingText {
+    font-size: 3rem !important;
+}
+.highlightText {
+    color: var(--primary);
+}
+.title {
+    font-size: 2.5rem !important;
+}
+.subtitle {
+    font-size: 2rem !important;
+}
+.highlightContainer {
+    height: 70vh;
+    width: 30vw;
+    padding: 1rem;
+}
+.media {
+    flex-grow: 1;
+    width: 100%;
+}
+.image {
+    width: 50% !important;
+}
+
+.highlight {
+    background: var(--background-light);
+    border-radius: 1rem;
+    box-shadow: 0 0 1.25rem -1rem black;
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+}
+
+.highlightScreenshotContainer {
+    padding: 0.5rem;
+}
+
+.highlightScreenshot {
+    box-shadow: 0 0 1.25rem -1rem black;
+    border-radius: 0.5rem;
+}
+
+// USES
+
+.uses {
+    background: var(--background-medium);
+    width: 100%;
+    height: 30vh;
+}
+
+// ALBUMS
+
+.albums {
+    height: 100vh;
+    width: 100%;
+    position: relative;
+}
+.background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    filter: blur(8px); 
+    background: url('/backgrounds/albums.jpg') center/cover;
+    opacity: 0.5;
+    z-index: -1;
+}
+.albumImage {
+    width: 50% !important;
+    box-shadow: 0 0 1.25rem -1rem black;
+}
+
+//SHARE
+
+.share {
+    min-height: 100vh;
+    width: 100%;
+    position: relative;
+
+    .product {
+        position: relative;
+    }
+}
+.shareCardContainer {
+    width: 25vh;
+    height:25vh;
+}
+.shareCard {
+    background: var(--background-medium);
+    width: 100%;
+    height:100%;
+    justify-content: center !important;
+    border-radius: 0.5rem;
+    box-shadow: 0 0 1.25rem -1rem black;
+    color: var(--primary);
+}
+.iconContainer {
+    height:60%;
+    width: 100%;
+}
+.icon {
+    height:100%;
+}
+.magnifyContainer {
+    position: absolute;
+    height: auto;
+    width: 10vw;
+    top: 40%;
+    left: 60%;
+}
+.magnify {
+    width: 100% !important;
+}
+
+.detail {
+    position: absolute;
+    color: var(--primary-dark);
+    width: 20vw;
+}
+.detailIcon {
+    height: 7vh;
+}
+
+// APP
+
+.app {
+    min-height: 100vh;
+    width: 100%;
+    position: relative;
+}
+.appImage {
+    width: 50% !important;
+    justify-content: flex-end !important;
+}
+.appDetailsContainer {
+    width: 100% !important;
+}
+.appDetails {
+    width: 50% !important;
+}
+.appDetail {
+    width: 75% !important;
+    padding: 0.5rem 0 !important;
+    .title {
+        padding: 1rem 0;
+        width: 100%;
+        justify-content: flex-start !important;
+        font-size: 2rem !important;
+    }
+    .description {
+        width: 100%;
+        justify-content: flex-start !important;
+        text-align: left !important;
+        font-size: 1.3rem;
+    }
+}
+
+// FOOTER
+
+.footer {
+    width: 100%;
+    height: 40vh;
+    background: var(--primary-dark);
+    color: var(--background-light);
+}
+
+.branding {
+    width: 30%;
+    text-align: left;
+}
+.brandingRow {
+    width: 100%;
+    padding: 1rem;
+}

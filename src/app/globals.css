@@ -1,0 +1,31 @@
+:root {
+  --primary: #CA9B8C;
+  --secondary: #CFDFDD;
+
+  --primary-dark: #926C60;
+  --secondary-dark: #214F4B;
+  
+  --primary-light: #EFD5D0;
+
+  --background-dark: #FFF5F3;
+  --background-medium: #FDF8F7;
+  --background-light: #FFFFFF;
+
+  --text-dark: #1D1C1C; 
+
+  --font-family: 'Playfair Display', serif;
+}
+
+body {
+  background-image: url('/backgrounds/background.jpg');
+  font-family: var(--font-family);
+  letter-spacing: 0.0rem;
+  background-size: cover repeat;
+  padding: 0;
+  margin: 0;
+  height:100%;
+  width: 100vw;
+  box-sizing: border-box;
+  overflow: auto;
+  color: var(--text-dark);
+}
