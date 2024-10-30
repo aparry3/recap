@@ -4,6 +4,9 @@
     position: relative;
     min-height: 100vh;
     text-align: center;
+    background-image: url('/backgrounds/background.jpg');
+    background-size: 100% 100%;
+    background-repeat: repeat;
 }
 .link {
     text-decoration: none;

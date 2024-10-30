@@ -19,7 +19,7 @@ const Input: FC<InputProps> = ({value, label, onChange, inputStyle, inverse, sty
     }
     return (
     <Column className={styles.inputContainer}>
-        <input className={`${styles.input} ${disabled ? styles.disabled : ''}`} id={id} onChange={(e) => handleChange(e)} value={value} placeholder=" " disabled={disabled}/>
+        <input className={`${styles.input} ${disabled ? styles.disabled : ''}`} id={id} onChange={(e) => handleChange(e)} value={value} placeholder=" " disabled={disabled} {...props}/>
         <label className={styles.label} htmlFor={id}>{label}</label>
         <Container className={styles.dash}/>
     </Column>

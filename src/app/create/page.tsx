@@ -33,48 +33,58 @@ const CreatePage: FC = () => {
 
   const url = useMemo(() => `https://ourweddingrecap.com/${name.toLowerCase().replaceAll(' ', '-')}`, [name]);
   return (
-    <Column as='main'>
-      <Container as='header' padding={0.5}>
-        <Image src='/branding/wordmark.png' alt='wordmark' layout='intrinsic' height={100} width={100}/>
-      </Container>
-      <Column as='header' className={styles.header}>
-        <Text size={1.4}>Create a</Text>
-        <Text size={2.5} weight={500}>New Gallery</Text>
-      </Column>
-
-
-      <Form onSubmit={handleSubmit} className={styles.form}>
-        <Column className={styles.inputContainer} padding={0.5}>
-          <Container className={styles.galleryNamePrompt}>
-            <Text size={1.3}>Choose a name for your gallery. This will also determine the url of your gallery.</Text>
-          </Container>
-          <Input
-            label="Gallery Name"
-            type="text"
-            name="name"
-            value={name}
-            onChange={handleNameChange}
-          />
-          <Row className={styles.url}>
-            <Text size={0.9}>{url}</Text>
-          </Row>
+    <Container as='main' className={styles.page}>
+      <Column className={styles.titleContainer}>
+        <Row as='header'padding={1}>
+          <Image src='/branding/wordmark.png' alt='wordmark' layout='intrinsic' height={100} width={100}/>
+        </Row>
+        <Column as='header' className={styles.header}>
+          <Text size={1.4}>Welcome to</Text>
+          <Text size={2.5} weight={500}>The Dion Wedding</Text>
         </Column>
-        <Container className={styles.inputContainer}>
-          <Input
-              label="Email"
-              type="text"
-              name="email"
-              value={email}
-              onChange={handleEmailChange}
-            />
-        </Container>
-        <Container className={styles.buttonContainer}>
-          <Button onClick={handleButtonPress} type='submit' disabled={!email || !name}>
-            <Text size={1.2} weight={600}>Submit</Text>
+        <Container className={styles.buttonContainer} padding={[2, 0]}>
+          <Button className={styles.button} onClick={() => {}} type='submit' disabled={!name || !email}>
+            <Text size={1.2} weight={600}>Next</Text>
           </Button>
         </Container>
-      </Form>
-    </Column>
+      </Column>
+
+      <Container className={styles.contentContainer}>
+        <Form onSubmit={handleSubmit} className={styles.form}>
+          <Column className={styles.inputContainer} padding={0.5}>
+            <Container className={styles.galleryNamePrompt}>
+              <Text size={1.3}>Choose a name for your gallery. This will also determine the url of your gallery.</Text>
+            </Container>
+            <Input
+              label="Gallery Name"
+              type="text"
+              name="name"
+              autoComplete='off'
+              value={name}
+              onChange={handleNameChange}
+            />
+            <Row className={styles.url}>
+              <Text size={0.9}>{url}</Text>
+            </Row>
+          </Column>
+          <Container className={styles.inputContainer}>
+            <Input
+                label="Email"
+                type="text"
+                autoComplete='off'
+                name="email"
+                value={email}
+                onChange={handleEmailChange}
+              />
+          </Container>
+          <Container className={styles.buttonContainer}>
+            <Button className={styles.button} onClick={handleButtonPress} type='submit' disabled={!email || !name}>
+              <Text size={1.2} weight={600}>Submit</Text>
+            </Button>
+          </Container>
+        </Form>
+      </Container>
+    </Container>
   );
 };
 
