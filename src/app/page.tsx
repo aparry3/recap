@@ -14,10 +14,12 @@ const Header = () => {
                     <Image src='/branding/wordmark.png' alt='wordmark' layout='intrinsic' height={100} width={100}/>
                 </Link>
             </Container>
-            <Container id="action" padding={0.5}>
-                <Container className={styles.actionButton}>
-                    <Text>Get Started</Text>
-                </Container>
+            <Container className={styles.action} padding={0.5}>
+                <Link href='/' className={styles.link}>
+                    <Container className={styles.actionButton}>
+                        <Text weight={700} size={1.2}>Get Started</Text>
+                    </Container>
+                </Link>
             </Container>
         </Container>
     )
@@ -36,7 +38,7 @@ const Hero = () => {
             </Column>
             <Container id="heroAction" padding={1}>
                 <Container className={styles.actionButton} padding={1}>
-                    <Text size={1.2}>Create your shared gallery</Text>
+                    <Text size={1.2} weight={700}>Create your shared gallery</Text>
                 </Container>
             </Container>
             <Container id="product" style={{ width: '100%'}} padding={1}>
@@ -132,9 +134,9 @@ const Highlights = () => {
 const Uses = () => {
     return (
         <Container className={styles.uses} padding={2}>
-            <Text className={styles.headingText}>Great for</Text>
+            <Text className={styles.headingText} as='h1'>Great for</Text>
             <Container padding={[0, 0, 0, 0.5]}><Text weight={600} className={`${styles.headingText} ${styles.highlightText}`}>Weddings</Text></Container>
-            <Text className={styles.headingText}>.</Text>
+            <Text className={styles.headingText} as='h1'>.</Text>
         </Container>
     )
 }
@@ -241,7 +243,7 @@ const App = () => {
                 <Column className={styles.appDetails}>
                     <Column className={styles.appDetail}>
                         <Container className={styles.title}>
-                            <Text className={styles.detailText}>Background Image Upload</Text>
+                            <Text className={styles.detailText} as='h3'>Background Image Upload</Text>
                         </Container>
                         <Container className={styles.description}>
                             <Text className={styles.detailText}>Use the home screen saved version of Recap and upload your photos in the background, and get back to enjoying the fun. No long wait times while all of your media buffers.</Text>
@@ -249,7 +251,7 @@ const App = () => {
                     </Column>
                     <Column className={styles.appDetail}>
                         <Container className={styles.title}>
-                            <Text className={styles.detailText}>Event Notifications</Text>
+                            <Text className={styles.detailText} as='h3'>Event Notifications</Text>
                         </Container>
                         <Container className={styles.description}>
                             <Text className={styles.detailText}>Get notified about gallery updates, and events. Going to a wedding? Recap will notify you if the happy couple has a gallery set up and prompt you to join automatically..</Text>
@@ -257,7 +259,7 @@ const App = () => {
                     </Column>
                     <Column className={styles.appDetail}>
                         <Container className={styles.title}>
-                            <Text className={styles.detailText}>Better Usability</Text>
+                            <Text className={styles.detailText} as='h3'>Better Usability</Text>
                         </Container>
                         <Container className={styles.description}>
                             <Text className={styles.detailText}>Opens like a website, feels like an app. Utilize the extra space to browse your photos more easily, and take advantage of some of your phones capabilities like notifications and geolocation..</Text>
