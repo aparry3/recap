@@ -1,0 +1,79 @@
+.app {
+    height: 100%;
+    width: 100%;
+}
+.sidebar {
+    height: 100%;
+    width: 20%;
+    background: var(--background-medium);
+}
+.dash {
+    width: 80%;
+    height: 1px;
+    background: var(--primary);
+}
+.dashVertical {
+    width: 1px;
+    height: 1.3rem;
+    background: var(--text-dark);
+    opacity: 0.5;
+}
+
+.content {
+    flex-grow: 1;
+    height: 100%;
+}
+.heading {
+    width: 100%;
+}
+.subtitleContainer {
+    width: 100%;
+}
+.subtitle {
+    opacity: 0.5;
+}
+.menu {
+    width: 100%;
+    padding: 0.5rem 0;
+}
+.menuItemContainer {
+    width: 100%;
+    padding: 0.1rem 1rem !important;
+}
+
+.menuItem {
+    border-radius: 0.5rem;
+    color: var(--primary);
+    font-size: 1.2rem !important;
+    padding: 0.75rem;
+    width: 100%;
+    cursor: pointer;
+    &:hover{
+        background: var(--primary);
+        color: var(--background-light);
+    };
+
+}
+.active{
+    background: var(--primary);
+    color: var(--background-light);
+};
+.menuIcon {
+    padding: 0 1rem !important;
+}
+.icon {
+    height: 1.2rem;
+    width: 1.2rem;
+}
+.actionContainer {
+    .iconContainer {
+        padding: 0.5rem;
+        color: var(--primary);
+        border-radius: 0.5rem;
+        cursor: pointer;
+        &:hover {
+            background: var(--primary);
+            color: var(--background-light);
+        }
+    }
+}
