@@ -14,8 +14,8 @@ const cormorant = Cormorant({
 });
 
 export const metadata: Metadata = {
-  title: 'Video Greeting Cards - Better Letter Card Co.',
-  description: 'Send a video with your next greeting card. Upload your own photo and video, and Better Letter will automatically mail a physcial card that your loved ones can scan to watch your video.',
+  title: 'The Best Collaborative Photo Gallery - Recap',
+  description: 'The best collaborative photo gallery for your next wedding, birthday, or celebration, offering unlimited uploads and collaborators, and easy organization of all of your media.',
 }
 
 export default function RootLayout({
