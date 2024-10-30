@@ -12,6 +12,7 @@
 .header {
     height: 7vh;
     width: 100%;
+    z-index: 10;
     position: fixed;
     top:0;
     left: 0;
@@ -79,7 +80,7 @@
     height: 70vh;
     min-height: 500px;
     width: 30vw;
-    min-width: 375px;
+    min-width: 350px;
     padding: 1rem;
 }
 .highlightsList {
@@ -148,19 +149,20 @@
     min-height: 100vh;
     width: 100%;
     position: relative;
+    padding: 2rem !important;
 
     .product {
         position: relative;
     }
 }
-.shareCardContainer {
-    width: 25vh;
-    height:25vh;
+.shareCards {
+    flex-wrap: wrap;
 }
+
 .shareCard {
     background: var(--background-medium);
-    width: 100%;
-    height:100%;
+    width: 25vh;
+    height:25vh;
     justify-content: center !important;
     border-radius: 0.5rem;
     box-shadow: 0 0 1.25rem -1rem black;
@@ -309,5 +311,34 @@
             width: 100%;
         }
     }
+    .share {
+        padding: 1rem !important;
+    }
+    .shareCards {
+        width: 100%;
+    }
+
+    .shareCard{
+        width: 40vw;
+        height: 40vw;
+    }
+    
+    
+    .magnifyContainer {
+        position: relative;
+        top: unset;
+        left: unset;
+        padding: 1rem;
+        width: 100%;
+        width: unset;
+    }
+    .magnify {
+        position: relative;
+        height: 40vw !important;
+        width: 40vw !important;
+        top: unset;
+        left: unset;
+    }
+
     
 }

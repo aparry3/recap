@@ -8,7 +8,7 @@ import { circleVideoIcon, downloadIcon, photoFilmIcon, shareNodesIcon, zipIcon }
 
 const Header = () => {
     return (
-        <Container className={styles.header} justify='space-between'>
+        <Container as='header' className={styles.header} justify='space-between'>
             <Container className={styles.wordmarkContainer} padding={0.5}>
                 <Link href="/">
                     <Image src='/branding/wordmark.png' alt='wordmark' layout='intrinsic' height={100} width={100}/>
@@ -27,7 +27,7 @@ const Header = () => {
 
 const Hero = () => {
     return (
-        <Column className={styles.hero} justify='space-between'>
+        <Column as='section' className={styles.hero} justify='space-between'>
             <Column className={styles.textContainer} padding={0.5}>
                 <Container className={styles.heroHeading} padding={[0, 1]}>
                     <Text weight={700} className={styles.heroHeadingText} as='h1'><span className={styles.highlightText}>Recap</span> and <span className={styles.highlightText}>Relive</span> your favorite moments and memories</Text>
@@ -51,7 +51,7 @@ const Hero = () => {
 
 const Highlights = () => {
     return (
-        <Column className={styles.highlights} justify='space-between'>
+        <Column as='section' className={styles.highlights} justify='space-between'>
             <Column className={styles.textContainer} padding={0.5}>
                 <Container className={styles.heading} padding={[0, 1]}>
                     <Text className={styles.headingText} as='h1'>The best collaborative gallery.</Text>
@@ -133,7 +133,7 @@ const Highlights = () => {
 
 const Uses = () => {
     return (
-        <Container className={styles.uses} padding={2}>
+        <Container as='section' className={styles.uses} padding={2}>
             <Text className={styles.headingText} as='h1'>Great for</Text>
             <Container padding={[0, 0, 0, 0.5]}><Text weight={600} className={`${styles.headingText} ${styles.highlightText}`}>Weddings</Text></Container>
             <Text className={styles.headingText} as='h1'>.</Text>
@@ -144,7 +144,7 @@ const Uses = () => {
 
 const Albums = () => {
     return (
-        <Column className={styles.albums} padding={2}>
+        <Column as='section' className={styles.albums} padding={2}>
             <Container className={styles.background} />
             <Container className={styles.heading} padding={[0, 1]}>
                 <Text className={styles.headingText} as='h1'>An album for everything.</Text>
@@ -161,7 +161,7 @@ const Albums = () => {
 
 const Share = () => {
     return (
-        <Column className={styles.share} padding={2}>
+        <Column as='section' className={styles.share} >
             <Container className={styles.heading} padding={[0, 1]}>
                 <Text className={styles.headingText} as='h1'><span className={styles.highlightText}>Share</span> and <span className={styles.highlightText}>save</span> your photos.</Text>
             </Container>
@@ -171,7 +171,13 @@ const Share = () => {
             <Column className={styles.product} style={{ width: '100%', flexGrow: 1}} padding={1}>
                 <Image src='/product/imageView.png' alt='albums' className={styles.albumImage} layout='responsive' height={572} width={940}/>
                 <Container className={styles.shareCards} padding>
-                    <Container className={styles.shareCardContainer} padding={1}>
+                    <Column className={styles.magnifyContainer}>
+                        <Image src='/product/magnify.png' alt='magnify' className={styles.magnify} layout='responsive' height={500} width={500}/>
+                        <Container padding>
+                            <Text size={1.3}>Share to social media with one click.</Text>
+                        </Container>
+                    </Column>
+                    <Column className={styles.shareCardContainer} padding={1}>
                         <Column className={styles.shareCard} padding={1}>
                             <Container className={styles.iconContainer} padding={0.5}>
                                 <FontAwesomeIcon icon={photoFilmIcon} className={styles.icon}/>
@@ -180,11 +186,11 @@ const Share = () => {
                                 <Text size={1.3}>Export Video</Text>
                             </Container>
                         </Column>
-                    </Container>
-                    <Container className={styles.shareCardContainer} padding={1}>
-                        <Container className={styles.magnifyContainer}>
-                            <Image src='/product/magnify.png' alt='magnify' className={styles.magnify} layout='responsive' height={500} width={500}/>
+                        <Container padding>
+                            <Text size={1.3}>Turn your gallery into a video.</Text>
                         </Container>
+                    </Column>
+                    <Column className={styles.shareCardContainer} padding={1}>
                         <Column className={styles.shareCard} padding={1}>
                             <Container className={styles.iconContainer} padding={0.5}>
                                 <FontAwesomeIcon icon={zipIcon} className={styles.icon}/>
@@ -193,7 +199,10 @@ const Share = () => {
                                 <Text size={1.3}>Download Media</Text>
                             </Container>
                         </Column>
-                    </Container>
+                        <Container padding>
+                            <Text size={1.3}>Download a single image or export your whole gallery.</Text>
+                        </Container>
+                    </Column>
                     <Container className={styles.details}>
                         <Column className={styles.detail} style={{top: '35%', right: '1%'}}>
                             <Container className={styles.detailIcon}>
@@ -229,7 +238,7 @@ const Share = () => {
 
 const App = () => {
     return (
-        <Column className={styles.app} padding={2}>
+        <Column as='section' className={styles.app} padding={2}>
             <Container className={styles.heading} padding={[0, 1]}>
                 <Text className={styles.headingText} as='h1'>No app store, it just works.</Text>
             </Container>
@@ -274,7 +283,7 @@ const App = () => {
 
 const Footer = () => {
     return (
-        <Container className={styles.footer} padding={2}>
+        <Container as='footer' className={styles.footer} padding={2}>
             <Container style={{flexGrow: 1}}>
 
             </Container>
@@ -293,7 +302,7 @@ const Footer = () => {
 
 const HomePage: FC = ({}) => {
     return (
-        <Column className={styles.body}>
+        <Column as='main' className={styles.body}>
             {/* FIXED/STICKY */}
             <Header />
 

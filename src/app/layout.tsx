@@ -2,6 +2,8 @@ import './globals.css'
 import type { Metadata } from 'next'
 import { Cormorant } from 'next/font/google'
 import { config } from '@fortawesome/fontawesome-svg-core';
+import Head from 'next/head';
+
 config.autoAddCss = false; // Disable automatic CSS addition
 
 // Import the Google font
@@ -14,9 +16,9 @@ const cormorant = Cormorant({
 });
 
 export const metadata: Metadata = {
-  title: 'The Best Collaborative Photo Gallery - Recap',
+  title: 'Recap - Collaborative Photo Galleries',
   description: 'The best collaborative photo gallery for your next wedding, birthday, or celebration, offering unlimited uploads and collaborators, and easy organization of all of your media.',
-}
+};
 
 export default function RootLayout({
   children,
@@ -25,7 +27,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <head>
+      <Head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,300..700;1,300..700&display=swap" rel="stylesheet" />
@@ -34,7 +36,7 @@ export default function RootLayout({
         <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
         <link rel="manifest" href="/site.webmanifest" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" id="viewportMeta" />
-      </head>
+      </Head>
       <body className={cormorant.className}>
         {children}
         {/* <CookieConsentProvider>
