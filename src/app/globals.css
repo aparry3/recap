@@ -13,11 +13,11 @@
 
   --text-dark: #1D1C1C; 
 
-  --font-family: 'Playfair Display', serif;
+  --font-family: 'Cormorant', serif;
 }
 
 body {
-  background-image: url('/backgrounds/background.jpg');
+  /* background-image: url('/backgrounds/background.jpg'); */
   font-family: var(--font-family);
   letter-spacing: 0.0rem;
   background-size: 100% 100%;

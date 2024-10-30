@@ -1,0 +1,48 @@
+.header {
+    padding: 2rem 1rem 1rem 1rem!important;
+}
+.content {
+    text-align: center;
+    padding: 2rem !important;
+}
+.section {
+    width: 80%;
+    padding: 0.5rem !important;
+}
+.qrcode {
+    width: 50% !important;
+}
+.linkContainer {
+    background: var(--background-medium);
+    color: var(--primary-dark);
+    border-radius: 0.5rem;
+    padding: 0.5rem 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    &:hover {
+        background: var(--primary);
+        color: var(--background-light);
+      }
+    
+      &:active {
+        background: var(--primary);
+        color: var(--background-light);
+    }    
+}
+.linkIcon {
+    padding: 0 1rem;
+}
+.icon {
+    height:1rem;
+    width: 1rem;
+}
+.qrCode {
+    height: 3rem;
+    width: 3rem;
+    color: var(--primary);
+}
+.buttonContainer {
+    padding:1rem !important;
+}

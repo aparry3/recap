@@ -48,8 +48,8 @@ importers:
         specifier: ^18.3.1
         version: 18.3.1(react@18.3.1)
       react-web-layout-components:
-        specifier: ^1.0.5
-        version: 1.0.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: ^1.0.6
+        version: 1.0.6(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       tailwindcss:
         specifier: ^3.4.14
         version: 3.4.14
@@ -927,8 +927,8 @@ packages:
   react-is@16.13.1:
     resolution: {integrity: sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==}
 
-  react-web-layout-components@1.0.5:
-    resolution: {integrity: sha512-/HeDaXBfdh/5939Y/FwYTQ6Lluki8tpxe+PFcjDw2VUK0M7BeBWGVesvXh6tLXc32AWpFPmZTHB55TxAITQPKA==}
+  react-web-layout-components@1.0.6:
+    resolution: {integrity: sha512-OdhhmxtSafRoO796FVYOzhg8f5K4hbkBNIyc8/pc7TBPc6D8T36KckKkJUpL7akviMYhpr9vKcHvoniLhwzIWg==}
     peerDependencies:
       react: ^18.0.0
       react-dom: ^18.0.0
@@ -1816,7 +1816,7 @@ snapshots:
 
   react-is@16.13.1: {}
 
-  react-web-layout-components@1.0.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
+  react-web-layout-components@1.0.6(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)

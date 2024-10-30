@@ -1,0 +1,21 @@
+.button {
+  background-color: var(--primary);
+  color: var(--background-light);
+  border: none;
+  border-radius: 0.5rem;;
+  padding: 0.75rem;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  font-family: var(--font-family);
+  cursor: pointer;
+  min-width: 5rem;
+  outline: none;
+
+  &:disabled {
+    opacity:  0.4;
+    cursor: default;
+  }
+}

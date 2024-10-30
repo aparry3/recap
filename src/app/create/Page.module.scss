@@ -1,0 +1,32 @@
+.header {
+    padding: 2rem 1rem 1rem 1rem!important;
+}
+.form {
+    flex-direction: column !important;
+    width: 90%;
+    padding: 1rem !important;
+}
+.inputContainer {
+    width: 100%;
+    padding: 0.5rem;
+}
+.galleryNamePrompt {
+    width: 100%;
+    padding: 1rem 0;
+    text-align: center;
+}
+.url {
+    text-align: left;width: 100%;
+    color: var(--primary-dark);
+}
+
+.buttonContainer {
+    padding: 2rem !important;
+}
+.button {
+    min-width: 100px;
+    padding: 0.5rem !important;
+    background: var(--primary);
+    color: var(--background-light);
+    border-radius: 0.5rem;
+}

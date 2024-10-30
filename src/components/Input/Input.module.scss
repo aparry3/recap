@@ -1,6 +1,53 @@
-.input {
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    font-size: 16px;
-  }
+
+.inputContainer {
+    background: var(--background-light);
+    position: relative;
+    width: 100%;
+    height: 80px;
+    border-radius: 0.5rem;
+    font-weight: 400;
+    color: var(--text-dark);
+
+    .label {
+        position: absolute;
+        left: 0;
+        top: 60%; // Initial position inside the input
+        transform: translate(0, -50%); // Center the label
+        transition: top 0.3s ease, font-size 0.3s ease, color 0.3s ease; // Smooth transition for top, font-size, and color
+        pointer-events: none;
+        font-size: 20px;
+        color: rgba(var(--primary-color), 0.8);
+    }
+    
+    .input {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 32px 8px 10px 8px;
+        font-weight: 200;
+        font-size: 24px;
+        border: none;
+        border-radius: 4px; 
+        font-family: var(--font-family);
+        &:focus {
+            outline: none;
+        } 
+        &:not(:placeholder-shown) {
+            outline: none;
+        }
+        &:focus ~ .label,
+        &:not(:placeholder-shown) ~ .label {
+            top: 15%; // Final position above the input
+            font-size: 16px; // Smaller font size
+            color: var(--primary); // Color change to indicate focus or content
+        }
+
+    }
+    .dash {
+        width: 100%;
+        height: 2px;
+        background: var(--primary);
+    }
+}
+.disabled {
+    color: var(--primary);
+}
