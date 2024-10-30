@@ -39,8 +39,8 @@ const CreatePage: FC = () => {
           <Image src='/branding/wordmark.png' alt='wordmark' layout='intrinsic' height={100} width={100}/>
         </Row>
         <Column as='header' className={styles.header}>
-          <Text size={1.4}>Welcome to</Text>
-          <Text size={2.5} weight={500}>The Dion Wedding</Text>
+          <Text size={1.4}>Create a</Text>
+          <Text size={2.5} weight={500}>New Gallery</Text>
         </Column>
         <Container className={styles.buttonContainer} padding={[2, 0]}>
           <Button className={styles.button} onClick={() => {}} type='submit' disabled={!name || !email}>
