@@ -1,0 +1,40 @@
+
+// HEADING
+.heading {
+    width: 100%;
+}
+.actionContainer {
+    .iconContainer {
+        padding: 0.5rem;
+        color: var(--primary);
+        border-radius: 0.5rem;
+        cursor: pointer;
+        &:hover {
+            background: var(--primary);
+            color: var(--background-light);
+        }
+    }
+}
+
+
+@media screen and (max-width: 768px) {
+    .titleContainer {
+        text-align: center;
+        width: 100%;
+        .title {
+            justify-content: center !important;
+        }
+        .titleText {
+            font-size: 2rem !important;
+
+        }
+        .subtitleContainer {
+            justify-content: center !important;
+        }
+    }
+    .heading {
+        .actionContainer {
+            display: none !important;
+        }    
+    }
+}
