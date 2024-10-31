@@ -1,9 +1,9 @@
 // lib/fontawesome.js
 import { findIconDefinition, icon, library } from '@fortawesome/fontawesome-svg-core';
-import { faGift, faQrcode, faFileZipper, faPhotoFilm, faCircleVideo, faDownload, faShareNodes, faLink } from '@fortawesome/pro-solid-svg-icons';
+import { faGift, faQrcode, faFileZipper, faPhotoFilm, faCircleVideo, faDownload, faShareNodes, faLink, faUpload, faGridHorizontal, faHouse, faUser, faBars } from '@fortawesome/pro-solid-svg-icons';
 
 // Add any icons you want here
-library.add(faGift, faQrcode, faFileZipper, faPhotoFilm, faCircleVideo, faDownload, faShareNodes, faLink);
+library.add(faGift, faUser, faBars, faHouse, faGridHorizontal, faUpload,faQrcode, faFileZipper, faPhotoFilm, faCircleVideo, faDownload, faShareNodes, faLink);
 
 
 const download = findIconDefinition({ prefix: 'fas', iconName: 'download' })
@@ -26,5 +26,24 @@ export const linkIcon = icon(link)
 
 const qrcode = findIconDefinition({ prefix: 'fas', iconName: 'qrcode' })
 export const qrcodeIcon = icon(qrcode)
+
+const upload = findIconDefinition({ prefix: 'fas', iconName: 'upload' })
+export const uploadIcon = icon(upload)
+
+const grid = findIconDefinition({ prefix: 'fas', iconName: 'grid-horizontal' })
+export const gridIcon = icon(grid)
+
+const house = findIconDefinition({ prefix: 'fas', iconName: 'house' })
+export const houseIcon = icon(house)
+
+const user = findIconDefinition({ prefix: 'fas', iconName: 'user' })
+export const userIcon = icon(user)
+
+const menu = findIconDefinition({ prefix: 'fas', iconName: 'bars' })
+export const menuIcon = icon(menu)
+
+
+
+
 
 
