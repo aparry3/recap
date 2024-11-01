@@ -37,9 +37,11 @@ const Hero = () => {
                 </Container>
             </Column>
             <Container id="heroAction" padding={1}>
-                <Container className={styles.actionButton} padding={1}>
-                    <Text size={1.2} weight={700}>Create your shared gallery</Text>
-                </Container>
+                <Link href='/create'>
+                    <Container className={styles.actionButton} padding={1}>
+                        <Text size={1.2} weight={700}>Create your shared gallery</Text>
+                    </Container>
+                </Link>
             </Container>
             <Container id="product" style={{ width: '100%'}} padding={1}>
                 <Image src='/product/screenshots.png' alt='screenshots' layout='responsive' height={718} width={1369}/>
