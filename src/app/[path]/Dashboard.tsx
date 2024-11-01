@@ -20,13 +20,17 @@ const Dashboard: FC =  ({}) => {
     const [showQrCode, setShowQrCode] = useState(false)
     const [page, setPage] = useState(Page.HOME)
 
+    const handlePageChange = (newPage: Page) => {
+        setPage(newPage)
+        setShowSidebar(false)
+    }
     const sidebarOpen = useMemo(() => isMobile && showSidebar, [showSidebar, isMobile])
     return (
         <Container as='main'className={styles.app}>
             <Header onMenuClick={() => setShowSidebar(true)} onQrClick={() => setShowQrCode(true)} />
             {showQrCode && <QrCode onClose={() => setShowQrCode(false)} open={showQrCode}/>}
-            <Sidebar page={page} onPageChange={(newPage: Page) => setPage(newPage)} onClose={() => setShowSidebar(false)} />
-            <MobileMenu page={page} onPageChange={(newPage: Page) => setPage(newPage)} open={sidebarOpen} onClose={() => setShowSidebar(false)} />
+            <Sidebar page={page} onPageChange={handlePageChange} onClose={() => setShowSidebar(false)} />
+            <MobileMenu page={page} onPageChange={handlePageChange} open={sidebarOpen} onClose={() => setShowSidebar(false)} />
             <Content page={page}onQrClick={() => setShowQrCode(true)}/>
         </Container>
     )
