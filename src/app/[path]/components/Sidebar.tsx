@@ -6,9 +6,15 @@ import { FC } from "react"
 import { Column, Container, Row, Text } from "react-web-layout-components"
 import styles from './Sidebar.module.scss'
 import Image from "next/image"
+import { Page } from "../Dashboard";
 
-
-const SidebarContent: FC<{onClose?: () => void}> = ({onClose}) => {
+interface SidebarProps {
+    onClose?: () => void
+    open?: boolean
+    page: Page
+    onPageChange: (page: Page) => void
+}
+const SidebarContent: FC<Omit<SidebarProps, 'open'>> = ({onClose, onPageChange, page}) => {
     return (
     <>
     <Container className={styles.header} padding>
@@ -23,7 +29,7 @@ const SidebarContent: FC<{onClose?: () => void}> = ({onClose}) => {
      <Container className={styles.dash} />
      <Column className={styles.menu}>
         <Container className={styles.menuItemContainer}>
-            <Row className={`${styles.menuItem} ${styles.active}`}>
+            <Row className={`${styles.menuItem} ${page === Page.HOME ? styles.active : ''} `} onClick={() => onPageChange(Page.HOME)}>
                 <Container className={styles.menuIcon}>
                     <FontAwesomeIcon icon={houseIcon} className={styles.icon}/>
                 </Container>
@@ -33,7 +39,7 @@ const SidebarContent: FC<{onClose?: () => void}> = ({onClose}) => {
             </Row>
         </Container>
         <Container className={styles.menuItemContainer}>
-            <Row className={styles.menuItem}>
+            <Row className={`${styles.menuItem} ${page === Page.GALLERY ? styles.active : ''} `} onClick={() => onPageChange(Page.GALLERY)}>
                 <Container className={styles.menuIcon}>
                     <FontAwesomeIcon icon={gridIcon} className={styles.icon}/>
                 </Container>
@@ -43,7 +49,7 @@ const SidebarContent: FC<{onClose?: () => void}> = ({onClose}) => {
             </Row>
         </Container>
         <Container className={styles.menuItemContainer}>
-            <Row className={styles.menuItem}>
+            <Row className={`${styles.menuItem} ${page === Page.USER ? styles.active : ''}`} onClick={() => onPageChange(Page.USER)}>
                 <Container className={styles.menuIcon}>
                     <FontAwesomeIcon icon={userIcon} className={styles.icon}/>
                 </Container>
@@ -57,18 +63,18 @@ const SidebarContent: FC<{onClose?: () => void}> = ({onClose}) => {
     )
 }
 
-const Sidebar: FC<{onClose: () => void}> = ({onClose}) => {
+const Sidebar: FC<SidebarProps> = (props) => {
     return (
         <Column className={styles.sidebar}>
-            <SidebarContent />
+            <SidebarContent {...props}/>
         </Column>
     )
 }
 
-export const MobileMenu: FC<{open: boolean, onClose: () => void}> = ({onClose, open = false}) => {
+export const MobileMenu: FC<SidebarProps> = ({open = false, ...props}) => {
     return open ? (
         <Column className={styles.mobileSidebar}>
-            <SidebarContent onClose={onClose} />
+            <SidebarContent {...props} />
         </Column>
     ) : <></>
 }

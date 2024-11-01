@@ -108,6 +108,9 @@
     .action {
         width: 100%;
     }
+    .title {
+        justify-content: space-between !important;
+    }
     .exportActions {
         width: 100%;
         .actionContainer {
@@ -122,4 +125,9 @@
 }
 .emptyGallery {
     opacity: 0.5;
+}
+.tab {
+    flex-grow: 1;
+    width: 100%;
+    padding: 1rem !important;
 }

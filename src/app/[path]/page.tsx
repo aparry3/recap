@@ -3,7 +3,6 @@ import Dashboard from "./Dashboard";
 
 
 const GalleryPage: FC<{params: {path: string}}> = async ({params}) => {
-
     // const ipAddress = getIpAddress(headerList)
 
     return (

@@ -1,13 +1,23 @@
 'use client';
-import React, { FC } from 'react';
+import React, { FC, useEffect } from 'react';
 import { Column, Container, Row, Text } from 'react-web-layout-components';
 import Image from 'next/image';
-import styles from './Page.module.scss';
+import styles from './Welcome.module.scss';
 import Button from '@/components/Button';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { linkIcon, qrcodeIcon } from '@/lib/icons';
+import { useRouter } from 'next/navigation';
 
-const ThanksPage: FC = () => {
+const Welcome: FC<{url: string, name: string, email: string}> = ({url, name, email}) => {
+  const router = useRouter()
+  useEffect(() => {
+    console.log(name)
+  }, [name])
+
+  const handleNext = () => {
+    router.push(url)
+  }
+
   return (
     <Container as='main' className={styles.page}>
       <Column className={styles.titleContainer}>
@@ -16,10 +26,10 @@ const ThanksPage: FC = () => {
         </Row>
         <Column as='header' className={styles.header}>
           <Text size={1.4}>Welcome to</Text>
-          <Text size={2.5} weight={500}>The Dion Wedding</Text>
+          <Text size={2.5} weight={500}>{name}</Text>
         </Column>
         <Container className={styles.buttonContainer} padding={[2, 0]}>
-          <Button onClick={() => {}} type='submit'>
+          <Button onClick={handleNext} type='submit'>
             <Text size={1.2} weight={600}>Next</Text>
           </Button>
         </Container>
@@ -42,7 +52,7 @@ const ThanksPage: FC = () => {
               </Container>
               <Container>
                 <Text>
-                  /the-dion-wedding
+                  {url}
                 </Text>
               </Container>
             </Container>
@@ -54,7 +64,7 @@ const ThanksPage: FC = () => {
             <FontAwesomeIcon icon={qrcodeIcon} className={styles.qrCode}/>
           </Container>
           <Container className={styles.buttonContainer} padding={[4, 0]}>
-            <Button onClick={() => {}} type='submit'>
+            <Button type='submit' onClick={handleNext}>
               <Text size={1.2} weight={600}>Next</Text>
             </Button>
           </Container>
@@ -64,4 +74,4 @@ const ThanksPage: FC = () => {
   );
 };
 
-export default ThanksPage;
+export default Welcome;

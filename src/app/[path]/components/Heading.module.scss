@@ -15,6 +15,12 @@
         }
     }
 }
+.dashVertical {
+    width: 1px;
+    height: 1.3rem;
+    background: var(--text-dark);
+    opacity: 0.5;
+}
 
 
 @media screen and (max-width: 768px) {
