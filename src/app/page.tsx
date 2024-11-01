@@ -37,7 +37,7 @@ const Hero = () => {
                 </Container>
             </Column>
             <Container id="heroAction" padding={1}>
-                <Link href='/create'>
+                <Link href='/create' className={styles.link}>
                     <Container className={styles.actionButton} padding={1}>
                         <Text size={1.2} weight={700}>Create your shared gallery</Text>
                     </Container>
