@@ -6,13 +6,13 @@ import { FC } from "react"
 import { Column, Container, Row, Text } from "react-web-layout-components"
 import styles from './Sidebar.module.scss'
 import Image from "next/image"
-import { Page } from "../App";
+import { AppPage } from "../App";
 
 interface SidebarProps {
     onClose?: () => void
     open?: boolean
-    page: Page
-    onPageChange: (page: Page) => void
+    page: AppPage
+    onPageChange: (page: AppPage) => void
 }
 const SidebarContent: FC<Omit<SidebarProps, 'open'>> = ({onClose, onPageChange, page}) => {
     return (
@@ -29,7 +29,7 @@ const SidebarContent: FC<Omit<SidebarProps, 'open'>> = ({onClose, onPageChange, 
      <Container className={styles.dash} />
      <Column className={styles.menu}>
         <Container className={styles.menuItemContainer}>
-            <Row className={`${styles.menuItem} ${page === Page.HOME ? styles.active : ''} `} onClick={() => onPageChange(Page.HOME)}>
+            <Row className={`${styles.menuItem} ${page === AppPage.HOME ? styles.active : ''} `} onClick={() => onPageChange(AppPage.HOME)}>
                 <Container className={styles.menuIcon}>
                     <FontAwesomeIcon icon={houseIcon} className={styles.icon}/>
                 </Container>
@@ -39,7 +39,7 @@ const SidebarContent: FC<Omit<SidebarProps, 'open'>> = ({onClose, onPageChange, 
             </Row>
         </Container>
         <Container className={styles.menuItemContainer}>
-            <Row className={`${styles.menuItem} ${page === Page.GALLERY ? styles.active : ''} `} onClick={() => onPageChange(Page.GALLERY)}>
+            <Row className={`${styles.menuItem} ${page === AppPage.GALLERY ? styles.active : ''} `} onClick={() => onPageChange(AppPage.GALLERY)}>
                 <Container className={styles.menuIcon}>
                     <FontAwesomeIcon icon={gridIcon} className={styles.icon}/>
                 </Container>
@@ -49,7 +49,7 @@ const SidebarContent: FC<Omit<SidebarProps, 'open'>> = ({onClose, onPageChange, 
             </Row>
         </Container>
         <Container className={styles.menuItemContainer}>
-            <Row className={`${styles.menuItem} ${page === Page.USER ? styles.active : ''}`} onClick={() => onPageChange(Page.USER)}>
+            <Row className={`${styles.menuItem} ${page === AppPage.USER ? styles.active : ''}`} onClick={() => onPageChange(AppPage.USER)}>
                 <Container className={styles.menuIcon}>
                     <FontAwesomeIcon icon={userIcon} className={styles.icon}/>
                 </Container>

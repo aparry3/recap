@@ -5,17 +5,17 @@ import { Column } from 'react-web-layout-components'
 import Heading from './Heading'
 import Home from './Content/Home';
 import Gallery from './Content/Gallery';
-import { Page } from '../App';
+import { AppPage } from '../App';
 
 
-const Content: FC<{onQrClick: () => void, page: Page}> = ({onQrClick, page}) => {
+const Content: FC<{onQrClick: () => void, page: AppPage}> = ({onQrClick, page}) => {
     const currentPage = useMemo(() => {
         switch (page) {
-            case Page.HOME:
+            case AppPage.HOME:
                 return <Home />
-            case Page.GALLERY:
+            case AppPage.GALLERY:
                 return <Gallery />
-            case Page.USER:
+            case AppPage.USER:
                 return <Home />
             default:
                 return <Home />

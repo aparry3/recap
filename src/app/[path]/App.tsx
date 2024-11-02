@@ -7,10 +7,10 @@ import Header from "./components/Header";
 import Sidebar, { MobileMenu } from "./components/Sidebar";
 import QrCode from "./components/QrCode";
 import useWindowSize from "@/helpers/hooks/window";
-import { usePathname } from "next/navigation";
-import Upload from "./components/Upload";
+// import { usePathname } from "next/navigation";
+// import Upload from "./components/Upload";
 
-export enum Page {
+export enum AppPage {
     HOME = 'HOME',
     GALLERY = 'GALLERY',
     USER = 'USER'
@@ -20,9 +20,9 @@ const App: FC =  ({}) => {
     const [showSidebar, setShowSidebar] = useState(false)
     const [showQrCode, setShowQrCode] = useState(false)
     // const [showUploadConfirmation, setShowUploadConfirmation] = useState(true)
-    const [page, setPage] = useState(Page.HOME)
+    const [page, setPage] = useState(AppPage.HOME)
 
-    const handlePageChange = (newPage: Page) => {
+    const handlePageChange = (newPage: AppPage) => {
         setPage(newPage)
         setShowSidebar(false)
     }
