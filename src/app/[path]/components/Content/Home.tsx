@@ -1,12 +1,20 @@
 "use client";
-import { FC } from 'react'
+import { FC, useCallback } from 'react'
 import styles from '../Content.module.scss'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Column, Container, Row, Text } from 'react-web-layout-components'
 import { uploadIcon, zipIcon, photoFilmIcon } from '@/lib/icons'
+import { usePathname, useRouter } from 'next/navigation';
 
 
 const Home: FC = () => {
+    const router = useRouter()
+    const pathname = usePathname()
+
+    const handleUploadClick = useCallback(() => {
+        router.push(`${pathname}/upload`, )
+    }, [pathname, router])
+
     return (
         <>
             <Column className={styles.section} padding>
@@ -16,7 +24,7 @@ const Home: FC = () => {
                 <Container className={styles.line} style={{width: '100%'}}/>
                 <Row className={styles.actions}>
                     <Container className={styles.actionContainer}>
-                        <Column className={styles.action}>
+                        <Column className={styles.action} onClick={handleUploadClick}>
                             <Container padding={0.5}>
                                 <FontAwesomeIcon icon={uploadIcon} className={styles.icon}/>
                             </Container>

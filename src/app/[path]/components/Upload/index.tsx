@@ -15,7 +15,7 @@ interface OrientationImage {
 }
 const Upload: FC = () => {
     const pathname = usePathname()
-    const name = pathname.replace('/', '').split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+    const name = pathname.replace('/upload', '').replace('/', '').split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
 
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [imagesWithOrientation, setImagesWithOrientation] = useState<OrientationImage[]>([]);

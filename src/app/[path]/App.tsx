@@ -19,7 +19,7 @@ const App: FC =  ({}) => {
     const {isMobile} = useWindowSize()
     const [showSidebar, setShowSidebar] = useState(false)
     const [showQrCode, setShowQrCode] = useState(false)
-    const [showUploadConfirmation, setShowUploadConfirmation] = useState(true)
+    // const [showUploadConfirmation, setShowUploadConfirmation] = useState(true)
     const [page, setPage] = useState(Page.HOME)
 
     const handlePageChange = (newPage: Page) => {
@@ -34,7 +34,7 @@ const App: FC =  ({}) => {
             <Sidebar page={page} onPageChange={handlePageChange} onClose={() => setShowSidebar(false)} />
             <MobileMenu page={page} onPageChange={handlePageChange} open={sidebarOpen} onClose={() => setShowSidebar(false)} />
             <Content page={page}onQrClick={() => setShowQrCode(true)}/>
-            {showUploadConfirmation && <Upload /> }
+            {/* {showUploadConfirmation && <Upload /> } */}
         </Container>
     )
 }
