@@ -8,16 +8,18 @@ import Sidebar, { MobileMenu } from "./components/Sidebar";
 import QrCode from "./components/QrCode";
 import useWindowSize from "@/helpers/hooks/window";
 import { usePathname } from "next/navigation";
+import Upload from "./components/Upload";
 
 export enum Page {
     HOME = 'HOME',
     GALLERY = 'GALLERY',
     USER = 'USER'
 }
-const Dashboard: FC =  ({}) => {
+const App: FC =  ({}) => {
     const {isMobile} = useWindowSize()
     const [showSidebar, setShowSidebar] = useState(false)
     const [showQrCode, setShowQrCode] = useState(false)
+    const [showUploadConfirmation, setShowUploadConfirmation] = useState(true)
     const [page, setPage] = useState(Page.HOME)
 
     const handlePageChange = (newPage: Page) => {
@@ -32,8 +34,9 @@ const Dashboard: FC =  ({}) => {
             <Sidebar page={page} onPageChange={handlePageChange} onClose={() => setShowSidebar(false)} />
             <MobileMenu page={page} onPageChange={handlePageChange} open={sidebarOpen} onClose={() => setShowSidebar(false)} />
             <Content page={page}onQrClick={() => setShowQrCode(true)}/>
+            {showUploadConfirmation && <Upload /> }
         </Container>
     )
 }
 
-export default Dashboard;
+export default App;

@@ -5,7 +5,7 @@ import { Column } from 'react-web-layout-components'
 import Heading from './Heading'
 import Home from './Content/Home';
 import Gallery from './Content/Gallery';
-import { Page } from '../Dashboard';
+import { Page } from '../App';
 
 
 const Content: FC<{onQrClick: () => void, page: Page}> = ({onQrClick, page}) => {
