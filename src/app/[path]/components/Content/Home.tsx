@@ -5,15 +5,13 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Column, Container, Row, Text } from 'react-web-layout-components'
 import { uploadIcon, zipIcon, photoFilmIcon } from '@/lib/icons'
 import { usePathname, useRouter } from 'next/navigation';
+import useUpload from '@/helpers/providers/upload';
+import MediaGallery from '@/components/MediaGallery';
 
 
 const Home: FC = () => {
-    const router = useRouter()
-    const pathname = usePathname()
 
-    const handleUploadClick = useCallback(() => {
-        router.push(`${pathname}/upload`, )
-    }, [pathname, router])
+    const {upload, images} = useUpload()
 
     return (
         <>
@@ -24,7 +22,7 @@ const Home: FC = () => {
                 <Container className={styles.line} style={{width: '100%'}}/>
                 <Row className={styles.actions}>
                     <Container className={styles.actionContainer}>
-                        <Column className={styles.action} onClick={handleUploadClick}>
+                        <Column className={styles.action} onClick={upload}>
                             <Container padding={0.5}>
                                 <FontAwesomeIcon icon={uploadIcon} className={styles.icon}/>
                             </Container>
@@ -38,7 +36,7 @@ const Home: FC = () => {
                     </Container>
                     <Container className={styles.exportActions}>
                         <Container className={styles.actionContainer}>
-                            <Column className={styles.action}>
+                            <Column className={`${styles.action} ${styles.disabled}`}>
                                 <Container>
                                     <FontAwesomeIcon icon={photoFilmIcon} className={styles.icon}/>
                                 </Container>
@@ -66,9 +64,13 @@ const Home: FC = () => {
                 </Row>
                 <Container className={styles.line} style={{width: '100%'}}/>
                 <Column className={styles.gallery}>
+                    {images.length > 0 ? (
+                        <MediaGallery images={images}/>
+                    ) : (
                     <Container className={styles.emptyGallery} padding>
                         <Text size={2} weight={500}>No Recent Uploads</Text>
-                    </Container>  
+                    </Container>
+                    )}
                 </Column>
             </Column>
         </>

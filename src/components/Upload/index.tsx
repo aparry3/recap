@@ -1,5 +1,5 @@
 "use client";
-import React,{ ChangeEvent, FC, useCallback, useEffect, useRef, useState } from "react"
+import React, { FC } from "react"
 import { Column, Row, Container, Text } from "react-web-layout-components"
 import styles from './Upload.module.scss'
 import  NextImage from "next/image"
@@ -7,60 +7,17 @@ import Button from "@/components/Button"
 import { usePathname } from "next/navigation"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { uploadIcon } from "@/lib/icons";
+import { OrientationImage } from "@/helpers/providers/upload";
+import MediaGallery from "../MediaGallery";
 
 
-interface OrientationImage {
-    url: string;
-    isVertical: boolean;
-}
-const Upload: FC = () => {
+const Upload: FC<{images: OrientationImage[], upload: () => void, onConfirm: (confirmedImages: OrientationImage[]) => void}> = ({images, upload, onConfirm}) => {
     const pathname = usePathname()
     const name = pathname.replace('/upload', '').replace('/', '').split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
 
-    const fileInputRef = useRef<HTMLInputElement>(null);
-    const [imagesWithOrientation, setImagesWithOrientation] = useState<OrientationImage[]>([]);
-
-    const handleButtonClick = useCallback(() => {
-        console.log(fileInputRef.current)
-        if (fileInputRef.current) {
-            fileInputRef.current.click();
-        }
-    }, [fileInputRef]);
-  
-  
-    const getImageOrientation = async (imageFile: File): Promise<OrientationImage>  => {
-      return new Promise((resolve) => {
-        const img = new Image();
-        img.src = URL.createObjectURL(imageFile);
-        img.onload = () => {
-          const isVertical = img.height > img.width;
-          URL.revokeObjectURL(img.src); // Clean up
-          resolve({ url: URL.createObjectURL(imageFile), isVertical });
-        };
-        img.onerror = () => {
-          // In case of error, default to landscape
-          resolve({ url: URL.createObjectURL(imageFile), isVertical: false });
-        };
-      });
-    };
-  
-    const loadImages = async (images: File[]) => {
-        const imagesData = await Promise.all(
-          images.map(image => getImageOrientation(image))
-        );
-        setImagesWithOrientation((prevImages) => [...prevImages, ...imagesData]);
-      };
-
-      
-    const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
-      const files = Array.from(event.target.files || []);
-      const imageFiles = files.filter(file => file.type.startsWith('image/'));
-      
-      // Optionally, you can limit the number of files or perform other validations here
-      
-      loadImages(files);
-    };
-  
+    const handleConfirm = () => {
+        onConfirm(images)
+    }
     return (
         <Column className={styles.upload}>
             <Container className={styles.header}>
@@ -80,12 +37,12 @@ const Upload: FC = () => {
                     </Container>
                 </Row>
                 <Container className={styles.action}>
-                    <Button className={styles.button} onClick={handleButtonClick}>
+                    <Button className={styles.button} onClick={upload}>
                         <Text size={1}>
                             + Upload
                         </Text>
                     </Button>
-                    <Container className={styles.icon} onClick={handleButtonClick}>
+                    <Container className={styles.icon} onClick={upload}>
                         <FontAwesomeIcon icon={uploadIcon} />
                     </Container>
                 </Container>
@@ -106,14 +63,8 @@ const Upload: FC = () => {
                     <Container className={styles.separatorLine}/>
                 </Column>
             </Column>
-            <Column className={styles.uploadElements}>
-                <Column className={styles.gallery}>
-                {imagesWithOrientation.map((image) => (
-                    <Container key={image.url} className={`${styles.imageContainer} ${image.isVertical ? styles.vertical : ''}`}>
-                        <NextImage src={image.url} alt="image" className={`${styles.image}`} layout='intrinsic' height={350} width={350}/>
-                    </Container>
-                ))}
-                </Column>
+            <Column className={styles.galleryContainer} >
+                <MediaGallery images={images} />
             </Column>
             <Container className={styles.actionBar}>
                 <Container className={styles.mediaInfo}>
@@ -125,25 +76,16 @@ const Upload: FC = () => {
                     </Container>
                 </Container>
                 <Container className={styles.button}>
-                    <Button>
+                    <Button onClick={handleConfirm}>
                         <Text>Cancel</Text>
                     </Button>
                 </Container>
                 <Container className={styles.button}>
-                    <Button>
+                    <Button onClick={handleConfirm}>
                         <Text>Confirm</Text>
                     </Button>
                 </Container>
             </Container>
-            <input
-                type="file"
-                accept="image/*"
-                multiple
-                ref={fileInputRef}
-                style={{ display: 'none' }}
-                onChange={handleFileChange}
-            />
-
         </Column>
     )
 }

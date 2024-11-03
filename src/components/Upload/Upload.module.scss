@@ -85,33 +85,14 @@
     background: var(--text-dark);
     opacity: 0.3;
 }
-.gallery {
-    display: grid !important;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    grid-auto-rows: 15vh;
-    grid-gap: 0.25rem;
-    width: 100%;
-}
-.vertical {
-    grid-row: span 2;
-}
-.uploadElements {
-    width: 100%;
-    overflow: auto;
-    height: 100%;
-}
-.imageContainer {
-    height:100%;
-    width: 100%;
-}
-.image {
-    width: 100% !important; /* Ensures the image spans the full width of the cell */
-    height: 100% !important; /* Ensures the image spans the full height of the cell */
-    object-fit:cover;
-}
 .actionBar {
     width: 100%;
     padding: 0.5rem;
+}
+.galleryContainer {
+    width: 100%;
+    overflow: auto;
+    height: 100%;
 }
 @media screen and (max-width: 768px) {
     .separatorTitle {

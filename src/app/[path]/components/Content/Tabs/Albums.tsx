@@ -2,8 +2,10 @@ import { FC } from "react"
 import { Column, Container, Text } from "react-web-layout-components"
 import styles from './Albums.module.scss'
 import Button from "@/components/Button"
+import useUpload from "@/helpers/providers/upload"
 
 const Albums: FC = () => {
+    const {upload} = useUpload()
     return (
         <Column className={styles.data}>
             <Container padding>
@@ -12,7 +14,7 @@ const Albums: FC = () => {
                 </Text>
             </Container>
             <Container padding>
-                <Button onClick={() => {}}>Upload</Button>
+                <Button onClick={upload}>Upload</Button>
             </Container>
         </Column>
     )

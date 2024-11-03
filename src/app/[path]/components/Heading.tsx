@@ -6,15 +6,13 @@ import { Column, Container, Row, Text } from "react-web-layout-components"
 import styles from './Heading.module.scss'
 import { FC } from "react";
 import { usePathname, useRouter } from "next/navigation";
+import useUpload from "@/helpers/providers/upload";
 
 const Heading: FC<{onQrClick?: () => void}> = ({onQrClick}) => {
-    const router = useRouter()
+    const {upload} = useUpload()
+    
     const pathname = usePathname()
     const name = pathname.replace('/', '').split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
-
-    const handleUploadClick = () => {
-        router.push(`${pathname}/upload`)
-    }
 
     return (
         <Container className={styles.heading} justify="space-between">
@@ -40,7 +38,7 @@ const Heading: FC<{onQrClick?: () => void}> = ({onQrClick}) => {
                 </Container>
             </Container>
             <Container padding={[0, 0.5]}>
-                <Button onClick={handleUploadClick}>
+                <Button onClick={upload}>
                     <Text size={1} weight={500}>+ Upload</Text>
                 </Button>
             </Container>

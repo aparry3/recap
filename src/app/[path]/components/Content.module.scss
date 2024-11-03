@@ -46,7 +46,7 @@
 .section {
     width: 95%;
     .title {
-        padding: 0.5rem 0 !important;
+        padding: 0.5rem 1rem !important;
         width: 100%;
     }
 }
@@ -117,6 +117,9 @@
             width: 50%;
         }
     }
+    .section {
+        width: 100%;
+    }    
 
 }
 .gallery {
