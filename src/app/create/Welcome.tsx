@@ -7,15 +7,13 @@ import Button from '@/components/Button';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { linkIcon, qrcodeIcon } from '@/lib/icons';
 import { useRouter } from 'next/navigation';
+import { Gallery, NewGalleryData } from '@/lib/types/Gallery';
 
-const Welcome: FC<{url: string, name: string, email: string}> = ({url, name, email}) => {
+const Welcome: FC<{gallery: Gallery | NewGalleryData}> = ({gallery}) => {
   const router = useRouter()
-  useEffect(() => {
-    console.log(name)
-  }, [name])
 
   const handleNext = () => {
-    router.push(url)
+    router.push(gallery.path)
   }
 
   return (
@@ -26,7 +24,7 @@ const Welcome: FC<{url: string, name: string, email: string}> = ({url, name, ema
         </Row>
         <Column as='header' className={styles.header}>
           <Text size={1.4}>Welcome to</Text>
-          <Text size={2.5} weight={500}>{name}</Text>
+          <Text size={2.5} weight={500}>{gallery.name}</Text>
         </Column>
         <Container className={styles.buttonContainer} padding={[2, 0]}>
           <Button onClick={handleNext} type='submit'>
@@ -52,7 +50,7 @@ const Welcome: FC<{url: string, name: string, email: string}> = ({url, name, ema
               </Container>
               <Container>
                 <Text>
-                  {url}
+                  {gallery.path}
                 </Text>
               </Container>
             </Container>

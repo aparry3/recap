@@ -1,6 +1,7 @@
 // UploadContext.ts
 import { ChangeEvent, createContext, useCallback, useContext, useRef, useState } from 'react';
 import ClientUpload from '@/components/Upload'
+import { Gallery } from '@/lib/types/Gallery';
 
 
 export interface OrientationImage {
@@ -11,7 +12,8 @@ export interface OrientationImage {
 
 interface UploadState {
     images: OrientationImage[]
-}
+    gallery: Gallery
+} 
 
 interface UploadActions {
     upload: () => void
@@ -19,14 +21,15 @@ interface UploadActions {
 
 type UploadContext = UploadState & UploadActions
 
-const UploadContext = createContext<UploadContext>({images: [], upload: () => {}});
+const UploadContext = createContext<UploadContext>({} as UploadContext);
 
-const UploadProvider: React.FC<{ children: React.ReactNode}> = ({ children }) => {
+const UploadProvider: React.FC<{ children: React.ReactNode, gallery: Gallery}> = ({ children, gallery: propsGallery }) => {
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [images, setImages] = useState<OrientationImage[]>([]);
   const [stagedImages, setStagedImages] = useState<OrientationImage[]>([]);
   const [showUploadConfirmation, setShowUploadConfirmation] = useState<boolean>(false);
+  const [gallery] = useState<Gallery>(propsGallery);
 
   const handleBeginUpload = useCallback(() => {
       console.log(fileInputRef.current)
@@ -78,7 +81,8 @@ const UploadProvider: React.FC<{ children: React.ReactNode}> = ({ children }) =>
   return (
     <UploadContext.Provider value={{
         upload: handleBeginUpload,
-        images: images
+        images: images,
+        gallery
     }}>
       {children}
       <input
@@ -99,12 +103,14 @@ const UploadProvider: React.FC<{ children: React.ReactNode}> = ({ children }) =>
 const useUpload = (): UploadContext => {
   const {
     upload,
-    images
+    images,
+    gallery
   } = useContext(UploadContext);
 
   return {
     images,
     upload,
+    gallery
   };
 };
 

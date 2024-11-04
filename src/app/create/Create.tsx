@@ -1,35 +1,62 @@
 'use client';
-import React, { FC, FormEvent, MouseEvent, useMemo, useState } from 'react';
+import React, { FC, FormEvent, MouseEvent, useEffect, useMemo, useState } from 'react';
 import { Column, Container, Form, Row, Text } from 'react-web-layout-components';
 import Image from 'next/image';
 import Input from '@/components/Input';
 import styles from './Create.module.scss';
 import Button from '@/components/Button';
+import { Person, NewPersonData } from '@/lib/types/Person';
 
-const CreatePage: FC<{onSubmit: (name: string, email: string) => void}> = ({onSubmit}) => {
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
+const CreatePage: FC<{person?: Person | NewPersonData, onSubmit: (galleryName: string,name: string, email: string) => void}> = ({person, onSubmit}) => {
+  const [name, setName] = useState(person?.name || '');
+  const [galleryName, setGalleryName] = useState('');
+  const [email, setEmail] = useState(person?.email || '');
 
+  useEffect(() => {
+   if (person) {
+      setName(person.name)
+      setEmail(person.email || '')
+   } 
+  }, [person])
 
   const handleNameChange = (value?: string) => {
     setName(value || '');
   };
+
+  const handleGalleryNameChange = (value?: string) => {
+    setGalleryName(value || '');
+  };
+
 
   const handleEmailChange = (value?: string) => {
     setEmail(value || '');
   };
 
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    // Perform any necessary actions with the form data
-    onSubmit(name, email);
-};
 
   const handleButtonPress = () => {
     // Perform any necessary actions with the form data
-    onSubmit(name, email);
+    onSubmit(galleryName, name, email);
   };
+
+  const emailError = useMemo(() => {
+    if (email) {
+      const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+      return !emailRegex.test(email);
+    }
+    return false
+  } , [email])
+
+
+  const submitDisabled = useMemo(() => {
+    return !email || !name || !galleryName|| emailError
+  }, [email, emailError, name, galleryName])
+
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    // Perform any necessary actions with the form data
+    if (!submitDisabled) onSubmit(galleryName, name, email);
+};
 
 
   const url = useMemo(() => `https://ourweddingrecap.com/${name.toLowerCase().replaceAll(' ', '-')}`, [name]);
@@ -59,27 +86,42 @@ const CreatePage: FC<{onSubmit: (name: string, email: string) => void}> = ({onSu
             <Input
               label="Gallery Name"
               type="text"
-              name="name"
+              name="gallery_name"
               autoComplete='off'
-              value={name}
-              onChange={handleNameChange}
+              value={galleryName}
+              onChange={handleGalleryNameChange}
             />
             <Row className={styles.url}>
               <Text size={0.9}>{url}</Text>
             </Row>
           </Column>
-          <Container className={styles.inputContainer}>
+          <Column className={styles.inputContainer}>
             <Input
-                label="Email"
+                label="Your Name"
+                type="text"
+                autoComplete='off'
+                name="name"
+                value={name}
+                onChange={handleNameChange}
+              />
+          </Column>
+          <Column className={styles.inputContainer}>
+            <Input
+                label="Your Email"
                 type="text"
                 autoComplete='off'
                 name="email"
                 value={email}
                 onChange={handleEmailChange}
               />
-          </Container>
+              {emailError && (
+              <Row style={{width: '100%'}}>
+                  <Text>Please enter a valid email address</Text>
+              </Row>
+              )}
+          </Column>
           <Container className={styles.buttonContainer}>
-            <Button className={styles.button} onClick={handleButtonPress} type='submit' disabled={!email || !name}>
+            <Button className={styles.button} onClick={handleButtonPress} type='submit' disabled={submitDisabled}>
               <Text size={1.2} weight={600}>Submit</Text>
             </Button>
           </Container>

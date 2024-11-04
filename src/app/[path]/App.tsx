@@ -8,6 +8,7 @@ import Sidebar, { MobileMenu } from "./components/Sidebar";
 import QrCode from "./components/QrCode";
 import useWindowSize from "@/helpers/hooks/window";
 import { UploadProvider } from "@/helpers/providers/upload";
+import { Gallery } from "@/lib/types/Gallery";
 // import { usePathname } from "next/navigation";
 // import Upload from "./components/Upload";
 
@@ -16,7 +17,7 @@ export enum AppPage {
     GALLERY = 'GALLERY',
     USER = 'USER'
 }
-const App: FC =  ({}) => {
+const App: FC<{gallery: Gallery}> =  ({gallery}) => {
     const {isMobile} = useWindowSize()
     const [showSidebar, setShowSidebar] = useState(false)
     const [showQrCode, setShowQrCode] = useState(false)
@@ -29,7 +30,7 @@ const App: FC =  ({}) => {
     }
     const sidebarOpen = useMemo(() => isMobile && showSidebar, [showSidebar, isMobile])
     return (
-        <UploadProvider>
+        <UploadProvider gallery={gallery}>
             <Container as='main'className={styles.app}>
                 <Header onMenuClick={() => setShowSidebar(true)} onQrClick={() => setShowQrCode(true)} />
                 {showQrCode && <QrCode onClose={() => setShowQrCode(false)} open={showQrCode}/>}

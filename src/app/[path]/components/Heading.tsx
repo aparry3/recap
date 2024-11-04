@@ -5,20 +5,16 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { Column, Container, Row, Text } from "react-web-layout-components"
 import styles from './Heading.module.scss'
 import { FC } from "react";
-import { usePathname, useRouter } from "next/navigation";
 import useUpload from "@/helpers/providers/upload";
 
 const Heading: FC<{onQrClick?: () => void}> = ({onQrClick}) => {
-    const {upload} = useUpload()
+    const {upload, gallery} = useUpload()
     
-    const pathname = usePathname()
-    const name = pathname.replace('/', '').split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
-
     return (
         <Container className={styles.heading} justify="space-between">
         <Column className={styles.titleContainer} padding>
             <Row className={styles.title}>
-                <Text className={styles.titleText} size={3}>{name}</Text>
+                <Text className={styles.titleText} size={3}>{gallery.name}</Text>
             </Row>
             <Row className={styles.subtitleContainer} padding={[0, 0.5]}>
                 <Container className={styles.subtitle} padding={[0, 1, 0, 0]}>
