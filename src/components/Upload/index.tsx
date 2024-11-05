@@ -1,5 +1,5 @@
 "use client";
-import React, { FC } from "react"
+import React, { FC, useCallback, useEffect, useState } from "react"
 import { Column, Row, Container, Text } from "react-web-layout-components"
 import styles from './Upload.module.scss'
 import  NextImage from "next/image"
@@ -7,17 +7,40 @@ import Button from "@/components/Button"
 import { usePathname } from "next/navigation"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { uploadIcon } from "@/lib/icons";
-import { OrientationImage } from "@/helpers/providers/upload";
-import MediaGallery from "../MediaGallery";
+import { OrientationImage } from "@/helpers/providers/gallery";
+import { MediaConfirmationGallery } from "../MediaGallery";
 
 
 const Upload: FC<{images: OrientationImage[], upload: () => void, onConfirm: (confirmedImages: OrientationImage[]) => void}> = ({images, upload, onConfirm}) => {
     const pathname = usePathname()
     const name = pathname.replace('/upload', '').replace('/', '').split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+    
+    const [selectedImages, setSelectedImages] = useState<Set<number>>(new Set(images.map((_, index) => index)))
+    
+    const toggleImage = useCallback((index: number) => {
+        if (selectedImages.has(index)) {
+            selectedImages.delete(index)
+            const newSelectedImages = new Set(selectedImages)
+            setSelectedImages(newSelectedImages)
+        } else {
+            selectedImages.add(index)
+            const newSelectedImages = new Set(selectedImages)
+            setSelectedImages(newSelectedImages)
+        }
+    }, [selectedImages])
 
+    useEffect(() => {
+        console.log(selectedImages)
+    }, [selectedImages])
     const handleConfirm = () => {
-        onConfirm(images)
+        onConfirm(images.filter((_, index) => selectedImages.has(index)))
     }
+
+    useEffect(() => {
+        if (images.length > 0) {
+            setSelectedImages(new Set(images.map((_, index) => index)))
+        }
+    }, [images])
     return (
         <Column className={styles.upload}>
             <Container className={styles.header}>
@@ -64,7 +87,7 @@ const Upload: FC<{images: OrientationImage[], upload: () => void, onConfirm: (co
                 </Column>
             </Column>
             <Column className={styles.galleryContainer} >
-                <MediaGallery images={images} />
+                <MediaConfirmationGallery images={images} toggleImage={toggleImage} selectedImages={selectedImages}/>
             </Column>
             <Container className={styles.actionBar}>
                 <Container className={styles.mediaInfo}>

@@ -12,6 +12,7 @@
     height:100%;
     width: 100%;
     cursor: pointer;
+    position: relative;
 }
 .image {
     width: 100% !important; /* Ensures the image spans the full width of the cell */
@@ -43,4 +44,25 @@
     max-height: 80% !important; /* Ensures the image spans the full height of the cell */
     object-fit:contain;
     z-index: 10;
+}
+.checkContainer {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 0;
+    height: 0;
+    border-left: 2rem solid transparent;
+    border-top: 2rem solid var(--primary); /* Adjust color to match border */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.icon {
+    position: absolute;
+    top: 0;
+    right: 0;
+    color: var(--background-light);
+  }
+.border {
+    border: 0.5rem solid var(--primary);
 }

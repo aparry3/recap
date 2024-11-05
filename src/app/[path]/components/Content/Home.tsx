@@ -5,13 +5,13 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Column, Container, Row, Text } from 'react-web-layout-components'
 import { uploadIcon, zipIcon, photoFilmIcon } from '@/lib/icons'
 import { usePathname, useRouter } from 'next/navigation';
-import useUpload from '@/helpers/providers/upload';
+import useGallery from '@/helpers/providers/gallery';
 import MediaGallery from '@/components/MediaGallery';
 
 
 const Home: FC = () => {
 
-    const {upload, images} = useUpload()
+    const {upload, images} = useGallery()
 
     return (
         <>

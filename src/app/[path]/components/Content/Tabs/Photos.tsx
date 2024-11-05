@@ -2,11 +2,11 @@ import { FC } from "react"
 import { Column, Container, Text } from "react-web-layout-components"
 import styles from './Photos.module.scss'
 import Button from "@/components/Button"
-import useUpload from "@/helpers/providers/upload"
+import useGallery from "@/helpers/providers/gallery"
 import MediaGallery from "@/components/MediaGallery"
 
 const Photos: FC = () => {
-    const {images, upload} = useUpload()
+    const {images, upload} = useGallery()
     return (
         <Column className={styles.content}>
             {images.length > 0 ? (

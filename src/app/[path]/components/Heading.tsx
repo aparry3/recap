@@ -5,10 +5,10 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { Column, Container, Row, Text } from "react-web-layout-components"
 import styles from './Heading.module.scss'
 import { FC } from "react";
-import useUpload from "@/helpers/providers/upload";
+import useGallery from "@/helpers/providers/gallery";
 
 const Heading: FC<{onQrClick?: () => void}> = ({onQrClick}) => {
-    const {upload, gallery} = useUpload()
+    const {upload, gallery} = useGallery()
     
     return (
         <Container className={styles.heading} justify="space-between">

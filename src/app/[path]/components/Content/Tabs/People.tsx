@@ -2,10 +2,10 @@ import { FC } from "react"
 import { Column, Container, Text } from "react-web-layout-components"
 import styles from './People.module.scss'
 import Button from "@/components/Button"
-import useUpload from "@/helpers/providers/upload"
+import useGallery from "@/helpers/providers/gallery"
 
 const People: FC = () => {
-    const {upload} = useUpload()
+    const {upload} = useGallery()
     return (
         <Column className={styles.data}>
             <Container padding>

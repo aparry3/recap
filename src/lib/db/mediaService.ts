@@ -1,9 +1,12 @@
 import { db } from ".";
-import { Media, NewMedia, MediaUpdate } from "../types/Media";
+import { Media, NewMedia, MediaUpdate, NewMediaData } from "../types/Media";
+import {v4 as uuidv4} from 'uuid';
 
-export const insertMedia = async (newMedia: NewMedia): Promise<Media> => {
-  const media = await db.insertInto('media').values(newMedia).returningAll().executeTakeFirstOrThrow();
-  return media;
+
+export const insertMedia = async (newMediaData: NewMediaData): Promise<Media> => {
+    const newMedia = {...newMediaData, id: uuidv4()} as NewMedia
+    const media = await db.insertInto('media').values(newMedia).returningAll().executeTakeFirstOrThrow();
+    return media;
 }
 
 export const updateMedia = async (mediaId: string, mediaUpdate: MediaUpdate): Promise<Media> => {

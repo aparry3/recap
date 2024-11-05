@@ -19,12 +19,12 @@ interface UploadActions {
     upload: () => void
 }
 
-type UploadContext = UploadState & UploadActions
+type GalleryContextType = UploadState & UploadActions
 
-const UploadContext = createContext<UploadContext>({} as UploadContext);
+const GalleryContext = createContext<GalleryContextType>({} as GalleryContextType);
 
-const UploadProvider: React.FC<{ children: React.ReactNode, gallery: Gallery}> = ({ children, gallery: propsGallery }) => {
-
+const GalleryProvider: React.FC<{ children: React.ReactNode, gallery: Gallery}> = ({ children, gallery: propsGallery }) => {
+  const [personId, setPersonId] = useState<string>(localStorage.getItem('personId') || '');
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [images, setImages] = useState<OrientationImage[]>([]);
   const [stagedImages, setStagedImages] = useState<OrientationImage[]>([]);
@@ -72,14 +72,28 @@ const UploadProvider: React.FC<{ children: React.ReactNode, gallery: Gallery}> =
     loadImages(imageFiles);
   };
 
-  const updateImages = (confirmedImages: OrientationImage[]) => {
+/*************  ✨ Codeium Command ⭐  *************/
+/**
+ * Inserts an image into the gallery.
+ * 
+ * @param media - The OrientationImage object containing the image details to be inserted.
+ * @returns A promise that resolves when the image is successfully inserted.
+ */
+/******  874274c9-1ee4-4643-b8b8-35838b3e506e  *******/
+  const insertImage = async (media: OrientationImage) => {
+    // const insertedMedia = await createMedia(media, gallery.id, personId)
+  }
+  const confirmImages = (confirmedImages: OrientationImage[]) => {
+    setStagedImages(confirmedImages)
+    confirmedImages.map(image => insertImage(image))
+
     setImages((oldImages) => [...oldImages, ...confirmedImages]);
     setStagedImages([]);
     setShowUploadConfirmation(false);
   };
 
   return (
-    <UploadContext.Provider value={{
+    <GalleryContext.Provider value={{
         upload: handleBeginUpload,
         images: images,
         gallery
@@ -93,19 +107,19 @@ const UploadProvider: React.FC<{ children: React.ReactNode, gallery: Gallery}> =
         style={{ display: 'none' }}
         onChange={handleFileChange}
     />
-    {showUploadConfirmation && <ClientUpload images={stagedImages} upload={handleBeginUpload} onConfirm={updateImages}/>}
-    </UploadContext.Provider>
+    {showUploadConfirmation && <ClientUpload images={stagedImages} upload={handleBeginUpload} onConfirm={confirmImages}/>}
+    </GalleryContext.Provider>
   );
 };
 
 
 
-const useUpload = (): UploadContext => {
+const useGallery = (): GalleryContextType => {
   const {
     upload,
     images,
     gallery
-  } = useContext(UploadContext);
+  } = useContext(GalleryContext);
 
   return {
     images,
@@ -114,5 +128,5 @@ const useUpload = (): UploadContext => {
   };
 };
 
-export default useUpload;
-export { UploadProvider, UploadContext };
+export default useGallery;
+export { GalleryProvider, GalleryContext };

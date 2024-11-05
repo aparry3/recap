@@ -1,5 +1,5 @@
 import { db } from ".";
-import { Gallery, NewGallery, GalleryUpdate, NewGalleryData } from "../types/Gallery";
+import { Gallery, NewGallery, GalleryUpdate, NewGalleryData, GalleryMedia } from "../types/Gallery";
 import {v4 as uuidv4} from 'uuid';
 
 
@@ -28,4 +28,10 @@ export const selectGalleryByPath = async (path: string): Promise<Gallery> => {
 export const selectGalleries = async (): Promise<Gallery[]> => {
     const galleries = await db.selectFrom('gallery').selectAll().execute();
     return galleries;
+}
+
+export const insertGalleryMedia = async (galleryId: string, mediaId: string): Promise<GalleryMedia> => {
+
+    const galleryMedia = await db.insertInto('galleryMedia').values({galleryId, mediaId}).returningAll().executeTakeFirstOrThrow();
+    return galleryMedia;
 }
