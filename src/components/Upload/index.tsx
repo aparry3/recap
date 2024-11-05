@@ -7,11 +7,11 @@ import Button from "@/components/Button"
 import { usePathname } from "next/navigation"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { uploadIcon } from "@/lib/icons";
-import { OrientationImage } from "@/helpers/providers/gallery";
+import { OrientationImageWithFile } from "@/helpers/providers/gallery";
 import { MediaConfirmationGallery } from "../MediaGallery";
 
 
-const Upload: FC<{images: OrientationImage[], upload: () => void, onConfirm: (confirmedImages: OrientationImage[]) => void}> = ({images, upload, onConfirm}) => {
+const Upload: FC<{images: OrientationImageWithFile[], upload: () => void, onConfirm: (confirmedImages: OrientationImageWithFile[]) => void, onCancel: () => void}> = ({images, upload, onConfirm, onCancel}) => {
     const pathname = usePathname()
     const name = pathname.replace('/upload', '').replace('/', '').split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
     
@@ -99,7 +99,7 @@ const Upload: FC<{images: OrientationImage[], upload: () => void, onConfirm: (co
                     </Container>
                 </Container>
                 <Container className={styles.button}>
-                    <Button onClick={handleConfirm}>
+                    <Button onClick={onCancel}>
                         <Text>Cancel</Text>
                     </Button>
                 </Container>

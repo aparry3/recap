@@ -1,10 +1,12 @@
 import { db } from ".";
-import { Media, NewMedia, MediaUpdate, NewMediaData } from "../types/Media";
+import { NewMedia, MediaUpdate, NewMediaData, MediaWithUrl, Media } from "../types/Media";
 import {v4 as uuidv4} from 'uuid';
 
+const CLOUDFRONT_URL = process.env.AWS_CLOUDFRONT_URL || ''
 
 export const insertMedia = async (newMediaData: NewMediaData): Promise<Media> => {
-    const newMedia = {...newMediaData, id: uuidv4()} as NewMedia
+    const id = uuidv4()
+    const newMedia = {...newMediaData, id, key: `${newMediaData.personId}/${id}`} as NewMedia
     const media = await db.insertInto('media').values(newMedia).returningAll().executeTakeFirstOrThrow();
     return media;
 }
@@ -21,7 +23,7 @@ export const selectMedia = async (mediaId: string): Promise<Media> => {
 
 export const selectGalleryMedia = async (galleryId: string): Promise<Media[]> => {
   const media = await db.selectFrom('galleryMedia').where('galleryId', '=', galleryId).fullJoin('media', 'galleryMedia.mediaId', 'media.id').selectAll('media').execute();
-  return media as Media[];
+  return media.map(m => ({...m, url: `${CLOUDFRONT_URL}/${m.key}`})) as MediaWithUrl[];
 }
 
 export const selectAlbumMedia = async (albumId: string): Promise<Media[]> => {

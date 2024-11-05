@@ -28,8 +28,9 @@ export async function up(db: Kysely<any>): Promise<void> {
   await db.schema
     .createTable('media')
     .addColumn('id', 'varchar', (col) => col.primaryKey())
-    .addColumn('type', 'varchar', (col) => col.notNull().check(sql`type IN ('image', 'video')`))
-    .addColumn('url', 'varchar', (col) => col.notNull())
+    .addColumn('content_type', 'varchar', (col) => col.notNull())
+    .addColumn('name', 'varchar', (col) => col.notNull())
+    .addColumn('key', 'varchar', (col) => col.notNull())
     .addColumn('height', 'integer')
     .addColumn('width', 'integer')
     .addColumn('person_id', 'varchar', (col) => col.notNull().references('person.id'))

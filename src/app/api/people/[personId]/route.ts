@@ -12,10 +12,11 @@ export const PUT = async (req: Request, ctx: { params: { personId: string } }) =
 export const GET = async (_req: Request, ctx: { params: { personId: string } }) => {
     const { personId } = ctx.params
 
-    const person = await selectPerson(personId)
-    if (!person) {
+    try {
+        const person = await selectPerson(personId)
+        return NextResponse.json({person}, {status: 200})
+    } catch (error) {
         return NextResponse.json({error: 'Person not found'}, {status: 404})
     }
-    return NextResponse.json({person}, {status: 200})
 };
 

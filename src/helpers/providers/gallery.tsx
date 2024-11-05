@@ -1,17 +1,26 @@
 // UploadContext.ts
-import { ChangeEvent, createContext, useCallback, useContext, useRef, useState } from 'react';
+import { ChangeEvent, createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
 import ClientUpload from '@/components/Upload'
 import { Gallery } from '@/lib/types/Gallery';
+import { createMedia, fetchGalleryImages, uploadMedia } from '../api/mediaClient';
+import useLocalStorage from '../hooks/localStorage';
+import { Media, MediaWithUrl } from '@/lib/types/Media';
 
 
 export interface OrientationImage {
     url: string;
     isVertical: boolean;
-    dimensions: { width: number; height: number };
+    name: string
+    width: number; 
+    height: number;
+    contentType: string
 }
 
+export type OrientationImageWithFile = OrientationImage & {file: File}
+
 interface UploadState {
-    images: OrientationImage[]
+    images: MediaWithUrl[]
+    stagedImages: OrientationImage[]
     gallery: Gallery
 } 
 
@@ -24,33 +33,33 @@ type GalleryContextType = UploadState & UploadActions
 const GalleryContext = createContext<GalleryContextType>({} as GalleryContextType);
 
 const GalleryProvider: React.FC<{ children: React.ReactNode, gallery: Gallery}> = ({ children, gallery: propsGallery }) => {
-  const [personId, setPersonId] = useState<string>(localStorage.getItem('personId') || '');
+  const [personId, setPersonId] = useLocalStorage<string>('personId', '');
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [images, setImages] = useState<OrientationImage[]>([]);
-  const [stagedImages, setStagedImages] = useState<OrientationImage[]>([]);
+  const [images, setImages] = useState<MediaWithUrl[]>([]);
+  const [stagedImages, setStagedImages] = useState<(OrientationImageWithFile)[]>([]);
   const [showUploadConfirmation, setShowUploadConfirmation] = useState<boolean>(false);
   const [gallery] = useState<Gallery>(propsGallery);
 
   const handleBeginUpload = useCallback(() => {
-      console.log(fileInputRef.current)
-      if (fileInputRef.current) {
-          fileInputRef.current.click();
-      }
-  }, [fileInputRef]);
+    console.log(fileInputRef.current)
+    if (fileInputRef.current) {
+        fileInputRef.current.click();
+    }
+}, [fileInputRef]);
 
 
-  const getImageOrientation = async (imageFile: File): Promise<OrientationImage>  => {
+  const getImageOrientation = async (imageFile: File): Promise<OrientationImageWithFile>  => {
     return new Promise((resolve) => {
       const img = new Image();
-      img.src = URL.createObjectURL(imageFile);
+      const url = URL.createObjectURL(imageFile);
+      img.src = url;
       img.onload = () => {
         const isVertical = img.height > img.width;
-        URL.revokeObjectURL(img.src); // Clean up
-        resolve({ url: URL.createObjectURL(imageFile), isVertical, dimensions: { width: img.width, height: img.height } });
+        resolve({ url, file: imageFile, isVertical: isVertical, contentType: imageFile.type, name: imageFile.name, width: img.width, height: img.height });
       };
       img.onerror = () => {
         // In case of error, default to landscape
-        resolve({ url: URL.createObjectURL(imageFile), isVertical: false, dimensions: { width: img.width, height: img.height } });
+        resolve({ url, file: imageFile, isVertical: false, contentType: imageFile.type, name: imageFile.name, width: img.width, height: img.height});
       };
     });
   };
@@ -72,30 +81,43 @@ const GalleryProvider: React.FC<{ children: React.ReactNode, gallery: Gallery}> 
     loadImages(imageFiles);
   };
 
-/*************  ✨ Codeium Command ⭐  *************/
-/**
- * Inserts an image into the gallery.
- * 
- * @param media - The OrientationImage object containing the image details to be inserted.
- * @returns A promise that resolves when the image is successfully inserted.
- */
-/******  874274c9-1ee4-4643-b8b8-35838b3e506e  *******/
-  const insertImage = async (media: OrientationImage) => {
-    // const insertedMedia = await createMedia(media, gallery.id, personId)
+  const insertImage = async (newMedia: OrientationImageWithFile) => {
+    const {file, url, isVertical, ..._newMedia} = newMedia
+    const insertedMedia = await createMedia({..._newMedia, personId}, gallery.id)
+    const {presignedUrl, ...media} = insertedMedia
+    URL.revokeObjectURL(url)
+    const uploaded = await uploadMedia(presignedUrl, file)
   }
-  const confirmImages = (confirmedImages: OrientationImage[]) => {
+
+  const confirmImages = (confirmedImages: OrientationImageWithFile[]) => {
     setStagedImages(confirmedImages)
     confirmedImages.map(image => insertImage(image))
 
-    setImages((oldImages) => [...oldImages, ...confirmedImages]);
+    // setImages((oldImages) => [...oldImages, ...confirmedImages]);
     setStagedImages([]);
     setShowUploadConfirmation(false);
   };
+
+  const cancelImages = () => {
+    setStagedImages([])
+    setShowUploadConfirmation(false);
+  };
+
+  const initImages = async (galleryId: string) => {
+    const _images = await fetchGalleryImages(galleryId)
+    setImages(_images)
+
+  }
+  useEffect(() => {
+    initImages(gallery.id)
+  }, [gallery.id])
+
 
   return (
     <GalleryContext.Provider value={{
         upload: handleBeginUpload,
         images: images,
+        stagedImages: stagedImages,
         gallery
     }}>
       {children}
@@ -107,7 +129,7 @@ const GalleryProvider: React.FC<{ children: React.ReactNode, gallery: Gallery}> 
         style={{ display: 'none' }}
         onChange={handleFileChange}
     />
-    {showUploadConfirmation && <ClientUpload images={stagedImages} upload={handleBeginUpload} onConfirm={confirmImages}/>}
+    {showUploadConfirmation && <ClientUpload images={stagedImages} upload={handleBeginUpload} onConfirm={confirmImages} onCancel={cancelImages}/>}
     </GalleryContext.Provider>
   );
 };
@@ -118,11 +140,13 @@ const useGallery = (): GalleryContextType => {
   const {
     upload,
     images,
-    gallery
+    gallery,
+    stagedImages
   } = useContext(GalleryContext);
 
   return {
     images,
+    stagedImages,
     upload,
     gallery
   };

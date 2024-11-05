@@ -6,7 +6,7 @@ const withBundleAnalyzer = require('@next/bundle-analyzer')({
 const nextConfig = {
     reactStrictMode: false,
     images: {
-        // domains: ['d2e80s5xhoc6aq.cloudfront.net'],
+        domains: ['d3aucbxkwf7gxk.cloudfront.net'],
     },
     redirects: async () => [
     ]

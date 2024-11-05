@@ -6,14 +6,15 @@ import NextImage from "next/image"
 import styles from './MediaGallery.module.scss'
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { checkIcon } from "@/lib/icons"
+import { MediaWithUrl } from "@/lib/types/Media"
 
-const MediaGallery: FC<{images: OrientationImage[]}> = ({images}) => {
-    const [viewImage, setViewImage] = useState<OrientationImage | null>(null)
+const MediaGallery: FC<{images: MediaWithUrl[]}> = ({images}) => {
+    const [viewImage, setViewImage] = useState<MediaWithUrl | null>(null)
     return (
             <>
             <Column className={styles.gallery}>
             {images.map((image) => (
-                <Container key={image.url} className={`${styles.imageContainer} ${image.isVertical ? styles.vertical : ''}`} onClick={() => setViewImage(image)}>
+                <Container key={image.url} className={`${styles.imageContainer} ${(image?.height || 0) > (image?.width || 0) ? styles.vertical : ''}`} onClick={() => setViewImage(image)}>
                     <NextImage src={image.url} alt="image" className={`${styles.image}`} layout='intrinsic' height={350} width={350}/>
                 </Container>
             ))}
@@ -47,11 +48,11 @@ export const MediaConfirmationGallery: FC<{images: OrientationImage[], selectedI
 }
 
 
-const LightBox: FC<{image: OrientationImage | null, onClose: () => void}> = ({image, onClose}) => {
+const LightBox: FC<{image: MediaWithUrl | null, onClose: () => void}> = ({image, onClose}) => {
     return image ? (
         <Container className={styles.lightBox} >
             <Container className={styles.lightBoxBackground} onClick={onClose} />
-            <NextImage src={image.url} alt="image" className={`${styles.lightBoxImage}`} layout='responsive'  height={image.dimensions.height} width={image.dimensions.width}  />
+            <NextImage src={image.url} alt="image" className={`${styles.lightBoxImage}`} layout='responsive'  height={image.height} width={image.width}  />
         </Container>
     ) : <></>
 }
