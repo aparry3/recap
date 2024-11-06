@@ -41,7 +41,6 @@ const GalleryProvider: React.FC<{ children: React.ReactNode, gallery: Gallery}> 
   const [gallery] = useState<Gallery>(propsGallery);
 
   const handleBeginUpload = useCallback(() => {
-    console.log(fileInputRef.current)
     if (fileInputRef.current) {
         fileInputRef.current.click();
     }

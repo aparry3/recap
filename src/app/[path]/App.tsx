@@ -5,7 +5,7 @@ import styles from './page.module.scss'
 import Content from "./components/Content";
 import Header from "./components/Header";
 import Sidebar, { MobileMenu } from "./components/Sidebar";
-import QrCode from "./components/QrCode";
+import QrCode from "./components/LinkPage";
 import useWindowSize from "@/helpers/hooks/window";
 import { GalleryProvider } from "@/helpers/providers/gallery";
 import { Gallery } from "@/lib/types/Gallery";

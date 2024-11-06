@@ -32,7 +32,7 @@ export const MediaConfirmationGallery: FC<{images: OrientationImage[], selectedI
                 const selected = selectedImages.has(index)
                 return (
                 <Container key={image.url} className={`${styles.imageContainer} ${image.isVertical ? styles.vertical : ''} ${selected ? styles.border : ''}`} onClick={() => toggleImage(index)}>
-                    <img src={image.url} alt="image" className={`${styles.image}`} height={350} width={350} />
+                    <img src={image.url} alt="image" className={`${styles.image}`} />
                     {selected && (
                         <>
                             <Container className={styles.checkContainer} />
@@ -52,7 +52,7 @@ const LightBox: FC<{image: MediaWithUrl | null, onClose: () => void}> = ({image,
     return image ? (
         <Container className={styles.lightBox} >
             <Container className={styles.lightBoxBackground} onClick={onClose} />
-            <img src={image.url} alt="image" className={`${styles.lightBoxImage}`}  height={image.height!/3} width={image.width!/3} loading="lazy"/>
+            <img src={image.url} alt="image" className={`${styles.lightBoxImage}`}  loading="lazy"/>
         </Container>
     ) : <></>
 }
