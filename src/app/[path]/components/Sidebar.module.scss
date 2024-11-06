@@ -56,7 +56,7 @@
 .menuItem {
     border-radius: 0.5rem;
     color: var(--primary);
-    font-size: 1.2rem !important;
+    font-size: 1.1rem !important;
     padding: 0.75rem;
     width: 100%;
     cursor: pointer;
@@ -66,11 +66,36 @@
     };
 
 }
-.active{
-    background: var(--primary);
-    color: var(--background-light);
-};
 .menuIcon {
     padding: 0 1rem !important;
 }
 
+
+@media screen and (max-width: 1250px) {
+    .menuIcon {
+        padding: 0 0.75rem !important;
+    }
+    .menuItem {
+        border-radius: 0.5rem;
+        color: var(--primary);
+        font-size: 1.1rem !important;
+        padding: 0.75rem;
+        width: 100%;
+        cursor: pointer;
+        &:hover{
+            background: var(--primary);
+            color: var(--background-light);
+        };
+    
+    }   
+    .menuItemContainer {
+        width: 100%;
+        padding: 0.1rem 0rem !important;
+    }     
+    
+}
+
+.active{
+    background: var(--primary);
+    color: var(--background-light);
+};

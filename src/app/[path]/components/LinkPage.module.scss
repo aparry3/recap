@@ -32,9 +32,12 @@
     box-shadow: 0 0 1.25rem -1rem black;
     background: var(--background-light);
 }
-.colorsContainer {
+.colorChooserContainer {
     padding: 1rem;
     width: 50%;
+}
+.colorsContainer {
+    padding: 1rem;
     flex-wrap: wrap;
 }
 
@@ -78,4 +81,12 @@
 }
 .activeContainer {
     padding:0.0;
+}
+
+.verticalDash {
+    height: 50%;
+    width: 1px;
+    flex-shrink: 0;
+    background: var(--text-dark);
+    opacity: 0.3;
 }

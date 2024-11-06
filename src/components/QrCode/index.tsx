@@ -26,9 +26,6 @@ const QrCode: FC<{url: string, color: string}> = ({url, color}) => {
         generate()
     }, [color, window])
 
-    useEffect(() => {
-        console.log(qrCode)
-    }, [qrCode])
     return (
         <Container className={styles.qrCodeContainer}>
             <img className={styles.qrCode} src={qrCode || homeQr} alt="QR Code" />

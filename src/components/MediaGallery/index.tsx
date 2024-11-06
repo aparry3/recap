@@ -1,5 +1,5 @@
 import { OrientationImage } from "@/helpers/providers/gallery"
-import { FC, useState } from "react"
+import { FC, memo, useState } from "react"
 import { Column, Container } from "react-web-layout-components"
 import NextImage from "next/image"
 
@@ -15,7 +15,7 @@ const MediaGallery: FC<{images: MediaWithUrl[]}> = ({images}) => {
             <Column className={styles.gallery}>
             {images.map((image) => (
                 <Container key={image.url} className={`${styles.imageContainer} ${(image?.height || 0) > (image?.width || 0) ? styles.vertical : ''}`} onClick={() => setViewImage(image)}>
-                    <NextImage src={image.url} alt="image" className={`${styles.image}`} layout='intrinsic' height={350} width={350}/>
+                    <img src={image.url} alt="image" className={`${styles.image}`} />
                 </Container>
             ))}
             </Column>
@@ -48,12 +48,12 @@ export const MediaConfirmationGallery: FC<{images: OrientationImage[], selectedI
 }
 
 
-const LightBox: FC<{image: MediaWithUrl | null, onClose: () => void}> = ({image, onClose}) => {
+const LightBox: FC<{image: MediaWithUrl | null, onClose: () => void}> = memo(({image, onClose}) => {
     return image ? (
         <Container className={styles.lightBox} >
             <Container className={styles.lightBoxBackground} onClick={onClose} />
             <img src={image.url} alt="image" className={`${styles.lightBoxImage}`}  loading="lazy"/>
         </Container>
     ) : <></>
-}
+})
 export default MediaGallery

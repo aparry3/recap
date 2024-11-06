@@ -3,7 +3,7 @@
 import { downloadIcon, xIcon } from "@/lib/icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { FC, useState } from "react"
-import { Column, Container } from "react-web-layout-components"
+import { Column, Container, Row } from "react-web-layout-components"
 import styles from './LinkPage.module.scss'
 import Image from "next/image"
 import Heading from "./Heading";
@@ -31,6 +31,8 @@ enum Color {
 const LinkPage: FC<{open: boolean, onClose: () => void}> = ({onClose, open}) => {
     const {gallery} = useGallery()
     const [color, setColor] = useState(Color.PRIMARY)
+    const [backgroundColor, setBackgroundColor] = useState(Color.BACKGROUND_LIGHT)
+
     return open ?(
         <Column className={styles.qrcodePage}>
             <Container className={styles.header} padding justify="space-between">
@@ -46,42 +48,52 @@ const LinkPage: FC<{open: boolean, onClose: () => void}> = ({onClose, open}) => 
             <Heading />
              </Column>
              <Column className={styles.linkContainer}>
-                <Column className={styles.qrCodeContainer}>
+                <Column className={styles.qrCodeContainer} style={{background: backgroundColor}}>
                     <QrCode url={`${BASE}/${gallery.path}`} color={color}/>
                 </Column>
-                <ColorContainer color={color} setColor={setColor}/>
+                <ColorContainer foregroundColor={color} backgroundColor={color} setForeground={setColor} setBackground={setBackgroundColor}/>
              </Column>
         </Column>
     ) : <></>
 }
 
-const ColorContainer: FC<{color: Color, setColor: (color: Color) => void}> = ({color, setColor}) => {
+const ColorContainer: FC<{foregroundColor: Color, backgroundColor: Color, setForeground: (color: Color) => void, setBackground: (color: Color) => void}> = ({foregroundColor, backgroundColor, setForeground, setBackground}) => {
     return (
-        <Container className={styles.colorsContainer}>
-            <Container className={`${styles.colorContainer} ${color === Color.PRIMARY ? styles.activeContainer : ''}`}>
-                <Container onClick={() => setColor(Color.PRIMARY)} className={`${styles.color} ${color === Color.PRIMARY ? styles.active : ''}`} style={{backgroundColor: Color.PRIMARY}}/>
-            </Container>
-            <Container className={`${styles.colorContainer} ${color === Color.SECONDARY ? styles.activeContainer : ''}`}>
-                <Container onClick={() => setColor(Color.SECONDARY)} className={`${styles.color} ${color === Color.SECONDARY ? styles.active : ''}`} style={{backgroundColor: Color.SECONDARY}}/>
-            </Container>
-            <Container className={`${styles.colorContainer} ${color === Color.PRIMARY_DARK ? styles.activeContainer : ''}`}>
-                <Container onClick={() => setColor(Color.PRIMARY_DARK)} className={`${styles.color} ${color === Color.PRIMARY_DARK ? styles.active : ''}`} style={{backgroundColor: Color.PRIMARY_DARK}}/>
-            </Container>
-            <Container className={`${styles.colorContainer} ${color === Color.PRIMARY_LIGHT ? styles.activeContainer : ''}`}>
-                <Container onClick={() => setColor(Color.PRIMARY_LIGHT)} className={`${styles.color} ${color === Color.PRIMARY_LIGHT ? styles.active : ''}`} style={{backgroundColor: Color.PRIMARY_LIGHT}}/>
-            </Container>
-            <Container className={`${styles.colorContainer} ${color === Color.SECONDARY_DARK ? styles.activeContainer : ''}`}>
-                <Container onClick={() => setColor(Color.SECONDARY_DARK)} className={`${styles.color} ${color === Color.SECONDARY_DARK ? styles.active : ''}`} style={{backgroundColor: Color.SECONDARY_DARK}}/>
-            </Container>
-            <Container className={`${styles.colorContainer} ${color === Color.BACKGROUND_DARK ? styles.activeContainer : ''}`}>
-                <Container onClick={() => setColor(Color.BACKGROUND_DARK)} className={`${styles.color} ${color === Color.BACKGROUND_DARK ? styles.active : ''}`} style={{backgroundColor: Color.BACKGROUND_DARK}}/>
-            </Container>
-            <Container className={`${styles.colorContainer} ${color === Color.BACKGROUND_LIGHT ? styles.activeContainer : ''}`}>
-                <Container onClick={() => setColor(Color.BACKGROUND_LIGHT)} className={`${styles.color} ${color === Color.BACKGROUND_LIGHT ? styles.active : ''}`} style={{backgroundColor: Color.BACKGROUND_LIGHT}}/>
-            </Container>
-            <Container className={`${styles.colorContainer} ${color === Color.BACKGROUND_MEDIUM ? styles.activeContainer : ''}`}>
-                <Container onClick={() => setColor(Color.BACKGROUND_MEDIUM)} className={`${styles.color} ${color === Color.BACKGROUND_MEDIUM ? styles.active : ''}`} style={{backgroundColor: Color.BACKGROUND_MEDIUM}}/>
-            </Container>
+        <Container className={styles.colorChooserContainer}>
+            <Column className={styles.colorsContainer} >
+                <Row>
+                <Container className={`${styles.colorContainer} ${foregroundColor === Color.PRIMARY_LIGHT ? styles.activeContainer : ''}`}>
+                        <Container onClick={() => setForeground(Color.PRIMARY_LIGHT)} className={`${styles.color} ${foregroundColor === Color.PRIMARY_LIGHT ? styles.active : ''}`} style={{backgroundColor: Color.PRIMARY_LIGHT}}/>
+                    </Container>
+                    <Container className={`${styles.colorContainer} ${foregroundColor === Color.PRIMARY ? styles.activeContainer : ''}`}>
+                        <Container onClick={() => setForeground(Color.PRIMARY)} className={`${styles.color} ${foregroundColor === Color.PRIMARY ? styles.active : ''}`} style={{backgroundColor: Color.PRIMARY}}/>
+                    </Container>
+                    <Container className={`${styles.colorContainer} ${foregroundColor === Color.PRIMARY_DARK ? styles.activeContainer : ''}`}>
+                        <Container onClick={() => setForeground(Color.PRIMARY_DARK)} className={`${styles.color} ${foregroundColor === Color.PRIMARY_DARK ? styles.active : ''}`} style={{backgroundColor: Color.PRIMARY_DARK}}/>
+                    </Container>
+                </Row>
+                <Row>
+                    <Container className={`${styles.colorContainer} ${foregroundColor === Color.SECONDARY ? styles.activeContainer : ''}`}>
+                            <Container onClick={() => setForeground(Color.SECONDARY)} className={`${styles.color} ${foregroundColor === Color.SECONDARY ? styles.active : ''}`} style={{backgroundColor: Color.SECONDARY}}/>
+                        </Container>
+                        <Container className={`${styles.colorContainer} ${foregroundColor === Color.SECONDARY_DARK ? styles.activeContainer : ''}`}>
+                            <Container onClick={() => setForeground(Color.SECONDARY_DARK)} className={`${styles.color} ${foregroundColor === Color.SECONDARY_DARK ? styles.active : ''}`} style={{backgroundColor: Color.SECONDARY_DARK}}/>
+                        </Container>
+                        <Container className={`${styles.colorContainer} ${foregroundColor === Color.TEXT_DARK ? styles.activeContainer : ''}`}>
+                            <Container onClick={() => setForeground(Color.TEXT_DARK)} className={`${styles.color} ${foregroundColor === Color.TEXT_DARK ? styles.active : ''}`} style={{backgroundColor: Color.TEXT_DARK}}/>
+                        </Container>
+                </Row>
+            </Column>
+            <Container className={styles.verticalDash} />
+            <Column className={styles.colorsContainer} >
+                <Container className={`${styles.colorContainer} ${backgroundColor === Color.BACKGROUND_LIGHT ? styles.activeContainer : ''}`}>
+                    <Container onClick={() => setBackground(Color.BACKGROUND_LIGHT)} className={`${styles.color} ${backgroundColor === Color.BACKGROUND_LIGHT ? styles.active : ''}`} style={{backgroundColor: Color.BACKGROUND_LIGHT}}/>
+                </Container>
+                <Container className={`${styles.colorContainer} ${backgroundColor === Color.TEXT_DARK ? styles.activeContainer : ''}`}>
+                    <Container onClick={() => setBackground(Color.TEXT_DARK)} className={`${styles.color} ${backgroundColor === Color.TEXT_DARK ? styles.active : ''}`} style={{backgroundColor: Color.TEXT_DARK}}/>
+                </Container>
+            </Column>
+
         </Container>
     )
 }

@@ -9,6 +9,32 @@ export interface QRCodeOptions {
   imageSize?: number; // Size of the center image relative to QR code size (0 < imageSize < 1)
 }
 
+  /**
+   * Determines if a module is part of one of the three position markers.
+   * @param row - The row index of the module.
+   * @param col - The column index of the module.
+   * @param moduleCount - Total number of modules per side.
+   * @param markerSize - Size of the marker in modules (typically 7).
+   * @returns True if the module is part of a marker; otherwise, false.
+   */
+  function isMarkerModule(
+    row: number,
+    col: number,
+    moduleCount: number,
+    markerSize: number = 7
+  ): boolean {
+    // Top-left marker
+    if (row < markerSize && col < markerSize) return true;
+
+    // Top-right marker
+    if (row < markerSize && col >= moduleCount - markerSize) return true;
+
+    // Bottom-left marker
+    if (row >= moduleCount - markerSize && col < markerSize) return true;
+
+    return false;
+  }
+
 export async function generateCustomQRCodePNG(
   text: string,
   options: QRCodeOptions,
@@ -45,10 +71,9 @@ export async function generateCustomQRCodePNG(
   // Handle the center image
   let imagePixelData: ImageData | null = null;
   let imageDimensions = { width: 0, height: 0 };
-  let imagePosition = { x: 0, y: 0 };
-
+  let imagePosition = { x: 0, y: 0 }
   if (imageSrc) {
-    const image = await loadImage(imageSrc);
+    const image = await loadSvg(imageSrc, foregroundColor);
     imageDimensions.width = size * imageSize;
     imageDimensions.height = size * imageSize;
     imagePosition.x = (size - imageDimensions.width) / 2;
@@ -82,6 +107,7 @@ export async function generateCustomQRCodePNG(
   const CORNER_RADIUS = moduleSize * 0.3; // Adjust as needed for softness
   const MARKER_PADDING = moduleSize * 0.2; // Padding for inner marker square
 
+  
   // Draw QR modules with circles and rounded squares for markers
   ctx.fillStyle = foregroundColor;
   for (let row = 0; row < moduleCount; row++) {
@@ -136,48 +162,39 @@ export async function generateCustomQRCodePNG(
     }
   }
 
-  /**
-   * Determines if a module is part of one of the three position markers.
-   * @param row - The row index of the module.
-   * @param col - The column index of the module.
-   * @param moduleCount - Total number of modules per side.
-   * @param markerSize - Size of the marker in modules (typically 7).
-   * @returns True if the module is part of a marker; otherwise, false.
-   */
-  function isMarkerModule(
-    row: number,
-    col: number,
-    moduleCount: number,
-    markerSize: number = 7
-  ): boolean {
-    // Top-left marker
-    if (row < markerSize && col < markerSize) return true;
-
-    // Top-right marker
-    if (row < markerSize && col >= moduleCount - markerSize) return true;
-
-    // Bottom-left marker
-    if (row >= moduleCount - markerSize && col < markerSize) return true;
-
-    return false;
-  }
-
-
-  // Draw the center image if provided
+  // Draw the SVG logo
   if (imageSrc) {
-    ctx.drawImage(
-      await loadImage(imageSrc),
-      imagePosition.x,
-      imagePosition.y,
-      imageDimensions.width,
-      imageDimensions.height
-    );
+    const image = await loadSvg(imageSrc, foregroundColor);
+    const imageDimensions = { width: size * imageSize, height: size * imageSize };
+    const imagePosition = { x: (size - imageDimensions.width) / 2, y: (size - imageDimensions.height) / 2 };
+    ctx.drawImage(image, imagePosition.x, imagePosition.y, imageDimensions.width, imageDimensions.height);
   }
-
+  
   // Return the PNG data URL
   return canvas.toDataURL('image/png');
 }
 
+async function loadSvg(url: string, color: string): Promise<HTMLImageElement> {
+    const response = await fetch(url);
+    
+    if (!response.ok) {
+      throw new Error(`Failed to fetch SVG from ${url}`);
+    }
+    
+    // Get the SVG text
+    let svgText = await response.text();
+  
+    // Modify the SVG color if specified
+    if (color) {
+      svgText = svgText.replace(/fill="[^"]*"/g, `fill="${color}"`);
+    }
+
+    console.log(svgText)
+  
+    // Convert modified SVG to a Data URL
+    return await loadImage(`data:image/svg+xml;base64,${btoa(svgText)}`);
+  }
+  
 /**
  * Loads an image from a source and returns an HTMLImageElement.
  * @param src - The source of the image (URL or Data URI).
