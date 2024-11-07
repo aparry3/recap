@@ -1,7 +1,7 @@
-import { Media, MediaWithUrl, NewMediaData } from "@/lib/types/Media"
+import { Media, NewMediaData } from "@/lib/types/Media"
 import { OrientationImage } from "../providers/gallery"
 
-export const createMedia = async (media: NewMediaData, galleryId: string): Promise<Media & {presignedUrl: string}> => {
+export const createMedia = async (media: NewMediaData, galleryId: string): Promise<Media & {presignedUrls: {large: string, small: string}}> => {
     const data = await fetch(`/api/galleries/${galleryId}/media`, {
         method: 'POST',
         headers: {
@@ -9,10 +9,10 @@ export const createMedia = async (media: NewMediaData, galleryId: string): Promi
         },
         body: JSON.stringify(media as NewMediaData),
     }).then(res => res.json())
-    return {...data.media, presignedUrl: data.presignedUrl}
+    return {...data.media, presignedUrls: data.presignedUrls}
 }
 
-export const uploadMedia = async (presignedUrl: string, file: File): Promise<boolean> => {
+export const uploadMedia = async (presignedUrl: string, file: File | Blob): Promise<boolean> => {
     try {
         const data = await fetch(presignedUrl, {
             method: 'PUT',
@@ -20,16 +20,56 @@ export const uploadMedia = async (presignedUrl: string, file: File): Promise<boo
                 'Content-Type': file.type,
             },
             body: file,
-        }).then(res => res.json())
+        })
         console.log(data)
-        return true
+        return data.status === 200
     }  catch (error) {
         console.log(error)
         return false
     }
 }
 
-export const fetchGalleryImages = async (galleryId: string): Promise<MediaWithUrl[]> => {
+export const fetchGalleryImages = async (galleryId: string): Promise<Media[]> => {
     const data = await fetch(`/api/galleries/${galleryId}/media`).then(res => res.json())
     return data.media
 }
+
+export async function convertImageToWebP(imageFile: File | Blob, maxDimension: number = 500): Promise<Blob> {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.src = URL.createObjectURL(imageFile);
+      img.onload = () => {
+        // Calculate new dimensions while maintaining aspect ratio
+        let width = img.width;
+        let height = img.height;
+  
+        if (width > height && width > maxDimension) {
+          height = (maxDimension / width) * height;
+          width = maxDimension;
+        } else if (height >= width && height > maxDimension) {
+          width = (maxDimension / height) * width;
+          height = maxDimension;
+        }
+  
+        // Set up the canvas with the new dimensions
+        const canvas = document.createElement('canvas');
+        canvas.width = Math.round(width);
+        canvas.height = Math.round(height);
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return reject('Failed to get canvas context');
+  
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+  
+        // Convert canvas to WebP
+        canvas.toBlob((blob) => {
+          if (blob) {
+            resolve(blob);
+          } else {
+            reject('Conversion to WebP failed');
+          }
+        }, 'image/webp');
+      };
+      img.onerror = reject;
+    });
+  }  
+

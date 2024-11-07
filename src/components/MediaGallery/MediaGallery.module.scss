@@ -36,14 +36,21 @@
     top: 0;
     left: 0;
     backdrop-filter: blur(10px); /* Adds blur effect */
-    // background-color: rgba(var(--primary) 0.3); /* Adjust color and opacity */
 }
 .lightBoxImage {
-    width: auto !important;
     max-width: 80% !important; /* Ensures the image spans the full width of the cell */
     max-height: 80% !important; /* Ensures the image spans the full height of the cell */
+    height:100% !important;
     object-fit:contain;
     z-index: 10;
+}
+
+@media screen and (max-width: 768px) {
+    .lightBoxImage {
+        width: 100% !important;
+        height:auto !important;
+    }
+    
 }
 .checkContainer {
     position: absolute;

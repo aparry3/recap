@@ -1,21 +1,21 @@
 import { OrientationImage } from "@/helpers/providers/gallery"
-import { FC, memo, useState } from "react"
+import { FC, memo, useEffect, useState } from "react"
 import { Column, Container } from "react-web-layout-components"
 import NextImage from "next/image"
 
 import styles from './MediaGallery.module.scss'
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { checkIcon } from "@/lib/icons"
-import { MediaWithUrl } from "@/lib/types/Media"
+import { Media } from "@/lib/types/Media"
 
-const MediaGallery: FC<{images: MediaWithUrl[]}> = ({images}) => {
-    const [viewImage, setViewImage] = useState<MediaWithUrl | null>(null)
+const MediaGallery: FC<{images: Media[]}> = ({images}) => {
+    const [viewImage, setViewImage] = useState<Media | null>(null)
     return (
             <>
             <Column className={styles.gallery}>
             {images.map((image) => (
                 <Container key={image.url} className={`${styles.imageContainer} ${(image?.height || 0) > (image?.width || 0) ? styles.vertical : ''}`} onClick={() => setViewImage(image)}>
-                    <img src={image.url} alt="image" className={`${styles.image}`} />
+                    <img src={image.preview} alt="image" className={`${styles.image}`} />
                 </Container>
             ))}
             </Column>
@@ -48,11 +48,36 @@ export const MediaConfirmationGallery: FC<{images: OrientationImage[], selectedI
 }
 
 
-const LightBox: FC<{image: MediaWithUrl | null, onClose: () => void}> = memo(({image, onClose}) => {
+interface LightBoxProps {
+    image: Media | null;
+    onClose: () => void;
+  }
+  
+const LightBox: FC<LightBoxProps> = memo(({ image, onClose }) => {
+    const [currentSrc, setCurrentSrc] = useState<string | undefined>(image?.preview);
+  
+    useEffect(() => {
+      if (image?.url) {
+        const fullImage = new Image();
+        fullImage.src = image.url;
+        fullImage.onload = () => {
+          setCurrentSrc(image.url);
+        };
+        // Optionally handle error loading the full image
+        fullImage.onerror = () => {
+          console.error('Failed to load full image:', image.url);
+          // You can choose to keep the preview or set a fallback image
+        };
+      }
+  
+      // Reset to preview when image changes
+      setCurrentSrc(image?.preview);
+    }, [image]);
+  
     return image ? (
         <Container className={styles.lightBox} >
             <Container className={styles.lightBoxBackground} onClick={onClose} />
-            <img src={image.url} alt="image" className={`${styles.lightBoxImage}`}  loading="lazy"/>
+            <img src={image.preview} alt="image" className={`${styles.lightBoxImage}`}  loading="lazy"/>
         </Container>
     ) : <></>
 })
