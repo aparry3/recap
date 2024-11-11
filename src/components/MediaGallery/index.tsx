@@ -77,7 +77,7 @@ const LightBox: FC<LightBoxProps> = memo(({ image, onClose }) => {
     return image ? (
         <Container className={styles.lightBox} >
             <Container className={styles.lightBoxBackground} onClick={onClose} />
-            <img src={image.preview} alt="image" className={`${styles.lightBoxImage}`}  loading="lazy"/>
+            <img src={currentSrc} alt="image" className={`${styles.lightBoxImage}`}  loading="lazy"/>
         </Container>
     ) : <></>
 })
