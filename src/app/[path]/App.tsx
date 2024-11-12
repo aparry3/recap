@@ -9,8 +9,7 @@ import QrCode from "./components/LinkPage";
 import useWindowSize from "@/helpers/hooks/window";
 import { GalleryProvider } from "@/helpers/providers/gallery";
 import { Gallery } from "@/lib/types/Gallery";
-// import { usePathname } from "next/navigation";
-// import Upload from "./components/Upload";
+import { UserProvider } from "@/helpers/providers/user";
 
 export enum AppPage {
     HOME = 'HOME',
@@ -30,16 +29,18 @@ const App: FC<{gallery: Gallery}> =  ({gallery}) => {
     }
     const sidebarOpen = useMemo(() => isMobile && showSidebar, [showSidebar, isMobile])
     return (
-        <GalleryProvider gallery={gallery}>
-            <Container as='main'className={styles.app}>
-                <Header onMenuClick={() => setShowSidebar(true)} onQrClick={() => setShowQrCode(true)} />
-                {showQrCode && <QrCode onClose={() => setShowQrCode(false)} open={showQrCode}/>}
-                <Sidebar page={page} onPageChange={handlePageChange} onClose={() => setShowSidebar(false)} />
-                <MobileMenu page={page} onPageChange={handlePageChange} open={sidebarOpen} onClose={() => setShowSidebar(false)} />
-                <Content page={page}onQrClick={() => setShowQrCode(true)}/>
-                {/* {showUploadConfirmation && <Upload /> } */}
-            </Container>
-        </GalleryProvider>
+        <UserProvider>
+            <GalleryProvider gallery={gallery}>
+                <Container as='main'className={styles.app}>
+                    <Header onMenuClick={() => setShowSidebar(true)} onQrClick={() => setShowQrCode(true)} />
+                    {showQrCode && <QrCode onClose={() => setShowQrCode(false)} open={showQrCode}/>}
+                    <Sidebar page={page} onPageChange={handlePageChange} onClose={() => setShowSidebar(false)} />
+                    <MobileMenu page={page} onPageChange={handlePageChange} open={sidebarOpen} onClose={() => setShowSidebar(false)} />
+                    <Content page={page}onQrClick={() => setShowQrCode(true)}/>
+                    {/* {showUploadConfirmation && <Upload /> } */}
+                </Container>
+            </GalleryProvider>
+        </UserProvider>
     )
 }
 

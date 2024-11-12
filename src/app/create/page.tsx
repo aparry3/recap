@@ -1,7 +1,7 @@
 "use client"
 import React, { FC, useCallback, useEffect, useState } from 'react';
 import Welcome from './Welcome';
-import Create from './Create';
+import Create from '../../components/PersonPage/Create';
 import { createGallery } from '@/helpers/api/galleryClient';
 import { Gallery, NewGalleryData } from '@/lib/types/Gallery';
 import { Person } from '@/lib/types/Person';

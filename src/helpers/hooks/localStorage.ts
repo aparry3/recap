@@ -13,12 +13,14 @@ export const useLocalStorage = <T>(key: string, initialValue: T) => {
       return initialValue;
     }
   });
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (!isBrowser) return;
 
     // Sync state with localStorage when the key or initial value changes
     try {
+      setLoading(false);
       const item = window.localStorage.getItem(key);
       setStoredValue(item ? (JSON.parse(item) as T) : initialValue);
     } catch (error) {
@@ -38,7 +40,7 @@ export const useLocalStorage = <T>(key: string, initialValue: T) => {
     }
   };
 
-  return [storedValue, setValue] as const;
+  return [storedValue, setValue, loading] as const;
 }
 
 export default useLocalStorage;

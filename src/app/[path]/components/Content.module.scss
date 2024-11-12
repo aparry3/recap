@@ -88,6 +88,15 @@
         width: 2.5rem;
     }
 }
+.disabled {
+    opacity: 0.5;
+    cursor: default;
+    &:hover {
+        background: var(--background-medium);
+        color: var(--primary);
+    }
+}
+
 
 @media screen and (max-width: 768px) {
     .actions {

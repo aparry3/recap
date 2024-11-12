@@ -26,7 +26,7 @@ export function dataURLToBlob(dataUrl: string): Blob {
  * @param dataUrl - The Base64 Data URL.
  * @param filename - The name of the file to be downloaded.
  */
-export function downloadDataUrlAsPng(dataUrl: string, filename: string = 'download.png'): void {
+export function downloadDataUrlAsPng(dataUrl: string, filename: string = 'qrcode.png'): void {
     try {
         const blob = dataURLToBlob(dataUrl);
         const url = URL.createObjectURL(blob);

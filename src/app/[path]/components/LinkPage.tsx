@@ -2,13 +2,15 @@
 
 import { downloadIcon, xIcon } from "@/lib/icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { FC, useState } from "react"
+import { FC, useCallback, useEffect, useState } from "react"
 import { Column, Container, Row } from "react-web-layout-components"
 import styles from './LinkPage.module.scss'
 import Image from "next/image"
 import Heading from "./Heading";
 import useGallery from "@/helpers/providers/gallery";
 import QrCode from "@/components/QrCode";
+import { generateCustomQRCodePNG } from "@/helpers/qrCode";
+import { downloadDataUrlAsPng } from "@/helpers/files";
 
 
 const BASE = process.env.NEXT_PUBLIC_BASE_URL
@@ -33,6 +35,32 @@ const LinkPage: FC<{open: boolean, onClose: () => void}> = ({onClose, open}) => 
     const [color, setColor] = useState(Color.PRIMARY)
     const [backgroundColor, setBackgroundColor] = useState(Color.BACKGROUND_LIGHT)
 
+    const [qrCode, setQrCode] = useState<string | undefined>()
+    
+    const logo = '/branding/icon.svg'
+
+    const generate = async () => {
+        const qrCode = await generateCustomQRCodePNG(`${BASE}/${gallery.path}`, {
+            size: 1000,
+            foregroundColor: color,
+            backgroundColor: '#00000000',
+            imageSrc: logo,
+            imageSize: 0.2,
+        })
+        setQrCode(qrCode)
+    }
+
+    useEffect(() => {
+        generate()
+    }, [color, window])
+
+
+    const downloadQr = useCallback(() => {
+        if (qrCode) {
+            downloadDataUrlAsPng(qrCode)
+        }
+    }, [qrCode])
+
     return open ?(
         <Column className={styles.qrcodePage}>
             <Container className={styles.header} padding justify="space-between">
@@ -40,8 +68,8 @@ const LinkPage: FC<{open: boolean, onClose: () => void}> = ({onClose, open}) => 
                     <FontAwesomeIcon icon={xIcon} className={styles.icon}/>
                 </Container>
                 <Image src='/branding/wordmark.png' alt='wordmark' layout='intrinsic' height={100} width={100}/>
-                <Container className={styles.headerIcon}>
-                    <FontAwesomeIcon icon={downloadIcon} className={styles.icon}/>
+                <Container className={styles.headerIcon} onClick={() => downloadQr()}>
+                    {qrCode ? <FontAwesomeIcon icon={downloadIcon} className={styles.icon}/> : <Container />}
                 </Container>    
              </Container>
              <Column className={styles.heading}>
@@ -49,7 +77,7 @@ const LinkPage: FC<{open: boolean, onClose: () => void}> = ({onClose, open}) => 
              </Column>
              <Column className={styles.linkContainer}>
                 <Column className={styles.qrCodeContainer} style={{background: backgroundColor}}>
-                    <QrCode url={`${BASE}/${gallery.path}`} color={color}/>
+                    <QrCode src={qrCode}/>
                 </Column>
                 <ColorContainer foregroundColor={color} backgroundColor={color} setForeground={setColor} setBackground={setBackgroundColor}/>
              </Column>

@@ -1,10 +1,9 @@
 "use client";
-import { FC, useCallback } from 'react'
+import { FC } from 'react'
 import styles from '../Content.module.scss'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Column, Container, Row, Text } from 'react-web-layout-components'
 import { uploadIcon, zipIcon, photoFilmIcon } from '@/lib/icons'
-import { usePathname, useRouter } from 'next/navigation';
 import useGallery from '@/helpers/providers/gallery';
 import MediaGallery from '@/components/MediaGallery';
 
@@ -46,7 +45,7 @@ const Home: FC = () => {
                             </Column>
                         </Container>
                         <Container className={styles.actionContainer}>
-                            <Column className={styles.action}>
+                            <Column className={`${styles.action} ${styles.disabled}`}>
                                 <Container>
                                     <FontAwesomeIcon icon={zipIcon} className={styles.icon}/>
                                 </Container>
