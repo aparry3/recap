@@ -8,7 +8,7 @@ import { FC } from "react";
 import useGallery from "@/helpers/providers/gallery";
 
 const Heading: FC<{onQrClick?: () => void}> = ({onQrClick}) => {
-    const {upload, gallery} = useGallery()
+    const {upload, gallery, people} = useGallery()
     
     return (
         <Container className={styles.heading} justify="space-between">
@@ -22,7 +22,7 @@ const Heading: FC<{onQrClick?: () => void}> = ({onQrClick}) => {
                 </Container>
                 <Container className={styles.dashVertical}/>
                 <Container className={styles.subtitle} padding={[0, 0, 0, 1]}>
-                    <Text className={styles.subtitleText} size={1.2}>10 Contributors</Text>
+                    <Text className={styles.subtitleText} size={1.2}>{people.length} Contributors</Text>
                 </Container>
             </Row>
         </Column>

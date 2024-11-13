@@ -1,5 +1,4 @@
 import { Media, NewMediaData } from "@/lib/types/Media"
-import { OrientationImage } from "../providers/gallery"
 
 export const createMedia = async (media: NewMediaData, galleryId: string): Promise<Media & {presignedUrls: {large: string, small: string}}> => {
     const data = await fetch(`/api/galleries/${galleryId}/media`, {
@@ -9,7 +8,7 @@ export const createMedia = async (media: NewMediaData, galleryId: string): Promi
         },
         body: JSON.stringify(media as NewMediaData),
     }).then(res => res.json())
-    return {...data.media, presignedUrls: data.presignedUrls}
+    return data
 }
 
 export const uploadMedia = async (presignedUrl: string, file: File | Blob): Promise<boolean> => {
@@ -21,7 +20,6 @@ export const uploadMedia = async (presignedUrl: string, file: File | Blob): Prom
             },
             body: file,
         })
-        console.log(data)
         return data.status === 200
     }  catch (error) {
         console.log(error)

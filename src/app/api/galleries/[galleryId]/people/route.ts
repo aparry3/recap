@@ -1,7 +1,26 @@
 // src/app/api/galleries/route.ts
-import { NewPersonData } from '@/lib/types/Person';
+import { insertGalleryPerson, selectGalleryPeople } from '@/lib/db/personService';
+import { NextResponse } from 'next/server';
 
 export const POST = async (req: Request, ctx: { params: { galleryId: string } }) => {
-    const newPerson: NewPersonData = await req.json()
+    const {personId}  = await req.json()
     const { galleryId } = ctx.params
+    try {
+        const galleryPerson = await insertGalleryPerson(galleryId, personId)
+        return NextResponse.json({galleryPerson}, {status: 200})
+    } catch (error: any) {
+        return NextResponse.json({error: error.message}, {status: 400})
+    }
 };
+
+
+export const GET = async (_: Request, ctx: { params: { galleryId: string } }) => {
+    const { galleryId } = ctx.params
+    try {
+        const people = await selectGalleryPeople(galleryId)
+        return NextResponse.json({people}, {status: 200})
+    } catch (error: any) {
+        return NextResponse.json({error: error.message}, {status: 400})
+    }
+};
+

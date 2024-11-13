@@ -6,6 +6,7 @@ export interface GalleryTable {
     path: string
     date?: Date
     personId: string
+    created: Date
 }
 
 export interface GalleryMediaTable {
@@ -16,14 +17,14 @@ export interface GalleryMediaTable {
 export interface GalleryPersonTable {
     galleryId: string
     personId: string
+    coverPhotoId?: string
 }
-
 
 
 export type Gallery = Selectable<GalleryTable>
 export type GalleryUpdate = Updateable<GalleryTable>
 export type NewGallery = Insertable<GalleryTable>
-export type NewGalleryData = Omit<NewGallery, 'id'|'personId'> & {personId?: string}
+export type NewGalleryData = Omit<NewGallery, 'id'|'personId'|'created'> & {personId?: string}
 
 export type GalleryMedia = Selectable<GalleryMediaTable>
 export type GalleryMediaUpdate = Updateable<GalleryMediaTable>

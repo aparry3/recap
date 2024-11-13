@@ -5,6 +5,8 @@ import { Gallery } from '@/lib/types/Gallery';
 import { convertImageToWebP, createMedia, fetchGalleryImages, uploadMedia } from '../api/mediaClient';
 import useLocalStorage from '../hooks/localStorage';
 import { Media } from '@/lib/types/Media';
+import { fetchGalleryPeople } from '../api/personClient';
+import { GalleryPersonData } from '@/lib/types/Person';
 
 
 export interface OrientationImage {
@@ -20,6 +22,7 @@ export type OrientationImageWithFile = OrientationImage & {file: File}
 
 interface UploadState {
     images: Media[]
+    people: GalleryPersonData[]
     stagedImages: OrientationImage[]
     gallery: Gallery
 } 
@@ -36,6 +39,7 @@ const GalleryProvider: React.FC<{ children: React.ReactNode, gallery: Gallery}> 
   const [personId] = useLocalStorage<string>('personId', '');
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [images, setImages] = useState<Media[]>([]);
+  const [people, setPeople] = useState<GalleryPersonData[]>([]);
   const [stagedImages, setStagedImages] = useState<(OrientationImageWithFile)[]>([]);
   const [showUploadConfirmation, setShowUploadConfirmation] = useState<boolean>(false);
   const [gallery] = useState<Gallery>(propsGallery);
@@ -73,6 +77,7 @@ useEffect(() => {
       setStagedImages((prevImages) => [...prevImages, ...imagesData]);
     };
 
+
     
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(event.target.files || []);
@@ -83,20 +88,23 @@ useEffect(() => {
     loadImages(imageFiles);
   };
 
-  const insertImage = useCallback(async (newMedia: OrientationImageWithFile) => {
+  const insertImage = useCallback(async (newMedia: OrientationImageWithFile): Promise<Media> => {
     const {file, url, isVertical, ..._newMedia} = newMedia
     const insertedMedia = await createMedia({..._newMedia, personId}, gallery.id)
-    const {presignedUrls} = insertedMedia
+    const {presignedUrls, ...media} = insertedMedia
     URL.revokeObjectURL(url)
     const uploaded = uploadMedia(presignedUrls.large, file)
     const webpUploaded = convertImageToWebP(file).then(blob => uploadMedia(presignedUrls.small, blob))
     await Promise.all([uploaded, webpUploaded])
+    return media
   }, [personId, gallery.id])
 
   const confirmImages = (confirmedImages: OrientationImageWithFile[]) => {
     setStagedImages(confirmedImages)
-    confirmedImages.map(image => insertImage(image))
-
+    const imagePromises = confirmedImages.map(image => insertImage(image).then(media => {
+      setImages((oldImages) => [...oldImages, media])
+    }))
+    
     // setImages((oldImages) => [...oldImages, ...confirmedImages]);
     setStagedImages([]);
     setShowUploadConfirmation(false);
@@ -112,8 +120,17 @@ useEffect(() => {
     setImages(_images)
 
   }
+
+  const initPeople = async (galleryId: string) => {
+    const _people = await fetchGalleryPeople(galleryId)
+    console.log(_people)
+    setPeople(_people)
+
+  }
+
   useEffect(() => {
     initImages(gallery.id)
+    initPeople(gallery.id)
   }, [gallery.id])
 
 
@@ -121,6 +138,7 @@ useEffect(() => {
     <GalleryContext.Provider value={{
         upload: handleBeginUpload,
         images: images,
+        people,
         stagedImages: stagedImages,
         gallery
     }}>
@@ -144,12 +162,14 @@ const useGallery = (): GalleryContextType => {
   const {
     upload,
     images,
+    people,
     gallery,
     stagedImages
   } = useContext(GalleryContext);
 
   return {
     images,
+    people,
     stagedImages,
     upload,
     gallery

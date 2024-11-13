@@ -6,6 +6,9 @@ export async function up(db: Kysely<any>): Promise<void> {
   .addColumn('id', 'varchar', (col) => col.primaryKey())
   .addColumn('name', 'varchar', (col) => col.notNull())
   .addColumn('email', 'varchar')
+  .addColumn('created', 'timestamp', (col) =>
+    col.defaultTo(sql`now()`).notNull()
+  )  
   .execute();
 
   await db.schema
@@ -15,6 +18,9 @@ export async function up(db: Kysely<any>): Promise<void> {
   .addColumn('path', 'varchar', (col) => col.notNull())
   .addColumn('date', 'date')
   .addColumn('person_id', 'varchar', (col) => col.references('person.id').notNull())
+  .addColumn('created', 'timestamp', (col) =>
+    col.defaultTo(sql`now()`).notNull()
+  )  
   .execute();
 
   await db.schema
@@ -23,6 +29,9 @@ export async function up(db: Kysely<any>): Promise<void> {
     .addColumn('name', 'varchar', (col) => col.notNull())
     .addColumn('date', 'date')
     .addColumn('gallery_id', 'varchar', (col) => col.notNull().references('gallery.id'))
+    .addColumn('created', 'timestamp', (col) =>
+      col.defaultTo(sql`now()`).notNull()
+    )  
     .execute();
 
   await db.schema
@@ -37,6 +46,9 @@ export async function up(db: Kysely<any>): Promise<void> {
     .addColumn('person_id', 'varchar', (col) => col.notNull().references('person.id'))
     .addColumn('latitude', 'float8')
     .addColumn('longitude', 'float8')
+    .addColumn('created', 'timestamp', (col) =>
+      col.defaultTo(sql`now()`).notNull()
+    )  
     .execute();
 
   await db.schema
@@ -57,6 +69,7 @@ export async function up(db: Kysely<any>): Promise<void> {
     .createTable('gallery_person')
     .addColumn('gallery_id', 'varchar', (col) => col.references('gallery.id'))
     .addColumn('person_id', 'varchar', (col) => col.references('person.id'))
+    .addColumn('cover_photo_id', 'varchar', (col) => col.references('media.id'))
     .addPrimaryKeyConstraint('gallery_person_pk', ['gallery_id', 'person_id'])
     .execute();
 

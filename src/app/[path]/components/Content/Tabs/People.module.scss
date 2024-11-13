@@ -1,0 +1,59 @@
+.data {
+    width: 100%;
+}
+.content {
+    width: 100%;
+    height: 100%;
+    justify-content: flex-start !important;
+    align-items: flex-start !important;
+    flex-wrap: wrap;
+
+}
+.personContainer {
+    width: 20%;
+    height: 20vh;
+    min-width: 15rem;
+    padding: 0.5rem !important;
+}
+.person {
+    height: 100%;
+    width: 100%;
+    padding: 0.5rem !important;
+    object-fit: cover;
+    box-shadow: 0 0 1.25rem -1rem black;
+    border-radius: 0.5rem;
+    overflow: hidden;
+    cursor: pointer;
+    &:hover {
+        background: var(--background-medium);
+    }
+}
+
+.preview {
+    flex-grow: 1;
+    height: 70%;
+    width: 100%;
+    border-radius: 0.5rem;
+    object-fit: cover;
+}
+.detailsContainer {
+    height: 30%;
+    width: 100%;
+    padding: 0.25rem 0.5rem 0 0.5rem;
+}
+.nameContainer {
+    flex-grow: 1;
+}
+.count {
+    opacity: 0.5;
+}
+
+@media (max-width: 768px) {
+    .personContainer {
+        width: 100%;
+        height: 25vh;
+    }
+    .person {
+        width: 90%;
+    }
+}

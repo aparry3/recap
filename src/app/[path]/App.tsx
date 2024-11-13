@@ -29,7 +29,7 @@ const App: FC<{gallery: Gallery}> =  ({gallery}) => {
     }
     const sidebarOpen = useMemo(() => isMobile && showSidebar, [showSidebar, isMobile])
     return (
-        <UserProvider>
+        <UserProvider galleryId={gallery.id}>
             <GalleryProvider gallery={gallery}>
                 <Container as='main'className={styles.app}>
                     <Header onMenuClick={() => setShowSidebar(true)} onQrClick={() => setShowQrCode(true)} />

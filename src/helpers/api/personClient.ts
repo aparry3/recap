@@ -1,10 +1,10 @@
-import { NewPersonData, Person, PersonUpdate } from "@/lib/types/Person";
+import { GalleryPersonData, NewPersonData, Person, PersonUpdate } from "@/lib/types/Person";
 
 
-export const createPerson = async (newPerson: NewPersonData): Promise<Person> => {
-    const data = await fetch('/api/people', {
+export const createPerson = async (galleryId: string, newPerson: NewPersonData): Promise<Person> => {
+    const data = await fetch(`/api/people`, {
         method: 'POST',
-        body: JSON.stringify({...newPerson}) 
+        body: JSON.stringify({...newPerson, galleryId}) 
     }).then(res => res.json())
     return data.person
 }
@@ -26,4 +26,9 @@ export const fetchPerson = async (personId: string): Promise<Person> => {
         console.log(error)
         throw new Error('Person not found')
     }
+}
+
+export const fetchGalleryPeople = async (galleryId: string): Promise<GalleryPersonData[]> => {
+    const data = await fetch(`/api/galleries/${galleryId}/people`).then(res => res.json())
+    return data.people
 }

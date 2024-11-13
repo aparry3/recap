@@ -11,6 +11,7 @@ export interface MediaTable {
     latitude?: number
     longitude?: number
     contentType: string
+    created: Date
 }
 
 export interface AlbumMediaTable {
@@ -22,7 +23,7 @@ export interface AlbumMediaTable {
 export type Media = Selectable<MediaTable>
 export type MediaUpdate = Updateable<MediaTable>
 export type NewMedia = Insertable<MediaTable>
-export type NewMediaData = Omit<OrientationImage, 'url' | 'isVertical'> & {personId: string}
+export type NewMediaData = Omit<OrientationImage, 'url' | 'isVertical'|'created'> & {personId: string}
 export type AlbumMedia = Selectable<AlbumMediaTable>
 export type AlbumMediaUpdate = Updateable<AlbumMediaTable>
 export type NewAlbumMedia = Insertable<AlbumMediaTable>

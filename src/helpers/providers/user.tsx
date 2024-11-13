@@ -1,5 +1,6 @@
+"use client"
 import { Person } from '@/lib/types/Person';
-import React, { createContext, useState, useContext, useEffect } from 'react';
+import React, { createContext, useState, useContext, useEffect, useCallback } from 'react';
 import useLocalStorage from '../hooks/localStorage';
 import { createPerson, fetchPerson } from '../api/personClient';
 import PersonPage from '@/components/PersonPage';
@@ -14,7 +15,10 @@ type UserContextType = {
 const UserContext = createContext<UserContextType | null>(null);
 
 
-export const UserProvider: React.FC<{children: React.ReactNode}> = ({ children }) => {
+export const UserProvider: React.FC<{
+  children: React.ReactNode, 
+  galleryId: string
+}> = ({ children, galleryId }) => {
     const [personId, setPersonId, personLoading] = useLocalStorage<string>('personId', '');
     const [person, setPerson] = useState<Person | undefined>(undefined);
     const [loading, setLoading] = useState<boolean>(personLoading);
@@ -33,13 +37,14 @@ export const UserProvider: React.FC<{children: React.ReactNode}> = ({ children }
       }
     }, [personId, personLoading]);
 
-    const submitPerson = async (name: string, email?: string) => {
+    const submitPerson = useCallback(async (name: string, email?: string) => {
         setLoading(true)
-        const newPerson = await createPerson({name, email})
+        const newPerson = await createPerson(galleryId, {name, email})
         setPerson(newPerson)
         setPersonId(newPerson.id)
         setLoading(false)
-    }
+    }, [galleryId])
+
   return (
     <UserContext.Provider value={{ personId, person, loading }}>
       {(!loading && personId) && children}
