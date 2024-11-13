@@ -1,10 +1,10 @@
 "use client";
 import { FC, useMemo, useState } from 'react'
-import styles from '../../Content.module.scss'
+import styles from '../Content.module.scss'
 import { Column, Container, Row, Text } from 'react-web-layout-components'
-import Photos from '../Tabs/Photos';
-import People from '../Tabs/People';
-import Albums from '../Tabs/Albums';
+import Photos from './Tabs/Photos';
+import People from './Tabs/People';
+import Albums from './Tabs/Albums';
 
 
 enum Tab {
