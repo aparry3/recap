@@ -39,7 +39,7 @@ export const UserProvider: React.FC<{
 
     const submitPerson = useCallback(async (name: string, email?: string) => {
         setLoading(true)
-        const newPerson = await createPerson(galleryId, {name, email})
+        const newPerson = await createPerson({name, email}, galleryId)
         setPerson(newPerson)
         setPersonId(newPerson.id)
         setLoading(false)

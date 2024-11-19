@@ -1,7 +1,9 @@
+import { sql } from "kysely";
 import { db } from ".";
 import { GalleryPerson } from "../types/Gallery";
 import { Person, NewPerson, PersonUpdate, NewPersonData, GalleryPersonData } from "../types/Person";
 import {v4 as uuidv4} from 'uuid';
+import { selectGalleryPersonMedia } from "./mediaService";
 
 const CLOUDFRONT_URL = process.env.AWS_CLOUDFRONT_URL || ''
 export const insertPerson = async (newPersonData: NewPersonData): Promise<Person> => {
@@ -20,24 +22,29 @@ export const selectPerson = async (personId: string): Promise<Person> => {
   return person;
 }
 
-export const selectGalleryPeople = async (galleryId: string): Promise<GalleryPersonData[]> => {
-    const media = await db.selectFrom('galleryPerson')
-    .innerJoin('person', 'person.id', 'galleryPerson.personId')
-    .leftJoin('media as CoverMedia', 'CoverMedia.id', 'galleryPerson.coverPhotoId')
+export const selectPeopleMedia = async (galleryId: string): Promise<GalleryPersonData[]> => {
+    const people = await db.selectFrom('person')
     .leftJoin('media', 'media.personId', 'person.id') // Join to count media for each person
+    .leftJoin('galleryMedia', 'galleryMedia.mediaId', 'media.id')
     .select([
       'person.id',
       'person.name',
       'person.email',
-      'CoverMedia.preview as preview',
-      'CoverMedia.created as created',
-      db.fn.count('media.id').as('count')
+      db.fn.count('media.id').as('count'),
     ])
-    .where('galleryPerson.galleryId', '=', galleryId)
-    .groupBy(['person.id', 'CoverMedia.preview', 'CoverMedia.created']) // Only group by person ID
+    .where('galleryMedia.galleryId', '=', galleryId)
+    .groupBy(['person.id']) // Only group by person ID
     .execute();
 
-    return  media.map(m => ({...m, preview: `${CLOUDFRONT_URL}/${m.preview}`} as GalleryPersonData));
+    const personPromises = people.map(async p => {
+      const recentMedia = await selectGalleryPersonMedia(galleryId, p.id, 10)
+      return {
+        ...p,
+        recentMedia
+      }
+    })
+
+    return await Promise.all(personPromises) as GalleryPersonData[];
 }
 
 export const insertGalleryPerson = async (galleryId: string, personId: string): Promise<GalleryPerson> => {

@@ -1,9 +1,9 @@
 // lib/fontawesome.js
 import { findIconDefinition, icon, library } from '@fortawesome/fontawesome-svg-core';
-import { faGift, faQrcode, faFileZipper, faPhotoFilm, faCircleVideo, faDownload, faShareNodes, faLink, faUpload, faGridHorizontal, faHouse, faUser, faBars, faChevronLeft, faX, faCheck } from '@fortawesome/pro-solid-svg-icons';
+import { faGift, faQrcode, faFileZipper, faPhotoFilm, faCircleVideo, faDownload, faShareNodes, faLink, faUpload, faGridHorizontal, faHouse, faUser, faBars, faChevronLeft, faX, faCheck, faArrowLeft } from '@fortawesome/pro-solid-svg-icons';
 
 // Add any icons you want here
-library.add(faGift, faCheck, faX, faChevronLeft, faUser, faBars, faHouse, faGridHorizontal, faUpload,faQrcode, faFileZipper, faPhotoFilm, faCircleVideo, faDownload, faShareNodes, faLink);
+library.add(faGift, faCheck, faX, faArrowLeft, faChevronLeft, faUser, faBars, faHouse, faGridHorizontal, faUpload,faQrcode, faFileZipper, faPhotoFilm, faCircleVideo, faDownload, faShareNodes, faLink);
 
 
 const download = findIconDefinition({ prefix: 'fas', iconName: 'download' })
@@ -50,6 +50,9 @@ export const xIcon = icon(x)
 
 const check = findIconDefinition({ prefix: 'fas', iconName: 'check' })
 export const checkIcon = icon(check)
+
+const arrowLeft = findIconDefinition({ prefix: 'fas', iconName: 'arrow-left' })
+export const arrowLeftIcon = icon(arrowLeft)
 
 
 

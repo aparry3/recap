@@ -22,7 +22,7 @@ const Heading: FC<{onQrClick?: () => void}> = ({onQrClick}) => {
                 </Container>
                 <Container className={styles.dashVertical}/>
                 <Container className={styles.subtitle} padding={[0, 0, 0, 1]}>
-                    <Text className={styles.subtitleText} size={1.2}>{people.length} Contributors</Text>
+                    <Text className={styles.subtitleText} size={1.2}>{people?.length || 0} Contributors</Text>
                 </Container>
             </Row>
         </Column>

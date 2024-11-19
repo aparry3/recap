@@ -1,4 +1,5 @@
 import { Selectable, Updateable, Insertable } from "kysely"
+import { Media } from "./Media"
 
 export interface PersonTable {
     id: string
@@ -12,4 +13,4 @@ export type PersonUpdate = Updateable<PersonTable>
 export type NewPerson = Insertable<PersonTable>
 export type NewPersonData = Omit<NewPerson, 'id'|'created'>
 
-export type GalleryPersonData = Person & { count: number; preview: string}
+export type GalleryPersonData = Person & { count: number; recentMedia?: Media[]}

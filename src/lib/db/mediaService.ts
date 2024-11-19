@@ -31,3 +31,14 @@ export const selectAlbumMedia = async (albumId: string): Promise<Media[]> => {
     const media = await db.selectFrom('albumMedia').where('albumId', '=', albumId).fullJoin('media', 'albumMedia.mediaId', 'media.id').selectAll('media').execute();
     return media as Media[];
   }
+
+  export const selectGalleryPersonMedia = async (galleryId: string, personId: string, limit?: number): Promise<Media[]> => {
+    let mediaQuery = db.selectFrom('galleryMedia').where('galleryId', '=', galleryId).fullJoin('media', 'galleryMedia.mediaId', 'media.id').where('media.personId', '=', personId).selectAll('media').orderBy('media.created', 'desc')
+    if (limit) {
+      mediaQuery = mediaQuery.limit(limit)
+
+    }
+    const media = await mediaQuery.execute();
+    return media.map(m => ({...m, url: `${CLOUDFRONT_URL}/${m.url}`, preview: `${CLOUDFRONT_URL}/${m.preview}`})) as Media[];
+  }
+  

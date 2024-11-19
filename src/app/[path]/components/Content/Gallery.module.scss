@@ -1,0 +1,24 @@
+@import '../Content.module.scss';
+
+.active {
+    opacity: 1;
+}
+
+.backText {
+    padding: 0 0.5rem !important;
+}
+
+.tab {
+    flex-grow: 1;
+    width: 100%;
+    padding: 1rem !important;
+}
+
+.nameContainer {
+    width: 100%;
+    justify-content: space-between !important;
+}
+
+.backIconContainer {
+    cursor: pointer;
+}

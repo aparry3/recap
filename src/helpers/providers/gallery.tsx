@@ -6,7 +6,7 @@ import { convertImageToWebP, createMedia, fetchGalleryImages, uploadMedia } from
 import useLocalStorage from '../hooks/localStorage';
 import { Media } from '@/lib/types/Media';
 import { fetchGalleryPeople } from '../api/personClient';
-import { GalleryPersonData } from '@/lib/types/Person';
+import { GalleryPersonData, Person } from '@/lib/types/Person';
 
 
 export interface OrientationImage {
@@ -22,6 +22,7 @@ export type OrientationImageWithFile = OrientationImage & {file: File}
 
 interface UploadState {
     images: Media[]
+    person?: GalleryPersonData
     people: GalleryPersonData[]
     stagedImages: OrientationImage[]
     gallery: Gallery
@@ -29,6 +30,7 @@ interface UploadState {
 
 interface UploadActions {
     upload: () => void
+    setPerson: (personId?: string) => void
 }
 
 type GalleryContextType = UploadState & UploadActions
@@ -44,6 +46,8 @@ const GalleryProvider: React.FC<{ children: React.ReactNode, gallery: Gallery}> 
   const [showUploadConfirmation, setShowUploadConfirmation] = useState<boolean>(false);
   const [gallery] = useState<Gallery>(propsGallery);
 
+  const [currentPerson, setCurrentPerson] = useState<GalleryPersonData | undefined>(undefined);
+
   const handleBeginUpload = useCallback(() => {
     if (fileInputRef.current) {
         fileInputRef.current.click();
@@ -54,6 +58,10 @@ useEffect(() => {
   console.log(personId)
 }, [personId]);
 
+const setPerson = useCallback((personId?: string) => {
+  const _person = people.find(person => person.id === personId)
+  setCurrentPerson(_person)
+}, [people])
   const getImageOrientation = async (imageFile: File): Promise<OrientationImageWithFile>  => {
     return new Promise((resolve) => {
       const img = new Image();
@@ -139,6 +147,8 @@ useEffect(() => {
         upload: handleBeginUpload,
         images: images,
         people,
+        setPerson,
+        person: currentPerson,
         stagedImages: stagedImages,
         gallery
     }}>
@@ -163,13 +173,17 @@ const useGallery = (): GalleryContextType => {
     upload,
     images,
     people,
+    person,
     gallery,
+    setPerson,
     stagedImages
   } = useContext(GalleryContext);
 
   return {
     images,
     people,
+    person,
+    setPerson,
     stagedImages,
     upload,
     gallery

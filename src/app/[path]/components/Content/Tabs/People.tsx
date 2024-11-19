@@ -3,10 +3,14 @@ import { Column, Container, Text } from "react-web-layout-components"
 import styles from './People.module.scss'
 import Button from "@/components/Button"
 import useGallery from "@/helpers/providers/gallery"
+import MediaGallery from "@/components/MediaGallery"
+import { Media } from "@/lib/types/Media"
 
 const People: FC = () => {
-    const {upload, people} = useGallery()
-    return !people.length ? (
+    const {upload, people, setPerson, person} = useGallery()
+    return person ? (
+        <MediaGallery images={person.recentMedia as Media[]} />
+    ) : !people.length ? (
             <Column className={styles.data}>
                 <Container padding>
                     <Text size={1.4}>
@@ -21,8 +25,8 @@ const People: FC = () => {
             <Container className={styles.content}>
                 {people.map((person, index) => (
                     <Container className={styles.personContainer}>
-                        <Column key={index} className={styles.person}>
-                            {person.preview ? (<img src={person.preview} alt={person.name} className={styles.preview} /> ) : (<Container  className={styles.placeholder}/>)}
+                        <Column key={index} className={styles.person} onClick={() => setPerson(person.id)}>
+                            {person.recentMedia?.length ? (<img src={person.recentMedia[0].preview} alt={person.name} className={styles.preview} /> ) : (<Container  className={styles.placeholder}/>)}
                             <Container className={styles.detailsContainer}>
                                 <Container className={styles.nameContainer} justify="flex-start">
                                     <Text size={1.4} className={styles.name}>

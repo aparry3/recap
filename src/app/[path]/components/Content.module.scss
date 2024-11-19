@@ -33,9 +33,6 @@
         opacity: 1;
     }
 }
-.active {
-    opacity: 1;
-}
 .subtitle {
     opacity: 0.5;
 }
@@ -137,9 +134,4 @@
 }
 .emptyGallery {
     opacity: 0.5;
-}
-.tab {
-    flex-grow: 1;
-    width: 100%;
-    padding: 1rem !important;
 }
