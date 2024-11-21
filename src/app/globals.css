@@ -27,3 +27,7 @@ body {
   overflow: auto;
   color: var(--text-dark);
 }
+.no-scroll {
+  overflow: hidden;
+  overscroll-behavior: none; /* Prevent bounce on the body */
+}

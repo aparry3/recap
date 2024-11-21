@@ -1,4 +1,3 @@
-import { sql } from "kysely";
 import { db } from ".";
 import { GalleryPerson } from "../types/Gallery";
 import { Person, NewPerson, PersonUpdate, NewPersonData, GalleryPersonData } from "../types/Person";
@@ -37,7 +36,7 @@ export const selectPeopleMedia = async (galleryId: string): Promise<GalleryPerso
     .execute();
 
     const personPromises = people.map(async p => {
-      const recentMedia = await selectGalleryPersonMedia(galleryId, p.id, 10)
+      const recentMedia = await selectGalleryPersonMedia(galleryId, p.id, 25)
       return {
         ...p,
         recentMedia

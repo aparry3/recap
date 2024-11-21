@@ -21,10 +21,25 @@ export const selectMedia = async (mediaId: string): Promise<Media> => {
   const media = await db.selectFrom('media').where('id', '=', mediaId).selectAll().executeTakeFirstOrThrow();
   return media;
 }
+export const deleteMedia = async (mediaId: string): Promise<boolean> => {
+  const results = await db.deleteFrom('media').where('id', '=', mediaId).executeTakeFirst();
+  return results.numDeletedRows > 0;
+}
+
 
 export const selectGalleryMedia = async (galleryId: string): Promise<Media[]> => {
   const media = await db.selectFrom('galleryMedia').where('galleryId', '=', galleryId).fullJoin('media', 'galleryMedia.mediaId', 'media.id').selectAll('media').execute();
   return media.map(m => ({...m, url: `${CLOUDFRONT_URL}/${m.url}`, preview: `${CLOUDFRONT_URL}/${m.preview}`})) as Media[];
+}
+
+export const deleteGalleryMedia = async (mediaId: string): Promise<number> => {
+  const results = await db.deleteFrom('galleryMedia').where('mediaId', '=', mediaId).executeTakeFirst();
+  return Number(results.numDeletedRows);
+}
+
+export const deleteAlbumMedia = async (mediaId: string): Promise<number> => {
+  const results = await db.deleteFrom('albumMedia').where('mediaId', '=', mediaId).executeTakeFirst();
+  return Number(results.numDeletedRows);
 }
 
 export const selectAlbumMedia = async (albumId: string): Promise<Media[]> => {

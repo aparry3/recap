@@ -1,0 +1,50 @@
+
+.lightBox {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    z-index: 1000;
+    left: 0;
+}
+.lightBoxBackground {
+    position: absolute;
+    width: 100%;
+    cursor: pointer;
+    height: 100%;
+    top: 0;
+    left: 0;
+    backdrop-filter: blur(10px); /* Adds blur effect */
+    overscroll-behavior: none;
+}
+.lightBoxContent {
+    max-width: 100% !important; /* Ensures the image spans the full width of the cell */
+    max-height: 100% !important; /* Ensures the image spans the full height of the cell */
+    height:100% !important;
+    z-index: 100;
+    position: relative;
+}
+
+.lightBoxImage {
+    max-width: 100% !important; /* Ensures the image spans the full width of the cell */
+    max-height: 100% !important; /* Ensures the image spans the full height of the cell */
+    height:100%;
+    width: 100%;
+    object-fit:contain;
+}
+
+@media screen and (max-width: 768px) {
+    .lightBoxImage {
+        max-width: 90% !important; /* Ensures the image spans the full width of the cell */
+        max-height: 90% !important; /* Ensures the image spans the full height of the cell */
+        user-select: none;
+        height: 100%;
+        width: 100%;
+        pointer-events: none;
+        position: absolute;
+    }    
+    .lightBoxContent {
+        width: 100% !important;
+        height: 100% !important;
+    }
+}
