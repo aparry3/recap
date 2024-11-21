@@ -80,7 +80,7 @@ const MediaGallery: FC<{images: Media[]}> = ({images}) => {
                 </Container>
             ))}
             </Column>
-            <LightBox image={imageSrc} onClose={handleClose} prevImage={prevSrc} nextImage={nextSrc} onPrevious={handlePrev} onNext={handleNext}/>
+            <LightBox image={imageSrc} index={viewImageIndex + 1} total={images.length} onClose={handleClose} prevImage={prevSrc} nextImage={nextSrc} onPrevious={handlePrev} onNext={handleNext}/>
             </>
     )
 }

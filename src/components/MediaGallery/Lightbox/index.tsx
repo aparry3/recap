@@ -1,25 +1,43 @@
-import { Media } from "@/lib/types/Media";
-import { FC, memo, useState, useEffect } from "react";
-import { Container } from "react-web-layout-components";
+import { FC, memo, useState, useEffect, useCallback } from "react";
+import { Column, Container, Text } from "react-web-layout-components";
 import styles from './Lightbox.module.scss'
 import useWindowSize from "@/helpers/hooks/window";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { downloadIcon, facebookIcon, instagramIcon } from "@/lib/icons";
+import { downloadUrl } from "@/helpers/files";
+import useGallery from "@/helpers/providers/gallery";
+// import { sharePhotoToFacebook } from "@/helpers/share";
 
 interface LightBoxProps {
+    index: number
+    total: number
     image?: string;
     onClose: () => void;
     prevImage?: string;
     nextImage?: string;
     onNext: () => void;
     onPrevious: () => void;
-
-
   }
   
-const LightBox: FC<LightBoxProps> = memo(({ image, onClose, prevImage, nextImage, onNext, onPrevious }) => {
+const LightBox: FC<LightBoxProps> = memo(({ image, index, total, onClose, prevImage, nextImage, onNext, onPrevious }) => {
+    const {gallery} = useGallery()
     const [touchStartX, setTouchStartX] = useState<number | null>(null);
     const [translateX, setTranslateX] = useState(0);
     const [isAnimating, setIsAnimating] = useState(false);
     const {width} = useWindowSize()
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+        if (isAnimating) return;
+
+        if (e.key === "ArrowRight") {
+            triggerAnimation("next");
+        } else if (e.key === "ArrowLeft") {
+            triggerAnimation("prev");
+        } else if (e.key === "Escape") {
+            onClose();
+        }
+    };
+
     const handleTouchStart = (e: React.TouchEvent) => {
         if (isAnimating) return;
         setTouchStartX(e.touches[0].clientX);
@@ -79,10 +97,30 @@ const LightBox: FC<LightBoxProps> = memo(({ image, onClose, prevImage, nextImage
         e.stopPropagation();
     }
 
+    const download = useCallback(() => {
+        if (image) {
+            downloadUrl(image, `${gallery.name.replace(' ', '_')}_${index}`)
+        }
+    }, [image])
+
+    // const share = useCallback(() => {
+    //     if (image) {
+    //         sharePhotoToFacebook(image)
+    //     }
+    // }, [image])
+
+    useEffect(() => {
+        if (image) {
+            document.addEventListener("keydown", handleKeyDown);
+            return () => document.removeEventListener("keydown", handleKeyDown);
+        }
+    }, [image, isAnimating]);
+
 
     return image ? (
-        <Container className={styles.lightBox} >
-            <Container className={styles.lightBoxBackground} onClick={onClose} />
+        <Column className={styles.lightBox} >
+            <Container className={styles.lightBoxBackground} />
+            <Container className={styles.lightboxBlur} onClick={onClose} />
             <Container
                 className={styles.lightBoxContent}
                 onTouchStart={handleTouchStart}
@@ -120,9 +158,25 @@ const LightBox: FC<LightBoxProps> = memo(({ image, onClose, prevImage, nextImage
                             loading="lazy"/>
 
                     </Container>
+                </Container>
+                <Container className={styles.lightboxDetails}>
+                    <Container className={styles.countContainer}>
+                        <Text size={1.8}>{index}/{total}</Text>
+                    </Container>
+                    <Container>
+                        <Container className={styles.brandIconContainer} onClick={download}>
+                            <FontAwesomeIcon icon={downloadIcon} className={styles.icon} />
+                        </Container>
+                        {/* <Container className={styles.brandIconContainer} onClick={share}>
+                            <FontAwesomeIcon icon={facebookIcon} className={styles.icon} />
+                        </Container>
+                        <Container className={styles.brandIconContainer}>
+                            <FontAwesomeIcon icon={instagramIcon} className={styles.icon} />
+                        </Container>     */}
+                    </Container>
 
                 </Container>
-        </Container>
+        </Column>
     ) : <></>
 })
 

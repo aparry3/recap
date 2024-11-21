@@ -14,16 +14,33 @@
     height: 100%;
     top: 0;
     left: 0;
-    backdrop-filter: blur(10px); /* Adds blur effect */
+    background: var(--background-dark); /* Adds blur effect */
+    opacity: 0.7;
+    overscroll-behavior: none;
+}
+.lightboxBlur {
+    position: absolute;
+    width: 100%;
+    cursor: pointer;
+    height: 100%;
+    top: 0;
+    left: 0;
+    backdrop-filter: blur(20px); /* Adds blur effect */
     overscroll-behavior: none;
 }
 .lightBoxContent {
     max-width: 100% !important; /* Ensures the image spans the full width of the cell */
-    max-height: 100% !important; /* Ensures the image spans the full height of the cell */
-    height:100% !important;
+    max-height: 80% !important; /* Ensures the image spans the full height of the cell */
+    height:80% !important;
     width: 100%;
     z-index: 100;
     position: relative;
+}
+.lightboxDetails {
+    z-index: 100;
+    flex-direction: row-reverse;
+    justify-content: space-between !important;
+    width: 50%;
 }
 
 .lightboxImageContainer {
@@ -48,8 +65,20 @@
     width: auto;
     object-fit:contain;
 }
+.brandIconContainer {
+    padding: 0.5rem;
+    font-size: 2rem;
+}
+.countContainer {
+    padding: 0.5rem;
+}
 
 @media screen and (max-width: 768px) {
+    .lightboxDetails {
+        flex-direction: column !important;
+        justify-content: flex-start !important;
+        width: 80%;
+    }
     .lightBoxImage {
         max-width: 90% !important; /* Ensures the image spans the full width of the cell */
         max-height: 90% !important; /* Ensures the image spans the full height of the cell */

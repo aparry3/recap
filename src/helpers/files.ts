@@ -44,3 +44,32 @@ export function downloadDataUrlAsPng(dataUrl: string, filename: string = 'qrcode
         console.error('Failed to download image:', error);
     }
 }
+
+/**
+ * Downloads a Base64 Data URL as a PNG file.
+ * @param dataUrl - The Base64 Data URL.
+ * @param filename - The name of the file to be downloaded.
+ */
+export async function downloadUrl(imageUrl: string, filename: string): Promise<void> {
+    try {
+        const res = await fetch(imageUrl)
+        const blob = await res.blob()
+        
+        const url = URL.createObjectURL(blob);
+        const contentType = res.headers.get('Content-Type');
+        const extension = contentType?.split('/')[1] || 'bin'; // Fallback to 'bin' if unknown
+
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${filename}.${extension}`;
+        document.body.appendChild(a);
+        a.click();
+
+        // Clean up
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    } catch (error) {
+        console.error('Failed to download image:', error);
+    }
+}
+

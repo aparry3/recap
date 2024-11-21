@@ -1,9 +1,11 @@
 // lib/fontawesome.js
-import { findIconDefinition, icon, library } from '@fortawesome/fontawesome-svg-core';
+import { findIconDefinition, icon, IconDefinition, library } from '@fortawesome/fontawesome-svg-core';
 import { faGift, faQrcode, faFileZipper, faPhotoFilm, faCircleVideo, faDownload, faShareNodes, faLink, faUpload, faGridHorizontal, faHouse, faUser, faBars, faChevronLeft, faX, faCheck, faArrowLeft } from '@fortawesome/pro-solid-svg-icons';
+import { faFacebook, faInstagram } from '@fortawesome/free-brands-svg-icons'
+
 
 // Add any icons you want here
-library.add(faGift, faCheck, faX, faArrowLeft, faChevronLeft, faUser, faBars, faHouse, faGridHorizontal, faUpload,faQrcode, faFileZipper, faPhotoFilm, faCircleVideo, faDownload, faShareNodes, faLink);
+library.add(faGift, faCheck, faX, faArrowLeft, faChevronLeft, faUser, faBars, faHouse, faGridHorizontal, faUpload,faQrcode, faFileZipper, faPhotoFilm, faCircleVideo, faDownload, faShareNodes, faLink, faInstagram as IconDefinition, faFacebook as IconDefinition);
 
 
 const download = findIconDefinition({ prefix: 'fas', iconName: 'download' })
@@ -54,6 +56,11 @@ export const checkIcon = icon(check)
 const arrowLeft = findIconDefinition({ prefix: 'fas', iconName: 'arrow-left' })
 export const arrowLeftIcon = icon(arrowLeft)
 
+const facebook = findIconDefinition({ prefix: 'fab', iconName: 'facebook' })
+export const facebookIcon = icon(facebook)
+
+const instagram = findIconDefinition({ prefix: 'fab', iconName: 'instagram' })
+export const instagramIcon = icon(instagram)
 
 
 
