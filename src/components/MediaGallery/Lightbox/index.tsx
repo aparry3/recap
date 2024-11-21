@@ -31,7 +31,7 @@ const LightBox: FC<LightBoxProps> = memo(({ image, onClose, prevImage, nextImage
         setTranslateX(touchX - touchStartX);
     };
 
-    const handleTouchEnd = () => {
+    const handleTouchEnd = (e: React.TouchEvent) => {
         if (isAnimating || touchStartX === null) return;
 
         const threshold = 100; // Minimum swipe distance to trigger navigation
@@ -60,7 +60,7 @@ const LightBox: FC<LightBoxProps> = memo(({ image, onClose, prevImage, nextImage
         setIsAnimating(true);
 
         // Animate swipe
-        setTranslateX(direction === "next" ? -0.95 * (width || 200) : 0.95 * (width || 200));
+        setTranslateX(direction === "next" ? -1 * (width || 200) : 1 * (width || 200));
 
         // Wait for animation to complete before triggering callback
         setTimeout(() => {
@@ -75,6 +75,10 @@ const LightBox: FC<LightBoxProps> = memo(({ image, onClose, prevImage, nextImage
         }, 300); // Match the animation duration
     };
 
+    const handleImageClick = (e: React.MouseEvent) => {
+        e.stopPropagation();
+    }
+
 
     return image ? (
         <Container className={styles.lightBox} >
@@ -84,30 +88,38 @@ const LightBox: FC<LightBoxProps> = memo(({ image, onClose, prevImage, nextImage
                 onTouchStart={handleTouchStart}
                 onTouchMove={handleTouchMove}
                 onTouchEnd={handleTouchEnd}
+                onClick={() => onClose()}
                 style={{
                     transform: `translateX(${translateX}px)`,
                     transition: isAnimating ? "transform 0.3s ease" : "none",
                 }}
                 >
-                <img
-                    src={prevImage} 
-                    alt="image" 
-                    className={`${styles.lightBoxImage} ${styles.left}`}
-                    style={{ position: "absolute", left: "-100%" }}
-                    loading="lazy"/>
+                    <Container className={`${styles.lightboxImageContainer} ${styles.left}`}>
+                        <img
+                            onClick={handleImageClick}
+                            src={prevImage} 
+                            alt="image" 
+                            className={`${styles.lightBoxImage}`}
+                            loading="lazy"/>
+                    </Container>
+                    <Container className={`${styles.lightboxImageContainer}`}>
+                        <img
+                            onClick={handleImageClick}
+                            src={image} 
+                            alt="image" 
+                            className={`${styles.lightBoxImage}`}
+                            loading="lazy"/>
 
-                <img
-                    src={image} 
-                    alt="image" 
-                    className={`${styles.lightBoxImage}`}
-                    style={{ position: "absolute", left: "5%" }}
-                    loading="lazy"/>
-                <img
-                    src={nextImage} 
-                    alt="image" 
-                    className={`${styles.lightBoxImage} ${styles.right}`}
-                    style={{ position: "absolute", left: "100%" }}
-                    loading="lazy"/>
+                    </Container>
+                    <Container className={`${styles.lightboxImageContainer} ${styles.right}`}>
+                        <img
+                            onClick={handleImageClick}
+                            src={nextImage} 
+                            alt="image" 
+                            className={`${styles.lightBoxImage}`}
+                            loading="lazy"/>
+
+                    </Container>
 
                 </Container>
         </Container>
