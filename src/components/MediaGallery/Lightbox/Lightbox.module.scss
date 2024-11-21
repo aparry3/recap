@@ -28,12 +28,20 @@
     backdrop-filter: blur(20px); /* Adds blur effect */
     overscroll-behavior: none;
 }
-.lightBoxContent {
+.lightboxContentContainer {
     max-width: 100% !important; /* Ensures the image spans the full width of the cell */
-    max-height: 80% !important; /* Ensures the image spans the full height of the cell */
-    height:80% !important;
+    max-height: 70% !important; /* Ensures the image spans the full height of the cell */
+    height:70% !important;
     width: 100%;
     z-index: 100;
+    position: relative;
+}
+
+.lightBoxContent {
+    max-width: 100% !important; /* Ensures the image spans the full width of the cell */
+    max-height: 100% !important; /* Ensures the image spans the full height of the cell */
+    height:100% !important;
+    width: 100%;
     position: relative;
 }
 .lightboxDetails {
@@ -72,8 +80,33 @@
 .countContainer {
     padding: 0.5rem;
 }
-
+.lightboxHeader {
+    padding: 1rem;
+    width: 100%;
+    z-index: 100
+}
+.headerIconContainer {
+    padding: 0.5rem;
+    cursor: pointer;
+}
+.lightboxControls {
+    position: absolute;
+    justify-content: space-between !important;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    z-index: 100;
+}
+.controlContainer {
+    padding: 3rem;
+    font-size: 3rem;
+    cursor: pointer;
+}
 @media screen and (max-width: 768px) {
+    .lightboxControls {
+        display: none !important;
+    }
     .lightboxDetails {
         flex-direction: column !important;
         justify-content: flex-start !important;
