@@ -1,5 +1,5 @@
 'use client';
-import React, { FC, useEffect } from 'react';
+import React, { FC, useEffect, useMemo } from 'react';
 import { Column, Container, Row, Text } from 'react-web-layout-components';
 import Image from 'next/image';
 import styles from './Welcome.module.scss';
@@ -13,8 +13,13 @@ const Welcome: FC<{gallery: Gallery | NewGalleryData}> = ({gallery}) => {
   const router = useRouter()
 
   const handleNext = () => {
-    router.push(gallery.path)
+    if (window !== undefined) {
+      window.localStorage.setItem((gallery as Gallery).id, gallery.password)
+    }
+    router.push(`${gallery.path}?password=${gallery.password}`)
   }
+
+  const disabled = useMemo(() => !gallery.hasOwnProperty('id'), [gallery])
 
   return (
     <Container as='main' className={styles.page}>
@@ -27,7 +32,7 @@ const Welcome: FC<{gallery: Gallery | NewGalleryData}> = ({gallery}) => {
           <Text size={2.5} weight={500}>{gallery.name}</Text>
         </Column>
         <Container className={styles.buttonContainer} padding={[2, 0]}>
-          <Button onClick={handleNext} type='submit'>
+          <Button onClick={handleNext} type='submit' disabled={disabled}>
             <Text size={1.2} weight={600}>Next</Text>
           </Button>
         </Container>
@@ -62,7 +67,7 @@ const Welcome: FC<{gallery: Gallery | NewGalleryData}> = ({gallery}) => {
             <FontAwesomeIcon icon={qrcodeIcon} className={styles.qrCode}/>
           </Container>
           <Container className={styles.buttonContainer} padding={[4, 0]}>
-            <Button type='submit' onClick={handleNext}>
+            <Button type='submit' onClick={handleNext} disabled={disabled}>
               <Text size={1.2} weight={600}>Next</Text>
             </Button>
           </Container>

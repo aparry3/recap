@@ -1,5 +1,9 @@
 import { useState, useEffect } from "react";
 
+export function setCookie(name: string, value: string): void {
+  document.cookie = `${name}=${encodeURIComponent(value)}; path=/; SameSite=Strict`;
+}
+
 export const useLocalStorage = <T>(key: string, initialValue: T) => {
   const isBrowser = typeof window !== "undefined";
 

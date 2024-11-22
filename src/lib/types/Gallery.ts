@@ -7,6 +7,7 @@ export interface GalleryTable {
     date?: Date
     personId: string
     created: Date
+    password: string
 }
 
 export interface GalleryMediaTable {

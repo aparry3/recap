@@ -6,7 +6,7 @@ export const createGallery = async (newGallery: NewGalleryData, personId: string
         method: 'POST',
         body: JSON.stringify({...newGallery, personId}) 
     }).then(res => res.json())
-    return data.gallery
+    return data.gallery as Gallery
 }
 
 export const fetchGallery = async (galleryId: string): Promise<Gallery> => {
