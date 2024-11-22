@@ -6,7 +6,7 @@ import { FC } from "react"
 import { Column, Container, Row, Text } from "react-web-layout-components"
 import styles from './Sidebar.module.scss'
 import Image from "next/image"
-import { AppPage } from "../App";
+import { AppPage } from "../../App";
 
 interface SidebarProps {
     onClose?: () => void

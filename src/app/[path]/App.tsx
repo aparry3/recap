@@ -4,7 +4,6 @@ import {  Container } from "react-web-layout-components"
 import styles from './page.module.scss'
 import Content from "./components/Content";
 import Header from "./components/Header";
-import Sidebar, { MobileMenu } from "./components/Sidebar";
 import QrCode from "./components/LinkPage";
 import useWindowSize from "@/helpers/hooks/window";
 import { GalleryProvider } from "@/helpers/providers/gallery";
@@ -12,6 +11,7 @@ import { Gallery } from "@/lib/types/Gallery";
 import { UserProvider } from "@/helpers/providers/user";
 import useLocalStorage, { setCookie } from "@/helpers/hooks/localStorage";
 import Password from "./components/Password";
+import Sidebar, { MobileMenu } from "./components/Sidebar";
 
 export enum AppPage {
     HOME = 'HOME',

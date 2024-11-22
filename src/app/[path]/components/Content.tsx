@@ -3,8 +3,8 @@ import { FC, useMemo } from 'react'
 import styles from './Content.module.scss'
 import { Column } from 'react-web-layout-components'
 import Heading from './Heading'
-import Home from './Content/Home';
-import Gallery from './Content/Gallery';
+import Home from './Pages/Home';
+import Gallery from './Pages/Gallery';
 import { AppPage } from '../App';
 
 
