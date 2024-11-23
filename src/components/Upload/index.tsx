@@ -7,15 +7,15 @@ import Button from "@/components/Button"
 import { usePathname } from "next/navigation"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { uploadIcon } from "@/lib/icons";
-import { OrientationImageWithFile } from "@/helpers/providers/gallery";
+import { OrientationMediaWithFile } from "@/helpers/providers/gallery";
 import { MediaConfirmationGallery } from "../MediaGallery";
 
 
-const Upload: FC<{images: OrientationImageWithFile[], upload: () => void, onConfirm: (confirmedImages: OrientationImageWithFile[]) => void, onCancel: () => void}> = ({images, upload, onConfirm, onCancel}) => {
+const Upload: FC<{media: OrientationMediaWithFile[], upload: () => void, onConfirm: (confirmedImages: OrientationMediaWithFile[]) => void, onCancel: () => void}> = ({media, upload, onConfirm, onCancel}) => {
     const pathname = usePathname()
     const name = pathname.replace('/upload', '').replace('/', '').split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
     
-    const [selectedImages, setSelectedImages] = useState<Set<number>>(new Set(images.map((_, index) => index)))
+    const [selectedImages, setSelectedImages] = useState<Set<number>>(new Set(media.map((_, index) => index)))
     
     const toggleImage = useCallback((index: number) => {
         if (selectedImages.has(index)) {
@@ -33,14 +33,14 @@ const Upload: FC<{images: OrientationImageWithFile[], upload: () => void, onConf
         console.log(selectedImages)
     }, [selectedImages])
     const handleConfirm = () => {
-        onConfirm(images.filter((_, index) => selectedImages.has(index)))
+        onConfirm(media.filter((_, index) => selectedImages.has(index)))
     }
 
     useEffect(() => {
-        if (images.length > 0) {
-            setSelectedImages(new Set(images.map((_, index) => index)))
+        if (media.length > 0) {
+            setSelectedImages(new Set(media.map((_, index) => index)))
         }
-    }, [images])
+    }, [media])
     return (
         <Column className={styles.upload}>
             <Container className={styles.header}>
@@ -87,7 +87,7 @@ const Upload: FC<{images: OrientationImageWithFile[], upload: () => void, onConf
                 </Column>
             </Column>
             <Column className={styles.galleryContainer} >
-                <MediaConfirmationGallery images={images} toggleImage={toggleImage} selectedImages={selectedImages}/>
+                <MediaConfirmationGallery media={media} toggleImage={toggleImage} selectedImages={selectedImages}/>
             </Column>
             <Container className={styles.actionBar}>
                 <Container className={styles.mediaInfo}>

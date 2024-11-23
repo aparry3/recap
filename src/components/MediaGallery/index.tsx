@@ -1,7 +1,6 @@
-import { OrientationImage } from "@/helpers/providers/gallery"
-import { Dispatch, FC, memo, SetStateAction, useCallback, useEffect, useMemo, useState } from "react"
+import { OrientationMedia } from "@/helpers/providers/gallery"
+import { Dispatch, FC, SetStateAction, useCallback, useState } from "react"
 import { Column, Container } from "react-web-layout-components"
-import NextImage from "next/image"
 
 import styles from './MediaGallery.module.scss'
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
@@ -9,7 +8,7 @@ import { checkIcon } from "@/lib/icons"
 import { Media } from "@/lib/types/Media"
 import LightBox from "./Lightbox"
 
-const MediaGallery: FC<{images: Media[]}> = ({images}) => {
+const MediaGallery: FC<{media: Media[]}> = ({media}) => {
     const [viewImageIndex, setViewImageIndex] = useState<number>(-1)
     const [imageSrc, setImageSrc] = useState<string | undefined>(undefined)
     const [nextSrc, setNextSrc] = useState<string | undefined>(undefined)
@@ -34,15 +33,15 @@ const MediaGallery: FC<{images: Media[]}> = ({images}) => {
   
     }
     const handleNext = useCallback(() => {
-        if (viewImageIndex + 1 < images.length) {
+        if (viewImageIndex + 1 < media.length) {
             const imageIndex = viewImageIndex + 1
             setPrevSrc(imageSrc)
             setImageSrc(nextSrc)
 
-            loadImage(images[imageIndex + 1], setNextSrc)
+            loadImage(media[imageIndex + 1], setNextSrc)
             setViewImageIndex(imageIndex);
         }  
-    }, [viewImageIndex, images, imageSrc, nextSrc])
+    }, [viewImageIndex, media, imageSrc, nextSrc])
     
     const handlePrev = useCallback(() => {
         if (viewImageIndex - 1 > -1) {
@@ -50,17 +49,17 @@ const MediaGallery: FC<{images: Media[]}> = ({images}) => {
             setNextSrc(imageSrc)
             setImageSrc(prevSrc)
 
-            loadImage(images[imageIndex - 1], setPrevSrc)  
+            loadImage(media[imageIndex - 1], setPrevSrc)  
             setViewImageIndex(imageIndex);  
           }
-    }, [viewImageIndex, images, imageSrc, nextSrc])
+    }, [viewImageIndex, media, imageSrc, nextSrc])
 
     const setImage = useCallback((index: number) => {
-        loadImage(images[index], setImageSrc)
-        if (index - 1 > -1) loadImage(images[index -1], setPrevSrc)
-        if (index + 1 < images.length) loadImage(images[index + 1], setNextSrc)
+        loadImage(media[index], setImageSrc)
+        if (index - 1 > -1) loadImage(media[index -1], setPrevSrc)
+        if (index + 1 < media.length) loadImage(media[index + 1], setNextSrc)
         setViewImageIndex(index)
-    }, [images])
+    }, [media])
 
     const handleClose = () => {
         setImageSrc(undefined)
@@ -69,31 +68,29 @@ const MediaGallery: FC<{images: Media[]}> = ({images}) => {
         setViewImageIndex(-1)
     }
 
-  
-
     return (
             <>
             <Column className={styles.gallery}>
-            {images.map((image, index) => (
-                <Container key={image.url} className={`${styles.imageContainer} ${(image?.height || 0) > (image?.width || 0) ? styles.vertical : ''}`} onClick={() => setImage(index)}>
-                    <img src={image.preview} alt="image" className={`${styles.image}`} />
+            {media.map((m, index) => (
+                <Container key={m.url} className={`${styles.imageContainer} ${(m?.height || 0) > (m?.width || 0) ? styles.vertical : ''}`} onClick={() => setImage(index)}>
+                    <img src={m.preview} alt="image" className={`${styles.image}`} />
                 </Container>
             ))}
             </Column>
-            <LightBox image={imageSrc} index={viewImageIndex + 1} total={images.length} onClose={handleClose} prevImage={prevSrc} nextImage={nextSrc} onPrevious={handlePrev} onNext={handleNext}/>
+            <LightBox image={imageSrc} index={viewImageIndex + 1} total={media.length} onClose={handleClose} prevImage={prevSrc} nextImage={nextSrc} onPrevious={handlePrev} onNext={handleNext}/>
             </>
     )
 }
 
-export const MediaConfirmationGallery: FC<{images: OrientationImage[], selectedImages: Set<number>, toggleImage: (index: number) => void}> = ({images, selectedImages, toggleImage}) => {
+export const MediaConfirmationGallery: FC<{media: OrientationMedia[], selectedImages: Set<number>, toggleImage: (index: number) => void}> = ({media, selectedImages, toggleImage}) => {
     return (
             <>
             <Column className={styles.gallery}>
-            {images.map((image, index) => {
+            {media.map((m, index) => {
                 const selected = selectedImages.has(index)
                 return (
-                <Container key={image.url} className={`${styles.imageContainer} ${image.isVertical ? styles.vertical : ''} ${selected ? styles.border : ''}`} onClick={() => toggleImage(index)}>
-                    <img src={image.url} alt="image" className={`${styles.image}`} />
+                <Container key={m.url} className={`${styles.imageContainer} ${m.isVertical ? styles.vertical : ''} ${selected ? styles.border : ''}`} onClick={() => toggleImage(index)}>
+                    <img src={m.url} alt="image" className={`${styles.image}`} />
                     {selected && (
                         <>
                             <Container className={styles.checkContainer} />

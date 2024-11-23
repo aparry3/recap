@@ -6,10 +6,10 @@ import { convertImageToWebP, createMedia, fetchGalleryImages, uploadMedia } from
 import useLocalStorage from '../hooks/localStorage';
 import { Media } from '@/lib/types/Media';
 import { fetchGalleryPeople } from '../api/personClient';
-import { GalleryPersonData, Person } from '@/lib/types/Person';
+import { GalleryPersonData } from '@/lib/types/Person';
 
 
-export interface OrientationImage {
+export interface OrientationMedia {
     url: string;
     isVertical: boolean;
     name: string
@@ -18,13 +18,13 @@ export interface OrientationImage {
     contentType: string
 }
 
-export type OrientationImageWithFile = OrientationImage & {file: File}
+export type OrientationMediaWithFile = OrientationMedia & {file: File}
 
 interface UploadState {
-    images: Media[]
+    media: Media[]
     person?: GalleryPersonData
     people: GalleryPersonData[]
-    stagedImages: OrientationImage[]
+    stagedMedia: OrientationMedia[]
     gallery: Gallery
 } 
 
@@ -40,12 +40,13 @@ const GalleryContext = createContext<GalleryContextType>({} as GalleryContextTyp
 const GalleryProvider: React.FC<{ children: React.ReactNode, gallery: Gallery}> = ({ children, gallery: propsGallery }) => {
   const [personId] = useLocalStorage<string>('personId', '');
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [images, setImages] = useState<Media[]>([]);
+  const [media, setMedia] = useState<Media[]>([]);
   const [people, setPeople] = useState<GalleryPersonData[]>([]);
-  const [stagedImages, setStagedImages] = useState<(OrientationImageWithFile)[]>([]);
+  const [stagedMedia, setStagedMedia] = useState<(OrientationMediaWithFile)[]>([]);
   const [showUploadConfirmation, setShowUploadConfirmation] = useState<boolean>(false);
   const [gallery] = useState<Gallery>(propsGallery);
-
+  const [totalImages, setTotalImages] = useState<number>(0);
+  const [totalVideos, setTotalVideos] = useState<number>(0);
   const [currentPerson, setCurrentPerson] = useState<GalleryPersonData | undefined>(undefined);
 
   const handleBeginUpload = useCallback(() => {
@@ -62,7 +63,7 @@ const setPerson = useCallback((personId?: string) => {
   const _person = people.find(person => person.id === personId)
   setCurrentPerson(_person)
 }, [people])
-  const getImageOrientation = async (imageFile: File): Promise<OrientationImageWithFile>  => {
+  const getImageOrientation = async (imageFile: File): Promise<OrientationMediaWithFile>  => {
     return new Promise((resolve) => {
       const img = new Image();
       const url = URL.createObjectURL(imageFile);
@@ -78,25 +79,70 @@ const setPerson = useCallback((personId?: string) => {
     });
   };
 
-  const loadImages = async (images: File[]) => {
-      const imagesData = await Promise.all(
-        images.map(image => getImageOrientation(image))
-      );
-      setStagedImages((prevImages) => [...prevImages, ...imagesData]);
+  const getVideoOrientation = async (videoFile: File): Promise<OrientationMediaWithFile> => {
+    return new Promise((resolve) => {
+      const video = document.createElement('video');
+      const url = URL.createObjectURL(videoFile);
+      video.src = url;
+  
+      video.onloadedmetadata = () => {
+        const isVertical = video.videoHeight > video.videoWidth;
+        resolve({
+          url,
+          file: videoFile,
+          isVertical: isVertical,
+          contentType: videoFile.type,
+          name: videoFile.name,
+          width: video.videoWidth,
+          height: video.videoHeight,
+        });
+        URL.revokeObjectURL(url); // Clean up after loading metadata
+      };
+  
+      video.onerror = () => {
+        // Default to landscape in case of error
+        resolve({
+          url,
+          file: videoFile,
+          isVertical: false,
+          contentType: videoFile.type,
+          name: videoFile.name,
+          width: 0,
+          height: 0,
+        });
+        URL.revokeObjectURL(url);
+      };
+    });
+  };
+  
+
+  /**
+   * Load a list of files into the staged media state.
+   * @param media List of image files to load.
+   */
+  const loadFiles = async (files: File[]) => {
+      const filesData = await Promise.all(
+        files.map(file => {
+          if (file.type.startsWith('image/')) {
+            setTotalImages(oldTotal => oldTotal + 1)
+             return getImageOrientation(file) 
+          } else {
+            setTotalVideos(oldTotal => oldTotal + 1)
+             return getVideoOrientation(file)
+          }
+        }));
+      setStagedMedia((prevImages) => [...prevImages, ...filesData]);
     };
 
-
-    
-  const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async(event: ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(event.target.files || []);
-    const imageFiles = files.filter(file => file.type.startsWith('image/'));
     
     // Optionally, you can limit the number of files or perform other validations here
     setShowUploadConfirmation(true);
-    loadImages(imageFiles);
+    loadFiles(files);
   };
 
-  const insertImage = useCallback(async (newMedia: OrientationImageWithFile): Promise<Media> => {
+  const insertMedia = useCallback(async (newMedia: OrientationMediaWithFile): Promise<Media> => {
     const {file, url, isVertical, ..._newMedia} = newMedia
     const insertedMedia = await createMedia({..._newMedia, personId}, gallery.id)
     const {presignedUrls, ...media} = insertedMedia
@@ -107,25 +153,25 @@ const setPerson = useCallback((personId?: string) => {
     return media
   }, [personId, gallery.id])
 
-  const confirmImages = (confirmedImages: OrientationImageWithFile[]) => {
-    setStagedImages(confirmedImages)
-    const imagePromises = confirmedImages.map(image => insertImage(image).then(media => {
-      setImages((oldImages) => [...oldImages, media])
+  const confirmMedia = (confirmedImages: OrientationMediaWithFile[]) => {
+    setStagedMedia(confirmedImages)
+    const imagePromises = confirmedImages.map(image => insertMedia(image).then(media => {
+      setMedia((oldImages) => [...oldImages, media])
     }))
     
-    // setImages((oldImages) => [...oldImages, ...confirmedImages]);
-    setStagedImages([]);
+    // setMedia((oldImages) => [...oldImages, ...confirmedImages]);
+    setStagedMedia([]);
     setShowUploadConfirmation(false);
   };
 
   const cancelImages = () => {
-    setStagedImages([])
+    setStagedMedia([])
     setShowUploadConfirmation(false);
   };
 
   const initImages = async (galleryId: string) => {
-    const _images = await fetchGalleryImages(galleryId)
-    setImages(_images)
+    const _media = await fetchGalleryImages(galleryId)
+    setMedia(_media)
 
   }
 
@@ -145,23 +191,23 @@ const setPerson = useCallback((personId?: string) => {
   return (
     <GalleryContext.Provider value={{
         upload: handleBeginUpload,
-        images: images,
+        media: media,
         people,
         setPerson,
         person: currentPerson,
-        stagedImages: stagedImages,
+        stagedMedia: stagedMedia,
         gallery
     }}>
       {children}
       <input
         type="file"
-        accept="image/*"
+        accept="image/*,video/*"
         multiple
         ref={fileInputRef}
         style={{ display: 'none' }}
         onChange={handleFileChange}
     />
-    {showUploadConfirmation && <ClientUpload images={stagedImages} upload={handleBeginUpload} onConfirm={confirmImages} onCancel={cancelImages}/>}
+    {showUploadConfirmation && <ClientUpload media={stagedMedia} upload={handleBeginUpload} onConfirm={confirmMedia} onCancel={cancelImages}/>}
     </GalleryContext.Provider>
   );
 };
@@ -171,20 +217,20 @@ const setPerson = useCallback((personId?: string) => {
 const useGallery = (): GalleryContextType => {
   const {
     upload,
-    images,
+    media,
     people,
     person,
     gallery,
     setPerson,
-    stagedImages
+    stagedMedia
   } = useContext(GalleryContext);
 
   return {
-    images,
+    media,
     people,
     person,
     setPerson,
-    stagedImages,
+    stagedMedia,
     upload,
     gallery
   };

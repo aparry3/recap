@@ -9,7 +9,7 @@ import { Media } from "@/lib/types/Media"
 const People: FC = () => {
     const {upload, people, setPerson, person} = useGallery()
     return person ? (
-        <MediaGallery images={person.recentMedia as Media[]} />
+        <MediaGallery media={person.recentMedia as Media[]} />
     ) : !people.length ? (
             <Column className={styles.data}>
                 <Container padding>

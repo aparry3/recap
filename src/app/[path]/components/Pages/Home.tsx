@@ -10,7 +10,7 @@ import MediaGallery from '@/components/MediaGallery';
 
 const Home: FC = () => {
 
-    const {upload, images} = useGallery()
+    const {upload, media} = useGallery()
 
     return (
         <>
@@ -63,8 +63,8 @@ const Home: FC = () => {
                 </Row>
                 <Container className={styles.line} style={{width: '100%'}}/>
                 <Column className={styles.gallery}>
-                    {images.length > 0 ? (
-                        <MediaGallery images={images}/>
+                    {media.length > 0 ? (
+                        <MediaGallery media={media}/>
                     ) : (
                     <Container className={styles.emptyGallery} padding>
                         <Text size={2} weight={500}>No Recent Uploads</Text>

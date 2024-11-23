@@ -6,11 +6,11 @@ import useGallery from "@/helpers/providers/gallery"
 import MediaGallery from "@/components/MediaGallery"
 
 const Photos: FC = () => {
-    const {images, upload} = useGallery()
+    const {media, upload} = useGallery()
     return (
         <Column className={styles.content}>
-            {images.length > 0 ? (
-                <MediaGallery images={images}/>
+            {media.length > 0 ? (
+                <MediaGallery media={media}/>
             ) : 
             (
                 <>
