@@ -17,6 +17,21 @@ const Upload: FC<{media: OrientationMediaWithFile[], upload: () => void, onConfi
     
     const [selectedImages, setSelectedImages] = useState<Set<number>>(new Set(media.map((_, index) => index)))
     
+    const [totalImages, setTotalImages] = useState<number>(0)
+    const [totalVideos, setTotalVideos] = useState<number>(0)
+
+    useEffect(() => {
+        setTotalImages(0)
+        setTotalVideos(0)
+        media.forEach((m) => {
+            if (m.contentType.startsWith('image')) {
+                setTotalImages(old => old + 1)
+            } else {
+                setTotalVideos(old => old + 1)
+            }
+        })
+    }, [media])
+
     const toggleImage = useCallback((index: number) => {
         if (selectedImages.has(index)) {
             selectedImages.delete(index)
@@ -92,10 +107,10 @@ const Upload: FC<{media: OrientationMediaWithFile[], upload: () => void, onConfi
             <Container className={styles.actionBar}>
                 <Container className={styles.mediaInfo}>
                     <Container className={styles.mediaType}>
-                        <Text size={1.2}>10 Photos</Text>
+                        <Text size={1.2}>{totalImages} Photos</Text>
                     </Container>
                     <Container className={styles.mediaType}>
-                        <Text size={1.2}>5 Videos</Text>
+                        <Text size={1.2}>{totalVideos} Videos</Text>
                     </Container>
                 </Container>
                 <Container className={styles.button}>

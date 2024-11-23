@@ -1,6 +1,6 @@
 import { Media, NewMediaData } from "@/lib/types/Media"
 
-export const createMedia = async (media: NewMediaData, galleryId: string): Promise<Media & {presignedUrls: {large: string, small: string}}> => {
+export const createMedia = async (media: NewMediaData, galleryId: string): Promise<Media & {presignedUrls: {large?: string, small: string, uploadId?: string, key: string}}> => {
     const data = await fetch(`/api/galleries/${galleryId}/media`, {
         method: 'POST',
         headers: {
@@ -11,21 +11,6 @@ export const createMedia = async (media: NewMediaData, galleryId: string): Promi
     return data
 }
 
-export const uploadMedia = async (presignedUrl: string, file: File | Blob): Promise<boolean> => {
-    try {
-        const data = await fetch(presignedUrl, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': file.type,
-            },
-            body: file,
-        })
-        return data.status === 200
-    }  catch (error) {
-        console.log(error)
-        return false
-    }
-}
 
 export const fetchGalleryImages = async (galleryId: string): Promise<Media[]> => {
     const data = await fetch(`/api/galleries/${galleryId}/media`).then(res => res.json())

@@ -68,12 +68,19 @@ const MediaGallery: FC<{media: Media[]}> = ({media}) => {
         setViewImageIndex(-1)
     }
 
+    const [hoverIndex, setHoverIndex] = useState<number>(-1)
+
     return (
             <>
             <Column className={styles.gallery}>
             {media.map((m, index) => (
-                <Container key={m.url} className={`${styles.imageContainer} ${(m?.height || 0) > (m?.width || 0) ? styles.vertical : ''}`} onClick={() => setImage(index)}>
-                    <img src={m.preview} alt="image" className={`${styles.image}`} />
+                <Container key={m.url} onMouseOver={() => setHoverIndex(index)} onMouseLeave={() => setHoverIndex(-1)} className={`${styles.imageContainer} ${(m?.height || 0) > (m?.width || 0) ? styles.vertical : ''}`} onClick={() => setImage(index)}>
+                    { m.contentType.startsWith('video') && hoverIndex === index
+                    ?  (
+                        <video id="hover-video" src={m.url} muted loop autoPlay className={styles.image} />
+                    )
+                    :  <img src={m.preview} alt="image" className={`${styles.image}`} />
+                    }
                 </Container>
             ))}
             </Column>
@@ -83,14 +90,21 @@ const MediaGallery: FC<{media: Media[]}> = ({media}) => {
 }
 
 export const MediaConfirmationGallery: FC<{media: OrientationMedia[], selectedImages: Set<number>, toggleImage: (index: number) => void}> = ({media, selectedImages, toggleImage}) => {
+    const [hoverIndex, setHoverIndex] = useState<number>(-1)
     return (
             <>
             <Column className={styles.gallery}>
             {media.map((m, index) => {
                 const selected = selectedImages.has(index)
                 return (
-                <Container key={m.url} className={`${styles.imageContainer} ${m.isVertical ? styles.vertical : ''} ${selected ? styles.border : ''}`} onClick={() => toggleImage(index)}>
-                    <img src={m.preview || m.url} alt="image" className={`${styles.image}`} />
+                <Container onMouseOver={() => setHoverIndex(index)} onMouseLeave={() => setHoverIndex(-1)} key={m.url} className={`${styles.imageContainer} ${m.isVertical ? styles.vertical : ''} ${selected ? styles.border : ''}`} onClick={() => toggleImage(index)}>
+                    { m.contentType.startsWith('video') && hoverIndex === index
+                    ?  (
+                        <video id="hover-video" src={m.url} muted loop autoPlay className={styles.image} />
+                    )
+                    : <img src={m.preview || m.url} alt="image" className={`${styles.image}`} />
+                    }
+                    
                     {selected && (
                         <>
                             <Container className={styles.checkContainer} />

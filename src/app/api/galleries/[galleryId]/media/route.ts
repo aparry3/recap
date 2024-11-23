@@ -1,5 +1,5 @@
 // src/app/api/galleries/route.ts
-import { generatePresignedUrl } from '@/lib/aws/s3';
+import { beginMultipartUpload, generatePresignedUrl } from '@/lib/aws/s3';
 import { insertGalleryMedia } from '@/lib/db/galleryService';
 import { insertMedia, selectGalleryMedia } from '@/lib/db/mediaService';
 import { updateGalleryPerson } from '@/lib/db/personService';
@@ -14,15 +14,18 @@ export const POST = async (req: Request, ctx: { params: { galleryId: string } })
     const { galleryId } = ctx.params
 
     const media = await insertMedia(newMedia)
-    const [presignedUrl, webpPresignedUrl] = await Promise.all([generatePresignedUrl(media.url, media.contentType), generatePresignedUrl(media.preview, WEBP_TYPE)])
+    const presignedUrlPromise = media.contentType.startsWith('image') ? generatePresignedUrl(media.url, media.contentType) : Promise.resolve(null)
+    const uploadIdPromise = media.contentType.startsWith('video') ? beginMultipartUpload(media.url, media.contentType) : Promise.resolve(null)
+
+    const [presignedUrl, webpPresignedUrl, uploadId] = await Promise.all([presignedUrlPromise, generatePresignedUrl(media.preview, WEBP_TYPE), uploadIdPromise])
     try {
         await insertGalleryMedia(galleryId, media.id)
         await updateGalleryPerson(galleryId, media.personId, media.id)
     } catch (error) {
-        return NextResponse.json({...media, url: `${CLOUDFRONT_URL}/${media.url}`, preview: `${CLOUDFRONT_URL}/${media.preview}`, presignedUrls: {large: presignedUrl, small: webpPresignedUrl}}, {status: 209})
+        return NextResponse.json({...media, url: `${CLOUDFRONT_URL}/${media.url}`, preview: `${CLOUDFRONT_URL}/${media.preview}`, presignedUrls: {large: presignedUrl, small: webpPresignedUrl, uploadId, key: media.url}}, {status: 209})
     }
 
-    return NextResponse.json({...media, url: `${CLOUDFRONT_URL}/${media.url}`, preview: `${CLOUDFRONT_URL}/${media.preview}`, presignedUrls: {large: presignedUrl, small: webpPresignedUrl}}, {status: 209})
+    return NextResponse.json({...media, url: `${CLOUDFRONT_URL}/${media.url}`, preview: `${CLOUDFRONT_URL}/${media.preview}`, presignedUrls: {large: presignedUrl, small: webpPresignedUrl, uploadId, key: media.url}}, {status: 209})
 };
 
 export const GET = async (_: Request, ctx: { params: { galleryId: string } }) => {

@@ -10,6 +10,7 @@
 }
 .imageContainer {
     height:100%;
+    max-width: 25vw;
     width: 100%;
     cursor: pointer;
     position: relative;
@@ -49,6 +50,9 @@
     .lightBoxImage {
         width: 100% !important;
         height:auto !important;
+    }
+    .imageContainer {
+        max-width: unset;
     }
     
 }

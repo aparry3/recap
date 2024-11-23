@@ -1,9 +1,10 @@
-import { generatePresignedUrl } from '@/lib/aws/s3';
+import { getMultiplartSignedUrl } from '@/lib/aws/s3';
 import { NextResponse } from 'next/server';
  
  
 export const POST = async (request: Request) => {
-  const {key, contentType} = await request.json();
-  const url = await generatePresignedUrl(key, contentType)
+  const {key, uploadId, partNumber} = await request.json();
+
+  const url = await getMultiplartSignedUrl(key, uploadId, partNumber)
   return NextResponse.json({url});
 }
