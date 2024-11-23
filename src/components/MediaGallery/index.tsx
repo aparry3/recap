@@ -1,5 +1,5 @@
 import { OrientationMedia } from "@/helpers/providers/gallery"
-import { Dispatch, FC, SetStateAction, useCallback, useState } from "react"
+import { Dispatch, FC, SetStateAction, useCallback, useRef, useState } from "react"
 import { Column, Container } from "react-web-layout-components"
 
 import styles from './MediaGallery.module.scss'
@@ -13,24 +13,46 @@ const MediaGallery: FC<{media: Media[]}> = ({media}) => {
     const [imageSrc, setImageSrc] = useState<string | undefined>(undefined)
     const [nextSrc, setNextSrc] = useState<string | undefined>(undefined)
     const [prevSrc, setPrevSrc] = useState<string | undefined>(undefined)
+    const [loaded, setLoaded] = useState(false)
 
-    const loadImage = (media: Media, setMethod: Dispatch<SetStateAction<string | undefined>>) => {
+    const loadMedia = (media: Media, setMethod: Dispatch<SetStateAction<string | undefined>>) => {
+        setLoaded(false)
         if (media?.url) {
-            const fullImage = new Image();
-            fullImage.src = media.url;
-            fullImage.onload = () => {
-              setMethod(media.url);
-            };
-            // Optionally handle error loading the full media
-            fullImage.onerror = () => {
-              console.error('Failed to load full media:', media.url);
-              // You can choose to keep the preview or set a fallback image
-            };
+            if (media.contentType.startsWith("image")) {
+              // Handle image loading
+              const fullImage = new Image();
+              fullImage.src = media.url;
+              fullImage.onload = () => {
+                setMethod(media.url);
+                setLoaded(true);
+              };
+              fullImage.onerror = () => {
+                console.error("Failed to load image:", media.url);
+                // You can choose to keep the preview or set a fallback image
+                setLoaded(true); // Consider marking as "loaded" to avoid spinner loops
+              };
+            } else if (media.contentType.startsWith("video")) {
+              // Handle video loading
+              const videoElement = document.createElement("video");
+              videoElement.src = media.url;
+              videoElement.onloadeddata = () => {
+                setMethod(media.url);
+                setLoaded(true);
+              };
+              videoElement.onerror = () => {
+                console.error("Failed to load video:", media.url);
+                // You can choose to keep the preview or set a fallback media
+                setLoaded(true); // Consider marking as "loaded" to avoid spinner loops
+              };
+            } else {
+              console.warn("Unsupported media type:", media.contentType);
+              setLoaded(true);
+            }
           }
-      
-          // Reset to preview when image changes
+        
+          // Reset to preview when media changes
           setMethod(media?.preview);
-  
+          
     }
     const handleNext = useCallback(() => {
         if (viewImageIndex + 1 < media.length) {
@@ -38,7 +60,7 @@ const MediaGallery: FC<{media: Media[]}> = ({media}) => {
             setPrevSrc(imageSrc)
             setImageSrc(nextSrc)
 
-            loadImage(media[imageIndex + 1], setNextSrc)
+            loadMedia(media[imageIndex + 1], setNextSrc)
             setViewImageIndex(imageIndex);
         }  
     }, [viewImageIndex, media, imageSrc, nextSrc])
@@ -49,19 +71,20 @@ const MediaGallery: FC<{media: Media[]}> = ({media}) => {
             setNextSrc(imageSrc)
             setImageSrc(prevSrc)
 
-            loadImage(media[imageIndex - 1], setPrevSrc)  
+            loadMedia(media[imageIndex - 1], setPrevSrc)  
             setViewImageIndex(imageIndex);  
           }
     }, [viewImageIndex, media, imageSrc, nextSrc])
 
     const setImage = useCallback((index: number) => {
-        loadImage(media[index], setImageSrc)
-        if (index - 1 > -1) loadImage(media[index -1], setPrevSrc)
-        if (index + 1 < media.length) loadImage(media[index + 1], setNextSrc)
+        loadMedia(media[index], setImageSrc)
+        if (index - 1 > -1) loadMedia(media[index -1], setPrevSrc)
+        if (index + 1 < media.length) loadMedia(media[index + 1], setNextSrc)
         setViewImageIndex(index)
     }, [media])
 
     const handleClose = () => {
+        setLoaded(false)
         setImageSrc(undefined)
         setNextSrc(undefined)
         setPrevSrc(undefined)
@@ -69,22 +92,45 @@ const MediaGallery: FC<{media: Media[]}> = ({media}) => {
     }
 
     const [hoverIndex, setHoverIndex] = useState<number>(-1)
+    const touchTimerRef = useRef<NodeJS.Timeout | null>(null);
 
+    const handleMouseOver = useCallback((index: number) => {
+        if (!touchTimerRef.current) {
+            setHoverIndex(index)
+        }
+      }, [touchTimerRef.current]);
+
+    const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>,index: number) => {
+        // Start a timer when the user touches the element
+        e.stopPropagation()
+        touchTimerRef.current = setTimeout(() => {
+          setHoverIndex(index); // Update the state to play the video
+        }, 1000); // 1-second threshold
+      };
+    
+      const handleTouchEnd = useCallback(() => {
+        // Clear the timer if the user stops touching
+        console.log('handleTouchEnd')
+        if (touchTimerRef.current) {
+          clearTimeout(touchTimerRef.current);
+          touchTimerRef.current = null;
+          setHoverIndex(-1);
+        }
+      }, [touchTimerRef.current]);
+    
     return (
             <>
             <Column className={styles.gallery}>
             {media.map((m, index) => (
-                <Container key={m.url} onMouseOver={() => setHoverIndex(index)} onMouseLeave={() => setHoverIndex(-1)} className={`${styles.imageContainer} ${(m?.height || 0) > (m?.width || 0) ? styles.vertical : ''}`} onClick={() => setImage(index)}>
-                    { m.contentType.startsWith('video') && hoverIndex === index
-                    ?  (
-                        <video id="hover-video" src={m.url} muted loop autoPlay className={styles.image} />
-                    )
-                    :  <img src={m.preview} alt="image" className={`${styles.image}`} />
-                    }
+                <Container onTouchStart={(e) => handleTouchStart(e, index)} onTouchEnd={handleTouchEnd} onContextMenu={(e) => e.preventDefault()} key={m.url} onMouseOver={() => handleMouseOver(index)} onMouseLeave={() => setHoverIndex(-1)} className={`${styles.imageContainer} ${(m?.height || 0) > (m?.width || 0) ? styles.vertical : ''}`} onClick={() => setImage(index)}>
+                    { m.contentType.startsWith('video') && (
+                        <video id="hover-video" src={m.url} muted loop autoPlay className={styles.image} style={{display: hoverIndex === index ? 'block' : 'none'}}/>
+                    )}
+                    <img src={m.preview} alt="image" className={`${styles.image}`} style={{display: hoverIndex === index ? 'none' : 'block'}}/>
                 </Container>
             ))}
             </Column>
-            <LightBox image={imageSrc} index={viewImageIndex + 1} total={media.length} onClose={handleClose} prevImage={prevSrc} nextImage={nextSrc} onPrevious={handlePrev} onNext={handleNext}/>
+            <LightBox image={imageSrc} contentType={loaded && media[viewImageIndex].contentType.startsWith('video') ? 'video' : 'image'} index={viewImageIndex + 1} total={media.length} onClose={handleClose} prevImage={prevSrc} nextImage={nextSrc} onPrevious={handlePrev} onNext={handleNext}/>
             </>
     )
 }

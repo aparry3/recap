@@ -17,9 +17,10 @@ interface LightBoxProps {
     nextImage?: string;
     onNext: () => void;
     onPrevious: () => void;
+    contentType?: 'image' | 'video'
   }
   
-const LightBox: FC<LightBoxProps> = memo(({ image, index, total, onClose, prevImage, nextImage, onNext, onPrevious }) => {
+const LightBox: FC<LightBoxProps> = memo(({ image, index, total, onClose, prevImage, nextImage, onNext, onPrevious, contentType = 'image' }) => {
     const {gallery} = useGallery()
     const [touchStartX, setTouchStartX] = useState<number | null>(null);
     const [touchStartY, setTouchStartY] = useState<number | null>(null);
@@ -176,12 +177,16 @@ const LightBox: FC<LightBoxProps> = memo(({ image, index, total, onClose, prevIm
                             loading="lazy"/>
                     </Container>
                     <Container className={`${styles.lightboxImageContainer}`}>
-                        <img
+                        {contentType === "video" ? (
+                            <video id="hover-video" src={image} muted loop autoPlay className={styles.image} />
+                        ) : (
+                            <img
                             onClick={handleImageClick}
                             src={image} 
                             alt="image" 
                             className={`${styles.lightBoxImage}`}
                             loading="lazy"/>
+                        )}
 
                     </Container>
                     <Container className={`${styles.lightboxImageContainer} ${styles.right}`}>
