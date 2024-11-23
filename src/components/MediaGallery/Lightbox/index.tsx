@@ -178,7 +178,7 @@ const LightBox: FC<LightBoxProps> = memo(({ image, index, total, onClose, prevIm
                     </Container>
                     <Container className={`${styles.lightboxImageContainer}`}>
                         {contentType === "video" ? (
-                            <video id="hover-video" src={image} muted loop autoPlay className={styles.image} />
+                            <video id="hover-video" src={image} muted loop autoPlay className={styles.lightBoxImage} />
                         ) : (
                             <img
                             onClick={handleImageClick}
