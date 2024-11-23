@@ -2,7 +2,7 @@
 import { ChangeEvent, createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
 import ClientUpload from '@/components/Upload'
 import { Gallery } from '@/lib/types/Gallery';
-import { convertImageToWebP, createMedia, fetchGalleryImages, uploadMedia } from '../api/mediaClient';
+import { convertImageToWebP, createMedia, extractWebPPreview, fetchGalleryImages, uploadMedia } from '../api/mediaClient';
 import useLocalStorage from '../hooks/localStorage';
 import { Media } from '@/lib/types/Media';
 import { fetchGalleryPeople } from '../api/personClient';
@@ -16,9 +16,10 @@ export interface OrientationMedia {
     width: number; 
     height: number;
     contentType: string
+    preview?: string
 }
 
-export type OrientationMediaWithFile = OrientationMedia & {file: File}
+export type OrientationMediaWithFile = OrientationMedia & {file: File, previewFile?: Blob}
 
 interface UploadState {
     media: Media[]
@@ -80,39 +81,46 @@ const setPerson = useCallback((personId?: string) => {
   };
 
   const getVideoOrientation = async (videoFile: File): Promise<OrientationMediaWithFile> => {
-    return new Promise((resolve) => {
-      const video = document.createElement('video');
-      const url = URL.createObjectURL(videoFile);
-      video.src = url;
-  
-      video.onloadedmetadata = () => {
-        const isVertical = video.videoHeight > video.videoWidth;
-        resolve({
-          url,
-          file: videoFile,
-          isVertical: isVertical,
-          contentType: videoFile.type,
-          name: videoFile.name,
-          width: video.videoWidth,
-          height: video.videoHeight,
-        });
-        URL.revokeObjectURL(url); // Clean up after loading metadata
-      };
-  
-      video.onerror = () => {
-        // Default to landscape in case of error
-        resolve({
-          url,
-          file: videoFile,
-          isVertical: false,
-          contentType: videoFile.type,
-          name: videoFile.name,
-          width: 0,
-          height: 0,
-        });
-        URL.revokeObjectURL(url);
-      };
-    });
+    const [previewImage, video] = await Promise.all([
+      extractWebPPreview(videoFile),
+      new Promise<OrientationMediaWithFile>((resolve) => {
+        const video = document.createElement('video');
+        const url = URL.createObjectURL(videoFile);
+        video.src = url;
+    
+        video.onloadedmetadata = () => {
+          const isVertical = video.videoHeight > video.videoWidth;
+          resolve({
+            url,
+            file: videoFile,
+            isVertical: isVertical,
+            contentType: videoFile.type,
+            name: videoFile.name,
+            width: video.videoWidth,
+            height: video.videoHeight,
+          });
+          URL.revokeObjectURL(url); // Clean up after loading metadata
+        };
+    
+        video.onerror = () => {
+          // Default to landscape in case of error
+          resolve({
+            url,
+            file: videoFile,
+            isVertical: false,
+            contentType: videoFile.type,
+            name: videoFile.name,
+            width: 0,
+            height: 0,
+          });
+          URL.revokeObjectURL(url);
+        };
+      })])
+    return {
+      ...video,
+      preview: URL.createObjectURL(previewImage),
+      previewFile: previewImage
+    }
   };
   
 

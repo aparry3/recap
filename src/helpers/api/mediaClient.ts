@@ -71,3 +71,36 @@ export async function convertImageToWebP(imageFile: File | Blob, maxDimension: n
     });
   }  
 
+
+  export function extractWebPPreview(videoFile: File): Promise<Blob> {
+    return new Promise((resolve, reject) => {
+      const video = document.createElement('video');
+      video.src = URL.createObjectURL(videoFile);
+      video.currentTime = 1; // Seek to 1 second for a representative frame
+
+      video.addEventListener('loadeddata', () => {
+          const canvas = document.createElement('canvas');
+          canvas.width = video.videoWidth;
+          canvas.height = video.videoHeight;
+
+          const ctx = canvas.getContext('2d');
+          if (!ctx) {
+            reject(new Error('Failed to get 2D context for canvas.'));
+            return;
+          }
+          ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+          canvas.toBlob((blob) => {
+              if (blob) {
+                  resolve(blob); // Resolve the WebP blob
+              } else {
+                  reject(new Error('Failed to create WebP blob.'));
+              }
+          }, 'image/webp');
+      });
+
+      video.addEventListener('error', () => {
+          reject(new Error('Error loading video.'));
+      });
+  });
+}

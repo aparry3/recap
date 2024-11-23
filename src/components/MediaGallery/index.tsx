@@ -90,7 +90,7 @@ export const MediaConfirmationGallery: FC<{media: OrientationMedia[], selectedIm
                 const selected = selectedImages.has(index)
                 return (
                 <Container key={m.url} className={`${styles.imageContainer} ${m.isVertical ? styles.vertical : ''} ${selected ? styles.border : ''}`} onClick={() => toggleImage(index)}>
-                    <img src={m.url} alt="image" className={`${styles.image}`} />
+                    <img src={m.preview || m.url} alt="image" className={`${styles.image}`} />
                     {selected && (
                         <>
                             <Container className={styles.checkContainer} />
