@@ -57,9 +57,6 @@ const GalleryProvider: React.FC<{ children: React.ReactNode, gallery: Gallery}> 
     }
 }, [fileInputRef]);
 
-useEffect(() => {
-  console.log(personId)
-}, [personId]);
 
 const setPerson = useCallback((personId?: string) => {
   const _person = people.find(person => person.id === personId)
@@ -97,7 +94,7 @@ const setPerson = useCallback((personId?: string) => {
         const video = document.createElement('video');
         const url = URL.createObjectURL(videoFile);
         video.src = url;
-    
+
         video.onloadedmetadata = () => {
           const isVertical = video.videoHeight > video.videoWidth;
           resolve({
@@ -113,6 +110,7 @@ const setPerson = useCallback((personId?: string) => {
     
         video.onerror = () => {
           // Default to landscape in case of error
+          console.log("Video error:", url);
           resolve({
             url,
             preview: url,
@@ -124,12 +122,15 @@ const setPerson = useCallback((personId?: string) => {
           });
         };
       })])
-    return {
+
+   const orVid = {
       ...video,
       file: videoFile,
       preview: URL.createObjectURL(previewImage),
       previewFile: previewImage
     }
+
+    return orVid
   };
   
 

@@ -26,6 +26,7 @@ body {
   box-sizing: border-box;
   overflow: auto;
   color: var(--text-dark);
+
 }
 .no-scroll {
   overflow: hidden;

@@ -19,6 +19,13 @@
     width: 100% !important; /* Ensures the image spans the full width of the cell */
     height: 100% !important; /* Ensures the image spans the full height of the cell */
     object-fit:cover;
+    -webkit-touch-callout: none; /* Safari */
+    -webkit-user-select: none;  /* Safari */
+    -moz-user-select: none;     /* Firefox */
+    -ms-user-select: none;      /* IE */
+    user-select: none;          /* Standard */  
+    pointer-events: none;       /* Prevent long-press interaction */
+    touch-action: none; /* Disable zoom and gestures */
 }
 
 .lightBox {

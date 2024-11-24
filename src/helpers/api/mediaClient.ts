@@ -61,31 +61,56 @@ export async function convertImageToWebP(imageFile: File | Blob, maxDimension: n
     return new Promise((resolve, reject) => {
       const video = document.createElement('video');
       video.src = URL.createObjectURL(videoFile);
-      video.currentTime = 1; // Seek to 1 second for a representative frame
-
-      video.addEventListener('loadeddata', () => {
+  
+      // Ensure the video has a muted attribute for auto-playing
+      video.muted = true;
+      video.playsInline = true;
+  
+      // Handle the `canplay` event to ensure the video is ready for frame capture
+      video.addEventListener('canplay', () => {
+        // Seek to the desired frame
+        video.currentTime = 1;
+  
+        video.addEventListener('seeked', () => {
           const canvas = document.createElement('canvas');
           canvas.width = video.videoWidth;
           canvas.height = video.videoHeight;
-
+  
           const ctx = canvas.getContext('2d');
           if (!ctx) {
             reject(new Error('Failed to get 2D context for canvas.'));
             return;
           }
+  
+          // Draw the video frame to the canvas
           ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-
+  
+          // Convert the canvas content to a WebP blob
           canvas.toBlob((blob) => {
-              if (blob) {
-                  resolve(blob); // Resolve the WebP blob
-              } else {
-                  reject(new Error('Failed to create WebP blob.'));
-              }
+            if (blob) {
+              resolve(blob); // Resolve with the WebP blob
+            } else {
+              reject(new Error('Failed to create WebP blob.'));
+            }
           }, 'image/webp');
+        });
+  
+        // Handle seek errors
+        video.addEventListener('error', () => {
+          reject(new Error('Error seeking video frame.'));
+        });
       });
-
+  
+      // Handle video load errors
       video.addEventListener('error', () => {
-          reject(new Error('Error loading video.'));
+        reject(new Error('Error loading video.'));
       });
-  });
-}
+  
+      // Attempt to play the video to ensure it loads on mobile
+      video.play().catch((err) => {
+        // Ignore play errors, just ensure the video can load
+        console.warn('Autoplay error, continuing with load:', err);
+      });
+    });
+  }
+  

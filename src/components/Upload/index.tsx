@@ -44,9 +44,6 @@ const Upload: FC<{media: OrientationMediaWithFile[], upload: () => void, onConfi
         }
     }, [selectedImages])
 
-    useEffect(() => {
-        console.log(selectedImages)
-    }, [selectedImages])
     const handleConfirm = () => {
         onConfirm(media.filter((_, index) => selectedImages.has(index)))
     }

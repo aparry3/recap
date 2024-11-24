@@ -1,3 +1,14 @@
+import { Media } from "@/lib/types/Media";
+import { OrientationMedia } from "./providers/gallery";
+
+export const isVideo = (media: Media | OrientationMedia): boolean => {
+    return media.contentType.startsWith('video')
+}
+
+export const isImage = (media: Media | OrientationMedia): boolean => {
+    return media.contentType.startsWith('image')
+}
+
 export function generateRandomString(length: number): string {
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
     const charactersLength = characters.length;
@@ -10,3 +21,4 @@ export function generateRandomString(length: number): string {
 
     return result;
 }
+
