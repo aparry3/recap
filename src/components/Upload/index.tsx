@@ -88,10 +88,10 @@ const Upload: FC<{media: OrientationMediaWithFile[], upload: () => void, onConfi
                         <Text size={2}>Uploads</Text>
                         <Container className={styles.mediaInfo}>
                             <Container className={styles.mediaType}>
-                                <Text size={1.2}>10 Photos</Text>
+                                <Text size={1.2}>{totalImages} Photos</Text>
                             </Container>
                             <Container className={styles.mediaType}>
-                                <Text size={1.2}>5 Videos</Text>
+                                <Text size={1.2}>{totalVideos} Videos</Text>
                             </Container>
                         </Container>
                     </Row>

@@ -47,13 +47,12 @@ export const UserProvider: React.FC<{
 
   return (
     <UserContext.Provider value={{ personId, person, loading }}>
-      {(!loading && personId) && children}
-      {(!loading && !personId) && (
+      {(!loading && person) ? children :
+      (!loading && !person) ? (
         <PersonPage person={person} onSubmit={submitPerson}/>
-      )}
-      {loading && (
+      ) : (
         <div>Loading...</div>
-    )}
+      )}
     </UserContext.Provider>
   );
 };

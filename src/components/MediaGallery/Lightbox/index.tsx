@@ -21,7 +21,6 @@ interface LightBoxProps {
   }
   
 const LightBox: FC<LightBoxProps> = memo(({ image, index, total, onClose, prevImage, nextImage, onNext, onPrevious, contentType = 'image' }) => {
-    console.log(contentType)
     const {gallery} = useGallery()
     const [touchStartX, setTouchStartX] = useState<number | null>(null);
     const [touchStartY, setTouchStartY] = useState<number | null>(null);
