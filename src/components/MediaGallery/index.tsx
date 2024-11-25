@@ -16,19 +16,19 @@ const MediaGallery: FC<{media: Media[]}> = ({media}) => {
     const [prevSrc, setPrevSrc] = useState<string | undefined>(undefined)
     const [contentType, setContentType] = useState<string>()
 
-    useEffect(() => {
-        const handleContextMenu = (e: Event) => {
-          e.preventDefault(); // Prevent the default context menu
-        };
+    // useEffect(() => {
+    //     const handleContextMenu = (e: Event) => {
+    //       e.preventDefault(); // Prevent the default context menu
+    //     };
     
-        // Attach the listener to the document or a specific container
-        document.addEventListener("contextmenu", handleContextMenu);
+    //     // Attach the listener to the document or a specific container
+    //     document.addEventListener("contextmenu", handleContextMenu);
     
-        return () => {
-          // Cleanup the listener on unmount
-          document.removeEventListener("contextmenu", handleContextMenu);
-        };
-      }, []);
+    //     return () => {
+    //       // Cleanup the listener on unmount
+    //       document.removeEventListener("contextmenu", handleContextMenu);
+    //     };
+    //   }, []);
     
     const loadMedia = (media: Media, setMethod: Dispatch<SetStateAction<string | undefined>>, setContentTypeMethod?: Dispatch<SetStateAction<string | undefined>>) => {
         if (media?.url) {

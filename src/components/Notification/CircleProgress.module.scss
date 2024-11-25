@@ -1,0 +1,37 @@
+.circularProgress {
+    position: relative;
+    width: 4rem;
+    height: 4rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .circle {
+    width: 100%;
+    height: 100%;
+    background: conic-gradient(
+      var(--primary) 0%,
+      var(--primary) calc(var(--percentage, 0) * 1%),
+      var(--background-medium) calc(var(--percentage, 0) * 1%),
+      var(--background-medium) 100%
+    );
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    transition: background 0.5s ease;
+  }
+
+  .overlay {
+    position: absolute;
+    width: 85%;
+    height: 85%;
+    background: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+  }

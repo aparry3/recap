@@ -8,6 +8,10 @@ import { Media } from '@/lib/types/Media';
 import { fetchGalleryPeople } from '../api/personClient';
 import { GalleryPersonData } from '@/lib/types/Person';
 import { uploadLargeMedia, uploadMedia } from '../hooks/upload';
+import Notification from '@/components/Notification';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Column, Container, Row } from 'react-web-layout-components';
+import UploadStatus from '@/components/UploadStatus';
 
 
 export interface OrientationMedia {
@@ -47,9 +51,9 @@ const GalleryProvider: React.FC<{ children: React.ReactNode, gallery: Gallery}> 
   const [stagedMedia, setStagedMedia] = useState<(OrientationMediaWithFile)[]>([]);
   const [showUploadConfirmation, setShowUploadConfirmation] = useState<boolean>(false);
   const [gallery] = useState<Gallery>(propsGallery);
-  const [totalImages, setTotalImages] = useState<number>(0);
-  const [totalVideos, setTotalVideos] = useState<number>(0);
   const [currentPerson, setCurrentPerson] = useState<GalleryPersonData | undefined>(undefined);
+  const[totalUploads, setTotalUploads] = useState<number | undefined>();
+  const[completeUploads, setCompleteUploads] = useState<number | undefined>();
 
   const handleBeginUpload = useCallback(() => {
     if (fileInputRef.current) {
@@ -142,10 +146,8 @@ const setPerson = useCallback((personId?: string) => {
       const filesData = await Promise.all(
         files.map(file => {
           if (file.type.startsWith('image/')) {
-            setTotalImages(oldTotal => oldTotal + 1)
              return getImageOrientation(file) 
           } else {
-            setTotalVideos(oldTotal => oldTotal + 1)
              return getVideoOrientation(file)
           }
         }));
@@ -173,15 +175,21 @@ const setPerson = useCallback((personId?: string) => {
     return media
   }, [personId, gallery.id])
 
-  const confirmMedia = (confirmedImages: OrientationMediaWithFile[]) => {
+  const confirmMedia = async (confirmedImages: OrientationMediaWithFile[]) => {
     setStagedMedia(confirmedImages)
+    setTotalUploads(confirmedImages.length)
+    setCompleteUploads(0)
     const imagePromises = confirmedImages.map(image => insertMedia(image).then(media => {
+      setCompleteUploads(oldComplete => (oldComplete || 0) + 1)
       setMedia((oldImages) => [...oldImages, media])
     }))
-    
-    // setMedia((oldImages) => [...oldImages, ...confirmedImages]);
-    setStagedMedia([]);
     setShowUploadConfirmation(false);
+    setStagedMedia([]);
+    await Promise.all(imagePromises)
+    const timer = setTimeout(() => {
+      setTotalUploads(undefined)
+      setCompleteUploads (undefined)  
+    }, 500);
   };
 
   const cancelImages = () => {
@@ -228,6 +236,7 @@ const setPerson = useCallback((personId?: string) => {
         onChange={handleFileChange}
     />
     {showUploadConfirmation && <ClientUpload media={stagedMedia} upload={handleBeginUpload} onConfirm={confirmMedia} onCancel={cancelImages}/>}
+    <UploadStatus total={totalUploads} complete={completeUploads}/>
     </GalleryContext.Provider>
   );
 };
