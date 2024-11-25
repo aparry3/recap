@@ -17,10 +17,10 @@ interface LightBoxProps {
     nextImage?: string;
     onNext: () => void;
     onPrevious: () => void;
-    contentType?: 'image' | 'video'
+    contentType?: string
   }
   
-const LightBox: FC<LightBoxProps> = memo(({ image, index, total, onClose, prevImage, nextImage, onNext, onPrevious, contentType = 'image' }) => {
+const LightBox: FC<LightBoxProps> = memo(({ image, index, total, onClose, prevImage, nextImage, onNext, onPrevious, contentType }) => {
     const {gallery} = useGallery()
     const [touchStartX, setTouchStartX] = useState<number | null>(null);
     const [touchStartY, setTouchStartY] = useState<number | null>(null);
@@ -61,7 +61,6 @@ const LightBox: FC<LightBoxProps> = memo(({ image, index, total, onClose, prevIm
             setTranslateX(deltaX);
             setTranslateY(0);
         }
-        console.log(deltaX, deltaY)
     };
 
     const handleTouchEnd = (e: React.TouchEvent) => {
@@ -168,6 +167,7 @@ const LightBox: FC<LightBoxProps> = memo(({ image, index, total, onClose, prevIm
                     transition: isAnimating ? "transform 0.3s ease" : "none",
                 }}
                 >
+                   {prevImage && ( 
                     <Container className={`${styles.lightboxImageContainer} ${styles.left}`}>
                         <img
                             onClick={handleImageClick}
@@ -175,9 +175,9 @@ const LightBox: FC<LightBoxProps> = memo(({ image, index, total, onClose, prevIm
                             alt="image" 
                             className={`${styles.lightBoxImage}`}
                             loading="lazy"/>
-                    </Container>
+                    </Container> )}
                     <Container className={`${styles.lightboxImageContainer}`}>
-                        {contentType === "video" ? (
+                        {contentType?.startsWith('video') ? (
                             <video id="hover-video" src={image} muted loop autoPlay playsInline className={styles.lightBoxImage} />
                         ) : (
                             <img
@@ -189,6 +189,7 @@ const LightBox: FC<LightBoxProps> = memo(({ image, index, total, onClose, prevIm
                         )}
 
                     </Container>
+                    {nextImage && (
                     <Container className={`${styles.lightboxImageContainer} ${styles.right}`}>
                         <img
                             onClick={handleImageClick}
@@ -197,7 +198,7 @@ const LightBox: FC<LightBoxProps> = memo(({ image, index, total, onClose, prevIm
                             className={`${styles.lightBoxImage}`}
                             loading="lazy"/>
 
-                    </Container>
+                    </Container>)}
             </Container>
             <Container className={styles.lightboxControls} >
                 <Container className={`${styles.controlContainer} ${styles.leftArrow}`} onClick={() => triggerAnimation("prev")}>

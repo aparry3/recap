@@ -14,7 +14,7 @@ const MediaGallery: FC<{media: Media[]}> = ({media}) => {
     const [mediaSrc, setMediaSrc] = useState<string | undefined>(undefined)
     const [nextSrc, setNextSrc] = useState<string | undefined>(undefined)
     const [prevSrc, setPrevSrc] = useState<string | undefined>(undefined)
-    const [loaded, setLoaded] = useState(false)
+    const [contentType, setContentType] = useState<string>()
 
     useEffect(() => {
         const handleContextMenu = (e: Event) => {
@@ -30,8 +30,7 @@ const MediaGallery: FC<{media: Media[]}> = ({media}) => {
         };
       }, []);
     
-    const loadMedia = (media: Media, setMethod: Dispatch<SetStateAction<string | undefined>>) => {
-        setLoaded(false)
+    const loadMedia = (media: Media, setMethod: Dispatch<SetStateAction<string | undefined>>, setContentTypeMethod?: Dispatch<SetStateAction<string | undefined>>) => {
         if (media?.url) {
             if (isImage(media)) {
               // Handle image loading
@@ -40,18 +39,16 @@ const MediaGallery: FC<{media: Media[]}> = ({media}) => {
               fullImage.src = media.url;
               fullImage.onload = () => {
                 setMethod(media.url);
-                setLoaded(true);
+                setContentTypeMethod?.(media.contentType)
               };
               fullImage.onerror = () => {
                 console.error("Failed to load image:", media.url);
                 // You can choose to keep the preview or set a fallback image
-                setLoaded(true); // Consider marking as "loaded" to avoid spinner loops
               };
             } else if (isVideo(media)) {
               // Handle video loading
               setMethod(media.url)
-              setLoaded(true)
-              console.log("Loading video:", media.url);
+              setContentTypeMethod?.(media.contentType)
             //   const videoElement = document.createElement("video");
             //   videoElement.muted = true; // Ensure autoplay works
             //     videoElement.playsInline = true; // Avoid fullscreen mode on mobile
@@ -69,7 +66,6 @@ const MediaGallery: FC<{media: Media[]}> = ({media}) => {
             //   };
             } else {
               console.warn("Unsupported media type:", media.contentType);
-              setLoaded(true);
             }
           }
         
@@ -83,7 +79,12 @@ const MediaGallery: FC<{media: Media[]}> = ({media}) => {
             setPrevSrc(mediaSrc)
             setMediaSrc(nextSrc)
 
-            loadMedia(media[imageIndex + 1], setNextSrc)
+            if (imageIndex + 1 < media.length) {
+                isVideo(media[imageIndex + 1]) ? setNextSrc(media[imageIndex + 1].preview) : loadMedia(media[imageIndex + 1], setNextSrc)
+            } else {
+                setNextSrc(undefined)
+            }
+            loadMedia(media[imageIndex], setMediaSrc, setContentType)
             setViewImageIndex(imageIndex);
         }  
     }, [viewImageIndex, media, mediaSrc, nextSrc])
@@ -94,23 +95,28 @@ const MediaGallery: FC<{media: Media[]}> = ({media}) => {
             setNextSrc(mediaSrc)
             setMediaSrc(prevSrc)
 
-            loadMedia(media[imageIndex - 1], setPrevSrc)  
+            if (imageIndex - 1 > -1) {
+                isVideo(media[imageIndex - 1]) ? setPrevSrc(media[imageIndex - 1].preview) : loadMedia(media[imageIndex - 1], setPrevSrc)
+            } else {
+                setPrevSrc(undefined)
+            }
+            loadMedia(media[imageIndex], setMediaSrc, setContentType)
             setViewImageIndex(imageIndex);  
           }
     }, [viewImageIndex, media, mediaSrc, nextSrc])
 
     const setImage = useCallback((index: number) => {
-        loadMedia(media[index], setMediaSrc)
-        if (index - 1 > -1) loadMedia(media[index -1], setPrevSrc)
-        if (index + 1 < media.length) loadMedia(media[index + 1], setNextSrc)
+        loadMedia(media[index], setMediaSrc, setContentType)
+        if (index - 1 > -1) isVideo(media[index - 1]) ? setPrevSrc(media[index - 1].preview) : loadMedia(media[index -1], setPrevSrc)
+        if (index + 1 < media.length) isVideo(media[index + 1]) ? setNextSrc(media[index + 1].preview) : loadMedia(media[index + 1], setNextSrc)
         setViewImageIndex(index)
     }, [media])
 
     const handleClose = () => {
-        setLoaded(false)
         setMediaSrc(undefined)
         setNextSrc(undefined)
         setPrevSrc(undefined)
+        setContentType(undefined)
         setViewImageIndex(-1)
     }
 
@@ -133,7 +139,6 @@ const MediaGallery: FC<{media: Media[]}> = ({media}) => {
     
       const handleTouchEnd = useCallback(() => {
         // Clear the timer if the user stops touching
-        console.log('handleTouchEnd')
         if (touchTimerRef.current) {
           clearTimeout(touchTimerRef.current);
           touchTimerRef.current = null;
@@ -142,7 +147,6 @@ const MediaGallery: FC<{media: Media[]}> = ({media}) => {
       }, [touchTimerRef.current]);
     
       const selectImage = (index: number) => {
-        console.log("select image")
           setImage(index)
       }
     return (
@@ -157,7 +161,7 @@ const MediaGallery: FC<{media: Media[]}> = ({media}) => {
                 </Container>
             ))}
             </Column>
-            <LightBox image={mediaSrc} contentType={loaded && media[viewImageIndex].contentType.startsWith('video') ? 'video' : 'image'} index={viewImageIndex + 1} total={media.length} onClose={handleClose} prevImage={prevSrc} nextImage={nextSrc} onPrevious={handlePrev} onNext={handleNext}/>
+            <LightBox image={mediaSrc} contentType={contentType} index={viewImageIndex + 1} total={media.length} onClose={handleClose} prevImage={prevSrc} nextImage={nextSrc} onPrevious={handlePrev} onNext={handleNext}/>
             </>
     )
 }
