@@ -22,14 +22,17 @@ const Welcome: FC<{galleries: Gallery[], person?: Person}> = ({galleries, person
           <Text size={1.4}>Welcome</Text>
           <Text size={2.5} weight={500}>{person?.name}</Text>
         </Column>
-        <Container className={styles.buttonContainer} padding={[2, 0]}>
-        </Container>
       </Column>
       <Column className={styles.content}>
+        <Row className={styles.contentTitle}>
+          <Text size={1.4}>
+            Galleries
+          </Text>
+        </Row>
         <Column className={styles.galleriesContainer}>
           {galleries.map((gallery, i) => (
             <>
-            <Container className={styles.galleryContainer} key={i} padding={[0, 1]}>
+            <Container className={styles.galleryContainer} key={i} padding={[0, 1]} onClick={() => router.push(`/${gallery.path}?password=${gallery.password}`)}>
                 <Row className={styles.gallery}> 
                     <Container className={styles.galleryImage}>
                         <Text>Image</Text>
