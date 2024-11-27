@@ -2,11 +2,13 @@
 
 import { houseIcon, gridIcon, userIcon, leftIcon, qrcodeIcon } from "@/lib/icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { FC } from "react"
+import { FC, useCallback } from "react"
 import { Column, Container, Row, Text } from "react-web-layout-components"
 import styles from './Sidebar.module.scss'
 import Image from "next/image"
 import { AppPage } from "../../App";
+import { Router } from "next/router";
+import { useRouter } from "next/navigation";
 
 interface SidebarProps {
     onClose?: () => void
@@ -15,6 +17,10 @@ interface SidebarProps {
     onPageChange: (page: AppPage) => void
 }
 const SidebarContent: FC<Omit<SidebarProps, 'open'>> = ({onClose, onPageChange, page}) => {
+    const router = useRouter()
+    const navigateToGalleries = useCallback(() => {
+        router.push('/galleries')
+    }, [router])
     return (
     <>
     <Container className={styles.header} padding>
@@ -27,7 +33,7 @@ const SidebarContent: FC<Omit<SidebarProps, 'open'>> = ({onClose, onPageChange, 
         </Container>    
      </Container>
      <Container className={styles.dash} />
-     <Column className={styles.menu}>
+     <Column className={styles.menu} style={{flexGrow: 1}}>
         <Container className={styles.menuItemContainer}>
             <Row className={`${styles.menuItem} ${page === AppPage.HOME ? styles.active : ''} `} onClick={() => onPageChange(AppPage.HOME)}>
                 <Container className={styles.menuIcon}>
@@ -55,6 +61,18 @@ const SidebarContent: FC<Omit<SidebarProps, 'open'>> = ({onClose, onPageChange, 
                 </Container>
                 <Container>
                     <Text weight={500}>My Uploads</Text>
+                </Container>
+            </Row>
+        </Container>
+     </Column>
+     <Column className={styles.menu}>
+        <Container className={styles.menuItemContainer}>
+            <Row className={`${styles.menuItem}`} onClick={navigateToGalleries}>
+                <Container className={styles.menuIcon}>
+                    <FontAwesomeIcon icon={leftIcon} className={styles.icon}/>
+                </Container>
+                <Container>
+                    <Text weight={500}>All Galleries</Text>
                 </Container>
             </Row>
         </Container>

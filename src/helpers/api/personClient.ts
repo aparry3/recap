@@ -1,3 +1,4 @@
+import { Gallery } from "@/lib/types/Gallery";
 import { GalleryPersonData, NewPersonData, Person, PersonUpdate } from "@/lib/types/Person";
 
 
@@ -44,4 +45,13 @@ export const fetchPerson = async (personId: string): Promise<Person> => {
 export const fetchGalleryPeople = async (galleryId: string): Promise<GalleryPersonData[]> => {
     const data = await fetch(`/api/galleries/${galleryId}/people`).then(res => res.json())
     return data.people
+}
+export const fetchPersonGalleries = async (personId: string): Promise<Gallery[]> => {
+    try {
+        const data = await fetch(`/api/people/${personId}/galleries`).then(res => res.json())
+        return data.galleries
+    } catch (error) {
+        console.log(error)
+        throw new Error('Person not found')
+    }
 }

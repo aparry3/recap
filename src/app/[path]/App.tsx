@@ -16,7 +16,8 @@ import Sidebar, { MobileMenu } from "./components/Sidebar";
 export enum AppPage {
     HOME = 'HOME',
     GALLERY = 'GALLERY',
-    USER = 'USER'
+    USER = 'USER',
+    GALLERIES = 'GALLERIES'
 }
 const App: FC<{gallery: Gallery, password?: string}> =  ({gallery, password: propsPassword}) => {
     const {isMobile} = useWindowSize()
@@ -30,6 +31,7 @@ const App: FC<{gallery: Gallery, password?: string}> =  ({gallery, password: pro
         if (password && password === gallery.password) {
             setCleared(true)
             setCookie(gallery.id, gallery.password)
+            
         }
     }, [password])
 

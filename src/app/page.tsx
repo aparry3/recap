@@ -5,6 +5,9 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { circleVideoIcon, downloadIcon, photoFilmIcon, shareNodesIcon, zipIcon } from '@/lib/icons';
+import { cookies } from 'next/headers';
+import { fetchPerson } from '@/helpers/api/personClient';
+import { redirect } from 'next/navigation';
 
 const Header = () => {
     return (
@@ -302,7 +305,12 @@ const Footer = () => {
 
 }
 
-const HomePage: FC = ({}) => {
+const HomePage: FC = async ({}) => {
+    const personId = cookies().get('personId')?.value
+    if (personId) {
+        const person = await fetchPerson(personId)
+        if (person) return redirect('/galleries')
+    }
     return (
         <Column as='main' className={styles.body}>
             {/* FIXED/STICKY */}

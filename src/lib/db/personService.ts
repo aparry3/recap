@@ -1,5 +1,5 @@
 import { db } from ".";
-import { GalleryPerson } from "../types/Gallery";
+import { Gallery, GalleryPerson } from "../types/Gallery";
 import { Person, NewPerson, PersonUpdate, NewPersonData, GalleryPersonData } from "../types/Person";
 import {v4 as uuidv4} from 'uuid';
 import { selectGalleryPersonMedia } from "./mediaService";
@@ -54,4 +54,13 @@ export const insertGalleryPerson = async (galleryId: string, personId: string): 
 export const updateGalleryPerson = async (galleryId: string, personId: string, mediaId: string): Promise<GalleryPerson> => {
   const galleryPerson = await db.updateTable('galleryPerson').where('galleryId', '=', galleryId).where('personId', '=', personId).set({coverPhotoId: mediaId}).returningAll().executeTakeFirstOrThrow();
   return galleryPerson;
+}
+
+export const selectPersonGalleries = async (personId: string): Promise<Gallery[]> => {
+  const galleries = await db.selectFrom('galleryPerson')
+  .leftJoin('gallery', 'gallery.id', 'galleryPerson.galleryId') // Join to count media for each person
+  .selectAll('gallery')
+  .where('galleryPerson.personId', '=', personId)
+  .execute() as Gallery[];
+  return galleries
 }
