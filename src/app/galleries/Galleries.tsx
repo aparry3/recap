@@ -50,68 +50,6 @@ const Welcome: FC<{galleries: Gallery[], person?: Person}> = ({galleries, person
             <Container className={styles.separator}/>
             </>
           ))}
-                    {galleries.map((gallery, i) => (
-            <>
-            <Container className={styles.galleryContainer} key={i} padding={[0, 1]} onClick={() => router.push(`/${gallery.path}?password=${gallery.password}`)}>
-                <Row className={styles.gallery}> 
-                    <Container className={styles.galleryImage}>
-                        <Text>Image</Text>
-                    </Container>
-                    <Column className={styles.galleryDetails}>
-                        <Row className={styles.galleryName}>
-                            <Text>{gallery.name}</Text>
-                        </Row>
-                        <Row className={styles.galleryDate}>
-                            <Text>{new Date(gallery.date ||gallery.created).toDateString()}</Text>
-                        </Row>
-                    </Column>
-                </Row>
-            </Container>
-            <Container className={styles.separator}/>
-            </>
-          ))}
-          {galleries.map((gallery, i) => (
-            <>
-            <Container className={styles.galleryContainer} key={i} padding={[0, 1]} onClick={() => router.push(`/${gallery.path}?password=${gallery.password}`)}>
-                <Row className={styles.gallery}> 
-                    <Container className={styles.galleryImage}>
-                        <Text>Image</Text>
-                    </Container>
-                    <Column className={styles.galleryDetails}>
-                        <Row className={styles.galleryName}>
-                            <Text>{gallery.name}</Text>
-                        </Row>
-                        <Row className={styles.galleryDate}>
-                            <Text>{new Date(gallery.date ||gallery.created).toDateString()}</Text>
-                        </Row>
-                    </Column>
-                </Row>
-            </Container>
-            <Container className={styles.separator}/>
-            </>
-          ))}
-          {galleries.map((gallery, i) => (
-            <>
-            <Container className={styles.galleryContainer} key={i} padding={[0, 1]} onClick={() => router.push(`/${gallery.path}?password=${gallery.password}`)}>
-                <Row className={styles.gallery}> 
-                    <Container className={styles.galleryImage}>
-                        <Text>Image</Text>
-                    </Container>
-                    <Column className={styles.galleryDetails}>
-                        <Row className={styles.galleryName}>
-                            <Text>{gallery.name}</Text>
-                        </Row>
-                        <Row className={styles.galleryDate}>
-                            <Text>{new Date(gallery.date ||gallery.created).toDateString()}</Text>
-                        </Row>
-                    </Column>
-                </Row>
-            </Container>
-            <Container className={styles.separator}/>
-            </>
-          ))}
-
-
         </Column>
       </Column>
     </Container>
