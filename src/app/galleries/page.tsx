@@ -24,7 +24,9 @@ const GalleriesPage: FC = () => {
             alert('Welcome Back ' + _person.name)
             if (!_person) return router.push('/create')
             setLoading(false)
-        } catch (error) {
+        } catch (error: any) {
+            alert('ERROR ' + error.message)
+
             console.log(error)
             setPersonId('')
         }
@@ -34,6 +36,7 @@ const GalleriesPage: FC = () => {
             if (personId) {
                 init(personId)
             } else {
+                alert('ERROR: NO ID')
                 router.push('')
             }    
         }
