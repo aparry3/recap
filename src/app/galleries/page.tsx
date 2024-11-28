@@ -21,7 +21,6 @@ const GalleriesPage: FC = () => {
             const [_person, _galleries] = await Promise.all([fetchPerson(personId), fetchPersonGalleries(personId)])
             setPerson(_person)
             setGalleries(_galleries)
-            alert('Welcome Back ' + _person.name)
             if (!_person) return router.push('/create')
             setLoading(false)
         } catch (error: any) {
@@ -36,8 +35,7 @@ const GalleriesPage: FC = () => {
             if (personId) {
                 init(personId)
             } else {
-                alert('ERROR: NO ID')
-                router.push('')
+                router.push('/create')
             }    
         }
     }, [personId, personLoading])
