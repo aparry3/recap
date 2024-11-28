@@ -6,7 +6,9 @@ import styles from './Loading.module.scss'
 const Loading: FC = () => {
     return (
         <Container className={styles.loadingContainer}>
-            <Container className={styles.loading}></Container>
+            <Container className={styles.loading}>
+                LOADING
+            </Container>
         </Container>
     )
 }
