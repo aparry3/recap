@@ -2,9 +2,13 @@
     padding: 1rem 0;
     min-height: 100%;
     height: 100%;
+    overflow: hidden;
 }
 .header {
     padding: 1rem!important;
+}
+.titleContainer {
+    width: 30%;
 }
 .content {
     flex-grow: 1;
@@ -13,6 +17,7 @@
     width: 70%;
     height:100%;
     justify-content: center;
+    overflow: auto;
     .buttonContainer {
         display: none !important;
     }
@@ -31,9 +36,10 @@
 }
 .gallery {
     width: 100%;
+    cursor: pointer;
     padding: 1rem;
-    border-radius: 1rem;
-    box-shadow: 0 0 1.25rem -1rem black;
+    border-radius: 0.5rem;
+    box-shadow: 0 0 15px -12px black;
     &:hover {
         background: var(--background-dark);
     }
@@ -51,6 +57,12 @@
 .galleryDate {
     width: 100%;
 }
+// .separator {
+//     width: 100%;
+//     height: 1px;
+//     background: var(--primary-light);
+//     flex-shrink: 0;
+// }
 @media screen and (max-width: 768px) {
     .page {
         flex-direction: column !important;
