@@ -1,11 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 
 export function setCookie(name: string, value: string): void {
   document.cookie = `${name}=${encodeURIComponent(value)}; path=/; SameSite=Strict`;
 }
 
 export const useLocalStorage = <T>(key: string, initialValue: T) => {
-  const isBrowser = typeof window !== "undefined";
+  const isBrowser = useMemo(() => typeof window !== "undefined", [window]);
 
   const [storedValue, setStoredValue] = useState<T>(() => {
     if (!isBrowser) return initialValue; // Return initial value on server
@@ -30,7 +30,7 @@ export const useLocalStorage = <T>(key: string, initialValue: T) => {
     } catch (error) {
       console.warn(`Error syncing localStorage key "${key}":`, error);
     }
-  }, [key, initialValue]);
+  }, [key, initialValue, isBrowser]);
 
   const setValue = (value: T | ((val: T) => T)) => {
     try {
