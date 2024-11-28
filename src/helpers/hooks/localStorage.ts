@@ -5,7 +5,7 @@ export function setCookie(name: string, value: string): void {
 }
 
 export const useLocalStorage = <T>(key: string, initialValue: T) => {
-  const isBrowser = useMemo(() => !!window && typeof window !== "undefined", [window]);
+  const isBrowser = typeof window !== "undefined"
 
   const [storedValue, setStoredValue] = useState<T>(() => {
     if (!isBrowser) return initialValue; // Return initial value on server
