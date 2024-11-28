@@ -21,7 +21,6 @@ export const useLocalStorage = <T>(key: string, initialValue: T) => {
 
   useEffect(() => {
     if (!isBrowser) return;
-    alert('LOCAL')
 
     // Sync state with localStorage when the key or initial value changes
     try {

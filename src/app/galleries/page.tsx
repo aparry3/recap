@@ -24,8 +24,6 @@ const GalleriesPage: FC = () => {
             if (!_person) return router.push('/create')
             setLoading(false)
         } catch (error: any) {
-            alert('ERROR ' + error.message)
-
             console.log(error)
             setPersonId('')
         }
