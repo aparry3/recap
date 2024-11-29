@@ -20,28 +20,25 @@
     position: sticky;
     top: 0;
     background: var(--background-light);
-    z-index: 10;
+    z-index: 1;
     justify-content: space-between !important;
 }
 
 .backIconContainer {
     cursor: pointer;
 }
-.title {
-
-}
-
+.titleContainer {
+    position: sticky;
+    width: 100%;
+    top: 0;
+    background: var(--background-light);
+    z-index: 1;
+}    
 @media screen and (max-width: 768px) {
+    .title {
+        justify-content: space-between !important;
+    }        
     .tab {
         padding: 0.25rem !important;
-    }
-    .title {
-        width: 100%;
-        padding: 0.5rem 1rem;
-        position: sticky;
-        top: 0;
-        background: var(--background-light);
-        z-index: 10;
-        justify-content: space-between !important;    
     }
 }
