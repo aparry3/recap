@@ -16,9 +16,32 @@
 
 .nameContainer {
     width: 100%;
+    padding: 0.5rem 1rem;
+    position: sticky;
+    top: 0;
+    background: var(--background-light);
+    z-index: 10;
     justify-content: space-between !important;
 }
 
 .backIconContainer {
     cursor: pointer;
+}
+.title {
+
+}
+
+@media screen and (max-width: 768px) {
+    .tab {
+        padding: 0.25rem !important;
+    }
+    .title {
+        width: 100%;
+        padding: 0.5rem 1rem;
+        position: sticky;
+        top: 0;
+        background: var(--background-light);
+        z-index: 10;
+        justify-content: space-between !important;    
+    }
 }

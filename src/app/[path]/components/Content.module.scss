@@ -3,6 +3,7 @@
     flex-grow: 1;
     height: 100%;
     overflow: auto;
+    position: relative;
 }
 @media screen and (max-width: 768px) {
     .content {
