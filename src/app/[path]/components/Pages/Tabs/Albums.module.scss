@@ -1,0 +1,86 @@
+.data {
+    width: 100%;
+}
+.content {
+    width: 100%;
+    height: 100%;
+    justify-content: flex-start !important;
+    align-items: flex-start !important;
+    flex-wrap: wrap;
+
+}
+.albumContainer {
+    width: 35%;
+    // height: 12vh;
+    min-width: 15rem;
+    padding: 0.5rem !important;
+}
+.imageContainer {
+    height: 4.5rem;
+    width: 4.5rem;
+    flex-shrink: 0;
+    border-radius: 0.5rem;
+    overflow: hidden;
+}
+.album {
+    height: 100%;
+    width: 100%;
+    padding: 0.5rem !important;
+    object-fit: cover;
+    box-shadow: 0 0 1.25rem -1rem black;
+    border-radius: 0.5rem;
+    overflow: hidden;
+    cursor: pointer;
+    &:hover {
+        background: var(--background-medium);
+    }
+}
+.placeholder {
+    height: 100%;
+    width: 100%;
+    background: var(--background-dark);
+}
+.preview {
+    flex-grow: 1;
+    height: 70%;
+    width: 100%;
+    border-radius: 0.5rem;
+    object-fit: cover;
+}
+.detailsContainer {
+    height: 30%;
+    width: 100%;
+    padding: 0 1rem 0 1rem;
+}
+.nameContainer {
+    flex-grow: 1;
+    width: 100%;
+}
+.countContainer {
+    width: 100%;
+}
+.count {
+    opacity: 0.5;
+}
+.createAlbumContainer {
+    padding: 1rem;
+    width: 35%;
+    height: 100%;
+}
+.createAlbumText {
+    font-size: 1.1rem;
+    color: var(--primary);
+}
+@media (max-width: 768px) {
+    .albumContainer {
+        width: 100%;
+        // height: 15vh;
+    }
+    .album {
+        width: 90%;
+    }
+    .createAlbumContainer {
+        width:100%;
+        height: unset;
+    }
+}

@@ -7,18 +7,32 @@ import People from './Tabs/People';
 import Albums from './Tabs/Albums';
 import useGallery from '@/helpers/providers/gallery';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { arrowLeftIcon } from '@/lib/icons';
+import { arrowLeftIcon, downIcon, upIcon } from '@/lib/icons';
 
 
 enum Tab {
-    PHOTOS = 'PHOTOS',
-    PEOPLE = 'PEOPLE',
-    ALBUMS = 'ALBUMS'
+    PHOTOS = 'Photos',
+    PEOPLE = 'People',
+    ALBUMS = 'Albums'
+}
+
+const TabMenuItem: FC<{tab: Tab, activeTab: Tab, selectTab: (tab: Tab) => void}> = ({tab, activeTab,selectTab}) => {
+    return (
+        <Container className={styles.menuItem}>
+            <Container className={`${styles.titleOption} ${activeTab === tab ? styles.active : ''}`}><Text size={1.8} weight={500} onClick={() => selectTab(tab)}>{tab}</Text></Container>
+        </Container>
+    )
 }
 
 const Gallery: FC = () => {
     const [tab, setTab] = useState<Tab>(Tab.PHOTOS)
     const {person, setPerson} = useGallery()
+    const [menuOpen, setMenuOpen] = useState(false)
+
+    const handleChangeTab = (tab: Tab) => {
+        setTab(tab)
+        setMenuOpen(false)
+    }
     const currentTab = useMemo(() => {
         switch (tab) {
             case Tab.PHOTOS:
@@ -31,6 +45,7 @@ const Gallery: FC = () => {
                 return <Photos />
         }
     }, [tab])
+    
     return (
         <Column className={styles.section}>
             <Column className={styles.titleContainer}>
@@ -47,13 +62,25 @@ const Gallery: FC = () => {
                         </Container>
                     </Row>
                 ) :(
-                <Row className={styles.title}>
-                    <Container className={`${styles.titleOption} ${tab === Tab.PHOTOS ? styles.active : ''}`}><Text size={1.8} weight={500} onClick={() => setTab(Tab.PHOTOS)}>Photos</Text></Container>
-                    <Container className={`${styles.titleOption} ${tab === Tab.PEOPLE ? styles.active : ''}`}><Text size={1.8} weight={500} onClick={() => setTab(Tab.PEOPLE)}>People</Text></Container>
-                    <Container className={`${styles.titleOption} ${tab === Tab.ALBUMS ? styles.active : ''}`}><Text size={1.8} weight={500} onClick={() => setTab(Tab.ALBUMS)}>Albums</Text></Container>
+                <Row className={styles.tabs}>
+                    <Container className={`${styles.titleOption} ${styles.active}`} onClick={() => setMenuOpen(!menuOpen)}>
+                        <Text size={1.8} weight={500}>{tab}</Text>
+                        <Container padding={[0, 1]}>
+                            <FontAwesomeIcon icon={menuOpen ? upIcon : downIcon} className={styles.leftIcon} />
+                        </Container>
+                    </Container>
+                    {menuOpen && (
+                        <Column className={styles.tabMenu}>
+                            <TabMenuItem tab={Tab.PHOTOS} activeTab={tab} selectTab={handleChangeTab}/>
+                            <Container className={styles.line}/>
+                            <TabMenuItem tab={Tab.PEOPLE} activeTab={tab} selectTab={handleChangeTab}/>
+                            <Container className={styles.line}/>
+                            <TabMenuItem tab={Tab.ALBUMS} activeTab={tab} selectTab={handleChangeTab}/>
+                        </Column>
+                    )}
                 </Row>
                 )}
-                <Container className={styles.line} style={{width: '95%'}}/>
+                <Container className={styles.line}/>
             </Column>
             <Container className={styles.tab}>
                 {currentTab}

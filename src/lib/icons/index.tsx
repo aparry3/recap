@@ -1,11 +1,11 @@
 // lib/fontawesome.js
 import { findIconDefinition, icon, IconDefinition, library } from '@fortawesome/fontawesome-svg-core';
-import { faGift, faQrcode, faFileZipper, faPhotoFilm, faCircleVideo, faDownload, faShareNodes, faLink, faUpload, faGridHorizontal, faHouse, faUser, faBars, faChevronLeft, faX, faCheck, faArrowLeft, faChevronRight } from '@fortawesome/pro-solid-svg-icons';
+import { faGift, faQrcode, faFileZipper, faPhotoFilm, faCircleVideo, faDownload, faShareNodes, faLink, faUpload, faGridHorizontal, faHouse, faUser, faBars, faChevronLeft, faX, faCheck, faArrowLeft, faChevronRight, faChevronDown, faChevronUp } from '@fortawesome/pro-solid-svg-icons';
 import { faFacebook, faInstagram } from '@fortawesome/free-brands-svg-icons'
-
+import {Actions} from './actions'
 
 // Add any icons you want here
-library.add(faGift, faChevronRight, faCheck, faX, faArrowLeft, faChevronLeft, faUser, faBars, faHouse, faGridHorizontal, faUpload,faQrcode, faFileZipper, faPhotoFilm, faCircleVideo, faDownload, faShareNodes, faLink, faInstagram as IconDefinition, faFacebook as IconDefinition);
+library.add(faGift, faChevronRight, faChevronDown, faChevronUp, faCheck, faX, faArrowLeft, faChevronLeft, faUser, faBars, faHouse, faGridHorizontal, faUpload,faQrcode, faFileZipper, faPhotoFilm, faCircleVideo, faDownload, faShareNodes, faLink, faInstagram as IconDefinition, faFacebook as IconDefinition);
 
 
 const download = findIconDefinition({ prefix: 'fas', iconName: 'download' })
@@ -50,6 +50,12 @@ export const leftIcon = icon(left)
 const right = findIconDefinition({ prefix: 'fas', iconName: 'chevron-right' })
 export const rightIcon = icon(right)
 
+const down = findIconDefinition({ prefix: 'fas', iconName: 'chevron-down' })
+export const downIcon = icon(down)
+
+const up = findIconDefinition({ prefix: 'fas', iconName: 'chevron-up' })
+export const upIcon = icon(up)
+
 const x = findIconDefinition({ prefix: 'fas', iconName: 'x' })
 export const xIcon = icon(x)
 
@@ -66,6 +72,6 @@ const instagram = findIconDefinition({ prefix: 'fab', iconName: 'instagram' })
 export const instagramIcon = icon(instagram)
 
 
-
+export {Actions}
 
 
