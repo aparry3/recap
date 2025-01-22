@@ -1,15 +1,16 @@
-import { OrientationMedia } from "@/helpers/providers/gallery"
+import useGallery, { OrientationMedia } from "@/helpers/providers/gallery"
 import { Dispatch, FC, SetStateAction, useCallback, useEffect, useRef, useState } from "react"
 import { Column, Container } from "react-web-layout-components"
 
 import styles from './MediaGallery.module.scss'
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { checkIcon } from "@/lib/icons"
+import { Actions, checkIcon, downloadIcon, trashIcon } from "@/lib/icons"
 import { Media } from "@/lib/types/Media"
 import LightBox from "./Lightbox"
 import { isImage, isVideo } from "@/helpers/utils"
 
 const MediaGallery: FC<{media: Media[]}> = ({media}) => {
+    const {selectImages, selectedImages, toggleSelectedImage} = useGallery()
     const [viewImageIndex, setViewImageIndex] = useState<number>(-1)
     const [mediaSrc, setMediaSrc] = useState<string | undefined>(undefined)
     const [nextSrc, setNextSrc] = useState<string | undefined>(undefined)
@@ -152,16 +153,59 @@ const MediaGallery: FC<{media: Media[]}> = ({media}) => {
     return (
             <>
             <Column className={styles.gallery}>
-            {media.map((m, index) => (
+            {media.map((m, index) => {
+                if (selectImages) {
+                    const selected = selectedImages.has(m.id)
+                    return (
+                        <Container  key={m.url} className={`${styles.imageContainer} ${(m?.height || 0) > (m?.width || 0) ? styles.vertical : ''} ${selected ? styles.border : ''}`} onClick={() => toggleSelectedImage(m.id)}>
+                            { isVideo(m) ? (
+                                <video id="hover-video" src={m.url} muted loop autoPlay playsInline className={styles.image} />
+                            ) : (
+                                <img src={m.preview} alt="image" className={`${styles.image}`} onContextMenu={(e) => e.preventDefault()}/>
+                            )}
+                            {selected && (
+                                <>
+                                    <Container className={styles.checkContainer} />
+                                    <FontAwesomeIcon icon={checkIcon} className={styles.icon}/>
+                                </>
+                            )}
+                        </Container>
+                        )        
+                }
+                return (
                 <Container onTouchStart={(e) => handleTouchStart(e, index)} onTouchEnd={handleTouchEnd} onContextMenu={(e) => {e.preventDefault()}} key={m.url} onMouseOver={() => handleMouseOver(index)} onMouseLeave={() => setHoverIndex(-1)} className={`${styles.imageContainer} ${(m?.height || 0) > (m?.width || 0) ? styles.vertical : ''}`} onClick={() => selectImage(index)}>
                     { isVideo(m) && (
                         <video id="hover-video" src={m.url} muted loop autoPlay playsInline className={styles.image} style={{display: hoverIndex === index ? 'block' : 'none'}}/>
                     )}
                     <img src={m.preview} alt="image" className={`${styles.image}`} onContextMenu={(e) => e.preventDefault()} style={{display: isImage(m) || hoverIndex !== index ? 'block' : 'none'}}/>
                 </Container>
-            ))}
+                )
+            })}
             </Column>
+            {(!!selectedImages.size) && <Container className={styles.menuSpace}/>}
             <LightBox image={mediaSrc} contentType={contentType} index={viewImageIndex + 1} total={media.length} onClose={handleClose} prevImage={prevSrc} nextImage={nextSrc} onPrevious={handlePrev} onNext={handleNext}/>
+            {(selectedImages && !!selectedImages.size) && (
+                <Column className={styles.selectedImageMenuContainer}>
+                    <Container className={styles.selectedImageActionsContainer}>
+                        <Container className={styles.selectedImageActions}>
+                            <Container className={styles.iconContainer}>
+                                <FontAwesomeIcon icon={downloadIcon} className={styles.actionIcon}/>
+                            </Container>
+                            <Container className={styles.iconContainer}>
+                                <Actions  className={styles.actionIcon}/>
+                            </Container>
+                        </Container>
+                        <Container className={styles.selectedImageActions}>
+                            <Container className={styles.iconContainer}>
+                                <FontAwesomeIcon icon={trashIcon} className={styles.actionIcon}/>
+                            </Container>
+                        </Container>
+                    </Container>
+                    <Container className={styles.selectedImageActionsContainer}>
+                        
+                    </Container>
+                </Column>
+            )}
             </>
     )
 }

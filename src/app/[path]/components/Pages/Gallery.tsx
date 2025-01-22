@@ -7,7 +7,7 @@ import People from './Tabs/People';
 import Albums from './Tabs/Albums';
 import useGallery from '@/helpers/providers/gallery';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { arrowLeftIcon, downIcon, upIcon } from '@/lib/icons';
+import { arrowLeftIcon, checkSquareIcon, downIcon, squareIcon, upIcon } from '@/lib/icons';
 
 
 enum Tab {
@@ -26,7 +26,7 @@ const TabMenuItem: FC<{tab: Tab, activeTab: Tab, selectTab: (tab: Tab) => void}>
 
 const Gallery: FC = () => {
     const [tab, setTab] = useState<Tab>(Tab.PHOTOS)
-    const {person, setPerson} = useGallery()
+    const {person, setPerson, toggleSelectImages, selectImages} = useGallery()
     const [menuOpen, setMenuOpen] = useState(false)
 
     const handleChangeTab = (tab: Tab) => {
@@ -62,7 +62,7 @@ const Gallery: FC = () => {
                         </Container>
                     </Row>
                 ) :(
-                <Row className={styles.tabs}>
+                <Row className={styles.tabs} justify='space-between'>
                     <Container className={`${styles.titleOption} ${styles.active}`} onClick={() => setMenuOpen(!menuOpen)}>
                         <Text size={1.8} weight={500}>{tab}</Text>
                         <Container padding={[0, 1]}>
@@ -78,6 +78,12 @@ const Gallery: FC = () => {
                             <TabMenuItem tab={Tab.ALBUMS} activeTab={tab} selectTab={handleChangeTab}/>
                         </Column>
                     )}
+                    <Container className={styles.selectContainer} onClick={toggleSelectImages}>
+                        <Text>Select</Text>
+                        <Container className={styles.checkContainer}>
+                            <FontAwesomeIcon icon={selectImages ? checkSquareIcon : squareIcon} className={styles.icon}/>
+                        </Container>
+                    </Container>
                 </Row>
                 )}
                 <Container className={styles.line}/>

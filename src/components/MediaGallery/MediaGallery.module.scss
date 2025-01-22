@@ -52,7 +52,30 @@
     object-fit:contain;
     z-index: 10;
 }
-
+.selectedImageMenuContainer {
+    width: 100%;
+    position: fixed;
+    bottom: -4rem;
+    z-index: 10;
+    background: var(--background-light);
+    left: 0;
+    border-radius: 0.5rem 0.5rem 0 0;
+    box-shadow: 0 0 1.25rem -1rem black;
+}
+.selectedImageActionsContainer {
+    padding: 0 1rem !important;
+    height: 4rem;
+    width: 100%;
+    justify-content: space-between !important;
+}
+.actionIcon {
+    color: var(--primary);
+    height: 1.25rem;
+}
+.menuSpace {
+    height: 4rem;
+    width: 100%;
+}
 @media screen and (max-width: 768px) {
     .lightBoxImage {
         width: 100% !important;
