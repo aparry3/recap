@@ -1,6 +1,5 @@
 // src/app/api/galleries/route.ts
-import { insertAlbum, selectAlbums, selectGalleryAlbums } from '@/lib/db/albumService';
-import { selectGalleryMedia } from '@/lib/db/mediaService';
+import { insertAlbum, selectGalleryAlbums } from '@/lib/db/albumService';
 import { NewAlbumData } from '@/lib/types/Album';
 import { NextResponse } from 'next/server';
 

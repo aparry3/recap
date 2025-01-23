@@ -1,9 +1,10 @@
 // UploadContext.ts
 import { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { AlbumMediaData } from '@/lib/types/Album';
-import { createAlbum, fetchAlbums } from '../api/albumClient';
+import { addMediaToAlbum, createAlbum, fetchAlbums } from '../api/albumClient';
 import CreateAlbum from '@/components/CreateAlbum';
 import { useUser } from './user';
+import AlbumSelect from '@/components/AlbumSelect';
 
 
 interface AlbumState {
@@ -14,6 +15,7 @@ interface AlbumState {
 interface AlbumActions {
     setAlbum: (albumId?: string) => void
     createAlbum: () => void
+    selectAlbums: (imageIds: Set<string>) => void
 }
 
 type AlbumContextType = AlbumState & AlbumActions
@@ -25,7 +27,8 @@ const AlbumsProvider: React.FC<{ children: React.ReactNode, galleryId: string}> 
     const [currentAlbum, setCurrentAlbum] = useState<AlbumMediaData | undefined>(undefined)
     const [albums, setAlbums] = useState<AlbumMediaData[]>([])
     const [showNewAlbumPage, setShowNewAlbumPage] = useState<boolean>(false)
-
+    const [showSelectAlbums, setShowSelectAlbums] = useState<boolean>(false)
+    const [selectedImages, setSelectedImages] = useState<Set<string>>(new Set())
     const setAlbum = useCallback((albumId?: string) => {
       const _album = albums.find(alb => alb.id === albumId)
       setCurrentAlbum(_album)
@@ -47,15 +50,38 @@ const AlbumsProvider: React.FC<{ children: React.ReactNode, galleryId: string}> 
       }
     }, [personId])
 
+    const selectAlbums = useCallback((imageIds: Set<string>) => {
+      setSelectedImages(new Set(imageIds))
+      setShowSelectAlbums(true)
+    }, [])
+
+    const cancelSelectAlbums = useCallback(() => {
+      setSelectedImages(new Set())
+      setShowSelectAlbums(false)
+    }, [])
+
+    const addMediaToAlbums = async (albumIds: string[], mediaIds: string[]) => {
+      const promises = albumIds.map(albumId => addMediaToAlbum(albumId, mediaIds))
+
+      const _albums = await Promise.all(promises)
+      return _albums
+    }
+
+    const confirmAlbums = useCallback((confirmedAlbumIds: string[]) => {
+      setShowSelectAlbums(false)
+      addMediaToAlbums(confirmedAlbumIds, Array.from(selectedImages))
+
+    }, [selectedImages])
   return (
     <AlbumContext.Provider value={{
         albums,
         album: currentAlbum,
         setAlbum,
+        selectAlbums: selectAlbums,
         createAlbum: () => setShowNewAlbumPage(true)
     }}>
       {children}
-      
+    {showSelectAlbums &&<AlbumSelect albums={albums} createAlbum={() => setShowNewAlbumPage(true)} onConfirm={confirmAlbums} onCancel={cancelSelectAlbums} />}
     {showNewAlbumPage && <CreateAlbum onSubmit={submitAlbum} onClose={() => setShowNewAlbumPage(false)}/>}
     </AlbumContext.Provider>
   );

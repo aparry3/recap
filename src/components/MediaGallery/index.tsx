@@ -8,9 +8,11 @@ import { Actions, albumIcon, checkIcon, downloadIcon, trashIcon } from "@/lib/ic
 import { Media } from "@/lib/types/Media"
 import LightBox from "./Lightbox"
 import { isImage, isVideo } from "@/helpers/utils"
+import useAlbums from "@/helpers/providers/albums"
 
 const MediaGallery: FC<{media: Media[]}> = ({media}) => {
-    const {selectImages, selectedImages, toggleSelectedImage} = useGallery()
+    const {selectImages, toggleSelectImages,selectedImages, toggleSelectedImage} = useGallery()
+    const {selectAlbums} = useAlbums()
     const [viewImageIndex, setViewImageIndex] = useState<number>(-1)
     const [mediaSrc, setMediaSrc] = useState<string | undefined>(undefined)
     const [nextSrc, setNextSrc] = useState<string | undefined>(undefined)
@@ -150,6 +152,11 @@ const MediaGallery: FC<{media: Media[]}> = ({media}) => {
       const selectImage = (index: number) => {
           setImage(index)
       }
+
+      const openSelectAlbums = useCallback(() => {
+        selectAlbums(selectedImages)
+        toggleSelectImages()
+      }, [selectedImages, selectAlbums])
     return (
             <>
             <Column className={styles.gallery}>
@@ -202,7 +209,7 @@ const MediaGallery: FC<{media: Media[]}> = ({media}) => {
                         </Container>
                     </Container>
                     <Row className={styles.selectedImageActionsContainer}>
-                        <Container className={styles.selectedImageActions}>
+                        <Container className={styles.selectedImageActions} onClick={openSelectAlbums}>
                             <Container className={styles.iconContainer}>
                                 <FontAwesomeIcon icon={albumIcon} className={styles.actionIcon}/>
                             </Container>
