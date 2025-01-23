@@ -1,12 +1,12 @@
 // lib/fontawesome.js
 import { findIconDefinition, icon, IconDefinition, library } from '@fortawesome/fontawesome-svg-core';
 import { faSquare } from '@fortawesome/pro-regular-svg-icons';
-import { faGift, faQrcode, faFileZipper, faPhotoFilm, faCircleVideo, faDownload, faShareNodes, faLink, faUpload, faGridHorizontal, faHouse, faUser, faBars, faChevronLeft, faX, faCheck, faArrowLeft, faChevronRight, faChevronDown, faChevronUp, faCheckSquare, faTrash } from '@fortawesome/pro-solid-svg-icons';
+import { faGift, faQrcode, faFileZipper, faPhotoFilm, faCircleVideo, faDownload, faShareNodes, faLink, faUpload, faGridHorizontal, faHouse, faUser, faBars, faChevronLeft, faX, faCheck, faArrowLeft, faChevronRight, faChevronDown, faChevronUp, faCheckSquare, faTrash, faRectangleHistory } from '@fortawesome/pro-solid-svg-icons';
 import { faFacebook, faInstagram } from '@fortawesome/free-brands-svg-icons'
 import {Actions} from './actions'
 
 // Add any icons you want here
-library.add(faGift, faTrash, faChevronRight, faChevronDown, faChevronUp, faCheck, faX, faArrowLeft, faChevronLeft, faUser, faBars, faHouse, faGridHorizontal, faUpload,faQrcode, faFileZipper, faPhotoFilm, faCircleVideo, faDownload, faShareNodes, faLink, faCheckSquare, faSquare as IconDefinition, faInstagram as IconDefinition, faFacebook as IconDefinition);
+library.add(faGift, faTrash, faRectangleHistory, faChevronRight, faChevronDown, faChevronUp, faCheck, faX, faArrowLeft, faChevronLeft, faUser, faBars, faHouse, faGridHorizontal, faUpload,faQrcode, faFileZipper, faPhotoFilm, faCircleVideo, faDownload, faShareNodes, faLink, faCheckSquare, faSquare as IconDefinition, faInstagram as IconDefinition, faFacebook as IconDefinition);
 
 
 const download = findIconDefinition({ prefix: 'fas', iconName: 'download' })
@@ -80,6 +80,10 @@ export const squareIcon = icon(square)
 
 const trash = findIconDefinition({ prefix: 'fas', iconName: 'trash' })
 export const trashIcon = icon(trash)
+
+const album = findIconDefinition({ prefix: 'fas', iconName: 'rectangle-history' })
+export const albumIcon = icon(album)
+
 
 
 

@@ -1,10 +1,10 @@
 import useGallery, { OrientationMedia } from "@/helpers/providers/gallery"
 import { Dispatch, FC, SetStateAction, useCallback, useEffect, useRef, useState } from "react"
-import { Column, Container } from "react-web-layout-components"
+import { Column, Container, Text, Row} from "react-web-layout-components"
 
 import styles from './MediaGallery.module.scss'
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { Actions, checkIcon, downloadIcon, trashIcon } from "@/lib/icons"
+import { Actions, albumIcon, checkIcon, downloadIcon, trashIcon } from "@/lib/icons"
 import { Media } from "@/lib/types/Media"
 import LightBox from "./Lightbox"
 import { isImage, isVideo } from "@/helpers/utils"
@@ -16,7 +16,7 @@ const MediaGallery: FC<{media: Media[]}> = ({media}) => {
     const [nextSrc, setNextSrc] = useState<string | undefined>(undefined)
     const [prevSrc, setPrevSrc] = useState<string | undefined>(undefined)
     const [contentType, setContentType] = useState<string>()
-
+    const [menuOpen, setMenuOpen] = useState<boolean>(false)
     // useEffect(() => {
     //     const handleContextMenu = (e: Event) => {
     //       e.preventDefault(); // Prevent the default context menu
@@ -185,13 +185,13 @@ const MediaGallery: FC<{media: Media[]}> = ({media}) => {
             {(!!selectedImages.size) && <Container className={styles.menuSpace}/>}
             <LightBox image={mediaSrc} contentType={contentType} index={viewImageIndex + 1} total={media.length} onClose={handleClose} prevImage={prevSrc} nextImage={nextSrc} onPrevious={handlePrev} onNext={handleNext}/>
             {(selectedImages && !!selectedImages.size) && (
-                <Column className={styles.selectedImageMenuContainer}>
+                <Column className={`${styles.selectedImageMenuContainer} ${menuOpen ? styles.selectedMenuOpen : ''}`}>
                     <Container className={styles.selectedImageActionsContainer}>
                         <Container className={styles.selectedImageActions}>
                             <Container className={styles.iconContainer}>
                                 <FontAwesomeIcon icon={downloadIcon} className={styles.actionIcon}/>
                             </Container>
-                            <Container className={styles.iconContainer}>
+                            <Container className={styles.iconContainer} onClick={() => setMenuOpen(!menuOpen)}>
                                 <Actions  className={styles.actionIcon}/>
                             </Container>
                         </Container>
@@ -201,9 +201,16 @@ const MediaGallery: FC<{media: Media[]}> = ({media}) => {
                             </Container>
                         </Container>
                     </Container>
-                    <Container className={styles.selectedImageActionsContainer}>
-                        
-                    </Container>
+                    <Row className={styles.selectedImageActionsContainer}>
+                        <Container className={styles.selectedImageActions}>
+                            <Container className={styles.iconContainer}>
+                                <FontAwesomeIcon icon={albumIcon} className={styles.actionIcon}/>
+                            </Container>
+                            <Container className={styles.iconContainer}>
+                                <Text weight={600}>Add to album</Text>
+                            </Container>
+                        </Container>
+                    </Row>
                 </Column>
             )}
             </>

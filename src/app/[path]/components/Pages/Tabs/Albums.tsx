@@ -7,8 +7,7 @@ import MediaGallery from "@/components/MediaGallery"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 
 const Albums: FC = () => {
-    const [album, setAlbum] = useState<string>()
-    const {createAlbum, albums} = useAlbums()
+    const {createAlbum, albums, album, setAlbum} = useAlbums()
 
     return album ? (
             <MediaGallery media={[]} />

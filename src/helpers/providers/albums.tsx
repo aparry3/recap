@@ -8,9 +8,11 @@ import { useUser } from './user';
 
 interface AlbumState {
     albums: AlbumMediaData[]
+    album: AlbumMediaData | undefined
 } 
 
 interface AlbumActions {
+    setAlbum: (albumId?: string) => void
     createAlbum: () => void
 }
 
@@ -20,9 +22,15 @@ const AlbumContext = createContext<AlbumContextType>({} as AlbumContextType);
 
 const AlbumsProvider: React.FC<{ children: React.ReactNode, galleryId: string}> = ({ children, galleryId }) => {
     const {personId} = useUser()
+    const [currentAlbum, setCurrentAlbum] = useState<AlbumMediaData | undefined>(undefined)
     const [albums, setAlbums] = useState<AlbumMediaData[]>([])
     const [showNewAlbumPage, setShowNewAlbumPage] = useState<boolean>(false)
 
+    const setAlbum = useCallback((albumId?: string) => {
+      const _album = albums.find(alb => alb.id === albumId)
+      setCurrentAlbum(_album)
+    }, [albums])
+    
     useEffect(() => {
       const init = async () => {
         const _albums = await fetchAlbums(galleryId)
@@ -42,6 +50,8 @@ const AlbumsProvider: React.FC<{ children: React.ReactNode, galleryId: string}> 
   return (
     <AlbumContext.Provider value={{
         albums,
+        album: currentAlbum,
+        setAlbum,
         createAlbum: () => setShowNewAlbumPage(true)
     }}>
       {children}

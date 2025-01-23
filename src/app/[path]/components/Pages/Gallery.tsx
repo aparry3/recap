@@ -1,5 +1,5 @@
 "use client";
-import { FC, useMemo, useState } from 'react'
+import { FC, useEffect, useMemo, useState } from 'react'
 import styles from './Gallery.module.scss'
 import { Column, Container, Row, Text } from 'react-web-layout-components'
 import Photos from './Tabs/Photos';
@@ -8,6 +8,7 @@ import Albums from './Tabs/Albums';
 import useGallery from '@/helpers/providers/gallery';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { arrowLeftIcon, checkSquareIcon, downIcon, squareIcon, upIcon } from '@/lib/icons';
+import useAlbums from '@/helpers/providers/albums';
 
 
 enum Tab {
@@ -27,7 +28,9 @@ const TabMenuItem: FC<{tab: Tab, activeTab: Tab, selectTab: (tab: Tab) => void}>
 const Gallery: FC = () => {
     const [tab, setTab] = useState<Tab>(Tab.PHOTOS)
     const {person, setPerson, toggleSelectImages, selectImages} = useGallery()
+    const {album, setAlbum} = useAlbums()
     const [menuOpen, setMenuOpen] = useState(false)
+
 
     const handleChangeTab = (tab: Tab) => {
         setTab(tab)
@@ -46,10 +49,14 @@ const Gallery: FC = () => {
         }
     }, [tab])
     
+    useEffect(() => {
+        console.log(album)
+        console.log(tab)
+    }, [album, tab])
     return (
         <Column className={styles.section}>
             <Column className={styles.titleContainer}>
-                {(person) ? (
+                {(Tab.PEOPLE === tab && person) ? (
                     <Row className={styles.nameContainer}>
                         <Container className={styles.backIconContainer} onClick={() => setPerson()}>
                             <FontAwesomeIcon icon={arrowLeftIcon} className={styles.leftIcon} /><Text size={1.1} className={styles.backText}>Back</Text>
@@ -59,6 +66,18 @@ const Gallery: FC = () => {
                         </Container>
                         <Container className={styles.countContainer}>
                             <Text size={1.1}>{person.count} uploads</Text>
+                        </Container>
+                    </Row>
+                ) : (Tab.ALBUMS === tab && album) ? (
+                    <Row className={styles.nameContainer}>
+                        <Container className={styles.backIconContainer} onClick={() => setAlbum()}>
+                            <FontAwesomeIcon icon={arrowLeftIcon} className={styles.leftIcon} /><Text size={1.1} className={styles.backText}>Back</Text>
+                        </Container>
+                        <Container className={styles.name}>
+                            <Text size={1.8}>{album.name}</Text>
+                        </Container>
+                        <Container className={styles.countContainer}>
+                            <Text size={1.1}>{album.count} uploads</Text>
                         </Container>
                     </Row>
                 ) :(
