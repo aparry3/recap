@@ -8,9 +8,6 @@ import { Media } from '@/lib/types/Media';
 import { fetchGalleryPeople } from '../api/personClient';
 import { GalleryPersonData } from '@/lib/types/Person';
 import { uploadLargeMedia, uploadMedia } from '../hooks/upload';
-import Notification from '@/components/Notification';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Column, Container, Row } from 'react-web-layout-components';
 import UploadStatus from '@/components/UploadStatus';
 
 
@@ -32,11 +29,15 @@ interface UploadState {
     people: GalleryPersonData[]
     stagedMedia: OrientationMedia[]
     gallery: Gallery
+    selectImages: boolean
+    selectedImages: Set<string>
 } 
 
 interface UploadActions {
     upload: () => void
     setPerson: (personId?: string) => void
+    toggleSelectImages: () => void
+    toggleSelectedImage: (imageId: string) => void
 }
 
 type GalleryContextType = UploadState & UploadActions
@@ -54,7 +55,8 @@ const GalleryProvider: React.FC<{ children: React.ReactNode, gallery: Gallery}> 
   const [currentPerson, setCurrentPerson] = useState<GalleryPersonData | undefined>(undefined);
   const[totalUploads, setTotalUploads] = useState<number | undefined>();
   const[completeUploads, setCompleteUploads] = useState<number | undefined>();
-
+  const [selectImages, setSelectImages] = useState<boolean>(false)
+  const [selectedImages, setSelectedImages] = useState<Set<string>>(new Set())
   const handleBeginUpload = useCallback(() => {
     if (fileInputRef.current) {
         fileInputRef.current.click();
@@ -215,6 +217,22 @@ const setPerson = useCallback((personId?: string) => {
     initPeople(gallery.id)
   }, [gallery.id])
 
+  const toggleSelectImages = () => {
+    setSelectImages(!selectImages)
+    setSelectedImages(new Set())
+  }
+  const toggleSelectedImage = useCallback((id: string) => {
+      if (selectedImages.has(id)) {
+          selectedImages.delete(id)
+          const newSelectedImages = new Set(selectedImages)
+          setSelectedImages(newSelectedImages)
+      } else {
+          selectedImages.add(id)
+          const newSelectedImages = new Set(selectedImages)
+          setSelectedImages(newSelectedImages)
+      }
+  }, [selectedImages])
+  
 
   return (
     <GalleryContext.Provider value={{
@@ -224,7 +242,13 @@ const setPerson = useCallback((personId?: string) => {
         setPerson,
         person: currentPerson,
         stagedMedia: stagedMedia,
-        gallery
+        gallery,
+        selectImages,
+        selectedImages,
+        toggleSelectImages,
+        toggleSelectedImage,
+
+
     }}>
       {children}
       <input
@@ -244,25 +268,9 @@ const setPerson = useCallback((personId?: string) => {
 
 
 const useGallery = (): GalleryContextType => {
-  const {
-    upload,
-    media,
-    people,
-    person,
-    gallery,
-    setPerson,
-    stagedMedia
-  } = useContext(GalleryContext);
+  const galleryContext = useContext(GalleryContext);
 
-  return {
-    media,
-    people,
-    person,
-    setPerson,
-    stagedMedia,
-    upload,
-    gallery
-  };
+  return galleryContext;
 };
 
 export default useGallery;

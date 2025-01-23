@@ -4,6 +4,26 @@
     opacity: 1;
 }
 
+.tabs {
+    position: relative;
+    width: 100%;
+    padding: 0.5rem 0 !important;
+}
+.tabMenu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 1;
+    background: var(--background-light);
+    border-radius: 0 0 0.5rem 0.5rem;
+    box-shadow: 0 5px 10px -8px var(--text-dark);
+    min-width: 15rem;
+}
+.menuItem {
+    padding: 0.5rem;
+    width: 100%;
+    justify-content: flex-start !important;
+}
 .backText {
     padding: 0 0.5rem !important;
 }
@@ -13,12 +33,44 @@
     width: 100%;
     padding: 1rem !important;
 }
+.line {
+    width: 99%;}
 
 .nameContainer {
     width: 100%;
+    padding: 0.5rem 1rem;
+    position: sticky;
+    top: 0;
+    background: var(--background-light);
+    z-index: 1;
     justify-content: space-between !important;
 }
 
 .backIconContainer {
     cursor: pointer;
+}
+.titleContainer {
+    position: sticky;
+    width: 100%;
+    top: 0;
+    background: var(--background-light);
+    z-index: 1;
+}
+.selectContainer {
+    padding: 0.5rem;
+}
+.checkContainer {
+    padding: 0 0.5rem;
+}
+.icon {
+    color: var(--primary);
+}
+@media screen and (max-width: 768px) {
+    .tabMenu {
+        min-width: 100%;
+    }
+    
+    .tab {
+        padding: 0.25rem !important;
+    }
 }

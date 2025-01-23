@@ -58,8 +58,7 @@ const CreatePage: FC<{person?: Person | NewPersonData, onSubmit: (galleryName: s
     if (!submitDisabled) onSubmit(galleryName, name, email);
 };
 
-
-  const url = useMemo(() => `https://ourweddingrecap.com/${name.toLowerCase().replaceAll(' ', '-')}`, [name]);
+  const url = useMemo(() => `https://ourweddingrecap.com/${galleryName.toLowerCase().replaceAll(' ', '-')}`, [galleryName]);
   return (
     <Container as='main' className={styles.page}>
       <Column className={styles.titleContainer}>

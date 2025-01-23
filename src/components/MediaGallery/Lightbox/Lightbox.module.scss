@@ -18,6 +18,11 @@
     opacity: 0.7;
     overscroll-behavior: none;
 }
+.icon {
+    height: 1rem;
+    width: 1rem;
+    color: black;
+}
 .lightboxBlur {
     position: absolute;
     width: 100%;
@@ -30,11 +35,10 @@
 }
 .lightboxContentContainer {
     max-width: 100% !important; /* Ensures the image spans the full width of the cell */
-    max-height: 70% !important; /* Ensures the image spans the full height of the cell */
-    height:70% !important;
     width: 100%;
     z-index: 100;
     position: relative;
+    flex-grow: 1;
 }
 
 .lightBoxContent {
@@ -46,6 +50,7 @@
 }
 .lightboxDetails {
     z-index: 100;
+    padding: 1rem;
     flex-direction: row-reverse;
     justify-content: space-between !important;
     width: 50%;
@@ -75,7 +80,7 @@
 }
 .brandIconContainer {
     padding: 0.5rem;
-    font-size: 2rem;
+    font-size: 1.5rem;
 }
 .countContainer {
     padding: 0.5rem;
@@ -84,6 +89,10 @@
     padding: 1rem;
     width: 100%;
     z-index: 100
+}
+.lightboxHeader {
+    width: 100%;
+    justify-content: space-between !important;
 }
 .headerIconContainer {
     padding: 0.5rem;
@@ -100,7 +109,7 @@
 }
 .controlContainer {
     padding: 3rem;
-    font-size: 3rem;
+    font-size: 2rem;
     cursor: pointer;
 }
 @media screen and (max-width: 768px) {

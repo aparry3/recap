@@ -3,6 +3,7 @@
     flex-grow: 1;
     height: 100%;
     overflow: auto;
+    position: relative;
 }
 @media screen and (max-width: 768px) {
     .content {
@@ -45,6 +46,11 @@
     .title {
         padding: 0.5rem 1rem !important;
         width: 100%;
+        position:sticky;
+        top: 0;
+        left: 0;
+        z-index: 1;
+        background: var(--background-light);
     }
 }
 

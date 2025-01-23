@@ -3,7 +3,7 @@ import { Column, Container, Row, Text } from "react-web-layout-components";
 import styles from './Lightbox.module.scss'
 import useWindowSize from "@/helpers/hooks/window";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { downloadIcon, facebookIcon, instagramIcon, leftIcon, rightIcon, xIcon } from "@/lib/icons";
+import { Actions, downloadIcon, leftIcon, rightIcon, xIcon } from "@/lib/icons";
 import { downloadUrl } from "@/helpers/files";
 import useGallery from "@/helpers/providers/gallery";
 // import { sharePhotoToFacebook } from "@/helpers/share";
@@ -28,7 +28,7 @@ const LightBox: FC<LightBoxProps> = memo(({ image, index, total, onClose, prevIm
     const [translateY, setTranslateY] = useState(0);
     const [isAnimating, setIsAnimating] = useState(false);
     const {width, height} = useWindowSize()
-
+    const [detailsOpen, setDetailsOpen] = useState(false)
     const handleKeyDown = (e: KeyboardEvent) => {
         if (isAnimating) return;
 
@@ -93,6 +93,9 @@ const LightBox: FC<LightBoxProps> = memo(({ image, index, total, onClose, prevIm
         }
     }, [image])
 
+    const openDetails = () => {
+        setDetailsOpen(true)
+    }
     const triggerAnimation = (direction?: "next" | "prev") => {
         setIsAnimating(true);
 
@@ -151,67 +154,70 @@ const LightBox: FC<LightBoxProps> = memo(({ image, index, total, onClose, prevIm
         >
             <Container className={styles.lightBoxBackground} />
             <Container className={styles.lightboxBlur} />
-            <Row className={styles.lightboxHeader} onClick={onClose}>
-                <Container className={styles.headerIconContainer}>
+            <Row className={styles.lightboxHeader}>
+                <Container className={styles.headerIconContainer} onClick={onClose}>
                     <FontAwesomeIcon icon={xIcon} className={styles.icon} />
+                </Container>
+                <Container className={styles.headerIconContainer} onClick={openDetails}>
+                    <Actions className={styles.icon}/>
                 </Container>
             </Row>
             <Container className={styles.lightboxContentContainer}>
-            <Container
-                className={styles.lightBoxContent}
-                onTouchStart={handleTouchStart}
-                onTouchMove={handleTouchMove}
-                onTouchEnd={handleTouchEnd}
-                style={{
-                    transform: `translateX(${translateX}px)`,
-                    transition: isAnimating ? "transform 0.3s ease" : "none",
-                }}
-                >
-                   {prevImage && ( 
-                    <Container className={`${styles.lightboxImageContainer} ${styles.left}`}>
-                        <img
-                            onClick={handleImageClick}
-                            src={prevImage} 
-                            alt="image" 
-                            className={`${styles.lightBoxImage}`}
-                            loading="lazy"/>
-                    </Container> )}
-                    <Container className={`${styles.lightboxImageContainer}`}>
-                        {contentType?.startsWith('video') ? (
-                            <video id="hover-video" src={image} muted loop autoPlay playsInline className={styles.lightBoxImage} />
-                        ) : (
+                <Container
+                    className={styles.lightBoxContent}
+                    onTouchStart={handleTouchStart}
+                    onTouchMove={handleTouchMove}
+                    onTouchEnd={handleTouchEnd}
+                    style={{
+                        transform: `translateX(${translateX}px)`,
+                        transition: isAnimating ? "transform 0.3s ease" : "none",
+                    }}
+                    >
+                    {prevImage && ( 
+                        <Container className={`${styles.lightboxImageContainer} ${styles.left}`}>
                             <img
-                            onClick={handleImageClick}
-                            src={image} 
-                            alt="image" 
-                            className={`${styles.lightBoxImage}`}
-                            loading="lazy"/>
-                        )}
+                                onClick={handleImageClick}
+                                src={prevImage} 
+                                alt="image" 
+                                className={`${styles.lightBoxImage}`}
+                                loading="lazy"/>
+                        </Container> )}
+                        <Container className={`${styles.lightboxImageContainer}`}>
+                            {contentType?.startsWith('video') ? (
+                                <video id="hover-video" src={image} muted loop autoPlay playsInline className={styles.lightBoxImage} />
+                            ) : (
+                                <img
+                                onClick={handleImageClick}
+                                src={image} 
+                                alt="image" 
+                                className={`${styles.lightBoxImage}`}
+                                loading="lazy"/>
+                            )}
 
+                        </Container>
+                        {nextImage && (
+                        <Container className={`${styles.lightboxImageContainer} ${styles.right}`}>
+                            <img
+                                onClick={handleImageClick}
+                                src={nextImage} 
+                                alt="image" 
+                                className={`${styles.lightBoxImage}`}
+                                loading="lazy"/>
+
+                        </Container>)}
+                </Container>
+                <Container className={styles.lightboxControls} >
+                    <Container className={`${styles.controlContainer} ${styles.leftArrow}`} onClick={() => triggerAnimation("prev")}>
+                        <FontAwesomeIcon icon={leftIcon} className={styles.icon} />
                     </Container>
-                    {nextImage && (
-                    <Container className={`${styles.lightboxImageContainer} ${styles.right}`}>
-                        <img
-                            onClick={handleImageClick}
-                            src={nextImage} 
-                            alt="image" 
-                            className={`${styles.lightBoxImage}`}
-                            loading="lazy"/>
-
-                    </Container>)}
-            </Container>
-            <Container className={styles.lightboxControls} >
-                <Container className={`${styles.controlContainer} ${styles.leftArrow}`} onClick={() => triggerAnimation("prev")}>
-                    <FontAwesomeIcon icon={leftIcon} className={styles.icon} />
+                    <Container className={`${styles.controlContainer} ${styles.rightArrow}`} onClick={() => triggerAnimation("next")}>
+                        <FontAwesomeIcon icon={rightIcon} className={styles.icon} />
+                    </Container>
                 </Container>
-                <Container className={`${styles.controlContainer} ${styles.rightArrow}`} onClick={() => triggerAnimation("next")}>
-                    <FontAwesomeIcon icon={rightIcon} className={styles.icon} />
-                </Container>
-            </Container>
             </Container>
             <Container className={styles.lightboxDetails}>
                 <Container className={styles.countContainer}>
-                    <Text size={1.8}>{index}/{total}</Text>
+                    <Text size={1.5}>{index}/{total}</Text>
                 </Container>
                 <Container>
                     <Container className={styles.brandIconContainer} onClick={download}>
