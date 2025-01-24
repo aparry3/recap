@@ -1,4 +1,4 @@
-@import '../Content.module.scss';
+@import '../../Content.module.scss';
 
 .active {
     opacity: 1;
@@ -55,15 +55,6 @@
     top: 0;
     background: var(--background-light);
     z-index: 1;
-}
-.selectContainer {
-    padding: 0.5rem;
-}
-.checkContainer {
-    padding: 0 0.5rem;
-}
-.icon {
-    color: var(--primary);
 }
 @media screen and (max-width: 768px) {
     .tabMenu {

@@ -5,6 +5,12 @@
     overflow: auto;
     position: relative;
 }
+.overscroll {
+    height:5rem;
+    bottom: 100%;
+    width: 100%;
+    position: absolute;
+}
 @media screen and (max-width: 768px) {
     .content {
         padding-top: 4rem !important;
@@ -100,6 +106,16 @@
     }
 }
 
+.selectContainer {
+    padding: 0.5rem;
+    cursor: pointer;
+}
+.checkContainer {
+    padding: 0 0.5rem;
+}
+.icon {
+    color: var(--primary);
+}
 
 @media screen and (max-width: 768px) {
     .actions {

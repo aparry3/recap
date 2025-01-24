@@ -38,6 +38,7 @@ interface UploadActions {
     setPerson: (personId?: string) => void
     toggleSelectImages: () => void
     toggleSelectedImage: (imageId: string) => void
+    loadGallery: () => Promise<void>
 }
 
 type GalleryContextType = UploadState & UploadActions
@@ -212,10 +213,16 @@ const setPerson = useCallback((personId?: string) => {
 
   }
 
-  useEffect(() => {
-    initImages(gallery.id)
-    initPeople(gallery.id)
+  const loadGallery = useCallback(async () => {
+    await Promise.all([
+      initImages(gallery.id),
+      initPeople(gallery.id)
+    ])
   }, [gallery.id])
+
+  useEffect(() => {
+    loadGallery()
+  }, [loadGallery])
 
   const toggleSelectImages = () => {
     setSelectImages(!selectImages)
@@ -247,8 +254,7 @@ const setPerson = useCallback((personId?: string) => {
         selectedImages,
         toggleSelectImages,
         toggleSelectedImage,
-
-
+        loadGallery
     }}>
       {children}
       <input

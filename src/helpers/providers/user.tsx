@@ -4,7 +4,8 @@ import React, { createContext, useState, useContext, useEffect, useCallback } fr
 import useLocalStorage from '../hooks/localStorage';
 import { createPerson, fetchPerson } from '../api/personClient';
 import PersonPage from '@/components/PersonPage';
-
+import { Container, Text } from 'react-web-layout-components';
+import styles from './Providers.module.scss'
 
 type UserContextType = {
   personId?: string;
@@ -51,7 +52,9 @@ export const UserProvider: React.FC<{
       (!loading && !person) ? (
         <PersonPage person={person} onSubmit={submitPerson}/>
       ) : (
-        <div>Loading...</div>
+        <Container className={styles.loading}>
+          <Text size={2}>Loading...</Text>
+        </Container>
       )}
     </UserContext.Provider>
   );

@@ -2,9 +2,9 @@
 import { FC, useEffect, useMemo, useState } from 'react'
 import styles from './Gallery.module.scss'
 import { Column, Container, Row, Text } from 'react-web-layout-components'
-import Photos from './Tabs/Photos';
-import People from './Tabs/People';
-import Albums from './Tabs/Albums';
+import Photos from '../Tabs/Photos';
+import People from '../Tabs/People';
+import Albums from '../Tabs/Albums';
 import useGallery from '@/helpers/providers/gallery';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { arrowLeftIcon, checkSquareIcon, downIcon, squareIcon, upIcon } from '@/lib/icons';
@@ -31,6 +31,7 @@ const Gallery: FC = () => {
     const {album, setAlbum} = useAlbums()
     const [menuOpen, setMenuOpen] = useState(false)
 
+    const isPhotos = useMemo(() => tab === Tab.PHOTOS || album || person, [tab])
 
     const handleChangeTab = (tab: Tab) => {
         setTab(tab)
@@ -97,12 +98,14 @@ const Gallery: FC = () => {
                             <TabMenuItem tab={Tab.ALBUMS} activeTab={tab} selectTab={handleChangeTab}/>
                         </Column>
                     )}
+                    { isPhotos && (
                     <Container className={styles.selectContainer} onClick={toggleSelectImages}>
                         <Text>Select</Text>
                         <Container className={styles.checkContainer}>
                             <FontAwesomeIcon icon={selectImages ? checkSquareIcon : squareIcon} className={styles.icon}/>
                         </Container>
                     </Container>
+                    )}
                 </Row>
                 )}
                 <Container className={styles.line}/>
