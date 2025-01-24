@@ -16,6 +16,7 @@ interface AlbumActions {
     setAlbum: (albumId?: string) => void
     createAlbum: () => void
     selectAlbums: (imageIds: Set<string>) => void
+    loadAlbums: () => Promise<void>
 }
 
 type AlbumContextType = AlbumState & AlbumActions
@@ -34,6 +35,11 @@ const AlbumsProvider: React.FC<{ children: React.ReactNode, galleryId: string}> 
       setCurrentAlbum(_album)
     }, [albums])
     
+    const loadAlbums = async () => {
+      const _albums = await fetchAlbums(galleryId)
+      setAlbums(_albums)
+    }
+
     useEffect(() => {
       const init = async () => {
         const _albums = await fetchAlbums(galleryId)
@@ -77,6 +83,7 @@ const AlbumsProvider: React.FC<{ children: React.ReactNode, galleryId: string}> 
         albums,
         album: currentAlbum,
         setAlbum,
+        loadAlbums,
         selectAlbums: selectAlbums,
         createAlbum: () => setShowNewAlbumPage(true)
     }}>

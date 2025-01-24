@@ -1,0 +1,15 @@
+.refreshStatus {
+    width: 85vw;
+}
+.status {
+    width: 3rem;
+}
+.done {
+    color: var(--success);
+}
+.refreshingIcon {
+    height: 1.5rem;
+    width: 1.5rem;
+    border-radius: 2rem;
+    background: var(--warning);
+}
