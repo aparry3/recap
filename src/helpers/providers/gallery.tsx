@@ -59,16 +59,17 @@ const GalleryProvider: React.FC<{ children: React.ReactNode, gallery: Gallery}> 
   const [selectImages, setSelectImages] = useState<boolean>(false)
   const [selectedImages, setSelectedImages] = useState<Set<string>>(new Set())
   const handleBeginUpload = useCallback(() => {
-    if (fileInputRef.current) {
-        fileInputRef.current.click();
-    }
-}, [fileInputRef]);
+      if (fileInputRef.current) {
+          fileInputRef.current.click();
+      }
+  }, [fileInputRef]);
 
 
-const setPerson = useCallback((personId?: string) => {
-  const _person = people.find(person => person.id === personId)
-  setCurrentPerson(_person)
-}, [people])
+  const setPerson = useCallback((personId?: string) => {
+    const _person = people.find(person => person.id === personId)
+    setCurrentPerson(_person)
+  }, [people])
+  
   const getImageOrientation = async (imageFile: File): Promise<OrientationMediaWithFile>  => {
     const [preview, image] = await Promise.all([
       convertImageToWebP(imageFile),

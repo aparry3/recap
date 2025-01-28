@@ -160,7 +160,7 @@ const MediaGallery: FC<{media: Media[]}> = ({media}) => {
     return (
             <>
             <Column className={styles.gallery}>
-            {media.map((m, index) => {
+            {media.filter(m => m.uploaded).map((m, index) => {
                 if (selectImages) {
                     const selected = selectedImages.has(m.id)
                     return (

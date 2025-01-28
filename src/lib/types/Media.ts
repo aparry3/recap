@@ -12,6 +12,7 @@ export interface MediaTable {
     longitude?: number
     contentType: string
     created?: Date
+    uploaded?: boolean
 }
 
 export interface AlbumMediaTable {
