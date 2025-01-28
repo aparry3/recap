@@ -2,13 +2,14 @@
 import { ChangeEvent, createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
 import ClientUpload from '@/components/Upload'
 import { Gallery } from '@/lib/types/Gallery';
-import { convertImageToWebP, createMedia, extractWebPPreview, fetchGalleryImages } from '../api/mediaClient';
+import { convertImageToWebP, createMedia, deleteMedia, extractWebPPreview, fetchGalleryImages, fetchMedia, updateMedia } from '../api/mediaClient';
 import useLocalStorage from '../hooks/localStorage';
-import { Media } from '@/lib/types/Media';
+import { Media, PresignedUrls } from '@/lib/types/Media';
 import { fetchGalleryPeople } from '../api/personClient';
 import { GalleryPersonData } from '@/lib/types/Person';
 import { uploadLargeMedia, uploadMedia } from '../hooks/upload';
 import UploadStatus from '@/components/UploadStatus';
+import { addFile, readFiles, removeFile, TempFile } from '../clientDb';
 
 
 export interface OrientationMedia {
@@ -166,26 +167,43 @@ const GalleryProvider: React.FC<{ children: React.ReactNode, gallery: Gallery}> 
     loadFiles(files);
   };
 
-  const insertMedia = useCallback(async (newMedia: OrientationMediaWithFile): Promise<Media> => {
-    const {file, previewFile, preview, url, isVertical, ..._newMedia} = newMedia
-    const insertedMedia = await createMedia({..._newMedia, personId}, gallery.id)
-    const {presignedUrls, ...media} = insertedMedia
-    URL.revokeObjectURL(url)
-    URL.revokeObjectURL(preview)
+  const doUploadMedia = async (presignedUrls: PresignedUrls, file: File, previewFile: Blob) => {
     console.log(presignedUrls)
     const uploaded = presignedUrls.large ? uploadMedia(presignedUrls.large, file) : presignedUrls.uploadId ? uploadLargeMedia(presignedUrls.uploadId, presignedUrls.key, file) : Promise.reject(`Unable to upload file`)
     const webpUploaded = uploadMedia(presignedUrls.small, previewFile)
     await Promise.all([uploaded, webpUploaded])
     return media
+  }
+
+  const insertMedia = useCallback(async (newMedia: OrientationMediaWithFile): Promise<Media> => {
+    const {file, previewFile, preview, url, isVertical, ..._newMedia} = newMedia
+    const insertedMedia = await createMedia({..._newMedia, personId}, gallery.id)
+    const {presignedUrls, ..._media} = insertedMedia
+    //Add Temp File
+    URL.revokeObjectURL(url)
+    URL.revokeObjectURL(preview)
+
+    await addFile(insertedMedia.id, gallery.id, file, previewFile)
+    await doUploadMedia(presignedUrls, file, previewFile)
+    return _media
   }, [personId, gallery.id])
+
+  const finalizeMedia = async (id: string): Promise<Media> => {
+    const [media] = await Promise.all([
+      updateMedia(id, {uploaded: true}),
+      removeFile(id)
+    ])
+    return media
+  }
 
   const confirmMedia = async (confirmedImages: OrientationMediaWithFile[]) => {
     setStagedMedia(confirmedImages)
     setTotalUploads(confirmedImages.length)
     setCompleteUploads(0)
-    const imagePromises = confirmedImages.map(image => insertMedia(image).then(media => {
+    const imagePromises = confirmedImages.map(image => insertMedia(image).then(async media => {
+      const m = await finalizeMedia(media.id)
       setCompleteUploads(oldComplete => (oldComplete || 0) + 1)
-      setMedia((oldImages) => [...oldImages, media])
+      setMedia((oldImages) => [...oldImages, m])
     }))
     setShowUploadConfirmation(false);
     setStagedMedia([]);
@@ -201,24 +219,57 @@ const GalleryProvider: React.FC<{ children: React.ReactNode, gallery: Gallery}> 
     setShowUploadConfirmation(false);
   };
 
+  const handleUnfinishedUploads = useCallback(async (files: TempFile[]) => {
+    if (files.length === 0) {
+      return
+    }
+    setTotalUploads(files.length)
+    setCompleteUploads(0)
+
+    const unfinishedMediaPromises = files.map(async f => {
+      const m = await fetchMedia(f.id)
+      await doUploadMedia(m.presignedUrls, f.file, f.previewFile).then(async _ => {
+        const finishedMedia = await finalizeMedia(m.id)
+        setCompleteUploads(oldComplete => (oldComplete || 0) + 1)
+        setMedia((oldImages) => [...oldImages, finishedMedia])
+        return finishedMedia
+      })
+    })
+    await Promise.all(unfinishedMediaPromises)
+    const timer = setTimeout(() => {
+      setTotalUploads(undefined)
+      setCompleteUploads (undefined)  
+    }, 500);
+
+  }, [])
+
   const initImages = async (galleryId: string) => {
     const _media = await fetchGalleryImages(galleryId)
-    setMedia(_media)
-
+    setMedia(_media.filter(m => m.uploaded))
+    return _media.filter(m => !m.uploaded)
   }
 
   const initPeople = async (galleryId: string) => {
     const _people = await fetchGalleryPeople(galleryId)
     console.log(_people)
     setPeople(_people)
-
   }
 
   const loadGallery = useCallback(async () => {
-    await Promise.all([
+    const [unfinishedImages, files] = await Promise.all([
       initImages(gallery.id),
-      initPeople(gallery.id)
+      readFiles(),
+      initPeople(gallery.id),
     ])
+    const fileIds = new Set(files.map(f => f.id))
+    const deleteImagePromises = unfinishedImages.map(async image => {
+      if (fileIds.has(image.id)) {
+        return
+      }
+      await deleteMedia(image.id)
+    })
+    await Promise.all([deleteImagePromises, handleUnfinishedUploads(files)])
+
   }, [gallery.id])
 
   useEffect(() => {
