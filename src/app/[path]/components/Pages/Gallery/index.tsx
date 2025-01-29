@@ -9,9 +9,10 @@ import useGallery from '@/helpers/providers/gallery';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { arrowLeftIcon, checkSquareIcon, downIcon, squareIcon, upIcon } from '@/lib/icons';
 import useAlbums from '@/helpers/providers/albums';
+import { useNavigationState } from '@/helpers/hooks/localStorage';
 
 
-enum Tab {
+export enum Tab {
     PHOTOS = 'Photos',
     PEOPLE = 'People',
     ALBUMS = 'Albums'
@@ -26,7 +27,7 @@ const TabMenuItem: FC<{tab: Tab, activeTab: Tab, selectTab: (tab: Tab) => void}>
 }
 
 const Gallery: FC = () => {
-    const [tab, setTab] = useState<Tab>(Tab.PHOTOS)
+    const {tab, setTab} = useNavigationState()
     const {person, setPerson, toggleSelectImages, selectImages} = useGallery()
     const {album, setAlbum} = useAlbums()
     const [menuOpen, setMenuOpen] = useState(false)

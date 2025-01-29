@@ -32,7 +32,7 @@ const Home: FC = () => {
             </Column>
             <Column className={styles.section} padding>
                 <Row className={styles.title}>
-                    <Text size={2} weight={500}>Recent Uploads</Text>
+                    <Text size={2} weight={500}>My Recent Uploads</Text>
                     <Container className={styles.selectContainer} onClick={toggleSelectImages}>
                         <Text>Select</Text>
                         <Container className={styles.checkContainer}>
@@ -46,7 +46,7 @@ const Home: FC = () => {
                         <MediaGallery media={media}/>
                     ) : (
                     <Container className={styles.emptyGallery} padding>
-                        <Text size={2} weight={500}>My Recent Uploads</Text>
+                        <Text size={2} weight={500}>No Recent Uploads</Text>
                     </Container>
                     )}
                 </Column>
