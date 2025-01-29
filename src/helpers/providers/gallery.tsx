@@ -10,6 +10,7 @@ import { GalleryPersonData } from '@/lib/types/Person';
 import { uploadLargeMedia, uploadMedia } from '../hooks/upload';
 import UploadStatus from '@/components/UploadStatus';
 import { addFile, readFiles, removeFile, TempFile } from '../clientDb';
+import ConfirmDelete from '@/components/ConfirmDelete';
 
 
 export interface OrientationMedia {
@@ -35,6 +36,7 @@ interface UploadState {
 } 
 
 interface UploadActions {
+    deleteImages: () => void,
     upload: () => void
     setPerson: (personId?: string) => void
     toggleSelectImages: () => void
@@ -59,6 +61,7 @@ const GalleryProvider: React.FC<{ children: React.ReactNode, gallery: Gallery}> 
   const[completeUploads, setCompleteUploads] = useState<number | undefined>();
   const [selectImages, setSelectImages] = useState<boolean>(false)
   const [selectedImages, setSelectedImages] = useState<Set<string>>(new Set())
+  const [showConfirmDelete, setShowConfirmDelete] = useState<boolean>(false)
   const handleBeginUpload = useCallback(() => {
       if (fileInputRef.current) {
           fileInputRef.current.click();
@@ -216,6 +219,7 @@ const GalleryProvider: React.FC<{ children: React.ReactNode, gallery: Gallery}> 
 
   const cancelImages = () => {
     setStagedMedia([])
+    setShowConfirmDelete(false)
     setShowUploadConfirmation(false);
   };
 
@@ -292,9 +296,23 @@ const GalleryProvider: React.FC<{ children: React.ReactNode, gallery: Gallery}> 
       }
   }, [selectedImages])
   
+  const handleConfirmDelete = useCallback(async () => {
+    if (selectedImages.size > 0) {
+      setShowConfirmDelete(false)
+      const deleteImagePromises = Array.from(selectedImages).map(async id => {
+        await deleteMedia(id)
+      })
+      await Promise.all(deleteImagePromises).then(_ => {
+        setMedia(media.filter(m => !selectedImages.has(m.id)))
+      })
+      setSelectedImages(new Set())
+      setSelectImages(false)
+    }    
+  }, [selectedImages])
 
   return (
     <GalleryContext.Provider value={{
+        deleteImages: () => setShowConfirmDelete(true),
         upload: handleBeginUpload,
         media: media,
         people,
@@ -317,6 +335,7 @@ const GalleryProvider: React.FC<{ children: React.ReactNode, gallery: Gallery}> 
         style={{ display: 'none' }}
         onChange={handleFileChange}
     />
+    {showConfirmDelete && <ConfirmDelete onCancel={cancelImages} onConfirm={handleConfirmDelete} selectedImages={selectedImages}/>}
     {showUploadConfirmation && <ClientUpload media={stagedMedia} upload={handleBeginUpload} onConfirm={confirmMedia} onCancel={cancelImages}/>}
     <UploadStatus total={totalUploads} complete={completeUploads}/>
     </GalleryContext.Provider>
