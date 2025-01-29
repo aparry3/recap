@@ -11,7 +11,7 @@ import { isImage, isVideo } from "@/helpers/utils"
 import useAlbums from "@/helpers/providers/albums"
 
 const MediaGallery: FC<{media: Media[]}> = ({media}) => {
-    const {selectImages, toggleSelectImages,selectedImages, toggleSelectedImage} = useGallery()
+    const {selectImages, toggleSelectImages,selectedImages, toggleSelectedImage, deleteImages} = useGallery()
     const {selectAlbums} = useAlbums()
     const [viewImageIndex, setViewImageIndex] = useState<number>(-1)
     const [mediaSrc, setMediaSrc] = useState<string | undefined>(undefined)
@@ -160,7 +160,7 @@ const MediaGallery: FC<{media: Media[]}> = ({media}) => {
     return (
             <>
             <Column className={styles.gallery}>
-            {media.map((m, index) => {
+            {media.filter(m => m.uploaded).map((m, index) => {
                 if (selectImages) {
                     const selected = selectedImages.has(m.id)
                     return (
@@ -203,7 +203,7 @@ const MediaGallery: FC<{media: Media[]}> = ({media}) => {
                             </Container>
                         </Container>
                         <Container className={styles.selectedImageActions}>
-                            <Container className={styles.iconContainer}>
+                            <Container className={styles.iconContainer} onClick={deleteImages}>
                                 <FontAwesomeIcon icon={trashIcon} className={styles.actionIcon}/>
                             </Container>
                         </Container>

@@ -12,6 +12,7 @@ export interface MediaTable {
     longitude?: number
     contentType: string
     created?: Date
+    uploaded?: boolean
 }
 
 export interface AlbumMediaTable {
@@ -19,6 +20,12 @@ export interface AlbumMediaTable {
     mediaId: string
 }
 
+export interface PresignedUrls {
+    uploadId?: string
+    key: string
+    large?: string
+    small: string
+}
 
 export type Media = Selectable<MediaTable>
 export type MediaUpdate = Updateable<MediaTable>

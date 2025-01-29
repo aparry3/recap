@@ -1,6 +1,6 @@
-import { Media, NewMediaData } from "@/lib/types/Media"
+import { Media, MediaUpdate, NewMediaData, PresignedUrls } from "@/lib/types/Media"
 
-export const createMedia = async (media: NewMediaData, galleryId: string): Promise<Media & {presignedUrls: {large?: string, small: string, uploadId?: string, key: string}}> => {
+export const createMedia = async (media: NewMediaData, galleryId: string): Promise<Media & {presignedUrls: PresignedUrls}> => {
     const data = await fetch(`/api/galleries/${galleryId}/media`, {
         method: 'POST',
         headers: {
@@ -11,11 +11,49 @@ export const createMedia = async (media: NewMediaData, galleryId: string): Promi
     return data
 }
 
+export const fetchMedia = async (id: string): Promise<Media & {presignedUrls: PresignedUrls}> => {
+  const data = await fetch(`/api/media/${id}`, {
+      method: 'GET',
+      headers: {
+          'Content-Type': 'application/json',
+      },
+  }).then(res => res.json())
+  return data
+}
+
+export const deleteMedia = async (id: string): Promise<boolean> => {
+  const data = await fetch(`/api/media/${id}`, {
+      method: 'DELETE',
+      headers: {
+          'Content-Type': 'application/json',
+      },
+  }).then(res => res.json())
+  return data.success
+}
+
+
+export const updateMedia = async (id: string, mediaUpdate: MediaUpdate): Promise<Media> => {
+  const data = await fetch(`/api/media/${id}`, {
+      method: 'PUT',
+      headers: {
+          'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(mediaUpdate as MediaUpdate),
+  }).then(res => res.json())
+  return data
+}
+
 
 export const fetchGalleryImages = async (galleryId: string): Promise<Media[]> => {
     const data = await fetch(`/api/galleries/${galleryId}/media`).then(res => res.json())
     return data.media
 }
+
+export const fetchGalleryImage = async (galleryId: string, mediaId: string): Promise<Media[]> => {
+  const data = await fetch(`/api/galleries/${galleryId}/media/${mediaId}`).then(res => res.json())
+  return data.media
+}
+
 
 export async function convertImageToWebP(imageFile: File | Blob, maxDimension: number = 500): Promise<Blob> {
     return new Promise((resolve, reject) => {

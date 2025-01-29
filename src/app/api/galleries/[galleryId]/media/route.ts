@@ -1,13 +1,11 @@
 // src/app/api/galleries/route.ts
-import { beginMultipartUpload, generatePresignedUrl } from '@/lib/aws/s3';
+import { beginMultipartUpload, CLOUDFRONT_URL, generatePresignedUrl, WEBP_TYPE } from '@/lib/aws/s3';
 import { insertGalleryMedia } from '@/lib/db/galleryService';
 import { insertMedia, selectGalleryMedia } from '@/lib/db/mediaService';
 import { updateGalleryPerson } from '@/lib/db/personService';
 import { NewMediaData } from '@/lib/types/Media';
 import { NextResponse } from 'next/server';
 
-const WEBP_TYPE = 'image/webp'
-const CLOUDFRONT_URL = process.env.AWS_CLOUDFRONT_URL || ''
 
 export const POST = async (req: Request, ctx: { params: { galleryId: string } }) => {
     const newMedia: NewMediaData = await req.json()
