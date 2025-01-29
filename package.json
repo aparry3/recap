@@ -22,6 +22,7 @@
     "@fortawesome/pro-regular-svg-icons": "^6.7.2",
     "@fortawesome/pro-solid-svg-icons": "^6.6.0",
     "@fortawesome/react-fontawesome": "^0.2.2",
+    "@sendgrid/mail": "^8.1.4",
     "@types/pg": "^8.11.10",
     "@vercel/functions": "^1.5.0",
     "@vercel/postgres": "^0.10.0",

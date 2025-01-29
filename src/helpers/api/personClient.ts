@@ -31,6 +31,15 @@ export const updatePerson = async (personId: string,personUpdate: PersonUpdate):
     return data.person
 }
 
+export const fetchPersonByEmail = async (email: string): Promise<Person | undefined> => {
+    try {
+        const data = await fetch(`/api/people?email=${email}`).then(res => res.json())
+        return data.person
+    } catch (error) {
+        console.log(error)
+        return undefined
+    }
+}
 
 export const fetchPerson = async (personId: string): Promise<Person> => {
     try {

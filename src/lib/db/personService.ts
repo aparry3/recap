@@ -21,6 +21,12 @@ export const selectPerson = async (personId: string): Promise<Person> => {
   return person;
 }
 
+export const selectPersonByEmail = async (email: string): Promise<Person> => {
+  const person = await db.selectFrom('person').where('email', '=', email).selectAll().executeTakeFirstOrThrow();
+  return person;
+}
+
+
 export const selectPeopleMedia = async (galleryId: string): Promise<GalleryPersonData[]> => {
     const people = await db.selectFrom('person')
     .leftJoin('media', 'media.personId', 'person.id') // Join to count media for each person

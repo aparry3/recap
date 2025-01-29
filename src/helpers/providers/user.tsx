@@ -2,16 +2,18 @@
 import { Person } from '@/lib/types/Person';
 import React, { createContext, useState, useContext, useEffect, useCallback } from 'react';
 import useLocalStorage from '../hooks/localStorage';
-import { createPerson, fetchPerson } from '../api/personClient';
+import { createPerson, fetchPerson, fetchPersonByEmail } from '../api/personClient';
 import PersonPage from '@/components/PersonPage';
 import { Container, Text } from 'react-web-layout-components';
 import styles from './Providers.module.scss'
+
 
 type UserContextType = {
   personId?: string;
   person?: Person;
   loading: boolean;
 };
+
 
 const UserContext = createContext<UserContextType | null>(null);
 
@@ -23,6 +25,7 @@ export const UserProvider: React.FC<{
     const [personId, setPersonId, personLoading] = useLocalStorage<string>('personId', '');
     const [person, setPerson] = useState<Person | undefined>(undefined);
     const [loading, setLoading] = useState<boolean>(personLoading);
+    const [showValidate, setShowValidate] = useState<boolean>(false)
 
     const initPerson = async (_personId: string) => {
         const _person = await fetchPerson(personId)
@@ -40,6 +43,14 @@ export const UserProvider: React.FC<{
 
     const submitPerson = useCallback(async (name: string, email?: string) => {
         setLoading(true)
+        if (email) {
+          const _person = await fetchPersonByEmail(email)
+          if (_person) { 
+            setLoading(false)
+            setShowValidate(true)
+            return
+          }
+        }
         const newPerson = await createPerson({name, email}, galleryId)
         setPerson(newPerson)
         setPersonId(newPerson.id)
@@ -56,6 +67,7 @@ export const UserProvider: React.FC<{
           <Text size={2}>Loading...</Text>
         </Container>
       )}
+
     </UserContext.Provider>
   );
 };
