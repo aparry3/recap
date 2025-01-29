@@ -1,3 +1,5 @@
+import { AppPage } from "@/app/[path]/App";
+import { Tab } from "@/app/[path]/components/Pages/Gallery";
 import { useState, useEffect, useMemo } from "react";
 
 export function setCookie(name: string, value: string): void {
@@ -46,5 +48,24 @@ export const useLocalStorage = <T>(key: string, initialValue: T) => {
 
   return [storedValue, setValue, loading] as const;
 }
+
+export const useNavigationState = (): {page: AppPage, tab: Tab, setPage: (page: AppPage) => void, setTab: (tab: Tab) => void, reset: () => void} => {
+  const [page, setPage] = useLocalStorage<AppPage>('page', AppPage.HOME)
+  const [tab, setTab] = useLocalStorage<Tab>('tab', Tab.PHOTOS)
+
+  const reset = () => {
+    setPage(AppPage.HOME)
+    setTab(Tab.PHOTOS)
+  }
+
+  const setPageAndTab = (page: AppPage) => {
+    setPage(page)
+    setTab(Tab.PHOTOS)
+  }
+  return {page, tab, setTab, setPage: setPageAndTab, reset}
+}
+
+
+
 
 export default useLocalStorage;

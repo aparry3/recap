@@ -9,7 +9,7 @@ import useWindowSize from "@/helpers/hooks/window";
 import { GalleryProvider } from "@/helpers/providers/gallery";
 import { Gallery } from "@/lib/types/Gallery";
 import { UserProvider } from "@/helpers/providers/user";
-import useLocalStorage, { setCookie } from "@/helpers/hooks/localStorage";
+import useLocalStorage, { setCookie, useNavigationState } from "@/helpers/hooks/localStorage";
 import Password from "./components/Password";
 import Sidebar, { MobileMenu } from "./components/Sidebar";
 import { AlbumsProvider } from "@/helpers/providers/albums";
@@ -24,7 +24,7 @@ const App: FC<{gallery: Gallery, password?: string}> =  ({gallery, password: pro
     const {isMobile} = useWindowSize()
     const [showSidebar, setShowSidebar] = useState(false)
     const [showQrCode, setShowQrCode] = useState(false)
-    const [page, setPage] = useState(AppPage.HOME)
+    const {page, setPage} = useNavigationState()
     const [password, setPassword] = useLocalStorage<string | null>(gallery.id, propsPassword || null)
     const [cleared, setCleared] = useState(password === gallery.password)
     
