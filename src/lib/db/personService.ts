@@ -1,6 +1,6 @@
 import { db } from ".";
 import { Gallery, GalleryPerson } from "../types/Gallery";
-import { Person, NewPerson, PersonUpdate, NewPersonData, GalleryPersonData } from "../types/Person";
+import { Person, NewPerson, PersonUpdate, NewPersonData, GalleryPersonData, Verification, NewVerification, VerificationUpdate } from "../types/Person";
 import {v4 as uuidv4} from 'uuid';
 import { selectGalleryPersonMedia } from "./mediaService";
 
@@ -20,6 +20,12 @@ export const selectPerson = async (personId: string): Promise<Person> => {
   const person = await db.selectFrom('person').where('id', '=', personId).selectAll().executeTakeFirstOrThrow();
   return person;
 }
+
+export const selectPersonByEmail = async (email: string): Promise<Person> => {
+  const person = await db.selectFrom('person').where('email', '=', email).selectAll().executeTakeFirstOrThrow();
+  return person;
+}
+
 
 export const selectPeopleMedia = async (galleryId: string): Promise<GalleryPersonData[]> => {
     const people = await db.selectFrom('person')
@@ -64,3 +70,22 @@ export const selectPersonGalleries = async (personId: string): Promise<Gallery[]
   .execute() as Gallery[];
   return galleries
 }
+
+export const insertVerification = async (personId: string): Promise<Verification> => {
+  const newVerification = {personId, id: uuidv4(), verified: false} as NewVerification
+  const verification = await db.insertInto('verification').values(newVerification).returningAll().executeTakeFirstOrThrow();
+  return verification;
+}
+
+export const updateVerification = async (verificationId: string, verified: boolean): Promise<Verification> => {
+  const newVerification = {verified} as VerificationUpdate
+  const verification = await db.updateTable('verification').set(newVerification).where('id', '=', verificationId).returningAll().executeTakeFirstOrThrow();
+  return verification;
+}
+
+
+export const selectVerification = async (verificationId: string): Promise<Verification> => {
+  const verification = await db.selectFrom('verification').where('id', '=', verificationId).selectAll().executeTakeFirstOrThrow();
+  return verification;
+}
+

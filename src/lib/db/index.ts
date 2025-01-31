@@ -1,7 +1,7 @@
 import { Pool } from "pg"
 import { CamelCasePlugin, Kysely, PostgresDialect } from "kysely"
 import { GalleryMediaTable, GalleryPersonTable, GalleryTable } from "../types/Gallery"
-import { PersonTable } from "../types/Person"
+import { PersonTable, VerificationTable } from "../types/Person"
 import { TagTable } from "../types/Tag"
 import { AlbumTable } from "../types/Album"
 import { AlbumMediaTable, MediaTable } from "../types/Media"
@@ -15,6 +15,7 @@ export interface Database {
     album: AlbumTable,
     albumMedia: AlbumMediaTable    
     media: MediaTable
+    verification: VerificationTable
 }
 
 const dialect = new PostgresDialect({
