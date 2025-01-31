@@ -11,7 +11,7 @@ import { OrientationMediaWithFile } from "@/helpers/providers/gallery";
 import { MediaConfirmationGallery } from "../MediaGallery";
 
 
-const Upload: FC<{media: OrientationMediaWithFile[], upload: () => void, onConfirm: (confirmedImages: OrientationMediaWithFile[]) => void, onCancel: () => void}> = ({media, upload, onConfirm, onCancel}) => {
+const Upload: FC<{media: OrientationMediaWithFile[], collaboratorCount: number, upload: () => void, onConfirm: (confirmedImages: OrientationMediaWithFile[]) => void, onCancel: () => void}> = ({media, collaboratorCount, upload, onConfirm, onCancel}) => {
     const pathname = usePathname()
     const name = pathname.replace('/upload', '').replace('/', '').split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
     
@@ -67,7 +67,7 @@ const Upload: FC<{media: OrientationMediaWithFile[], upload: () => void, onConfi
                     </Container>
                     <Container className={styles.info}>
                         <Text className={styles.infoText}>
-                            15 Collaborators
+                            {collaboratorCount} Collaborators
                         </Text>
                     </Container>
                 </Row>

@@ -68,15 +68,15 @@ const AlbumsProvider: React.FC<{ children: React.ReactNode, galleryId: string}> 
 
     const addMediaToAlbums = async (albumIds: string[], mediaIds: string[]) => {
       const promises = albumIds.map(albumId => addMediaToAlbum(albumId, mediaIds))
-
+      
       const _albums = await Promise.all(promises)
       return _albums
     }
 
-    const confirmAlbums = useCallback((confirmedAlbumIds: string[]) => {
+    const confirmAlbums = useCallback(async (confirmedAlbumIds: string[]) => {
       setShowSelectAlbums(false)
-      addMediaToAlbums(confirmedAlbumIds, Array.from(selectedImages))
-
+      await addMediaToAlbums(confirmedAlbumIds, Array.from(selectedImages))
+      loadAlbums()
     }, [selectedImages])
   return (
     <AlbumContext.Provider value={{

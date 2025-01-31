@@ -336,7 +336,7 @@ const GalleryProvider: React.FC<{ children: React.ReactNode, gallery: Gallery}> 
         onChange={handleFileChange}
     />
     {showConfirmDelete && <ConfirmDelete onCancel={cancelImages} onConfirm={handleConfirmDelete} selectedImages={selectedImages}/>}
-    {showUploadConfirmation && <ClientUpload media={stagedMedia} upload={handleBeginUpload} onConfirm={confirmMedia} onCancel={cancelImages}/>}
+    {showUploadConfirmation && <ClientUpload media={stagedMedia} collaboratorCount={people.length} upload={handleBeginUpload} onConfirm={confirmMedia} onCancel={cancelImages}/>}
     <UploadStatus total={totalUploads} complete={completeUploads}/>
     </GalleryContext.Provider>
   );

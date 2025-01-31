@@ -11,9 +11,22 @@ export const insertAlbum = async (galleryId: string, newAlbum: NewAlbumData): Pr
   return album;
 }
 
-export const insertAlbumMedia = async (albumId: string, mediaIds: string[]): Promise<AlbumMedia[]> => {
-  const albumMedia = await db.insertInto('albumMedia').values(mediaIds.map(id => ({albumId, mediaId: id}))).returningAll().execute();
-  return albumMedia;
+export const insertAlbumMedia = async (albumId: string, mediaIds: string[]): Promise<Media[]> => {
+  const albumMedia = await db.insertInto('albumMedia')
+  .values(mediaIds.map(id => ({albumId, mediaId: id})))
+  .onConflict(oc => oc.constraint('album_media_pk').doNothing())
+  .returningAll()
+  .execute();
+
+  const media = await db
+  .selectFrom('media')
+  .innerJoin('albumMedia', 'albumMedia.mediaId', 'media.id')
+  .where('albumMedia.albumId', '=', albumId)
+  .where('albumMedia.mediaId', 'in', albumMedia.map(row => row.mediaId)) // Fetch only the inserted media
+  .selectAll('media')
+  .execute();
+
+  return media;
 }
 
 
