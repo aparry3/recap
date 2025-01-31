@@ -2,10 +2,11 @@
 import { Person } from '@/lib/types/Person';
 import React, { createContext, useState, useContext, useEffect, useCallback } from 'react';
 import useLocalStorage from '../hooks/localStorage';
-import { createPerson, fetchPerson, fetchPersonByEmail } from '../api/personClient';
+import { createPerson, createVerification, fetchPerson, fetchPersonByEmail } from '../api/personClient';
 import PersonPage from '@/components/PersonPage';
 import { Container, Text } from 'react-web-layout-components';
 import styles from './Providers.module.scss'
+import ValidateUser from '@/components/PersonPage/ValidateUser';
 
 
 type UserContextType = {
@@ -26,6 +27,8 @@ export const UserProvider: React.FC<{
     const [person, setPerson] = useState<Person | undefined>(undefined);
     const [loading, setLoading] = useState<boolean>(personLoading);
     const [showValidate, setShowValidate] = useState<boolean>(false)
+    const [tempPerson, setTempPerson] = useState<{personId: string, email?: string, name: string} | undefined>(undefined)
+    const [verificationId, setVerificationId] = useState<string>('')
 
     const initPerson = async (_personId: string) => {
         const _person = await fetchPerson(personId)
@@ -41,22 +44,49 @@ export const UserProvider: React.FC<{
       }
     }, [personId, personLoading]);
 
+    const _createPerson = useCallback(async (name: string, email?: string) => {
+      setLoading(true)  
+      const newPerson = await createPerson({name, email}, galleryId)
+      setPerson(newPerson)
+      setPersonId(newPerson.id)
+      setLoading(false)
+    }, [galleryId])
+
     const submitPerson = useCallback(async (name: string, email?: string) => {
         setLoading(true)
         if (email) {
           const _person = await fetchPersonByEmail(email)
-          if (_person) { 
+          if (_person) {
+            const verification = await createVerification(_person.id, galleryId, email, name)
+            setVerificationId(verification.id)
+            setTempPerson({personId: _person.id, email, name})
             setLoading(false)
             setShowValidate(true)
             return
           }
         }
-        const newPerson = await createPerson({name, email}, galleryId)
-        setPerson(newPerson)
-        setPersonId(newPerson.id)
-        setLoading(false)
+        await _createPerson(name, email)
     }, [galleryId])
 
+    const cancelValidate = () => {
+      setShowValidate(false)
+      setTempPerson(undefined)
+    }
+
+    const skipValidate = useCallback(async () => {
+      if (tempPerson) {
+        await _createPerson(tempPerson.name, tempPerson.email)
+      }
+      setShowValidate(false)  
+    }, [tempPerson, _createPerson])
+
+    const confirmValidate = (person: Person) => {
+      setPerson(person)
+      setPersonId(person.id)
+      setTempPerson(undefined)
+      setVerificationId('')
+      setShowValidate(false)
+    }
   return (
     <UserContext.Provider value={{ personId, person, loading }}>
       {(!loading && person) ? children :
@@ -67,7 +97,9 @@ export const UserProvider: React.FC<{
           <Text size={2}>Loading...</Text>
         </Container>
       )}
-
+      {showValidate && tempPerson &&(
+        <ValidateUser verificationId={verificationId} person={tempPerson} confirm={confirmValidate} onBack={cancelValidate} skip={skipValidate}/>
+      )}
     </UserContext.Provider>
   );
 };

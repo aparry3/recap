@@ -27,15 +27,18 @@ export class SendGridClient {
         templateId: SENDGRID_TEMPLATE_ID,
         // Ensure template data is properly typed
         dynamicTemplateData: {
-          gallery_id: templateData.galleryName,
+          gallery_name: templateData.galleryName,
           button_url: templateData.buttonUrl,
           name: templateData.name,
         }
-      });
+      }).catch(err => {
+        throw new Error(`Error sending template email:, ${err.response.body.errors[0].message}`)
+      })
+      console.log(response[0])
       return response[0].statusCode >= 200 && response[0].statusCode < 300;
     } catch (error) {
-      console.error('Error sending template email:', error);
-      throw error;
+      console.error(error)
+      return false
     }
   }
 }

@@ -1,5 +1,5 @@
 import { Gallery } from "@/lib/types/Gallery";
-import { GalleryPersonData, NewPersonData, Person, PersonUpdate } from "@/lib/types/Person";
+import { GalleryPersonData, NewPersonData, Person, PersonUpdate, Verification } from "@/lib/types/Person";
 
 
 export const createPerson = async (newPerson: NewPersonData, galleryId?: string): Promise<Person> => {
@@ -23,9 +23,9 @@ export const createGalleryPerson = async (galleryId: string, personId: string): 
 }
 
 
-export const updatePerson = async (personId: string,personUpdate: PersonUpdate): Promise<Person> => {
+export const updatePerson = async (personId: string, personUpdate: PersonUpdate): Promise<Person> => {
     const data = await fetch(`/api/people/${personId}`, {
-        method: 'POST',
+        method: 'PUT',
         body: JSON.stringify({...personUpdate}) 
     }).then(res => res.json())
     return data.person
@@ -64,3 +64,22 @@ export const fetchPersonGalleries = async (personId: string): Promise<Gallery[]>
         throw new Error('Person not found')
     }
 }
+
+export const fetchVerification = async (verificationId: string): Promise<Verification> => {
+    try {
+        const data = await fetch(`/api/verifications/${verificationId}`).then(res => res.json())
+        return data.verification
+    } catch (error) {
+        console.log(error)
+        throw new Error('Verification not found')
+    }
+}
+
+export const createVerification = async (personId: string, galleryId: string, email: string, name: string): Promise<Verification> => {
+    const data = await fetch(`/api/verifications`, {
+        method: 'POST',
+        body: JSON.stringify({personId, galleryId, email, name}) 
+    }).then(res => res.json())
+    return data.verification
+}
+

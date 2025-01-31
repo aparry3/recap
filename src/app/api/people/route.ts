@@ -1,13 +1,22 @@
 // src/app/api/people/route.ts
 import { insertPerson, selectPersonByEmail } from '@/lib/db/personService';
 import { NewPersonData } from '@/lib/types/Person';
-import { NextResponse } from 'next/server';
+import { cookies } from 'next/headers';
+import { NextRequest, NextResponse } from 'next/server';
 
 
 export const POST = async (req: Request) => {
     const {...newPerson}: NewPersonData & {galleryId: string} = await req.json()
     try {
         const person = await insertPerson(newPerson)
+        cookies().set('personId', person.id, {
+            httpOnly: true, // Prevents client-side JS access
+            secure: process.env.NODE_ENV === 'production', // HTTPS-only in production
+            sameSite: 'lax', // Helps with CSRF protection
+            maxAge: 60 * 60 * 24 * 365, // 1 year
+            path: '/',
+            });
+        
         return NextResponse.json({person}, {status: 200})
     } catch (error: any) {
         return NextResponse.json({error: error.message}, {status: 400})
@@ -15,8 +24,10 @@ export const POST = async (req: Request) => {
 };
 
 
-export const GET = async (_req: Request, ctx: { searchParams: { email?: string } }) => {
-    const { email } = ctx.searchParams
+export const GET = async (req: NextRequest) => {
+    const searchParams = req.nextUrl.searchParams
+    const email = searchParams.get('email')
+
     if (!email) return NextResponse.json({error: 'No email provided'}, {status: 400})
 
     try {

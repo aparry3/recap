@@ -8,6 +8,7 @@ import { circleVideoIcon, downloadIcon, photoFilmIcon, shareNodesIcon, zipIcon }
 import { cookies } from 'next/headers';
 import { fetchPerson } from '@/helpers/api/personClient';
 import { redirect } from 'next/navigation';
+import { selectPerson } from '@/lib/db/personService';
 
 const Header = () => {
     return (
@@ -307,8 +308,9 @@ const Footer = () => {
 
 const HomePage: FC = async ({}) => {
     const personId = cookies().get('personId')?.value
+    console.log(personId)
     if (personId) {
-        const person = await fetchPerson(personId)
+        const person = await selectPerson(personId)
         if (person) return redirect('/galleries')
     }
     return (

@@ -14,3 +14,13 @@ export type NewPerson = Insertable<PersonTable>
 export type NewPersonData = Omit<NewPerson, 'id'|'created'>
 
 export type GalleryPersonData = Person & { count: number; recentMedia?: Media[]}
+
+export interface VerificationTable {
+    id: string
+    personId: string
+    verified: boolean
+}
+
+export type Verification = Selectable<VerificationTable>
+export type VerificationUpdate = Updateable<VerificationTable>
+export type NewVerification = Insertable<VerificationTable>
