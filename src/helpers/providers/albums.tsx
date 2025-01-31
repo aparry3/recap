@@ -5,6 +5,7 @@ import { addMediaToAlbum, createAlbum, fetchAlbums } from '../api/albumClient';
 import CreateAlbum from '@/components/CreateAlbum';
 import { useUser } from './user';
 import AlbumSelect from '@/components/AlbumSelect';
+import useGallery from './gallery';
 
 
 interface AlbumState {
@@ -24,15 +25,15 @@ type AlbumContextType = AlbumState & AlbumActions
 const AlbumContext = createContext<AlbumContextType>({} as AlbumContextType);
 
 const AlbumsProvider: React.FC<{ children: React.ReactNode, galleryId: string}> = ({ children, galleryId }) => {
+    const {album, setAlbum: setGalleryAlbum} = useGallery()
     const {personId} = useUser()
-    const [currentAlbum, setCurrentAlbum] = useState<AlbumMediaData | undefined>(undefined)
     const [albums, setAlbums] = useState<AlbumMediaData[]>([])
     const [showNewAlbumPage, setShowNewAlbumPage] = useState<boolean>(false)
     const [showSelectAlbums, setShowSelectAlbums] = useState<boolean>(false)
     const [selectedImages, setSelectedImages] = useState<Set<string>>(new Set())
     const setAlbum = useCallback((albumId?: string) => {
       const _album = albums.find(alb => alb.id === albumId)
-      setCurrentAlbum(_album)
+      setGalleryAlbum(_album)
     }, [albums])
     
     const loadAlbums = async () => {
@@ -50,8 +51,8 @@ const AlbumsProvider: React.FC<{ children: React.ReactNode, galleryId: string}> 
 
     const submitAlbum = useCallback(async (name: string) => {
       if (personId) {
-        const album = await createAlbum(galleryId, personId, name)
-        setAlbums((oldAlbums) => [...oldAlbums, {...album, count: 0, recentMedia: []}])
+        const _album = await createAlbum(galleryId, personId, name)
+        setAlbums((oldAlbums) => [...oldAlbums, {..._album, count: 0, recentMedia: []}])
         setShowNewAlbumPage(false)  
       }
     }, [personId])
@@ -81,7 +82,7 @@ const AlbumsProvider: React.FC<{ children: React.ReactNode, galleryId: string}> 
   return (
     <AlbumContext.Provider value={{
         albums,
-        album: currentAlbum,
+        album,
         setAlbum,
         loadAlbums,
         selectAlbums: selectAlbums,

@@ -2,6 +2,7 @@
 // HEADING
 .heading {
     width: 100%;
+    flex-wrap: wrap;
 }
 .actionContainer {
     .iconContainer {
@@ -39,8 +40,12 @@
         }
     }
     .heading {
-        .actionContainer {
+        justify-content: center !important;
+        // .actionContainer {
+        //     display: none !important;
+        // }
+        .qrContainer {
             display: none !important;
-        }    
+        } 
     }
 }

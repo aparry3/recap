@@ -11,6 +11,7 @@ import { uploadLargeMedia, uploadMedia } from '../hooks/upload';
 import UploadStatus from '@/components/UploadStatus';
 import { addFile, readFiles, removeFile, TempFile } from '../clientDb';
 import ConfirmDelete from '@/components/ConfirmDelete';
+import { AlbumMediaData } from '@/lib/types/Album';
 
 
 export interface OrientationMedia {
@@ -28,6 +29,7 @@ export type OrientationMediaWithFile = OrientationMedia & {file: File, previewFi
 interface UploadState {
     media: Media[]
     person?: GalleryPersonData
+    album?: AlbumMediaData
     people: GalleryPersonData[]
     stagedMedia: OrientationMedia[]
     gallery: Gallery
@@ -38,6 +40,7 @@ interface UploadState {
 interface UploadActions {
     deleteImages: () => void,
     upload: () => void
+    setAlbum: (album?: AlbumMediaData) => void
     setPerson: (personId?: string) => void
     toggleSelectImages: () => void
     toggleSelectedImage: (imageId: string) => void
@@ -57,6 +60,7 @@ const GalleryProvider: React.FC<{ children: React.ReactNode, gallery: Gallery}> 
   const [showUploadConfirmation, setShowUploadConfirmation] = useState<boolean>(false);
   const [gallery] = useState<Gallery>(propsGallery);
   const [currentPerson, setCurrentPerson] = useState<GalleryPersonData | undefined>(undefined);
+  const [currentAlbum, setCurrentAlbum] = useState<AlbumMediaData | undefined>(undefined)
   const[totalUploads, setTotalUploads] = useState<number | undefined>();
   const[completeUploads, setCompleteUploads] = useState<number | undefined>();
   const [selectImages, setSelectImages] = useState<boolean>(false)
@@ -180,7 +184,7 @@ const GalleryProvider: React.FC<{ children: React.ReactNode, gallery: Gallery}> 
 
   const insertMedia = useCallback(async (newMedia: OrientationMediaWithFile): Promise<Media> => {
     const {file, previewFile, preview, url, isVertical, ..._newMedia} = newMedia
-    const insertedMedia = await createMedia({..._newMedia, personId}, gallery.id)
+    const insertedMedia = await createMedia({..._newMedia, personId}, gallery.id, currentAlbum?.id)
     const {presignedUrls, ..._media} = insertedMedia
     //Add Temp File
     URL.revokeObjectURL(url)
@@ -189,7 +193,7 @@ const GalleryProvider: React.FC<{ children: React.ReactNode, gallery: Gallery}> 
     await addFile(insertedMedia.id, gallery.id, file, previewFile)
     await doUploadMedia(presignedUrls, file, previewFile)
     return _media
-  }, [personId, gallery.id])
+  }, [personId, gallery.id, currentAlbum])
 
   const finalizeMedia = async (id: string): Promise<Media> => {
     const [media] = await Promise.all([
@@ -207,6 +211,9 @@ const GalleryProvider: React.FC<{ children: React.ReactNode, gallery: Gallery}> 
       const m = await finalizeMedia(media.id)
       setCompleteUploads(oldComplete => (oldComplete || 0) + 1)
       setMedia((oldImages) => [...oldImages, m])
+      if (currentAlbum) {
+        setCurrentAlbum({...currentAlbum, recentMedia: [m, ...(currentAlbum?.recentMedia || [])]})
+      }
     }))
     setShowUploadConfirmation(false);
     setStagedMedia([]);
@@ -317,6 +324,8 @@ const GalleryProvider: React.FC<{ children: React.ReactNode, gallery: Gallery}> 
         media: media,
         people,
         setPerson,
+        setAlbum: setCurrentAlbum,
+        album: currentAlbum,
         person: currentPerson,
         stagedMedia: stagedMedia,
         gallery,

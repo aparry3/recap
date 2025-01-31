@@ -28,7 +28,7 @@ const Heading: FC<{onQrClick?: () => void}> = ({onQrClick}) => {
         </Column>
         {onQrClick && (
         <Container className={styles.actionContainer} padding>
-            <Container padding={[0, 0.5]}>
+            <Container padding={[0, 0.5]} className={styles.qrContainer}>
                 <Container padding={0.5} className={styles.iconContainer} onClick={onQrClick}>
                     <FontAwesomeIcon icon={qrcodeIcon} className={styles.icon} />
                 </Container>

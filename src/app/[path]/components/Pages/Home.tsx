@@ -9,8 +9,7 @@ import MediaGallery from '@/components/MediaGallery';
 
 
 const Home: FC = () => {
-
-    const {upload, media} = useGallery()
+    const {media} = useGallery()
 
     return (
         <>
@@ -20,7 +19,7 @@ const Home: FC = () => {
                 </Row>
                 <Container className={styles.line} style={{width: '100%'}}/>
                 <Row className={styles.actions}>
-                    <Container className={styles.actionContainer}>
+                    {/* <Container className={styles.actionContainer}>
                         <Column className={styles.action} onClick={upload}>
                             <Container padding={0.5}>
                                 <FontAwesomeIcon icon={uploadIcon} className={styles.icon}/>
@@ -29,10 +28,10 @@ const Home: FC = () => {
                                 <Text size={1.1}>Upload</Text>
                             </Container>
                         </Column>
-                    </Container>
-                    <Container className={styles.dividerContainer}>
+                    </Container> */}
+                    {/* <Container className={styles.dividerContainer}>
                         <Container className={styles.divider}/>
-                    </Container>
+                    </Container> */}
                     <Container className={styles.exportActions}>
                         <Container className={styles.actionContainer}>
                             <Column className={`${styles.action} ${styles.disabled}`}>

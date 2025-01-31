@@ -1,12 +1,12 @@
 import { Media, MediaUpdate, NewMediaData, PresignedUrls } from "@/lib/types/Media"
 
-export const createMedia = async (media: NewMediaData, galleryId: string): Promise<Media & {presignedUrls: PresignedUrls}> => {
+export const createMedia = async (media: NewMediaData, galleryId: string, albumId?: string): Promise<Media & {presignedUrls: PresignedUrls}> => {
     const data = await fetch(`/api/galleries/${galleryId}/media`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify(media as NewMediaData),
+        body: JSON.stringify({...media, albumId: albumId || ''} as NewMediaData & {albumId: string}),
     }).then(res => res.json())
     return data
 }
