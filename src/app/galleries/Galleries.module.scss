@@ -63,6 +63,23 @@
 //     background: var(--primary-light);
 //     flex-shrink: 0;
 // }
+
+.addGalleryContainer {
+    padding: 1rem;
+    width: 100%;
+}
+.addGalleryText {
+    color: var(--primary);
+    font-size: 1.2rem;
+    cursor: pointer;
+    &:hover {
+        font-weight: 600 !important;
+        text-decoration: underline !important;
+    }
+}
+.addGallery {
+    text-decoration: none;
+}
 @media screen and (max-width: 768px) {
     .page {
         flex-direction: column !important;

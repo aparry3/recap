@@ -1,7 +1,15 @@
 .page {
     padding: 1rem 0;
     flex-wrap: wrap;
+    position: relative;
     min-height: 100%;
+}
+.actionHeader {
+    width: 100%;
+    position: absolute;
+    top:0;
+    left: 0;
+    padding: 1.5rem;
 }
 .personPage {
     height: 100%;
@@ -12,6 +20,9 @@
     flex-wrap: wrap;
     z-index: 10;
     background: var(--background-light);
+}
+.backButton {
+    cursor: pointer;
 }
 .form {
     text-align: center;

@@ -6,8 +6,13 @@ import Input from '@/components/Input';
 import styles from './Create.module.scss';
 import Button from '@/components/Button';
 import { Person, NewPersonData } from '@/lib/types/Person';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { leftIcon } from '@/lib/icons';
+import { useRouter } from 'next/navigation';
+
 
 const CreatePage: FC<{person?: Person | NewPersonData, onSubmit: (galleryName: string,name: string, email: string) => void}> = ({person, onSubmit}) => {
+    const router = useRouter()
   const [name, setName] = useState(person?.name || '');
   const [galleryName, setGalleryName] = useState('');
   const [email, setEmail] = useState(person?.email || '');
@@ -19,6 +24,9 @@ const CreatePage: FC<{person?: Person | NewPersonData, onSubmit: (galleryName: s
    } 
   }, [person])
 
+  const back = () => {
+    router.back()
+  }
   const handleNameChange = (value?: string) => {
     setName(value || '');
   };
@@ -61,6 +69,16 @@ const CreatePage: FC<{person?: Person | NewPersonData, onSubmit: (galleryName: s
   const url = useMemo(() => `https://ourweddingrecap.com/${galleryName.toLowerCase().replaceAll(' ', '-')}`, [galleryName]);
   return (
     <Container as='main' className={styles.page}>
+      <Row className={styles.actionHeader}>
+        <Container className={styles.backButton} onClick={back}>
+          <Container>
+            <FontAwesomeIcon icon={leftIcon} className={styles.icon} />
+          </Container>
+          <Container>
+            <Text className={styles.icon}>Back</Text>
+          </Container>
+        </Container>
+      </Row>
       <Column className={styles.titleContainer}>
         <Row as='header'padding={1}>
           <Image src='/branding/wordmark.png' alt='wordmark' layout='intrinsic' height={100} width={100}/>
