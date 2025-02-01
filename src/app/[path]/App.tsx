@@ -14,6 +14,7 @@ import Password from "./components/Password";
 import Sidebar, { MobileMenu } from "./components/Sidebar";
 import { AlbumsProvider } from "@/helpers/providers/albums";
 import useNavigation, { NavigationProvider } from "@/helpers/providers/navigation";
+import { Album, AlbumMediaData } from "@/lib/types/Album";
 
 export enum AppPage {
     HOME = 'HOME',
@@ -21,8 +22,7 @@ export enum AppPage {
     USER = 'USER',
     GALLERIES = 'GALLERIES'
 }
-const App: FC<{gallery: Gallery, password?: string}> =  ({gallery, password: propsPassword}) => {
-    const {isMobile} = useWindowSize()
+const App: FC<{gallery: Gallery, password?: string, album?: AlbumMediaData}> =  ({gallery, password: propsPassword, album}) => {
     const [showQrCode, setShowQrCode] = useState(false)
     const [password, setPassword] = useLocalStorage<string | null>(gallery.id, propsPassword || null)
     const [cleared, setCleared] = useState(password === gallery.password)
@@ -39,7 +39,7 @@ const App: FC<{gallery: Gallery, password?: string}> =  ({gallery, password: pro
         <UserProvider galleryId={gallery.id}>
             <GalleryProvider gallery={gallery}>
                 <AlbumsProvider galleryId={gallery.id}>
-                    <NavigationProvider>
+                    <NavigationProvider album={album}>
                     <Container as='main'className={styles.app}>
                         {
                             cleared ? (

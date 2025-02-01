@@ -36,6 +36,7 @@ interface UploadState {
     gallery: Gallery
     selectImages: boolean
     selectedImages: Set<string>
+    loading: boolean
 } 
 
 interface UploadActions {
@@ -67,6 +68,7 @@ const GalleryProvider: React.FC<{ children: React.ReactNode, gallery: Gallery}> 
   const [selectImages, setSelectImages] = useState<boolean>(false)
   const [selectedImages, setSelectedImages] = useState<Set<string>>(new Set())
   const [showConfirmDelete, setShowConfirmDelete] = useState<boolean>(false)
+  const [loading, setLoading] = useState<boolean>(true)
   const handleBeginUpload = useCallback(() => {
       if (fileInputRef.current) {
           fileInputRef.current.click();
@@ -282,7 +284,7 @@ const GalleryProvider: React.FC<{ children: React.ReactNode, gallery: Gallery}> 
       await deleteMedia(image.id)
     })
     await Promise.all([deleteImagePromises, handleUnfinishedUploads(files)])
-
+    setLoading(false)
   }, [gallery.id])
 
   useEffect(() => {
@@ -335,7 +337,8 @@ const GalleryProvider: React.FC<{ children: React.ReactNode, gallery: Gallery}> 
         selectedImages,
         toggleSelectImages,
         toggleSelectedImage,
-        loadGallery
+        loadGallery,
+        loading
     }}>
       {children}
       <input
