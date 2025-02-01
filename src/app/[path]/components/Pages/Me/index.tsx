@@ -8,15 +8,23 @@ import AlbumChip from '@/components/AlbumChip';
 import useAlbums from '@/helpers/providers/albums';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { checkSquareIcon, squareIcon } from '@/lib/icons';
+import App from 'next/app';
+import useNavigation from '@/helpers/providers/navigation';
+import { AppPage } from '@/app/[path]/App';
+import { Tab } from '../Gallery';
 
 
 const Home: FC = () => {
     const {media, toggleSelectImages, selectImages} = useGallery()
-    const {albums} = useAlbums()
+    const {albums, setAlbum} = useAlbums()
+    const {setPage, setTab} = useNavigation()
 
     const chooseAlbum = (albumId: string) => {
-        
+        setAlbum(albumId)
+        setPage(AppPage.GALLERY)
+        setTab(Tab.ALBUMS)
     }
+
     return (
         <>
             <Column className={styles.section} padding>
@@ -26,7 +34,7 @@ const Home: FC = () => {
                 <Container className={styles.line} style={{width: '100%'}}/>
                 <Container className={styles.content}>
                     {albums.map((album, index) => (
-                        <AlbumChip index={index} album={album} onClick={() => chooseAlbum(album.id)}/>
+                        <AlbumChip key={album.name} index={index} album={album} onClick={() => chooseAlbum(album.id)}/>
                     ))}
                 </Container>
             </Column>

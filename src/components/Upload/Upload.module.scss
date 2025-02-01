@@ -33,6 +33,13 @@
         display: none !important;
     }
 }
+.albumName {
+    color: var(--primary);
+    font-weight: 600 !important;
+}
+.checkIcon {
+    color: var(--primary) !important;
+}
 @media screen and (max-width: 768px) {
     .action {
         .button {
@@ -89,6 +96,7 @@
 .actionBar {
     width: 100%;
     padding: 0.5rem;
+    flex-wrap: wrap;
 }
 .galleryContainer {
     width: 100%;

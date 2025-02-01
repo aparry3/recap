@@ -7,25 +7,35 @@ import { Column, Container, Row, Text } from "react-web-layout-components"
 import styles from './Sidebar.module.scss'
 import Image from "next/image"
 import { AppPage } from "../../App";
-import { Router } from "next/router";
 import { useRouter } from "next/navigation";
+import useGallery from "@/helpers/providers/gallery";
+import useNavigation from "@/helpers/providers/navigation";
 
 interface SidebarProps {
-    onClose?: () => void
-    open?: boolean
-    page: AppPage
-    onPageChange: (page: AppPage) => void
 }
-const SidebarContent: FC<Omit<SidebarProps, 'open'>> = ({onClose, onPageChange, page}) => {
+const SidebarContent: FC<Omit<SidebarProps, 'open'>> = () => {
+    const {handlePageChange, page, setShowSidebar} = useNavigation()
     const router = useRouter()
     const navigateToGalleries = useCallback(() => {
         router.push('/galleries')
     }, [router])
+
+    const {setAlbum, setPerson} = useGallery()
+    const changePage = (page: AppPage) => {
+        setAlbum()
+        setPerson()
+        setShowSidebar(false)
+        handlePageChange(page)
+    }
+
+    const handleClose = () => {
+        setShowSidebar(false)
+    }
     return (
     <>
     <Container className={styles.header} padding>
         <Container className={styles.headerIcon}>
-            <FontAwesomeIcon icon={leftIcon} className={styles.icon} onClick={onClose}/>
+            <FontAwesomeIcon icon={leftIcon} className={styles.icon} onClick={handleClose}/>
         </Container>
         <Image src='/branding/wordmark.png' alt='wordmark' layout='intrinsic' height={100} width={100}/>
         <Container className={styles.headerIcon}>
@@ -35,7 +45,7 @@ const SidebarContent: FC<Omit<SidebarProps, 'open'>> = ({onClose, onPageChange, 
      <Container className={styles.dash} />
      <Column className={styles.menu} style={{flexGrow: 1}}>
         <Container className={styles.menuItemContainer}>
-            <Row className={`${styles.menuItem} ${page === AppPage.HOME ? styles.active : ''} `} onClick={() => onPageChange(AppPage.HOME)}>
+            <Row className={`${styles.menuItem} ${page === AppPage.HOME ? styles.active : ''} `} onClick={() => changePage(AppPage.HOME)}>
                 <Container className={styles.menuIcon}>
                     <FontAwesomeIcon icon={houseIcon} className={styles.icon}/>
                 </Container>
@@ -45,7 +55,7 @@ const SidebarContent: FC<Omit<SidebarProps, 'open'>> = ({onClose, onPageChange, 
             </Row>
         </Container>
         <Container className={styles.menuItemContainer}>
-            <Row className={`${styles.menuItem} ${page === AppPage.GALLERY ? styles.active : ''} `} onClick={() => onPageChange(AppPage.GALLERY)}>
+            <Row className={`${styles.menuItem} ${page === AppPage.GALLERY ? styles.active : ''} `} onClick={() => changePage(AppPage.GALLERY)}>
                 <Container className={styles.menuIcon}>
                     <FontAwesomeIcon icon={gridIcon} className={styles.icon}/>
                 </Container>
@@ -55,7 +65,7 @@ const SidebarContent: FC<Omit<SidebarProps, 'open'>> = ({onClose, onPageChange, 
             </Row>
         </Container>
         <Container className={styles.menuItemContainer}>
-            <Row className={`${styles.menuItem} ${page === AppPage.USER ? styles.active : ''}`} onClick={() => onPageChange(AppPage.USER)}>
+            <Row className={`${styles.menuItem} ${page === AppPage.USER ? styles.active : ''}`} onClick={() => changePage(AppPage.USER)}>
                 <Container className={styles.menuIcon}>
                     <FontAwesomeIcon icon={userIcon} className={styles.icon}/>
                 </Container>
@@ -89,8 +99,9 @@ const Sidebar: FC<SidebarProps> = (props) => {
     )
 }
 
-export const MobileMenu: FC<SidebarProps> = ({open = false, ...props}) => {
-    return open ? (
+export const MobileMenu: FC<SidebarProps> = ({ ...props}) => {
+    const {sidebarOpen} = useNavigation()
+    return sidebarOpen ? (
         <Column className={styles.mobileSidebar}>
             <SidebarContent {...props} />
         </Column>

@@ -1,5 +1,5 @@
 "use client";
-import React, { FC, useEffect, useMemo, useState } from "react"
+import React, { FC, useCallback, useEffect, useMemo, useState } from "react"
 import {  Container } from "react-web-layout-components"
 import styles from './page.module.scss'
 import Content from "./components/Content";
@@ -9,10 +9,12 @@ import useWindowSize from "@/helpers/hooks/window";
 import { GalleryProvider } from "@/helpers/providers/gallery";
 import { Gallery } from "@/lib/types/Gallery";
 import { UserProvider } from "@/helpers/providers/user";
-import useLocalStorage, { setCookie, useNavigationState } from "@/helpers/hooks/localStorage";
+import useLocalStorage, { setCookie } from "@/helpers/hooks/localStorage";
 import Password from "./components/Password";
 import Sidebar, { MobileMenu } from "./components/Sidebar";
 import { AlbumsProvider } from "@/helpers/providers/albums";
+import useNavigation, { NavigationProvider } from "@/helpers/providers/navigation";
+import { Album, AlbumMediaData } from "@/lib/types/Album";
 
 export enum AppPage {
     HOME = 'HOME',
@@ -20,11 +22,8 @@ export enum AppPage {
     USER = 'USER',
     GALLERIES = 'GALLERIES'
 }
-const App: FC<{gallery: Gallery, password?: string}> =  ({gallery, password: propsPassword}) => {
-    const {isMobile} = useWindowSize()
-    const [showSidebar, setShowSidebar] = useState(false)
+const App: FC<{gallery: Gallery, password?: string, album?: AlbumMediaData}> =  ({gallery, password: propsPassword, album}) => {
     const [showQrCode, setShowQrCode] = useState(false)
-    const {page, setPage} = useNavigationState()
     const [password, setPassword] = useLocalStorage<string | null>(gallery.id, propsPassword || null)
     const [cleared, setCleared] = useState(password === gallery.password)
     
@@ -35,31 +34,29 @@ const App: FC<{gallery: Gallery, password?: string}> =  ({gallery, password: pro
             
         }
     }, [password])
-
-    const handlePageChange = (newPage: AppPage) => {
-        setPage(newPage)
-        setShowSidebar(false)
-    }
-    const sidebarOpen = useMemo(() => isMobile && showSidebar, [showSidebar, isMobile])
+    
     return (
         <UserProvider galleryId={gallery.id}>
             <GalleryProvider gallery={gallery}>
                 <AlbumsProvider galleryId={gallery.id}>
+                    <NavigationProvider album={album}>
                     <Container as='main'className={styles.app}>
                         {
                             cleared ? (
                             <>
-                                <Header onMenuClick={() => setShowSidebar(true)} onQrClick={() => setShowQrCode(true)} />
+                                <Header onQrClick={() => setShowQrCode(true)} />
                                 {showQrCode && <QrCode onClose={() => setShowQrCode(false)} open={showQrCode}/>}
-                                <Sidebar page={page} onPageChange={handlePageChange} onClose={() => setShowSidebar(false)} />
-                                <MobileMenu page={page} onPageChange={handlePageChange} open={sidebarOpen} onClose={() => setShowSidebar(false)} />
-                                <Content page={page} onQrClick={() => setShowQrCode(true)}/>
+                                <Sidebar />
+                                <MobileMenu  />
+                                <Content onQrClick={() => setShowQrCode(true)}/>
                                 {/* {showUploadConfirmation && <Upload /> } */}
                             </>
                             ): (
                                 <Password password={password || ''} setPassword={setPassword} name={gallery.name}/>
                             )}
                     </Container>
+
+                    </NavigationProvider>
                 </AlbumsProvider>
             </GalleryProvider>
         </UserProvider>

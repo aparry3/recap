@@ -7,11 +7,14 @@ import React, { FC } from "react"
 import { Container } from "react-web-layout-components"
 import Image from "next/image"
 import styles from './Header.module.scss'
+import useNavigation from "@/helpers/providers/navigation";
 
-const Header: FC<{onMenuClick: () => void, onQrClick: () => void}> = ({onMenuClick, onQrClick}) => {
+
+const Header: FC<{ onQrClick: () => void}> = ({onQrClick}) => {
+    const {setShowSidebar} = useNavigation()
     return (
         <Container as='header' className={styles.header} justify='space-between'>
-            <Container className={styles.headerItem} onClick={onMenuClick}>
+            <Container className={styles.headerItem} onClick={() => setShowSidebar(true)}>
                 <FontAwesomeIcon icon={menuIcon} className={styles.icon}/>
             </Container>
             <Container className={styles.wordmarkContainer} padding={0.5}>

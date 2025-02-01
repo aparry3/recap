@@ -11,9 +11,22 @@ export const insertAlbum = async (galleryId: string, newAlbum: NewAlbumData): Pr
   return album;
 }
 
-export const insertAlbumMedia = async (albumId: string, mediaIds: string[]): Promise<AlbumMedia[]> => {
-  const albumMedia = await db.insertInto('albumMedia').values(mediaIds.map(id => ({albumId, mediaId: id}))).returningAll().execute();
-  return albumMedia;
+export const insertAlbumMedia = async (albumId: string, mediaIds: string[]): Promise<Media[]> => {
+  const albumMedia = await db.insertInto('albumMedia')
+  .values(mediaIds.map(id => ({albumId, mediaId: id})))
+  .onConflict(oc => oc.constraint('album_media_pk').doNothing())
+  .returningAll()
+  .execute();
+
+  const media = await db
+  .selectFrom('media')
+  .innerJoin('albumMedia', 'albumMedia.mediaId', 'media.id')
+  .where('albumMedia.albumId', '=', albumId)
+  .where('albumMedia.mediaId', 'in', albumMedia.map(row => row.mediaId)) // Fetch only the inserted media
+  .selectAll('media')
+  .execute();
+
+  return media;
 }
 
 
@@ -22,10 +35,32 @@ export const updateAlbum = async (albumId: string, albumUpdate: AlbumUpdate): Pr
   return album;
 }
 
-export const selectAlbum = async (albumId: string): Promise<Album> => {
-  const album = await db.selectFrom('album').where('id', '=', albumId).selectAll().executeTakeFirstOrThrow();
-  return album;
+export const selectAlbum = async (albumId: string): Promise<AlbumMediaData | undefined> => {
+  const album = await db.selectFrom('album')
+  .leftJoin('albumMedia', 'albumMedia.albumId', 'album.id')
+  .leftJoin('media', 'media.id', 'albumMedia.mediaId') // Join to count media for each person
+  .selectAll('album')
+  .select([
+    db.fn.count('media.id').as('count'),
+  ])
+  .where('album.id', '=', albumId)
+  .groupBy(['album.id']) // Only group by person ID
+  .executeTakeFirst();
+
+  if (!album) return undefined
+  const recentMedia = await selectAlbumMedia(album.id, 25)
+
+  return {
+      ...album,
+      count: Number(album.count || 0),
+      recentMedia: recentMedia || []
+    }
 }
+
+// export const selectAlbum = async (albumId: string): Promise<Album> => {
+//   const album = await db.selectFrom('album').where('id', '=', albumId).selectAll().executeTakeFirstOrThrow();
+//   return album;
+// }
 
 export const selectGalleryAlbums = async (galleryId: string): Promise<AlbumMediaData[]> => {
     const albums = await db.selectFrom('album')

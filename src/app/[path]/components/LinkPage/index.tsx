@@ -31,11 +31,12 @@ enum Color {
 }
 
 const LinkPage: FC<{open: boolean, onClose: () => void}> = ({onClose, open}) => {
-    const {gallery} = useGallery()
+    const {gallery, album} = useGallery()
     const [color, setColor] = useState(Color.PRIMARY)
     const [backgroundColor, setBackgroundColor] = useState(Color.BACKGROUND_LIGHT)
     const [copied, setCopied] = useState(false);
-    const url = useMemo(() => `${BASE}/${gallery.path}?password=${gallery.password}`, [gallery])
+    const albumQP = useMemo(() => album ? `&album=${album.id}` : '', [album])
+    const url = useMemo(() => `${BASE}/${gallery.path}?password=${gallery.password}${albumQP}`, [gallery, albumQP])
 
     const copyToClipboard = useCallback(async () => {
         try {

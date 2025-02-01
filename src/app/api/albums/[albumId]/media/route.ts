@@ -6,10 +6,11 @@ export const POST = async (req: Request, ctx: { params: { albumId: string } }) =
     const { albumId } = ctx.params
 
     try {
-        const album = await insertAlbumMedia(albumId, mediaIds)
+        const media = await insertAlbumMedia(albumId, mediaIds)
 
-        return NextResponse.json({album}, {status: 200})
+        return NextResponse.json({media}, {status: 200})
     } catch (e: any) {
+        console.error(e)
         return NextResponse.json({error: e.message}, {status: 400})
 
     }
