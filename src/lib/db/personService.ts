@@ -42,7 +42,7 @@ export const selectPeopleMedia = async (galleryId: string): Promise<GalleryPerso
     .execute();
 
     const personPromises = people.map(async p => {
-      const recentMedia = await selectGalleryPersonMedia(galleryId, p.id, 25)
+      const recentMedia = await selectGalleryPersonMedia(galleryId, p.id, 100)
       return {
         ...p,
         recentMedia

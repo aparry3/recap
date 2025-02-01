@@ -4,8 +4,7 @@ import { redirect } from "next/navigation";
 import { selectGalleryByPath } from "@/lib/db/galleryService";
 import { Gallery } from "@/lib/types/Gallery";
 import { cookies } from "next/headers";
-import { setCookie } from "@/lib/cookies";
-import { Album, AlbumMediaData } from "@/lib/types/Album";
+import { AlbumMediaData } from "@/lib/types/Album";
 import { selectAlbum } from "@/lib/db/albumService";
 
 
