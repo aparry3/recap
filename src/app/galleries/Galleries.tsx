@@ -3,11 +3,10 @@ import React, { FC } from 'react';
 import { Column, Container, Row, Text } from 'react-web-layout-components';
 import Image from 'next/image';
 import styles from './Galleries.module.scss';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { linkIcon, qrcodeIcon } from '@/lib/icons';
 import { useRouter } from 'next/navigation';
 import { Gallery } from '@/lib/types/Gallery';
 import { Person } from '@/lib/types/Person';
+import Link from 'next/link';
 
 const Welcome: FC<{galleries: Gallery[], person?: Person}> = ({galleries, person}) => {
   const router = useRouter()
@@ -50,6 +49,13 @@ const Welcome: FC<{galleries: Gallery[], person?: Person}> = ({galleries, person
             <Container className={styles.separator}/>
             </>
           ))}
+          <Container className={styles.addGalleryContainer}>
+            <Link href='/create' className={styles.addGallery}>
+              <Text className={styles.addGalleryText}>
+                + Create a new gallery
+              </Text>
+            </Link>
+          </Container>
         </Column>
       </Column>
     </Container>
