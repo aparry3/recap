@@ -6,17 +6,17 @@ import  NextImage from "next/image"
 import Button from "@/components/Button"
 import { usePathname } from "next/navigation"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { uploadIcon } from "@/lib/icons";
+import { checkSquareIcon, squareIcon, uploadIcon } from "@/lib/icons";
 import { OrientationMediaWithFile } from "@/helpers/providers/gallery";
 import { MediaConfirmationGallery } from "../MediaGallery";
+import { AlbumMediaData } from "@/lib/types/Album";
 
 
-const Upload: FC<{media: OrientationMediaWithFile[], collaboratorCount: number, upload: () => void, onConfirm: (confirmedImages: OrientationMediaWithFile[]) => void, onCancel: () => void}> = ({media, collaboratorCount, upload, onConfirm, onCancel}) => {
+const Upload: FC<{media: OrientationMediaWithFile[], collaboratorCount: number, upload: () => void, onConfirm: (confirmedImages: OrientationMediaWithFile[], addToAlbum: boolean) => void, onCancel: () => void, album?: AlbumMediaData}> = ({media, collaboratorCount, album,upload, onConfirm, onCancel}) => {
     const pathname = usePathname()
     const name = pathname.replace('/upload', '').replace('/', '').split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
-    
     const [selectedImages, setSelectedImages] = useState<Set<number>>(new Set(media.map((_, index) => index)))
-    
+    const [addToAlbum, setAddToAlbum] = useState<boolean>(album ? true : false)
     const [totalImages, setTotalImages] = useState<number>(0)
     const [totalVideos, setTotalVideos] = useState<number>(0)
 
@@ -44,10 +44,15 @@ const Upload: FC<{media: OrientationMediaWithFile[], collaboratorCount: number, 
         }
     }, [selectedImages])
 
-    const handleConfirm = () => {
-        onConfirm(media.filter((_, index) => selectedImages.has(index)))
-    }
-
+    const handleConfirm = useCallback(() => {
+        console.log(selectedImages, media)
+        onConfirm(media.filter((_, index) => selectedImages.has(index)), addToAlbum)
+    }, [addToAlbum, media, selectedImages])
+    useEffect(() => {
+        if (album) {
+            setAddToAlbum(true)
+        }
+    }, [album])
     useEffect(() => {
         if (media.length > 0) {
             setSelectedImages(new Set(media.map((_, index) => index)))
@@ -102,6 +107,16 @@ const Upload: FC<{media: OrientationMediaWithFile[], collaboratorCount: number, 
                 <MediaConfirmationGallery media={media} toggleImage={toggleImage} selectedImages={selectedImages}/>
             </Column>
             <Container className={styles.actionBar}>
+                { album && (
+                <Container className={styles.albumCheck} onClick={() => setAddToAlbum(!addToAlbum)}>
+                    <Container className={styles.checkContainer}>
+                        <FontAwesomeIcon icon={addToAlbum ? checkSquareIcon : squareIcon} className={styles.checkIcon}/>
+                    </Container>
+                    <Container className={styles.mediaType}>
+                        <Text size={1.2}>Add to album: <Text className={styles.albumName}>{album.name}</Text></Text>
+                    </Container>
+                </Container>
+                )}
                 <Container className={styles.mediaInfo}>
                     <Container className={styles.mediaType}>
                         <Text size={1.2}>{totalImages} Photos</Text>

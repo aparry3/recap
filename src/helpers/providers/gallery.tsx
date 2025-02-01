@@ -12,6 +12,7 @@ import UploadStatus from '@/components/UploadStatus';
 import { addFile, readFiles, removeFile, TempFile } from '../clientDb';
 import ConfirmDelete from '@/components/ConfirmDelete';
 import { AlbumMediaData } from '@/lib/types/Album';
+import { add } from 'dexie';
 
 
 export interface OrientationMedia {
@@ -182,9 +183,9 @@ const GalleryProvider: React.FC<{ children: React.ReactNode, gallery: Gallery}> 
     return media
   }
 
-  const insertMedia = useCallback(async (newMedia: OrientationMediaWithFile): Promise<Media> => {
+  const insertMedia = useCallback(async (newMedia: OrientationMediaWithFile,  addToAlbum: boolean): Promise<Media> => {
     const {file, previewFile, preview, url, isVertical, ..._newMedia} = newMedia
-    const insertedMedia = await createMedia({..._newMedia, personId}, gallery.id, currentAlbum?.id)
+    const insertedMedia = await createMedia({..._newMedia, personId}, gallery.id, currentAlbum && addToAlbum ? currentAlbum.id : undefined)
     const {presignedUrls, ..._media} = insertedMedia
     //Add Temp File
     URL.revokeObjectURL(url)
@@ -203,15 +204,16 @@ const GalleryProvider: React.FC<{ children: React.ReactNode, gallery: Gallery}> 
     return media
   }
 
-  const confirmMedia = async (confirmedImages: OrientationMediaWithFile[]) => {
+  const confirmMedia = async (confirmedImages: OrientationMediaWithFile[], addToAlbum: boolean) => {
+    console.log(addToAlbum, confirmedImages, currentAlbum)
     setStagedMedia(confirmedImages)
     setTotalUploads(confirmedImages.length)
     setCompleteUploads(0)
-    const imagePromises = confirmedImages.map(image => insertMedia(image).then(async media => {
+    const imagePromises = confirmedImages.map(image => insertMedia(image, addToAlbum).then(async media => {
       const m = await finalizeMedia(media.id)
       setCompleteUploads(oldComplete => (oldComplete || 0) + 1)
       setMedia((oldImages) => [...oldImages, m])
-      if (currentAlbum) {
+      if (currentAlbum && addToAlbum) {
         setCurrentAlbum({...currentAlbum, recentMedia: [m, ...(currentAlbum?.recentMedia || [])]})
       }
     }))
@@ -345,7 +347,7 @@ const GalleryProvider: React.FC<{ children: React.ReactNode, gallery: Gallery}> 
         onChange={handleFileChange}
     />
     {showConfirmDelete && <ConfirmDelete onCancel={cancelImages} onConfirm={handleConfirmDelete} selectedImages={selectedImages}/>}
-    {showUploadConfirmation && <ClientUpload media={stagedMedia} collaboratorCount={people.length} upload={handleBeginUpload} onConfirm={confirmMedia} onCancel={cancelImages}/>}
+    {showUploadConfirmation && <ClientUpload album={currentAlbum} media={stagedMedia} collaboratorCount={people.length} upload={handleBeginUpload} onConfirm={confirmMedia} onCancel={cancelImages}/>}
     <UploadStatus total={totalUploads} complete={completeUploads}/>
     </GalleryContext.Provider>
   );

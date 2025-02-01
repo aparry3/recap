@@ -10,9 +10,11 @@ import Me from './Pages/Me';
 import useGallery from '@/helpers/providers/gallery';
 import useAlbums from '@/helpers/providers/albums';
 import RefreshStatusComponent, {RefreshStatus} from '@/components/RefreshStatusComponent';
+import useNavigation from '@/helpers/providers/navigation';
 
 const OVERSCROLL_THRESHOLD = 150
-const Content: FC<{onQrClick: () => void, page: AppPage}> = ({onQrClick, page}) => {
+const Content: FC<{onQrClick: () => void}> = ({onQrClick}) => {
+    const {page} = useNavigation()
     const {loadGallery} = useGallery()
     const {loadAlbums} = useAlbums()
     const contentRef = useRef<HTMLDivElement>(null);

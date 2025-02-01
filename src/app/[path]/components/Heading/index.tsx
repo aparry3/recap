@@ -4,26 +4,37 @@ import { qrcodeIcon } from "@/lib/icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { Column, Container, Row, Text } from "react-web-layout-components"
 import styles from './Heading.module.scss'
-import { FC } from "react";
+import { FC, useMemo } from "react";
 import useGallery from "@/helpers/providers/gallery";
 
+
 const Heading: FC<{onQrClick?: () => void}> = ({onQrClick}) => {
-    const {upload, gallery, people} = useGallery()
-    
+    const {upload, gallery, people, person, album} = useGallery()
+    const name = useMemo(() => person ? person.name : album ? album.name : gallery.name, [person, gallery, album])
+    const count = useMemo(() => person ? person.count : album ? album.count : undefined, [person, album, people])
+
     return (
         <Container className={styles.heading} justify="space-between">
         <Column className={styles.titleContainer} padding>
             <Row className={styles.title}>
-                <Text className={styles.titleText} size={3}>{gallery.name}</Text>
+                <Text className={styles.titleText} size={3}>{name}</Text>
             </Row>
             <Row className={styles.subtitleContainer} padding={[0, 0.5]}>
-                <Container className={styles.subtitle} padding={[0, 1, 0, 0]}>
-                    <Text className={styles.subtitleText} size={1.2}>{new Date().toDateString()}</Text>
-                </Container>
-                <Container className={styles.dashVertical}/>
+                { count === undefined ? (
+                <>
+                    <Container className={styles.subtitle} padding={[0, 1, 0, 0]}>
+                        <Text className={styles.subtitleText} size={1.2}>{new Date().toDateString()}</Text>
+                    </Container>
+                    <Container className={styles.dashVertical}/>
+                    <Container className={styles.subtitle} padding={[0, 0, 0, 1]}>
+                        <Text className={styles.subtitleText} size={1.2}>{people?.length || 0} Contributors</Text>
+                    </Container>
+                </>
+                ) : (
                 <Container className={styles.subtitle} padding={[0, 0, 0, 1]}>
-                    <Text className={styles.subtitleText} size={1.2}>{people?.length || 0} Contributors</Text>
+                    <Text className={styles.subtitleText} size={1.2}>{count || 0} Uploads</Text>
                 </Container>
+                )}
             </Row>
         </Column>
         {onQrClick && (

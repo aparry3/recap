@@ -31,6 +31,7 @@ const AlbumsProvider: React.FC<{ children: React.ReactNode, galleryId: string}> 
     const [showNewAlbumPage, setShowNewAlbumPage] = useState<boolean>(false)
     const [showSelectAlbums, setShowSelectAlbums] = useState<boolean>(false)
     const [selectedImages, setSelectedImages] = useState<Set<string>>(new Set())
+    
     const setAlbum = useCallback((albumId?: string) => {
       const _album = albums.find(alb => alb.id === albumId)
       setGalleryAlbum(_album)

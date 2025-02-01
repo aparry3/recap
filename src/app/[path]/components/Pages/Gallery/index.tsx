@@ -9,7 +9,7 @@ import useGallery from '@/helpers/providers/gallery';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { arrowLeftIcon, checkSquareIcon, downIcon, squareIcon, upIcon } from '@/lib/icons';
 import useAlbums from '@/helpers/providers/albums';
-import { useNavigationState } from '@/helpers/hooks/localStorage';
+import useNavigation from '@/helpers/providers/navigation';
 
 
 export enum Tab {
@@ -27,7 +27,7 @@ const TabMenuItem: FC<{tab: Tab, activeTab: Tab, selectTab: (tab: Tab) => void}>
 }
 
 const Gallery: FC = () => {
-    const {tab, setTab} = useNavigationState()
+    const {tab, setTab} = useNavigation()
     const {person, setPerson, toggleSelectImages, selectImages} = useGallery()
     const {album, setAlbum} = useAlbums()
     const [menuOpen, setMenuOpen] = useState(false)
@@ -37,6 +37,8 @@ const Gallery: FC = () => {
     const handleChangeTab = (tab: Tab) => {
         setTab(tab)
         setMenuOpen(false)
+        setPerson()
+        setAlbum()
     }
     const currentTab = useMemo(() => {
         switch (tab) {
@@ -51,35 +53,31 @@ const Gallery: FC = () => {
         }
     }, [tab])
     
-    useEffect(() => {
-        console.log(album)
-        console.log(tab)
-    }, [album, tab])
     return (
         <Column className={styles.section}>
             <Column className={styles.titleContainer}>
                 {(Tab.PEOPLE === tab && person) ? (
-                    <Row className={styles.nameContainer}>
+                    <Row className={styles.nameContainer} justify='space-between'>
                         <Container className={styles.backIconContainer} onClick={() => setPerson()}>
                             <FontAwesomeIcon icon={arrowLeftIcon} className={styles.leftIcon} /><Text size={1.1} className={styles.backText}>Back</Text>
                         </Container>
-                        <Container className={styles.name}>
-                            <Text size={1.8}>{person.name}</Text>
-                        </Container>
-                        <Container className={styles.countContainer}>
-                            <Text size={1.1}>{person.count} uploads</Text>
+                        <Container className={styles.selectContainer} onClick={toggleSelectImages}>
+                            <Text>Select</Text>
+                            <Container className={styles.checkContainer}>
+                                <FontAwesomeIcon icon={selectImages ? checkSquareIcon : squareIcon} className={styles.icon}/>
+                            </Container>
                         </Container>
                     </Row>
                 ) : (Tab.ALBUMS === tab && album) ? (
-                    <Row className={styles.nameContainer}>
+                    <Row className={styles.nameContainer} justify='space-between'>
                         <Container className={styles.backIconContainer} onClick={() => setAlbum()}>
                             <FontAwesomeIcon icon={arrowLeftIcon} className={styles.leftIcon} /><Text size={1.1} className={styles.backText}>Back</Text>
                         </Container>
-                        <Container className={styles.name}>
-                            <Text size={1.8}>{album.name}</Text>
-                        </Container>
-                        <Container className={styles.countContainer}>
-                            <Text size={1.1}>{album.count} uploads</Text>
+                        <Container className={styles.selectContainer} onClick={toggleSelectImages}>
+                            <Text>Select</Text>
+                            <Container className={styles.checkContainer}>
+                                <FontAwesomeIcon icon={selectImages ? checkSquareIcon : squareIcon} className={styles.icon}/>
+                            </Container>
                         </Container>
                     </Row>
                 ) :(
