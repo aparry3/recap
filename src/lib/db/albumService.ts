@@ -48,7 +48,7 @@ export const selectAlbum = async (albumId: string): Promise<AlbumMediaData | und
   .executeTakeFirst();
 
   if (!album) return undefined
-  const recentMedia = await selectAlbumMedia(album.id, 25)
+  const recentMedia = await selectAlbumMedia(album.id, 100)
 
   return {
       ...album,
@@ -75,7 +75,7 @@ export const selectGalleryAlbums = async (galleryId: string): Promise<AlbumMedia
     .execute();
 
     const albumPromises = albums.map(async a => {
-      const recentMedia = await selectAlbumMedia(a.id, 25)
+      const recentMedia = await selectAlbumMedia(a.id, 100)
       return {
         ...a,
         recentMedia
