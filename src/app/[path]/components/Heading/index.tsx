@@ -31,9 +31,15 @@ const Heading: FC<{onQrClick?: () => void}> = ({onQrClick}) => {
                     </Container>
                 </>
                 ) : (
-                <Container className={styles.subtitle} padding={[0, 0, 0, 1]}>
-                    <Text className={styles.subtitleText} size={1.2}>{count || 0} Uploads</Text>
-                </Container>
+                <>
+                    <Container className={styles.subtitle} padding={[0, 1, 0, 0]}>
+                        <Text className={styles.subtitleText} size={1.2}>{gallery.name}</Text>
+                    </Container>
+                    <Container className={styles.dashVertical}/>
+                    <Container className={styles.subtitle} padding={[0, 0, 0, 1]}>
+                        <Text className={styles.subtitleText} size={1.2}>{count} uploads</Text>
+                    </Container>
+                </>
                 )}
             </Row>
         </Column>
