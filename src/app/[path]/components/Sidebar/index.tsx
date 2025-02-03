@@ -79,12 +79,12 @@ const SidebarContent: FC<Omit<SidebarProps, 'open'>> = () => {
             <Container className={styles.dash} />
         </Container>
         <Container className={styles.menuItemContainer}>
-            <Container className={`${styles.menuItem} ${page === AppPage.GALLERY ? styles.active : ''} `} onClick={() => changePage(AppPage.GALLERY)}>
+            <Container className={styles.menuItem} onClick={() => changePage(AppPage.GALLERY)}>
                 <Image src='/branding/TheKnot.png' alt='the knot' layout='intrinsic' height={80} width={80}/>
             </Container>
         </Container>
         <Container className={styles.menuItemContainer}>
-            <Container className={`${styles.menuItem} ${page === AppPage.GALLERY ? styles.active : ''} `} onClick={() => changePage(AppPage.GALLERY)}>
+            <Container className={styles.menuItem} onClick={() => changePage(AppPage.GALLERY)}>
                 <Image src='/branding/Zola.png' alt='zola' layout='intrinsic' height={80} width={80}/>
             </Container>
         </Container>
