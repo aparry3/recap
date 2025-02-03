@@ -10,6 +10,7 @@ import { AppPage } from "../../App";
 import { useRouter } from "next/navigation";
 import useGallery from "@/helpers/providers/gallery";
 import useNavigation from "@/helpers/providers/navigation";
+import Link from "next/link";
 
 interface SidebarProps {
 }
@@ -73,6 +74,19 @@ const SidebarContent: FC<Omit<SidebarProps, 'open'>> = () => {
                     <Text weight={500}>My Uploads</Text>
                 </Container>
             </Row>
+        </Container>
+        <Container style={{width: '100%'}} padding>
+            <Container className={styles.dash} />
+        </Container>
+        <Container className={styles.menuItemContainer}>
+            <Container className={`${styles.menuItem} ${page === AppPage.GALLERY ? styles.active : ''} `} onClick={() => changePage(AppPage.GALLERY)}>
+                <Image src='/branding/TheKnot.png' alt='the knot' layout='intrinsic' height={80} width={80}/>
+            </Container>
+        </Container>
+        <Container className={styles.menuItemContainer}>
+            <Container className={`${styles.menuItem} ${page === AppPage.GALLERY ? styles.active : ''} `} onClick={() => changePage(AppPage.GALLERY)}>
+                <Image src='/branding/Zola.png' alt='zola' layout='intrinsic' height={80} width={80}/>
+            </Container>
         </Container>
      </Column>
      <Column className={styles.menu}>
