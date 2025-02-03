@@ -64,6 +64,14 @@
         background: var(--primary);
         color: var(--background-light);
     };
+    path {
+        fill: var(--primary);
+    }
+    &:hover {
+        path {
+            fill: var(--background-light);
+        }    
+    }    
 
 }
 .menuIcon {

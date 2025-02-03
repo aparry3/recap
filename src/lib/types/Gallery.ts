@@ -8,6 +8,8 @@ export interface GalleryTable {
     personId: string
     created: Date
     password: string
+    zola?: string
+    theknot?: string
 }
 
 export interface GalleryMediaTable {

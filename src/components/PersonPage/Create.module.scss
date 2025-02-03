@@ -21,6 +21,17 @@
     z-index: 10;
     background: var(--background-light);
 }
+.editPage {
+    height: 100%;
+    width: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    flex-wrap: wrap;
+    z-index: 10;
+    overflow:auto;
+    background: var(--background-light);
+}
 .backButton {
     cursor: pointer;
 }

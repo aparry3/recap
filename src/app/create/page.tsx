@@ -3,7 +3,7 @@ import React, { FC, useCallback, useEffect, useState } from 'react';
 import Welcome from './Welcome';
 import Create from '../../components/PersonPage/Create';
 import { createGallery } from '@/helpers/api/galleryClient';
-import { Gallery, NewGalleryData } from '@/lib/types/Gallery';
+import { Gallery, NewGallery, NewGalleryData } from '@/lib/types/Gallery';
 import { Person } from '@/lib/types/Person';
 import { createPerson, fetchPerson, updatePerson } from '@/helpers/api/personClient';
 import useLocalStorage from '@/helpers/hooks/localStorage';
@@ -30,10 +30,16 @@ const CreatePage: FC = () => {
     }
   }, [personId])
 
-  const handleSubmit = useCallback(async(_galleryName: string, _name: string, _email: string) => {
+  const handleSubmit = useCallback(async(_galleryName: string, _name: string, _email: string, theKnot? :string, zola?: string) => {
     const url = `${_galleryName.toLowerCase().replaceAll(' ', '-')}`
-    let _gallery = {name: _galleryName, path: url, password: generateRandomString(4)}
-    
+    let _gallery = {name: _galleryName, path: url, password: generateRandomString(4)} as NewGalleryData
+    if (theKnot) {
+      _gallery.theknot = theKnot
+    }
+    if (zola) {
+      _gallery.zola = theKnot
+    }
+
     setStage(1)
     setGallery(_gallery)
 

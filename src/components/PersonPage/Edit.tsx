@@ -5,42 +5,27 @@ import Image from 'next/image';
 import Input from '@/components/Input';
 import styles from './Create.module.scss';
 import Button from '@/components/Button';
-import { Person, NewPersonData } from '@/lib/types/Person';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { leftIcon } from '@/lib/icons';
-import { useRouter } from 'next/navigation';
+import { Gallery } from '@/lib/types/Gallery';
 
 
-const CreatePage: FC<{person?: Person | NewPersonData, onSubmit: (galleryName: string,name: string, email: string, theKnot?: string, zola?: string) => void}> = ({person, onSubmit}) => {
-    const router = useRouter()
-  const [name, setName] = useState(person?.name || '');
-  const [galleryName, setGalleryName] = useState('');
-  const [email, setEmail] = useState(person?.email || '');
+const EditGallery: FC<{gallery: Gallery, close: () => void, onSubmit: (galleryName: string, theKnot?: string, zola?: string) => void}> = ({gallery, close, onSubmit}) => {
+  const [galleryName, setGalleryName] = useState(gallery ? gallery.name : '');
 
-  const [theKnot, setTheKnot] = useState('');
-  const [zola, setZola] = useState('');
+  const [theKnot, setTheKnot] = useState(gallery ? (gallery.theknot || '') : '');
+  const [zola, setZola] = useState(gallery ? (gallery.zola || '') : '');
 
   useEffect(() => {
-   if (person) {
-      setName(person.name)
-      setEmail(person.email || '')
-   } 
-  }, [person])
-
-  const back = () => {
-    router.back()
-  }
-  const handleNameChange = (value?: string) => {
-    setName(value || '');
-  };
-
+    if (gallery) {
+       setGalleryName(gallery.name)
+       setTheKnot(gallery.theknot || '')
+       setZola(gallery.zola || '')
+    } 
+   }, [gallery])
+ 
   const handleGalleryNameChange = (value?: string) => {
     setGalleryName(value || '');
-  };
-
-
-  const handleEmailChange = (value?: string) => {
-    setEmail(value || '');
   };
 
   const handleTheKnotChange = (value?: string) => {
@@ -50,37 +35,22 @@ const CreatePage: FC<{person?: Person | NewPersonData, onSubmit: (galleryName: s
     setZola(value || '');
   };
 
-
-
   const handleButtonPress = () => {
     // Perform any necessary actions with the form data
-    onSubmit(galleryName, name, email, theKnot, zola);
+    onSubmit(galleryName, theKnot, zola);
   };
-
-  const emailError = useMemo(() => {
-    if (email) {
-      const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-      return !emailRegex.test(email);
-    }
-    return false
-  } , [email])
-
-
-  const submitDisabled = useMemo(() => {
-    return !email || !name || !galleryName|| emailError
-  }, [email, emailError, name, galleryName])
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     // Perform any necessary actions with the form data
-    if (!submitDisabled) onSubmit(galleryName, name, email, theKnot, zola);
+    if (!!galleryName) onSubmit(galleryName, theKnot, zola);
 };
 
   const url = useMemo(() => `https://ourweddingrecap.com/${galleryName.toLowerCase().replaceAll(' ', '-')}`, [galleryName]);
   return (
-    <Container as='main' className={styles.page}>
+    <Container as='main' className={styles.editPage}>
       <Row className={styles.actionHeader}>
-        <Container className={styles.backButton} onClick={back}>
+        <Container className={styles.backButton} onClick={close}>
           <Container>
             <FontAwesomeIcon icon={leftIcon} className={styles.icon} />
           </Container>
@@ -94,11 +64,11 @@ const CreatePage: FC<{person?: Person | NewPersonData, onSubmit: (galleryName: s
           <Image src='/branding/wordmark.png' alt='wordmark' layout='intrinsic' height={100} width={100}/>
         </Row>
         <Column as='header' className={styles.header}>
-          <Text size={1.4}>Create a</Text>
-          <Text size={2.5} weight={500}>New Gallery</Text>
+          <Text size={1.4}>Edit</Text>
+          <Text size={2.5} weight={500}>{gallery.name}</Text>
         </Column>
         <Container className={styles.buttonContainer} padding={[2, 0]}>
-          <Button className={styles.button} onClick={handleButtonPress} type='submit' disabled={!name || !email}>
+          <Button className={styles.button} onClick={handleButtonPress} type='submit' disabled={!galleryName}>
             <Text size={1.2} weight={600}>Submit</Text>
           </Button>
         </Container>
@@ -122,31 +92,6 @@ const CreatePage: FC<{person?: Person | NewPersonData, onSubmit: (galleryName: s
               <Text size={0.9}>{url}</Text>
             </Row>
           </Column>
-          <Column className={styles.inputContainer}>
-            <Input
-                label="Your Name"
-                type="text"
-                autoComplete='off'
-                name="name"
-                value={name}
-                onChange={handleNameChange}
-              />
-          </Column>
-          <Column className={styles.inputContainer}>
-            <Input
-                label="Your Email"
-                type="text"
-                autoComplete='off'
-                name="email"
-                value={email}
-                onChange={handleEmailChange}
-              />
-              {emailError && (
-              <Row style={{width: '100%'}}>
-                  <Text>Please enter a valid email address</Text>
-              </Row>
-              )}
-          </Column>
           <Column className={styles.inputContainer} padding={0.5}>
             <Container className={styles.galleryNamePrompt}>
               <Text size={1.3}>Optional: Add links to your wedding websites.</Text>
@@ -169,7 +114,7 @@ const CreatePage: FC<{person?: Person | NewPersonData, onSubmit: (galleryName: s
             />
           </Column>
           <Container className={styles.buttonContainer}>
-            <Button className={styles.button} onClick={handleButtonPress} type='submit' disabled={submitDisabled}>
+            <Button className={styles.button} onClick={handleButtonPress} type='submit' disabled={!galleryName}>
               <Text size={1.2} weight={600}>Submit</Text>
             </Button>
           </Container>
@@ -179,4 +124,4 @@ const CreatePage: FC<{person?: Person | NewPersonData, onSubmit: (galleryName: s
   );
 };
 
-export default CreatePage;
+export default EditGallery;

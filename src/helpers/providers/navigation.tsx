@@ -6,6 +6,7 @@ import { Tab } from '@/app/[path]/components/Pages/Gallery';
 import { useNavigationState } from '../hooks/localStorage';
 import useWindowSize from '../hooks/window';
 import { AlbumMediaData } from '@/lib/types/Album';
+import CreatePage from '@/components/PersonPage/Create';
 
 
 interface NavigationState {

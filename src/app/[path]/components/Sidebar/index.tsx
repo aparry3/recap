@@ -1,6 +1,6 @@
 "use client";
 
-import { houseIcon, gridIcon, userIcon, leftIcon, qrcodeIcon } from "@/lib/icons"
+import { houseIcon, gridIcon, userIcon, leftIcon, qrcodeIcon, gearIcon } from "@/lib/icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { FC, useCallback } from "react"
 import { Column, Container, Row, Text } from "react-web-layout-components"
@@ -11,17 +11,20 @@ import { useRouter } from "next/navigation";
 import useGallery from "@/helpers/providers/gallery";
 import useNavigation from "@/helpers/providers/navigation";
 import Link from "next/link";
+import { TheKnot, Zola } from "@/lib/icons/branding";
 
 interface SidebarProps {
 }
 const SidebarContent: FC<Omit<SidebarProps, 'open'>> = () => {
     const {handlePageChange, page, setShowSidebar} = useNavigation()
+    const {openSettings} = useGallery()
     const router = useRouter()
     const navigateToGalleries = useCallback(() => {
         router.push('/galleries')
     }, [router])
 
-    const {setAlbum, setPerson} = useGallery()
+    const {setAlbum, setPerson, gallery} = useGallery()
+    
     const changePage = (page: AppPage) => {
         setAlbum()
         setPerson()
@@ -75,21 +78,39 @@ const SidebarContent: FC<Omit<SidebarProps, 'open'>> = () => {
                 </Container>
             </Row>
         </Container>
-        <Container style={{width: '100%'}} padding>
-            <Container className={styles.dash} />
-        </Container>
-        <Container className={styles.menuItemContainer}>
-            <Container className={styles.menuItem} onClick={() => changePage(AppPage.GALLERY)}>
-                <Image src='/branding/TheKnot.png' alt='the knot' layout='intrinsic' height={80} width={80}/>
-            </Container>
-        </Container>
-        <Container className={styles.menuItemContainer}>
-            <Container className={styles.menuItem} onClick={() => changePage(AppPage.GALLERY)}>
-                <Image src='/branding/Zola.png' alt='zola' layout='intrinsic' height={80} width={80}/>
-            </Container>
-        </Container>
+        {(gallery.zola || gallery.theknot) && (
+            <>
+                <Container style={{width: '100%'}} padding>
+                    <Container className={styles.dash} />
+                </Container>
+                {gallery.theknot && (
+                <Container className={styles.menuItemContainer}>
+                    <Container className={styles.menuItem} onClick={() => changePage(AppPage.GALLERY)}>
+                        <TheKnot />
+                    </Container>
+                </Container>
+                )}
+                 {gallery.zola && (
+                <Container className={styles.menuItemContainer}>
+                    <Container className={styles.menuItem} onClick={() => changePage(AppPage.GALLERY)}>
+                        <Zola />
+                    </Container>
+                </Container>
+                )}
+            </>
+        )}
      </Column>
      <Column className={styles.menu}>
+        <Container className={styles.menuItemContainer}>
+            <Row className={`${styles.menuItem} ${page === AppPage.USER ? styles.active : ''}`} onClick={openSettings}>
+                <Container className={styles.menuIcon}>
+                    <FontAwesomeIcon icon={gearIcon} className={styles.icon}/>
+                </Container>
+                <Container>
+                    <Text weight={500}>Settings</Text>
+                </Container>
+            </Row>
+        </Container>
         <Container className={styles.menuItemContainer}>
             <Row className={`${styles.menuItem}`} onClick={navigateToGalleries}>
                 <Container className={styles.menuIcon}>
