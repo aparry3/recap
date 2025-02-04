@@ -101,7 +101,7 @@ const SidebarContent: FC<Omit<SidebarProps, 'open'>> = () => {
         )}
      </Column>
      <Column className={styles.menu}>
-     {personId === gallery.id && (
+     {personId === gallery.personId && (
         <Container className={styles.menuItemContainer}>
             <Row className={styles.menuItem} onClick={openSettings}>
                 <Container className={styles.menuIcon}>

@@ -34,7 +34,7 @@ const Hero = () => {
         <Column as='section' className={styles.hero} justify='space-between'>
             <Column className={styles.textContainer} padding={0.5}>
                 <Container className={styles.heroHeading} padding={[0, 1]}>
-                    <Text weight={700} className={styles.heroHeadingText} as='h1'><span className={styles.highlightText}>Recap</span> and <span className={styles.highlightText}>Relive</span> your favorite moments and memories</Text>
+                    <Text weight={700} className={styles.heroHeadingText} as='h1'><span className={styles.highlightText}>Recap</span> and <span className={styles.highlightText}>Relive</span> the best day of your life</Text>
                 </Container>
                 <Container className={styles.subheading} padding={[0, 1]}>
                     <Text className={styles.subheadingText} as='h2'>Through the eyes of everyone who was there</Text>

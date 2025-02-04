@@ -6,9 +6,24 @@ import { Gallery } from "@/lib/types/Gallery";
 import { cookies } from "next/headers";
 import { AlbumMediaData } from "@/lib/types/Album";
 import { selectAlbum } from "@/lib/db/albumService";
+import { Metadata, ResolvingMetadata } from "next";
 
-
-const GalleryPage: FC<{params: {path: string}, searchParams: {password?: string, album?: string}}> = async ({params, searchParams}) => {
+interface PageProps {
+    params: {path: string};
+    searchParams: {password?: string, album?: string};
+}
+export async function generateMetadata(
+    { params }: PageProps,
+  ): Promise<Metadata> {
+    const gallery = await selectGalleryByPath(params.path)
+      
+    return {
+      title: `Recap - ${gallery.name}`,
+      description: `Share your photos and videos with ${gallery.name}. Recap is the best way to share your photos and videos for everyone at your wedding.`,
+    }
+  }
+  
+const GalleryPage: FC<PageProps> = async ({params, searchParams}) => {
     // const ipAddress = getIpAddress(headerList)
     let gallery: Gallery
     let album: AlbumMediaData | undefined
