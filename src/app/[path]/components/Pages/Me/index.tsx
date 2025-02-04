@@ -27,6 +27,7 @@ const Home: FC = () => {
 
     return (
         <>
+            {albums.length && (
             <Column className={styles.section} padding>
                 <Row className={styles.title}>
                     <Text size={2} weight={500}>My Albums</Text>
@@ -38,6 +39,7 @@ const Home: FC = () => {
                     ))}
                 </Container>
             </Column>
+            )}
             <Column className={styles.section} padding>
                 <Row className={styles.title}>
                     <Text size={2} weight={500}>My Recent Uploads</Text>

@@ -188,8 +188,6 @@ async function loadSvg(url: string, color: string): Promise<HTMLImageElement> {
     if (color) {
       svgText = svgText.replace(/fill="[^"]*"/g, `fill="${color}"`);
     }
-
-    console.log(svgText)
   
     // Convert modified SVG to a Data URL
     return await loadImage(`data:image/svg+xml;base64,${btoa(svgText)}`);
