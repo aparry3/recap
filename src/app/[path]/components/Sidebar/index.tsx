@@ -1,5 +1,4 @@
-"use client";
-
+"use client"
 import { houseIcon, gridIcon, userIcon, leftIcon, qrcodeIcon, gearIcon } from "@/lib/icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { FC, useCallback } from "react"
@@ -10,7 +9,6 @@ import { AppPage } from "../../App";
 import { useRouter } from "next/navigation";
 import useGallery from "@/helpers/providers/gallery";
 import useNavigation from "@/helpers/providers/navigation";
-import Link from "next/link";
 import { TheKnot, Zola } from "@/lib/icons/branding";
 
 interface SidebarProps {
@@ -84,25 +82,25 @@ const SidebarContent: FC<Omit<SidebarProps, 'open'>> = () => {
                     <Container className={styles.dash} />
                 </Container>
                 {gallery.theknot && (
-                <Container className={styles.menuItemContainer}>
-                    <Container className={styles.menuItem} onClick={() => changePage(AppPage.GALLERY)}>
+                <a className={styles.menuItemContainer} href={gallery.theknot} target='_blank'>
+                    <Container className={styles.menuItem}>
                         <TheKnot />
                     </Container>
-                </Container>
+                </a>
                 )}
                  {gallery.zola && (
-                <Container className={styles.menuItemContainer}>
-                    <Container className={styles.menuItem} onClick={() => changePage(AppPage.GALLERY)}>
+                <a className={styles.menuItemContainer} href={gallery.zola} target='_blank'>
+                    <Container className={styles.menuItem}>
                         <Zola />
                     </Container>
-                </Container>
+                </a>
                 )}
             </>
         )}
      </Column>
      <Column className={styles.menu}>
         <Container className={styles.menuItemContainer}>
-            <Row className={`${styles.menuItem} ${page === AppPage.USER ? styles.active : ''}`} onClick={openSettings}>
+            <Row className={styles.menuItem} onClick={openSettings}>
                 <Container className={styles.menuIcon}>
                     <FontAwesomeIcon icon={gearIcon} className={styles.icon}/>
                 </Container>

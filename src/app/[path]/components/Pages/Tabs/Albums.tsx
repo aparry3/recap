@@ -1,16 +1,37 @@
-import { FC, useState } from "react"
+import { FC, useEffect, useState } from "react"
 import { Column, Container, Row, Text } from "react-web-layout-components"
 import styles from './Albums.module.scss'
 import Button from "@/components/Button"
 import useAlbums from "@/helpers/providers/albums"
 import MediaGallery from "@/components/MediaGallery"
 import AlbumChip from "@/components/AlbumChip"
+import useGallery from "@/helpers/providers/gallery"
 
 const Albums: FC = () => {
+    const {upload} = useGallery()
     const {createAlbum, albums, album, setAlbum} = useAlbums()
 
+    useEffect(() => {
+        console.log(album)
+    }, [album])
+
     return album ? (
-            <MediaGallery media={album.recentMedia || []} />
+            <>
+            {album.recentMedia && album.recentMedia.length ? (
+                <MediaGallery media={album.recentMedia} />
+            ) : (
+                <Column className={styles.data}>
+                <Container padding>
+                    <Text size={1.4}>
+                        No album uploads yet..
+                    </Text>
+                </Container>
+                <Container padding>
+                    <Button onClick={upload}>Upload</Button>
+                </Container>
+            </Column>
+            )}
+            </>
         ) : !albums.length ? (
                 <Column className={styles.data}>
                     <Container padding>

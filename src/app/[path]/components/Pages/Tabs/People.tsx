@@ -9,7 +9,22 @@ import { Media } from "@/lib/types/Media"
 const People: FC = () => {
     const {upload, people, setPerson, person} = useGallery()
     return person ? (
-        <MediaGallery media={person.recentMedia as Media[]} />
+        <>
+        {person.recentMedia && person.recentMedia.length ? (
+            <MediaGallery media={person.recentMedia as Media[]} />
+        ) : (
+            <Column className={styles.data}>
+                <Container padding>
+                    <Text size={1.4}>
+                        No uploads yet.
+                    </Text>
+                </Container>
+                <Container padding>
+                    <Button onClick={upload}>Upload</Button>
+                </Container>
+            </Column>
+        )}
+        </>
     ) : !people.length ? (
             <Column className={styles.data}>
                 <Container padding>
