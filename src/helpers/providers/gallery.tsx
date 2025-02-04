@@ -13,6 +13,9 @@ import { addFile, readFiles, removeFile, TempFile } from '../clientDb';
 import ConfirmDelete from '@/components/ConfirmDelete';
 import { AlbumMediaData } from '@/lib/types/Album';
 import { add } from 'dexie';
+import CreatePage from '@/components/PersonPage/Create';
+import { updateGallery } from '../api/galleryClient';
+import EditGallery from '@/components/PersonPage/Edit';
 
 
 export interface OrientationMedia {
@@ -47,6 +50,7 @@ interface UploadActions {
     toggleSelectImages: () => void
     toggleSelectedImage: (imageId: string) => void
     loadGallery: () => Promise<void>
+    openSettings: () => void
 }
 
 type GalleryContextType = UploadState & UploadActions
@@ -60,7 +64,7 @@ const GalleryProvider: React.FC<{ children: React.ReactNode, gallery: Gallery}> 
   const [people, setPeople] = useState<GalleryPersonData[]>([]);
   const [stagedMedia, setStagedMedia] = useState<(OrientationMediaWithFile)[]>([]);
   const [showUploadConfirmation, setShowUploadConfirmation] = useState<boolean>(false);
-  const [gallery] = useState<Gallery>(propsGallery);
+  const [gallery, setGallery] = useState<Gallery>(propsGallery);
   const [currentPerson, setCurrentPerson] = useState<GalleryPersonData | undefined>(undefined);
   const [currentAlbum, setCurrentAlbum] = useState<AlbumMediaData | undefined>(undefined)
   const[totalUploads, setTotalUploads] = useState<number | undefined>();
@@ -69,6 +73,8 @@ const GalleryProvider: React.FC<{ children: React.ReactNode, gallery: Gallery}> 
   const [selectedImages, setSelectedImages] = useState<Set<string>>(new Set())
   const [showConfirmDelete, setShowConfirmDelete] = useState<boolean>(false)
   const [loading, setLoading] = useState<boolean>(true)
+  const [showSettings, setShowSettings] = useState<boolean>(false)
+
   const handleBeginUpload = useCallback(() => {
       if (fileInputRef.current) {
           fileInputRef.current.click();
@@ -321,6 +327,22 @@ const GalleryProvider: React.FC<{ children: React.ReactNode, gallery: Gallery}> 
     }    
   }, [selectedImages])
 
+  const handleSubmitGallery = async (galleryName: string, theKnot?: string, zola?: string) => {
+    setShowSettings(false)
+    setTotalUploads(1)
+    setTotalUploads(0)
+    const _newGallery = await updateGallery(gallery.id, {
+      name: galleryName,
+      path: `${galleryName.toLowerCase().replaceAll(' ', '-')}`,
+      zola,
+      theknot: theKnot
+    })
+    setCompleteUploads(1)
+    setGallery(_newGallery)
+    setTotalUploads(0)
+    setCompleteUploads(0)
+  }
+
   return (
     <GalleryContext.Provider value={{
         deleteImages: () => setShowConfirmDelete(true),
@@ -338,6 +360,7 @@ const GalleryProvider: React.FC<{ children: React.ReactNode, gallery: Gallery}> 
         toggleSelectImages,
         toggleSelectedImage,
         loadGallery,
+        openSettings: () => setShowSettings(true),
         loading
     }}>
       {children}
@@ -351,6 +374,7 @@ const GalleryProvider: React.FC<{ children: React.ReactNode, gallery: Gallery}> 
     />
     {showConfirmDelete && <ConfirmDelete onCancel={cancelImages} onConfirm={handleConfirmDelete} selectedImages={selectedImages}/>}
     {showUploadConfirmation && <ClientUpload album={currentAlbum} media={stagedMedia} collaboratorCount={people.length} upload={handleBeginUpload} onConfirm={confirmMedia} onCancel={cancelImages}/>}
+    {showSettings && (<EditGallery gallery={gallery} close={() => setShowSettings(false)} onSubmit={handleSubmitGallery} />)}
     <UploadStatus total={totalUploads} complete={completeUploads}/>
     </GalleryContext.Provider>
   );
