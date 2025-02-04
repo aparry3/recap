@@ -5,8 +5,10 @@ import Button from "@/components/Button"
 import useGallery from "@/helpers/providers/gallery"
 import MediaGallery from "@/components/MediaGallery"
 import { Media } from "@/lib/types/Media"
+import { useUser } from "@/helpers/providers/user"
 
 const People: FC = () => {
+    const {personId} = useUser()
     const {upload, people, setPerson, person} = useGallery()
     return person ? (
         <>
@@ -19,9 +21,11 @@ const People: FC = () => {
                         No uploads yet.
                     </Text>
                 </Container>
+                {person.id === personId && (
                 <Container padding>
                     <Button onClick={upload}>Upload</Button>
                 </Container>
+                )}
             </Column>
         )}
         </>

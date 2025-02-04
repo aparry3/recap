@@ -10,10 +10,12 @@ import { useRouter } from "next/navigation";
 import useGallery from "@/helpers/providers/gallery";
 import useNavigation from "@/helpers/providers/navigation";
 import { TheKnot, Zola } from "@/lib/icons/branding";
+import { useUser } from "@/helpers/providers/user"
 
 interface SidebarProps {
 }
 const SidebarContent: FC<Omit<SidebarProps, 'open'>> = () => {
+    const {personId} = useUser()
     const {handlePageChange, page, setShowSidebar} = useNavigation()
     const {openSettings} = useGallery()
     const router = useRouter()
@@ -99,6 +101,7 @@ const SidebarContent: FC<Omit<SidebarProps, 'open'>> = () => {
         )}
      </Column>
      <Column className={styles.menu}>
+     {personId === gallery.id && (
         <Container className={styles.menuItemContainer}>
             <Row className={styles.menuItem} onClick={openSettings}>
                 <Container className={styles.menuIcon}>
@@ -109,6 +112,7 @@ const SidebarContent: FC<Omit<SidebarProps, 'open'>> = () => {
                 </Container>
             </Row>
         </Container>
+     )}
         <Container className={styles.menuItemContainer}>
             <Row className={`${styles.menuItem}`} onClick={navigateToGalleries}>
                 <Container className={styles.menuIcon}>
