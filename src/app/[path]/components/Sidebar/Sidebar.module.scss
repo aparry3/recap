@@ -71,8 +71,7 @@
         path {
             fill: var(--background-light);
         }    
-    }    
-
+    }
 }
 .menuIcon {
     padding: 0 1rem !important;
@@ -106,4 +105,7 @@
 .active{
     background: var(--primary);
     color: var(--background-light);
+    path {
+        fill: var(--background-light);
+    }    
 };

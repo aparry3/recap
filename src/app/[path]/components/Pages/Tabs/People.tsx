@@ -5,11 +5,30 @@ import Button from "@/components/Button"
 import useGallery from "@/helpers/providers/gallery"
 import MediaGallery from "@/components/MediaGallery"
 import { Media } from "@/lib/types/Media"
+import { useUser } from "@/helpers/providers/user"
 
 const People: FC = () => {
+    const {personId} = useUser()
     const {upload, people, setPerson, person} = useGallery()
     return person ? (
-        <MediaGallery media={person.recentMedia as Media[]} />
+        <>
+        {person.recentMedia && person.recentMedia.length ? (
+            <MediaGallery media={person.recentMedia as Media[]} />
+        ) : (
+            <Column className={styles.data}>
+                <Container padding>
+                    <Text size={1.4}>
+                        No uploads yet.
+                    </Text>
+                </Container>
+                {person.id === personId && (
+                <Container padding>
+                    <Button onClick={upload}>Upload</Button>
+                </Container>
+                )}
+            </Column>
+        )}
+        </>
     ) : !people.length ? (
             <Column className={styles.data}>
                 <Container padding>
