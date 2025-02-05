@@ -1,5 +1,5 @@
 'use client';
-import React, { FC } from 'react';
+import React, { FC, useCallback } from 'react';
 import { Column, Container, Row, Text } from 'react-web-layout-components';
 import Image from 'next/image';
 import styles from './Galleries.module.scss';
@@ -7,10 +7,20 @@ import { useRouter } from 'next/navigation';
 import { Gallery } from '@/lib/types/Gallery';
 import { Person } from '@/lib/types/Person';
 import Link from 'next/link';
+import Button from '@/components/Button';
+import useLocalStorage, { deleteCookie } from '@/helpers/hooks/localStorage';
 
 const Welcome: FC<{galleries: Gallery[], person?: Person}> = ({galleries, person}) => {
   const router = useRouter()
+  const [_, setPersonId, personLoading] = useLocalStorage<string>('personId', '');
 
+  const logout = useCallback(() => {
+    if (!personLoading) {
+      deleteCookie('personId')
+      setPersonId('')
+      router.push('/')
+    }
+  }, [personLoading])
   return (
     <Container as='main' className={styles.page}>
       <Column className={styles.titleContainer}>
@@ -21,6 +31,13 @@ const Welcome: FC<{galleries: Gallery[], person?: Person}> = ({galleries, person
           <Text size={1.4}>Welcome</Text>
           <Text size={2.5} weight={500}>{person?.name}</Text>
         </Column>
+        <Container className={styles.logoutButtonContainer}>
+            <Button className={styles.logoutButton} onClick={logout}>
+              <Text className={styles.logoutText}>
+                Log out
+              </Text>
+            </Button>
+          </Container>
       </Column>
       <Column className={styles.content}>
         <Row className={styles.contentTitle}>

@@ -80,6 +80,9 @@
 .addGallery {
     text-decoration: none;
 }
+.logoutText {
+    color: var(--background-light);
+}
 @media screen and (max-width: 768px) {
     .page {
         flex-direction: column !important;

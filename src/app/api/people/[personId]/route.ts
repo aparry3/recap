@@ -17,9 +17,8 @@ export const PUT = async (req: Request, ctx: { params: { personId: string } }) =
 
 export const GET = async (_req: Request, ctx: { params: { personId: string } }) => {
     const { personId } = ctx.params
-
     cookies().set('personId', personId, {
-        httpOnly: true, // Prevents client-side JS access
+        httpOnly: false, // Prevents client-side JS access
         secure: process.env.NODE_ENV === 'production', // HTTPS-only in production
         sameSite: 'lax', // Helps with CSRF protection
         maxAge: 60 * 60 * 24 * 365, // 1 year

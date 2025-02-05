@@ -21,7 +21,6 @@ const GalleriesPage: FC = () => {
             const [_person, _galleries] = await Promise.all([fetchPerson(personId), fetchPersonGalleries(personId)])
             setPerson(_person)
             setGalleries(_galleries)
-            if (!_person) return router.push('/create')
             setLoading(false)
         } catch (error: any) {
             console.log(error)
