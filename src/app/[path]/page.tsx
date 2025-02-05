@@ -16,7 +16,16 @@ export async function generateMetadata(
     { params }: PageProps,
   ): Promise<Metadata> {
     const path = decodeURIComponent(params.path)
-    const gallery = await selectGalleryByPath(path)
+    let gallery: Gallery
+    try {
+        gallery = await selectGalleryByPath(path)
+
+    } catch (error) {
+        return {
+            title: `Recap`,
+            description: `Redirecting....`,
+          }
+    }
       
     return {
       title: `Recap - ${gallery.name}`,

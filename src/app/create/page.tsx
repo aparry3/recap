@@ -9,9 +9,12 @@ import { createPerson, createVerification, fetchPerson, fetchPersonByEmail, upda
 import useLocalStorage from '@/helpers/hooks/localStorage';
 import { generateRandomString } from '@/helpers/utils';
 import ValidateUser from '@/components/PersonPage/ValidateUser';
+import Login from './Login';
+import { useRouter } from 'next/navigation';
 
 
 const CreatePage: FC = () => {
+  const router = useRouter()
   const [stage, setStage] = useState(0)
   const [gallery, setGallery] = useState<NewGalleryData | Gallery>()
   const [person, setPerson] = useState<Person>()
@@ -19,6 +22,8 @@ const CreatePage: FC = () => {
   const [verificationId, setVerificationId] = useState<string | undefined>('verificationId');
   const [tempPerson, setTempPerson] = useState<{email?: string, name: string, personId: string} | undefined>(undefined)
   const [tempGallery, setTempGallery] = useState<{name: string, zola?: string, theKnot?: string} | undefined>()
+  const [login, setLogin] = useState(false)
+  const [loginError, setLoginError] = useState('')
 
   const populatePerson = async (personId: string) => {
     try {
@@ -79,6 +84,16 @@ const CreatePage: FC = () => {
     }
   }, [person])
 
+  const handleLogin = async (email: string) => {
+    const _person = await fetchPersonByEmail(email)
+    if (_person) {
+      setTempPerson({personId: _person.id, email, name: _person.name})
+      const verification = await createVerification(_person.id, '', email, _person.name)
+      setVerificationId(verification.id)
+    } else {
+      setLoginError('No user with that email address')
+    }
+  }
   const cancelValidate = () => {
     setTempPerson(undefined)
     setVerificationId(undefined)
@@ -98,16 +113,21 @@ const CreatePage: FC = () => {
 
   const confirmValidate = async (person: Person) => {
     setPerson(person)
-    await submitGallery(tempGallery?.name || '', person.name, person.email, tempGallery?.theKnot, tempGallery?.zola, person)
+    if (tempGallery) {
+      await submitGallery(tempGallery?.name || '', person.name, person.email, tempGallery?.theKnot, tempGallery?.zola, person)
+      setTempPerson(undefined)
+      setTempGallery(undefined)
+      setVerificationId('')  
+    } else {
+      setPersonId(person.id)
+      router.push('/galleries')
+    }
 
-    setTempPerson(undefined)
-    setTempGallery(undefined)
-    setVerificationId('')
   }
 
   return (verificationId && tempPerson) ? (
   <ValidateUser verificationId={verificationId} person={tempPerson} confirm={confirmValidate} onBack={cancelValidate} skip={skipValidate}/>
-  ) : (stage && gallery) ? <Welcome gallery={gallery}/> : <Create person={person} onSubmit={handleSubmit}/>;
+  ) : (stage && gallery) ? <Welcome gallery={gallery}/> : login ? <Login back={() => setLogin(false)} loginError={loginError} onSubmit={handleLogin} /> : <Create login={() => setLogin(true)} person={person} onSubmit={handleSubmit}/>;
 };
 
 export default CreatePage;

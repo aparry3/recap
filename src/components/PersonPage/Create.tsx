@@ -11,7 +11,7 @@ import { leftIcon } from '@/lib/icons';
 import { useRouter } from 'next/navigation';
 
 
-const CreatePage: FC<{person?: Person | NewPersonData, onSubmit: (galleryName: string,name: string, email: string, theKnot?: string, zola?: string) => void}> = ({person, onSubmit}) => {
+const CreatePage: FC<{person?: Person | NewPersonData, login: () => void,onSubmit: (galleryName: string,name: string, email: string, theKnot?: string, zola?: string) => void}> = ({login, person, onSubmit}) => {
     const router = useRouter()
   const [name, setName] = useState(person?.name || '');
   const [galleryName, setGalleryName] = useState('');
@@ -103,6 +103,14 @@ const CreatePage: FC<{person?: Person | NewPersonData, onSubmit: (galleryName: s
             <Text size={1.2} weight={600}>Submit</Text>
           </Button>
         </Container>
+        <Column as='header' className={styles.header}>
+          <Text size={1.1}>or</Text>
+          <Container  padding={1}>
+            <Button className={styles.button} onClick={login} >
+              <Text size={1.2} weight={600}>Login</Text>
+            </Button>
+        </Container>
+        </Column>
       </Column>
 
       <Container className={styles.contentContainer}>
