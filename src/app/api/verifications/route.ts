@@ -8,13 +8,13 @@ import { NextResponse } from 'next/server';
 
 
 export const POST = async (req: Request) => {
-    const {personId, galleryId, email, name}: {personId: string, email: string, galleryId: string, name: string} = await req.json()
+    const {personId, galleryName, email, name}: {personId: string, email: string, galleryName: string, name: string} = await req.json()
     console.log(email)
     try {
-        const [gallery, verification] = await Promise.all([selectGallery(galleryId), insertVerification(personId)])
+        const verification = await insertVerification(personId)
         
         sendGridClient.sendTemplateEmail(email, {
-            galleryName: gallery.name,
+            galleryName: galleryName,
             name,
             buttonUrl: `${process.env.BASE_URL}/verification/${verification.id}`
         })

@@ -10,7 +10,6 @@ export const POST = async (req: Request) => {
     try {
         const person = await insertPerson(newPerson)
         cookies().set('personId', person.id, {
-            httpOnly: true, // Prevents client-side JS access
             secure: process.env.NODE_ENV === 'production', // HTTPS-only in production
             sameSite: 'lax', // Helps with CSRF protection
             maxAge: 60 * 60 * 24 * 365, // 1 year
