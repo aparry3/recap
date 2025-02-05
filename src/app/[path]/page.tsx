@@ -15,7 +15,8 @@ interface PageProps {
 export async function generateMetadata(
     { params }: PageProps,
   ): Promise<Metadata> {
-    const gallery = await selectGalleryByPath(params.path)
+    const path = decodeURIComponent(params.path)
+    const gallery = await selectGalleryByPath(path)
       
     return {
       title: `Recap - ${gallery.name}`,
@@ -29,8 +30,10 @@ const GalleryPage: FC<PageProps> = async ({params, searchParams}) => {
     let album: AlbumMediaData | undefined
     let password = searchParams.password
     const albumId = searchParams.album
+    const path = decodeURIComponent(params.path)
+
     try {
-        gallery = await selectGalleryByPath(params.path)
+        gallery = await selectGalleryByPath(path)
         if (!password) {
             password = cookies().get(gallery.id)?.value
         } 
