@@ -7,6 +7,7 @@ import PersonPage from '@/components/PersonPage';
 import { Container, Text } from 'react-web-layout-components';
 import styles from './Providers.module.scss'
 import ValidateUser from '@/components/PersonPage/ValidateUser';
+import { Gallery } from '@/lib/types/Gallery';
 
 
 type UserContextType = {
@@ -21,8 +22,8 @@ const UserContext = createContext<UserContextType | null>(null);
 
 export const UserProvider: React.FC<{
   children: React.ReactNode, 
-  galleryId: string
-}> = ({ children, galleryId }) => {
+  gallery: Gallery
+}> = ({ children, gallery }) => {
     const [personId, setPersonId, personLoading] = useLocalStorage<string>('personId', '');
     const [person, setPerson] = useState<Person | undefined>(undefined);
     const [loading, setLoading] = useState<boolean>(personLoading);
@@ -46,18 +47,18 @@ export const UserProvider: React.FC<{
 
     const _createPerson = useCallback(async (name: string, email?: string) => {
       setLoading(true)  
-      const newPerson = await createPerson({name, email}, galleryId)
+      const newPerson = await createPerson({name, email}, gallery.id)
       setPerson(newPerson)
       setPersonId(newPerson.id)
       setLoading(false)
-    }, [galleryId])
+    }, [gallery.id])
 
     const submitPerson = useCallback(async (name: string, email?: string) => {
         setLoading(true)
         if (email) {
           const _person = await fetchPersonByEmail(email)
           if (_person) {
-            const verification = await createVerification(_person.id, galleryId, email, name)
+            const verification = await createVerification(_person.id, gallery.name, email, name)
             setVerificationId(verification.id)
             setTempPerson({personId: _person.id, email, name})
             setLoading(false)
@@ -66,7 +67,7 @@ export const UserProvider: React.FC<{
           }
         }
         await _createPerson(name, email)
-    }, [galleryId])
+    }, [gallery.name])
 
     const cancelValidate = () => {
       setShowValidate(false)

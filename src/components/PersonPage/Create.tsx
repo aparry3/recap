@@ -53,6 +53,7 @@ const CreatePage: FC<{person?: Person | NewPersonData, onSubmit: (galleryName: s
 
 
   const handleButtonPress = () => {
+    console.log("handle press")
     // Perform any necessary actions with the form data
     onSubmit(galleryName, name, email, theKnot, zola);
   };

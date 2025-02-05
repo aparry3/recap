@@ -6,6 +6,21 @@ export function setCookie(name: string, value: string): void {
   document.cookie = `${name}=${encodeURIComponent(value)}; path=/; SameSite=Strict`;
 }
 
+export function getCookie(name: string): string | null {
+  const cookies = document.cookie.split('; ');
+  for (const cookie of cookies) {
+    const [cookieName, cookieValue] = cookie.split('=');
+    if (cookieName === name) {
+      return decodeURIComponent(cookieValue);
+    }
+  }
+  return null;
+}
+
+export function deleteCookie(name: string): void {
+  document.cookie = `${name}=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC`;
+}
+
 export const useLocalStorage = <T>(key: string, initialValue: T) => {
   const isBrowser = typeof window !== "undefined"
 

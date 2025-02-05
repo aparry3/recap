@@ -31,12 +31,11 @@ const App: FC<{gallery: Gallery, password?: string, album?: AlbumMediaData}> =  
         if (password && password === gallery.password) {
             setCleared(true)
             setCookie(gallery.id, gallery.password)
-            
         }
     }, [password])
     
     return (
-        <UserProvider galleryId={gallery.id}>
+        <UserProvider gallery={gallery}>
             <GalleryProvider gallery={gallery}>
                 <AlbumsProvider galleryId={gallery.id}>
                     <NavigationProvider album={album}>
