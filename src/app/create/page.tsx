@@ -58,24 +58,21 @@ const CreatePage: FC = () => {
     } else {
       _person = person
     }
-    setPerson(_person)
 
     const _newGallery = await createGallery(_gallery, _person.id)
     setGallery(_newGallery)
+    setPerson(_person)
   }
   
   const handleSubmit = useCallback(async(_galleryName: string, _name: string, _email?: string, theKnot? :string, zola?: string) => {
-    console.log("handle submit")
     let _person
-    if (_email) {
+    if (_email && person?.email !== _email) {
       _person = await fetchPersonByEmail(_email)
     }
-    if (_email && ((!person && _person) || (person && person.email !== _email))) {
-      const id = person?.id || _person?.id || ''
-      if (!id) return
-      const verification = await createVerification(id, _galleryName, _email, _name)
+    if (_person && _email) {
+      const verification = await createVerification(_person.id, _galleryName, _email, _name)
       setVerificationId(verification.id)
-      setTempPerson({personId: id, email: _email, name: _name})
+      setTempPerson({personId: _person.id, email: _email, name: _name})
       setTempGallery({name: _galleryName, zola, theKnot})
     } else {
       submitGallery(_galleryName, _name, _email, theKnot, zola, person)
@@ -107,11 +104,10 @@ const CreatePage: FC = () => {
     setTempGallery(undefined)
     setVerificationId('')
   }
-  
 
-  return verificationId && tempPerson ? (
+  return (verificationId && tempPerson) ? (
   <ValidateUser verificationId={verificationId} person={tempPerson} confirm={confirmValidate} onBack={cancelValidate} skip={skipValidate}/>
-  ) : stage && gallery ? <Welcome gallery={gallery}/> : <Create person={person} onSubmit={handleSubmit}/>;
+  ) : (stage && gallery) ? <Welcome gallery={gallery}/> : <Create person={person} onSubmit={handleSubmit}/>;
 };
 
 export default CreatePage;
