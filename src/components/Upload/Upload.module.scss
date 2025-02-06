@@ -124,3 +124,11 @@
     padding: 0 0.5rem !important;
     opacity: 0.5;
 }
+.albumCheck {
+    padding: 1rem !important;
+}
+@media screen and (max-width: 768px) {
+    .albumCheck {
+        width: 100%;
+    }
+}

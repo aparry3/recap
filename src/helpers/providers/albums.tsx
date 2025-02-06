@@ -1,11 +1,13 @@
 // UploadContext.ts
-import { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
-import { AlbumMediaData } from '@/lib/types/Album';
-import { addMediaToAlbum, createAlbum, fetchAlbums } from '../api/albumClient';
+import { createContext, useCallback, useContext, useEffect, useState } from 'react';
+import { AlbumMediaData, AlbumUpdate } from '@/lib/types/Album';
+import { addMediaToAlbum, createAlbum, deleteAlbum, fetchAlbums, updateAlbum } from '../api/albumClient';
 import CreateAlbum from '@/components/CreateAlbum';
 import { useUser } from './user';
 import AlbumSelect from '@/components/AlbumSelect';
 import useGallery from './gallery';
+import EditAlbum from '@/components/CreateAlbum/EditAlbum';
+import ConfirmDelete from '@/components/ConfirmDelete';
 
 
 interface AlbumState {
@@ -16,6 +18,7 @@ interface AlbumState {
 interface AlbumActions {
     setAlbum: (albumId?: string) => void
     createAlbum: () => void
+    editAlbum: () => void
     selectAlbums: (imageIds: Set<string>) => void
     loadAlbums: () => Promise<void>
 }
@@ -31,7 +34,8 @@ const AlbumsProvider: React.FC<{ children: React.ReactNode, galleryId: string}> 
     const [showNewAlbumPage, setShowNewAlbumPage] = useState<boolean>(false)
     const [showSelectAlbums, setShowSelectAlbums] = useState<boolean>(false)
     const [selectedImages, setSelectedImages] = useState<Set<string>>(new Set())
-    
+    const [isEditing, setIsEditing] = useState<boolean>(false)
+    const [showConfirmDelete, setShowConfirmDelete] = useState<boolean>(false)
     const setAlbum = useCallback((albumId?: string) => {
       const _album = albums.find(alb => alb.id === albumId)
       setGalleryAlbum(_album)
@@ -75,15 +79,43 @@ const AlbumsProvider: React.FC<{ children: React.ReactNode, galleryId: string}> 
       return _albums
     }
 
+    const editAlbum = () => {
+      setIsEditing(true)
+    }
+    
+    const saveAlbum = useCallback(async (_album: AlbumUpdate) => {
+      console.log("SAVE")
+      if (album) {
+        const newAlbum = await updateAlbum(album.id, _album)
+        const newAlbumMedia = {...newAlbum, count: album.count, recentMedia: album.recentMedia}
+        setAlbums((oldAlbums) => oldAlbums.map(alb => alb.id === newAlbum.id ? newAlbumMedia : alb))
+        setGalleryAlbum(newAlbumMedia)
+        setIsEditing(false)
+      }
+    }, [album])
+
     const confirmAlbums = useCallback(async (confirmedAlbumIds: string[]) => {
       setShowSelectAlbums(false)
       await addMediaToAlbums(confirmedAlbumIds, Array.from(selectedImages))
       loadAlbums()
     }, [selectedImages])
+
+    const handleConfirmDelete = useCallback(async () => {
+      if (album) {
+        const success = await deleteAlbum(album.id)
+        if (success) {
+          setAlbums((oldAlbums) => oldAlbums.filter(alb => alb.id !== album.id))
+          setAlbum(undefined)
+          setShowConfirmDelete(false)  
+        }
+      }
+    }, [album])
+
   return (
     <AlbumContext.Provider value={{
         albums,
         album,
+        editAlbum,
         setAlbum,
         loadAlbums,
         selectAlbums: selectAlbums,
@@ -92,6 +124,9 @@ const AlbumsProvider: React.FC<{ children: React.ReactNode, galleryId: string}> 
       {children}
     {showSelectAlbums &&<AlbumSelect albums={albums} createAlbum={() => setShowNewAlbumPage(true)} onConfirm={confirmAlbums} onCancel={cancelSelectAlbums} />}
     {showNewAlbumPage && <CreateAlbum onSubmit={submitAlbum} onClose={() => setShowNewAlbumPage(false)}/>}
+    {(isEditing && album) && <EditAlbum album={album} onDelete={() => setShowConfirmDelete(true)} onSubmit={saveAlbum} onClose={() => setIsEditing(false)}/>}
+    {showConfirmDelete && <ConfirmDelete onCancel={() => setShowConfirmDelete(false)} onConfirm={handleConfirmDelete} album={album}/>}
+
     </AlbumContext.Provider>
   );
 };

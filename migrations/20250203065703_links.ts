@@ -13,7 +13,7 @@ export async function up(db: Kysely<any>): Promise<void> {
 export async function down(db: Kysely<any>): Promise<void> {
   // Migration code
   await db.schema
-  .alterTable('media')
+  .alterTable('gallery')
   .dropColumn('zola')
   .dropColumn('theknot')
   .execute();

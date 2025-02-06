@@ -11,7 +11,7 @@ import { leftIcon } from '@/lib/icons';
 import { useRouter } from 'next/navigation';
 
 
-const CreatePage: FC<{person?: Person | NewPersonData, onSubmit: (galleryName: string,name: string, email: string, theKnot?: string, zola?: string) => void}> = ({person, onSubmit}) => {
+const CreatePage: FC<{person?: Person | NewPersonData, login: () => void,onSubmit: (galleryName: string,name: string, email: string, theKnot?: string, zola?: string) => void}> = ({login, person, onSubmit}) => {
     const router = useRouter()
   const [name, setName] = useState(person?.name || '');
   const [galleryName, setGalleryName] = useState('');
@@ -99,10 +99,18 @@ const CreatePage: FC<{person?: Person | NewPersonData, onSubmit: (galleryName: s
           <Text size={2.5} weight={500}>New Gallery</Text>
         </Column>
         <Container className={styles.buttonContainer} padding={[2, 0]}>
-          <Button className={styles.button} onClick={handleButtonPress} type='submit' disabled={!name || !email}>
+          <Button className={styles.button} onClick={handleButtonPress} disabled={!name || !email}>
             <Text size={1.2} weight={600}>Submit</Text>
           </Button>
         </Container>
+        <Column as='header' className={styles.header}>
+          <Text size={1.1}>or</Text>
+          <Container  padding={1}>
+            <Button className={styles.button} onClick={login} >
+              <Text size={1.2} weight={600}>Login</Text>
+            </Button>
+        </Container>
+        </Column>
       </Column>
 
       <Container className={styles.contentContainer}>
@@ -170,7 +178,7 @@ const CreatePage: FC<{person?: Person | NewPersonData, onSubmit: (galleryName: s
             />
           </Column>
           <Container className={styles.buttonContainer}>
-            <Button className={styles.button} onClick={handleButtonPress} type='submit' disabled={submitDisabled}>
+            <Button className={styles.button} onClick={handleButtonPress} disabled={submitDisabled}>
               <Text size={1.2} weight={600}>Submit</Text>
             </Button>
           </Container>

@@ -1,0 +1,52 @@
+.page {
+    justify-content: center !important;
+    padding: 1rem 0;
+    flex-wrap: wrap;
+    min-height: 100%;
+}
+// .titleContainer {
+//     // flex-grow: 1;
+// }
+.header {
+    padding: 1rem!important;
+}
+.contentContainer {
+    width: 70%;
+    padding: 1rem !important;
+}
+.content {
+    text-align: center;
+    width: 70%;
+    flex-direction: column !important;
+    justify-content: center;
+    .buttonContainer {
+        display: none !important;
+    }
+}
+.inputContainer {
+    width:100%;
+}
+.actionHeader {
+    width: 100%;
+    position: absolute;
+    top:0;
+    left: 0;
+    padding: 1.5rem;
+}
+.backButton {
+    cursor: pointer;
+}
+.icon {
+    height:1rem;
+    width: 1rem;
+}
+
+
+@media screen and (max-width: 768px) {
+    .content {
+        width: 100%;
+    }
+    .contentContainer {
+        width: 100%;
+    }
+}

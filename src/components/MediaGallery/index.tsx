@@ -1,5 +1,5 @@
 import useGallery, { OrientationMedia } from "@/helpers/providers/gallery"
-import { Dispatch, FC, SetStateAction, useCallback, useEffect, useRef, useState } from "react"
+import { Dispatch, FC, SetStateAction, useCallback, useRef, useState } from "react"
 import { Column, Container, Text, Row} from "react-web-layout-components"
 
 import styles from './MediaGallery.module.scss'
@@ -9,9 +9,12 @@ import { Media } from "@/lib/types/Media"
 import LightBox from "./Lightbox"
 import { isImage, isVideo } from "@/helpers/utils"
 import useAlbums from "@/helpers/providers/albums"
+import { useUser } from "@/helpers/providers/user"
+
 
 const MediaGallery: FC<{media: Media[]}> = ({media}) => {
-    const {selectImages, toggleSelectImages,selectedImages, toggleSelectedImage, deleteImages} = useGallery()
+    const {person} = useUser()
+    const {selectImages, toggleSelectImages, selectedImages, toggleSelectedImage, deleteImages, gallery} = useGallery()
     const {selectAlbums} = useAlbums()
     const [viewImageIndex, setViewImageIndex] = useState<number>(-1)
     const [mediaSrc, setMediaSrc] = useState<string | undefined>(undefined)
@@ -19,19 +22,7 @@ const MediaGallery: FC<{media: Media[]}> = ({media}) => {
     const [prevSrc, setPrevSrc] = useState<string | undefined>(undefined)
     const [contentType, setContentType] = useState<string>()
     const [menuOpen, setMenuOpen] = useState<boolean>(false)
-    // useEffect(() => {
-    //     const handleContextMenu = (e: Event) => {
-    //       e.preventDefault(); // Prevent the default context menu
-    //     };
-    
-    //     // Attach the listener to the document or a specific container
-    //     document.addEventListener("contextmenu", handleContextMenu);
-    
-    //     return () => {
-    //       // Cleanup the listener on unmount
-    //       document.removeEventListener("contextmenu", handleContextMenu);
-    //     };
-    //   }, []);
+
     
     const loadMedia = (media: Media, setMethod: Dispatch<SetStateAction<string | undefined>>, setContentTypeMethod?: Dispatch<SetStateAction<string | undefined>>) => {
         if (media?.url) {
@@ -160,7 +151,7 @@ const MediaGallery: FC<{media: Media[]}> = ({media}) => {
     return (
             <>
             <Column className={styles.gallery}>
-            {media.filter(m => m.uploaded).map((m, index) => {
+            {media.filter(m => (m.uploaded && (!m.isPrivate || m.personId === person?.id || person?.id === gallery.personId))).map((m, index) => {
                 if (selectImages) {
                     const selected = selectedImages.has(m.id)
                     return (

@@ -6,9 +6,11 @@ import useAlbums from "@/helpers/providers/albums"
 import MediaGallery from "@/components/MediaGallery"
 import AlbumChip from "@/components/AlbumChip"
 import useGallery from "@/helpers/providers/gallery"
+import { useUser } from "@/helpers/providers/user"
 
 const Albums: FC = () => {
-    const {upload} = useGallery()
+    const {personId} = useUser()
+    const {upload, gallery} = useGallery()
     const {createAlbum, albums, album, setAlbum} = useAlbums()
 
     useEffect(() => {
@@ -52,7 +54,7 @@ const Albums: FC = () => {
                             </Container>
                         </Container>
                     </Container>
-                    {albums.map((album, index) => (
+                    {albums.filter(a => !a.isPrivate || a.personId === personId || personId === gallery.personId).map((album, index) => (
                         <AlbumChip index={index} album={album} onClick={() => setAlbum(album.id)}/>
                     ))}
                 </Container>

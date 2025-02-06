@@ -4,6 +4,7 @@ import { Media } from "./Media"
 export interface AlbumTable {
     id: string
     name: string
+    isPrivate?: boolean
     date?: Date
     personId: string
     galleryId: string

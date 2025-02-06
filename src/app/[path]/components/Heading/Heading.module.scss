@@ -4,16 +4,14 @@
     width: 100%;
     flex-wrap: wrap;
 }
-.actionContainer {
-    .iconContainer {
-        padding: 0.5rem;
-        color: var(--primary);
-        border-radius: 0.5rem;
-        cursor: pointer;
-        &:hover {
-            background: var(--primary);
-            color: var(--background-light);
-        }
+.iconContainer {
+    padding: 0.5rem;
+    color: var(--primary);
+    border-radius: 0.5rem;
+    cursor: pointer;
+    &:hover {
+        background: var(--primary);
+        color: var(--background-light);
     }
 }
 .dashVertical {

@@ -29,6 +29,16 @@ export const insertAlbumMedia = async (albumId: string, mediaIds: string[]): Pro
   return media;
 }
 
+export const deleteAlbumMedia = async (albumId: string): Promise<number> => {
+  const results = await db.deleteFrom('albumMedia').where('albumId', '=', albumId).executeTakeFirst();
+  return Number(results.numDeletedRows);
+}
+
+export const deleteAlbum = async (albumId: string): Promise<boolean> => {
+  const results = await db.deleteFrom('album').where('id', '=', albumId).executeTakeFirst();
+  return !!results.numDeletedRows;
+}
+
 
 export const updateAlbum = async (albumId: string, albumUpdate: AlbumUpdate): Promise<Album> => {
   const album = await db.updateTable('album').set(albumUpdate).where('id', '=', albumId).returningAll().executeTakeFirstOrThrow();
