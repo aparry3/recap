@@ -4,9 +4,10 @@ import { Column, Container, Text } from "react-web-layout-components"
 import styles from './ConfirmDelete.module.scss'
 import  NextImage from "next/image"
 import Button from "@/components/Button"
+import { AlbumMediaData } from "@/lib/types/Album";
 
 
-const ConfirmDelete: FC<{onCancel: () => void, onConfirm: () => void, selectedImages: Set<string>}> = ({selectedImages, onConfirm, onCancel}) => {
+const ConfirmDelete: FC<{onCancel: () => void, onConfirm: () => void, selectedImages?: Set<string>, album?: AlbumMediaData}> = ({selectedImages, onConfirm, onCancel, album}) => {
         
     return (
         <Column className={styles.select}>
@@ -21,6 +22,8 @@ const ConfirmDelete: FC<{onCancel: () => void, onConfirm: () => void, selectedIm
                         Confirm delete
                     </Text>
                 </Container>
+                {selectedImages ? (
+                <>
                 <Container className={styles.action}>
                         <Text className={styles.count}>
                             {selectedImages.size}
@@ -31,6 +34,14 @@ const ConfirmDelete: FC<{onCancel: () => void, onConfirm: () => void, selectedIm
                         media?
                     </Text>
                 </Container>
+                </>
+                ) : album ? (
+                <Container className={styles.action}>
+                        <Text className={styles.count}>
+                            {album.name}
+                        </Text>
+                </Container>
+                ) : <></>}
             </Column>
             <Container className={styles.actionBar}>
                 <Container className={styles.button}>

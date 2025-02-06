@@ -24,7 +24,7 @@ const CreateAlbum: FC<{onSubmit: (name: string) => void, onClose: () => void}> =
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     // Perform any necessary actions with the form data
-    if (!name) onSubmit(name);
+    if (name) onSubmit(name);
 };
 
   return (
@@ -56,7 +56,7 @@ const CreateAlbum: FC<{onSubmit: (name: string) => void, onClose: () => void}> =
               />
           </Column>
           <Container className={styles.buttonContainer}>
-            <Button className={styles.button} onClick={handleButtonPress} type='submit' disabled={!name}>
+            <Button className={styles.button} onClick={handleButtonPress} disabled={!name}>
               <Text size={1.2} weight={600}>Submit</Text>
             </Button>
           </Container>

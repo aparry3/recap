@@ -19,6 +19,7 @@ const Upload: FC<{media: OrientationMediaWithFile[], collaboratorCount: number, 
     const [addToAlbum, setAddToAlbum] = useState<boolean>(album ? true : false)
     const [totalImages, setTotalImages] = useState<number>(0)
     const [totalVideos, setTotalVideos] = useState<number>(0)
+    const [isPrivate, setIsPrivate] = useState<boolean>(false)
 
     useEffect(() => {
         setTotalImages(0)
@@ -45,19 +46,21 @@ const Upload: FC<{media: OrientationMediaWithFile[], collaboratorCount: number, 
     }, [selectedImages])
 
     const handleConfirm = useCallback(() => {
-        console.log(selectedImages, media)
-        onConfirm(media.filter((_, index) => selectedImages.has(index)), addToAlbum)
-    }, [addToAlbum, media, selectedImages])
+        onConfirm(media.filter((_, index) => selectedImages.has(index)).map(m => ({...m, isPrivate})), addToAlbum)
+    }, [addToAlbum, media, selectedImages, isPrivate])
+
     useEffect(() => {
         if (album) {
             setAddToAlbum(true)
         }
     }, [album])
+
     useEffect(() => {
         if (media.length > 0) {
             setSelectedImages(new Set(media.map((_, index) => index)))
         }
     }, [media])
+
     return (
         <Column className={styles.upload}>
             <Container className={styles.header}>
@@ -117,6 +120,14 @@ const Upload: FC<{media: OrientationMediaWithFile[], collaboratorCount: number, 
                     </Container>
                 </Container>
                 )}
+                <Container className={styles.albumCheck} onClick={() => setIsPrivate(!isPrivate)}>
+                    <Container className={styles.checkContainer}>
+                        <FontAwesomeIcon icon={isPrivate ? checkSquareIcon : squareIcon} className={styles.checkIcon}/>
+                    </Container>
+                    <Container className={styles.mediaType}>
+                        <Text size={1.2}>Private</Text>
+                    </Container>
+                </Container>
                 <Container className={styles.mediaInfo}>
                     <Container className={styles.mediaType}>
                         <Text size={1.2}>{totalImages} Photos</Text>

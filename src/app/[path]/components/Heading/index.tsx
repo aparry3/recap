@@ -1,23 +1,38 @@
 "use client";
 import Button from "@/components/Button"
-import { qrcodeIcon } from "@/lib/icons"
+import { gearIcon, qrcodeIcon } from "@/lib/icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { Column, Container, Row, Text } from "react-web-layout-components"
 import styles from './Heading.module.scss'
-import { FC, useMemo } from "react";
+import { FC, useEffect, useMemo } from "react";
 import useGallery from "@/helpers/providers/gallery";
+import { useUser } from "@/helpers/providers/user";
+import useAlbums from "@/helpers/providers/albums";
 
 
 const Heading: FC<{onQrClick?: () => void}> = ({onQrClick}) => {
+    const {person: user} = useUser()
+    const {editAlbum} = useAlbums()
     const {upload, gallery, people, person, album} = useGallery()
     const name = useMemo(() => person ? person.name : album ? album.name : gallery.name, [person, gallery, album])
     const count = useMemo(() => person ? person.count : album ? album.count : undefined, [person, album, people])
-
+    
+    const showEdit = useMemo(() => album && user && album.personId === user.id, [user, album])
+    useEffect(() => {
+        console.log(showEdit)
+    }, [showEdit])
     return (
         <Container className={styles.heading} justify="space-between">
         <Column className={styles.titleContainer} padding>
             <Row className={styles.title}>
                 <Text className={styles.titleText} size={3}>{name}</Text>
+                {showEdit && (
+                <Container padding={[0, 0.5]}>
+                    <Container padding={0.5} className={styles.iconContainer} onClick={editAlbum}>
+                        <FontAwesomeIcon icon={gearIcon} className={styles.icon} />
+                    </Container>
+                </Container>
+                )}
             </Row>
             <Row className={styles.subtitleContainer} padding={[0, 0.5]}>
                 { count === undefined ? (

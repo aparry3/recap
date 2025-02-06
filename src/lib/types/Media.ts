@@ -5,6 +5,7 @@ export interface MediaTable {
     id: string
     url: string
     preview: string
+    isPrivate?: boolean
     height?: number
     width?: number
     personId: string

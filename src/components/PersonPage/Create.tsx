@@ -99,7 +99,7 @@ const CreatePage: FC<{person?: Person | NewPersonData, login: () => void,onSubmi
           <Text size={2.5} weight={500}>New Gallery</Text>
         </Column>
         <Container className={styles.buttonContainer} padding={[2, 0]}>
-          <Button className={styles.button} onClick={handleButtonPress} type='submit' disabled={!name || !email}>
+          <Button className={styles.button} onClick={handleButtonPress} disabled={!name || !email}>
             <Text size={1.2} weight={600}>Submit</Text>
           </Button>
         </Container>
@@ -178,7 +178,7 @@ const CreatePage: FC<{person?: Person | NewPersonData, login: () => void,onSubmi
             />
           </Column>
           <Container className={styles.buttonContainer}>
-            <Button className={styles.button} onClick={handleButtonPress} type='submit' disabled={submitDisabled}>
+            <Button className={styles.button} onClick={handleButtonPress} disabled={submitDisabled}>
               <Text size={1.2} weight={600}>Submit</Text>
             </Button>
           </Container>
