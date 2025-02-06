@@ -1,16 +1,16 @@
 import useGallery, { OrientationMedia } from "@/helpers/providers/gallery"
-import { Dispatch, FC, SetStateAction, useCallback, useRef, useState } from "react"
-import { Column, Container, Text, Row} from "react-web-layout-components"
+import { Dispatch, FC, SetStateAction, useCallback, useMemo, useRef, useState } from "react"
+import { Column, Container} from "react-web-layout-components"
 
 import styles from './MediaGallery.module.scss'
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { Actions, albumIcon, checkIcon, downloadIcon, trashIcon, xIcon } from "@/lib/icons"
+import { checkIcon } from "@/lib/icons"
 import { Media } from "@/lib/types/Media"
 import LightBox from "./Lightbox"
 import { isImage, isVideo } from "@/helpers/utils"
 import useAlbums from "@/helpers/providers/albums"
 import { useUser } from "@/helpers/providers/user"
-import Menu from "./Menu"
+import Menu, { MenuItem } from "./Menu"
 
 
 const MediaGallery: FC<{media: Media[]}> = ({media}) => {
@@ -150,6 +150,19 @@ const MediaGallery: FC<{media: Media[]}> = ({media}) => {
         toggleSelectImages()
     }, [selectedImages, selectAlbums])
     
+        const menuItems = useMemo(() => {
+            return album ? [
+                MenuItem.REMOVE,
+                MenuItem.ADD,
+                MenuItem.DOWNLOAD,
+                MenuItem.DELETE,
+            ] :  [
+                MenuItem.ADD,
+                MenuItem.DOWNLOAD,
+                MenuItem.DELETE,
+            ]
+        }, [album])
+    
     return (
             <>
             <Column className={styles.gallery}>
@@ -183,9 +196,9 @@ const MediaGallery: FC<{media: Media[]}> = ({media}) => {
             })}
             </Column>
             {(!!selectedImages.size) && <Container className={styles.menuSpace}/>}
-            <LightBox image={mediaSrc} contentType={contentType} index={viewImageIndex + 1} total={media.length} onClose={handleClose} prevImage={prevSrc} nextImage={nextSrc} onPrevious={handlePrev} onNext={handleNext}/>
+            <LightBox mediaId={media[viewImageIndex]?.id} image={mediaSrc} contentType={contentType} index={viewImageIndex + 1} total={media.length} onClose={handleClose} prevImage={prevSrc} nextImage={nextSrc} onPrevious={handlePrev} onNext={handleNext} />
             {(selectedImages && !!selectedImages.size) && (
-                <Menu selectedImages={selectedImages}/>
+                <Menu selectedImages={selectedImages} items={menuItems}/>
             )}
             </>
     )
