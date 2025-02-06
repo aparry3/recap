@@ -11,7 +11,7 @@ const People: FC = () => {
     const {personId} = useUser()
     const {upload, people, setPerson, person} = useGallery()
     return person ? (
-        <>
+        <Column className={styles.content}>
         {person.recentMedia && person.recentMedia.length ? (
             <MediaGallery media={person.recentMedia as Media[]} />
         ) : (
@@ -28,7 +28,7 @@ const People: FC = () => {
                 )}
             </Column>
         )}
-        </>
+        </Column>
     ) : !people.length ? (
             <Column className={styles.data}>
                 <Container padding>

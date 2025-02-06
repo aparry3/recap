@@ -21,6 +21,17 @@ export const deleteAlbum = async (albumId: string): Promise<AlbumMediaData[]> =>
     return data.success
 }
 
+export const removeMediaIdsFromAlbum = async (albumId: string, mediaIds: string[]): Promise<Media[]> => {
+    const params = new URLSearchParams()
+    mediaIds.map(m => params.append('mediaIds', m))
+    
+    const data = await fetch(`/api/albums/${albumId}/media?${params.toString()}`, {
+        method: 'DELETE',
+        body: JSON.stringify({mediaIds}) 
+    }).then(res => res.json())
+    return data.media as Media[]
+}
+
 export const addMediaToAlbum = async (albumId: string, mediaIds: string[]): Promise<Media[]> => {
     const data = await fetch(`/api/albums/${albumId}/media`, {
         method: 'POST',

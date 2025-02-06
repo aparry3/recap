@@ -1,6 +1,5 @@
-import { 
-  // useEffect, 
-  useState } from "react";
+import { Media } from "@/lib/types/Media";
+import JSZip from "jszip";
 
 interface MultipartUploadPart {
     ETag: string | null
@@ -130,6 +129,40 @@ export async function uploadLargeMedia(uploadId: string, key: string, file: File
 //     progress
 //   }
 // }
+
+export async function downloadMedia(galleryName: string, mediaList: Media[]): Promise<void> {
+
+  if (mediaList.length === 1) {
+    const media = mediaList[0]
+    const response = await fetch(media.url);
+    const blob = await response.blob();
+
+    // Create a link element to trigger the download
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = media.id;
+    link.click();
+
+  } else {
+    const zip = new JSZip();
+
+    for (const media of mediaList) {
+        // Add the media to the zip if not a direct download
+        const response = await fetch(media.url);
+        const blob = await response.blob();
+        zip.file(media.id, blob);
+      }
+      if (Object.keys(zip.files).length > 0) {
+        zip.generateAsync({ type: 'blob' }).then((content) => {
+          // Create a link to download the zip file
+          const link = document.createElement('a');
+          link.href = URL.createObjectURL(content);
+          link.download = `${galleryName}.zip`;
+          link.click();
+        });
+      }
+  }
+}
 
 
 export async function uploadHtml(rawHtml: string, propsId: string): Promise<{mediaLink: string, id: string}> {    

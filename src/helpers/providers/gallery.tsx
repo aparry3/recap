@@ -7,7 +7,7 @@ import useLocalStorage from '../hooks/localStorage';
 import { Media, PresignedUrls } from '@/lib/types/Media';
 import { fetchGalleryPeople } from '../api/personClient';
 import { GalleryPersonData } from '@/lib/types/Person';
-import { uploadLargeMedia, uploadMedia } from '../hooks/upload';
+import { downloadMedia, uploadLargeMedia, uploadMedia } from '../hooks/upload';
 import UploadStatus from '@/components/UploadStatus';
 import { addFile, readFiles, removeFile, TempFile } from '../clientDb';
 import ConfirmDelete from '@/components/ConfirmDelete';
@@ -45,6 +45,7 @@ interface UploadState {
 interface UploadActions {
     deleteImages: () => void,
     upload: () => void
+    download: () => void
     setAlbum: (album?: AlbumMediaData) => void
     setPerson: (personId?: string) => void
     toggleSelectImages: () => void
@@ -343,9 +344,15 @@ const GalleryProvider: React.FC<{ children: React.ReactNode, gallery: Gallery}> 
     setCompleteUploads(0)
   }
 
+  const handleDownload = useCallback(async () => {
+    downloadMedia(gallery.name, Array.from(selectedImages).map(id => media.find(m => m.id === id)!))
+  }, [selectedImages, gallery])
+
+
   return (
     <GalleryContext.Provider value={{
         deleteImages: () => setShowConfirmDelete(true),
+        download: handleDownload,
         upload: handleBeginUpload,
         media: media,
         people,

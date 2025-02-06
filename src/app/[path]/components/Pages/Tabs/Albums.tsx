@@ -18,7 +18,7 @@ const Albums: FC = () => {
     }, [album])
 
     return album ? (
-            <>
+            <Column className={styles.content}>
             {album.recentMedia && album.recentMedia.length ? (
                 <MediaGallery media={album.recentMedia} />
             ) : (
@@ -33,7 +33,7 @@ const Albums: FC = () => {
                 </Container>
             </Column>
             )}
-            </>
+            </Column>
         ) : !albums.length ? (
                 <Column className={styles.data}>
                     <Container padding>

@@ -1,4 +1,4 @@
-import { FC, memo, useState, useEffect, useCallback } from "react";
+import { FC, memo, useState, useEffect, useCallback, useMemo } from "react";
 import { Column, Container, Row, Text } from "react-web-layout-components";
 import styles from './Lightbox.module.scss'
 import useWindowSize from "@/helpers/hooks/window";
@@ -6,10 +6,12 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Actions, downloadIcon, leftIcon, rightIcon, xIcon } from "@/lib/icons";
 import { downloadUrl } from "@/helpers/files";
 import useGallery from "@/helpers/providers/gallery";
+import Menu, { MenuItem } from "../Menu";
 // import { sharePhotoToFacebook } from "@/helpers/share";
 
 interface LightBoxProps {
     index: number
+    mediaId: string,
     total: number
     image?: string;
     onClose: () => void;
@@ -20,15 +22,16 @@ interface LightBoxProps {
     contentType?: string
   }
   
-const LightBox: FC<LightBoxProps> = memo(({ image, index, total, onClose, prevImage, nextImage, onNext, onPrevious, contentType }) => {
-    const {gallery} = useGallery()
+const LightBox: FC<LightBoxProps> = memo(({ mediaId, image, index, total, onClose, prevImage, nextImage, onNext, onPrevious, contentType }) => {
+    const {gallery, album} = useGallery()
     const [touchStartX, setTouchStartX] = useState<number | null>(null);
     const [touchStartY, setTouchStartY] = useState<number | null>(null);
     const [translateX, setTranslateX] = useState(0);
     const [translateY, setTranslateY] = useState(0);
     const [isAnimating, setIsAnimating] = useState(false);
     const {width, height} = useWindowSize()
-    const [detailsOpen, setDetailsOpen] = useState(false)
+    const [showMenu, setShowMenu] = useState<boolean>(false)
+    const [detailsOpen, setDetailsOpen] = useState<boolean>(false)
     const handleKeyDown = (e: KeyboardEvent) => {
         if (isAnimating) return;
 
@@ -144,7 +147,18 @@ const LightBox: FC<LightBoxProps> = memo(({ image, index, total, onClose, prevIm
         }
     }, [image, isAnimating]);
 
-
+    const menuItems = useMemo(() => {
+        return album ? [
+            MenuItem.REMOVE,
+            MenuItem.ADD,
+            MenuItem.DOWNLOAD,
+            MenuItem.DELETE,
+        ] :  [
+            MenuItem.ADD,
+            MenuItem.DOWNLOAD,
+            MenuItem.DELETE,
+        ]
+    }, [album])
     return image ? (
         <Column className={styles.lightBox} 
             style={{
@@ -158,7 +172,7 @@ const LightBox: FC<LightBoxProps> = memo(({ image, index, total, onClose, prevIm
                 <Container className={styles.headerIconContainer} onClick={onClose}>
                     <FontAwesomeIcon icon={xIcon} className={styles.icon} />
                 </Container>
-                <Container className={styles.headerIconContainer} onClick={openDetails}>
+                <Container className={styles.headerIconContainer} onClick={() => setShowMenu(true)}>
                     <Actions className={styles.icon}/>
                 </Container>
             </Row>
@@ -223,15 +237,10 @@ const LightBox: FC<LightBoxProps> = memo(({ image, index, total, onClose, prevIm
                     <Container className={styles.brandIconContainer} onClick={download}>
                         <FontAwesomeIcon icon={downloadIcon} className={styles.icon} />
                     </Container>
-                    {/* <Container className={styles.brandIconContainer} onClick={share}>
-                        <FontAwesomeIcon icon={facebookIcon} className={styles.icon} />
-                    </Container>
-                    <Container className={styles.brandIconContainer}>
-                        <FontAwesomeIcon icon={instagramIcon} className={styles.icon} />
-                    </Container>     */}
                 </Container>
 
             </Container>
+            {showMenu && <Menu items={menuItems} selectedImages={new Set([mediaId])} onClose={() => setShowMenu(false)}/> }
         </Column>
     ) : <></>
 })
