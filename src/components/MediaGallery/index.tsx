@@ -4,7 +4,7 @@ import { Column, Container, Text, Row} from "react-web-layout-components"
 
 import styles from './MediaGallery.module.scss'
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { Actions, albumIcon, checkIcon, downloadIcon, trashIcon } from "@/lib/icons"
+import { Actions, albumIcon, checkIcon, downloadIcon, trashIcon, xIcon } from "@/lib/icons"
 import { Media } from "@/lib/types/Media"
 import LightBox from "./Lightbox"
 import { isImage, isVideo } from "@/helpers/utils"
@@ -14,6 +14,7 @@ import { useUser } from "@/helpers/providers/user"
 
 const MediaGallery: FC<{media: Media[]}> = ({media}) => {
     const {person} = useUser()
+    const {album} = useGallery()
     const {selectImages, toggleSelectImages, selectedImages, toggleSelectedImage, deleteImages, gallery} = useGallery()
     const {selectAlbums} = useAlbums()
     const [viewImageIndex, setViewImageIndex] = useState<number>(-1)
@@ -144,10 +145,11 @@ const MediaGallery: FC<{media: Media[]}> = ({media}) => {
           setImage(index)
       }
 
-      const openSelectAlbums = useCallback(() => {
+    const openSelectAlbums = useCallback(() => {
         selectAlbums(selectedImages)
         toggleSelectImages()
-      }, [selectedImages, selectAlbums])
+    }, [selectedImages, selectAlbums])
+    
     return (
             <>
             <Column className={styles.gallery}>
@@ -183,6 +185,7 @@ const MediaGallery: FC<{media: Media[]}> = ({media}) => {
             {(!!selectedImages.size) && <Container className={styles.menuSpace}/>}
             <LightBox image={mediaSrc} contentType={contentType} index={viewImageIndex + 1} total={media.length} onClose={handleClose} prevImage={prevSrc} nextImage={nextSrc} onPrevious={handlePrev} onNext={handleNext}/>
             {(selectedImages && !!selectedImages.size) && (
+
                 <Column className={`${styles.selectedImageMenuContainer} ${menuOpen ? styles.selectedMenuOpen : ''}`}>
                     <Container className={styles.selectedImageActionsContainer}>
                         <Container className={styles.selectedImageActions}>
@@ -199,13 +202,25 @@ const MediaGallery: FC<{media: Media[]}> = ({media}) => {
                             </Container>
                         </Container>
                     </Container>
+                    { album && (
+                        <Row className={styles.selectedImageActionsContainer}>
+                            <Container className={styles.selectedImageActions} onClick={openSelectAlbums}>
+                                <Container className={styles.iconContainer}>
+                                    <FontAwesomeIcon icon={xIcon} className={styles.actionIcon}/>
+                                </Container>
+                                <Container className={styles.iconContainer}>
+                                    <Text size={1.1}>Remove from <Text weight={600}>{album.name}</Text></Text>
+                                </Container>
+                            </Container>
+                        </Row>
+                    )}
                     <Row className={styles.selectedImageActionsContainer}>
                         <Container className={styles.selectedImageActions} onClick={openSelectAlbums}>
                             <Container className={styles.iconContainer}>
                                 <FontAwesomeIcon icon={albumIcon} className={styles.actionIcon}/>
                             </Container>
                             <Container className={styles.iconContainer}>
-                                <Text weight={600}>Add to album</Text>
+                                <Text size={1.1} weight={600}>Add to album</Text>
                             </Container>
                         </Container>
                     </Row>

@@ -82,7 +82,7 @@ const AlbumsProvider: React.FC<{ children: React.ReactNode, galleryId: string}> 
     const editAlbum = () => {
       setIsEditing(true)
     }
-    
+
     const saveAlbum = useCallback(async (_album: AlbumUpdate) => {
       console.log("SAVE")
       if (album) {
@@ -110,6 +110,13 @@ const AlbumsProvider: React.FC<{ children: React.ReactNode, galleryId: string}> 
         }
       }
     }, [album])
+
+    const removeFromAlbum = useCallback(async (selectedImages: Set<string>) => {
+      if (album) {
+        await removeMediaFromAlbum(album.id, Array.from(selectedImages))
+        loadAlbums()
+      }
+    }, [selectedImages])
 
   return (
     <AlbumContext.Provider value={{
