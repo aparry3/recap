@@ -6,11 +6,10 @@ import styles from './Menu.module.scss'
 import { FC, useCallback, useState } from "react";
 import useGallery from "@/helpers/providers/gallery";
 import useAlbums from "@/helpers/providers/albums";
-import { Media } from "@/lib/types/Media";
 
 
 const Menu: FC<{selectedImages: Set<string>}> = ({selectedImages}) => {
-    const {selectAlbums} = useAlbums()
+    const {selectAlbums, removeMedia} = useAlbums()
     const {album, deleteImages} = useGallery()
     const [menuOpen, setMenuOpen] = useState<boolean>(false)
 
@@ -18,8 +17,14 @@ const Menu: FC<{selectedImages: Set<string>}> = ({selectedImages}) => {
         selectAlbums(selectedImages)
         setMenuOpen(false)
     }, [selectedImages])
+
+    const removeFromAlbum = useCallback(() => {
+        if (album) {
+            removeMedia(selectedImages)
+        }
+    }, [selectedImages])
     return (
-        <Column className={`${styles.selectedImageMenuContainer} ${menuOpen ? styles.selectedMenuOpen : ''}`}>
+    <Column className={`${styles.selectedImageMenuContainer} ${menuOpen ? styles.selectedMenuOpen : ''}`}>
         <Container className={styles.selectedImageActionsContainer}>
             <Container className={styles.selectedImageActions}>
                 <Container className={styles.iconContainer}>
@@ -60,3 +65,5 @@ const Menu: FC<{selectedImages: Set<string>}> = ({selectedImages}) => {
     </Column>
     )
 }
+
+export default Menu

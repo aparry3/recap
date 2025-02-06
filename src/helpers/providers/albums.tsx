@@ -1,7 +1,7 @@
 // UploadContext.ts
 import { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import { AlbumMediaData, AlbumUpdate } from '@/lib/types/Album';
-import { addMediaToAlbum, createAlbum, deleteAlbum, fetchAlbums, updateAlbum } from '../api/albumClient';
+import { addMediaToAlbum, createAlbum, deleteAlbum, fetchAlbums, removeMediaIdsFromAlbum, updateAlbum } from '../api/albumClient';
 import CreateAlbum from '@/components/CreateAlbum';
 import { useUser } from './user';
 import AlbumSelect from '@/components/AlbumSelect';
@@ -17,6 +17,7 @@ interface AlbumState {
 
 interface AlbumActions {
     setAlbum: (albumId?: string) => void
+    removeMedia: (mediaIds: Set<string>) => void
     createAlbum: () => void
     editAlbum: () => void
     selectAlbums: (imageIds: Set<string>) => void
@@ -111,11 +112,22 @@ const AlbumsProvider: React.FC<{ children: React.ReactNode, galleryId: string}> 
       }
     }, [album])
     
+    const removeMedia = useCallback(async (mediaIds: Set<string>) => {
+      if (album) {
+        const success = await removeMediaIdsFromAlbum(album.id, Array.from(mediaIds))
+        if (success) {
+          const newAlbum = {...album, count: album.count - mediaIds.size, recentMedia: (album.recentMedia || []).filter(m => !mediaIds.has(m.id))}
+          setGalleryAlbum(newAlbum)
+          loadAlbums()
+        }
+      }
+    }, [album])
   return (
     <AlbumContext.Provider value={{
         albums,
         album,
         editAlbum,
+        removeMedia,
         setAlbum,
         loadAlbums,
         selectAlbums: selectAlbums,

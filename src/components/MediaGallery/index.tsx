@@ -10,6 +10,7 @@ import LightBox from "./Lightbox"
 import { isImage, isVideo } from "@/helpers/utils"
 import useAlbums from "@/helpers/providers/albums"
 import { useUser } from "@/helpers/providers/user"
+import Menu from "./Menu"
 
 
 const MediaGallery: FC<{media: Media[]}> = ({media}) => {
@@ -22,7 +23,6 @@ const MediaGallery: FC<{media: Media[]}> = ({media}) => {
     const [nextSrc, setNextSrc] = useState<string | undefined>(undefined)
     const [prevSrc, setPrevSrc] = useState<string | undefined>(undefined)
     const [contentType, setContentType] = useState<string>()
-    const [menuOpen, setMenuOpen] = useState<boolean>(false)
 
     
     const loadMedia = (media: Media, setMethod: Dispatch<SetStateAction<string | undefined>>, setContentTypeMethod?: Dispatch<SetStateAction<string | undefined>>) => {
@@ -185,46 +185,7 @@ const MediaGallery: FC<{media: Media[]}> = ({media}) => {
             {(!!selectedImages.size) && <Container className={styles.menuSpace}/>}
             <LightBox image={mediaSrc} contentType={contentType} index={viewImageIndex + 1} total={media.length} onClose={handleClose} prevImage={prevSrc} nextImage={nextSrc} onPrevious={handlePrev} onNext={handleNext}/>
             {(selectedImages && !!selectedImages.size) && (
-
-                <Column className={`${styles.selectedImageMenuContainer} ${menuOpen ? styles.selectedMenuOpen : ''}`}>
-                    <Container className={styles.selectedImageActionsContainer}>
-                        <Container className={styles.selectedImageActions}>
-                            <Container className={styles.iconContainer}>
-                                <FontAwesomeIcon icon={downloadIcon} className={styles.actionIcon}/>
-                            </Container>
-                            <Container className={styles.iconContainer} onClick={() => setMenuOpen(!menuOpen)}>
-                                <Actions  className={styles.actionIcon}/>
-                            </Container>
-                        </Container>
-                        <Container className={styles.selectedImageActions}>
-                            <Container className={styles.iconContainer} onClick={deleteImages}>
-                                <FontAwesomeIcon icon={trashIcon} className={styles.actionIcon}/>
-                            </Container>
-                        </Container>
-                    </Container>
-                    { album && (
-                        <Row className={styles.selectedImageActionsContainer}>
-                            <Container className={styles.selectedImageActions} onClick={openSelectAlbums}>
-                                <Container className={styles.iconContainer}>
-                                    <FontAwesomeIcon icon={xIcon} className={styles.actionIcon}/>
-                                </Container>
-                                <Container className={styles.iconContainer}>
-                                    <Text size={1.1}>Remove from <Text weight={600}>{album.name}</Text></Text>
-                                </Container>
-                            </Container>
-                        </Row>
-                    )}
-                    <Row className={styles.selectedImageActionsContainer}>
-                        <Container className={styles.selectedImageActions} onClick={openSelectAlbums}>
-                            <Container className={styles.iconContainer}>
-                                <FontAwesomeIcon icon={albumIcon} className={styles.actionIcon}/>
-                            </Container>
-                            <Container className={styles.iconContainer}>
-                                <Text size={1.1} weight={600}>Add to album</Text>
-                            </Container>
-                        </Container>
-                    </Row>
-                </Column>
+                <Menu selectedImages={selectedImages}/>
             )}
             </>
     )

@@ -34,6 +34,11 @@ export const deleteAlbumMedia = async (albumId: string): Promise<number> => {
   return Number(results.numDeletedRows);
 }
 
+export const removeAlbumMedia = async (albumId: string, mediaIds: string[]): Promise<boolean> => {
+  const results = await db.deleteFrom('albumMedia').where('albumId', '=', albumId).where('mediaId', 'in', mediaIds).executeTakeFirst();
+  return !!results.numDeletedRows;
+}
+
 export const deleteAlbum = async (albumId: string): Promise<boolean> => {
   const results = await db.deleteFrom('album').where('id', '=', albumId).executeTakeFirst();
   return !!results.numDeletedRows;
