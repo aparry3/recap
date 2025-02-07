@@ -1,5 +1,5 @@
 import useGallery, { OrientationMedia } from "@/helpers/providers/gallery"
-import { Dispatch, FC, SetStateAction, useCallback, useMemo, useRef, useState } from "react"
+import { Dispatch, FC, SetStateAction, useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { Column, Container} from "react-web-layout-components"
 
 import styles from './MediaGallery.module.scss'
@@ -15,8 +15,7 @@ import Menu, { MenuItem } from "./Menu"
 
 const MediaGallery: FC<{media: Media[]}> = ({media}) => {
     const {person} = useUser()
-    const {album} = useGallery()
-    const {selectImages, toggleSelectImages, selectedImages, toggleSelectedImage, deleteImages, gallery} = useGallery()
+    const {album, selectImages, toggleSelectImages, selectedImages, toggleSelectedImage, gallery} = useGallery()
     const {selectAlbums} = useAlbums()
     const [viewImageIndex, setViewImageIndex] = useState<number>(-1)
     const [mediaSrc, setMediaSrc] = useState<string | undefined>(undefined)
@@ -115,6 +114,10 @@ const MediaGallery: FC<{media: Media[]}> = ({media}) => {
         setViewImageIndex(-1)
     }
 
+    useEffect(() => {
+        handleClose()
+    }, [media])
+    
     const [hoverIndex, setHoverIndex] = useState<number>(-1)
     const touchTimerRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -170,7 +173,7 @@ const MediaGallery: FC<{media: Media[]}> = ({media}) => {
                 if (selectImages) {
                     const selected = selectedImages.has(m.id)
                     return (
-                        <Container  key={m.url} className={`${styles.imageContainer} ${(m?.height || 0) > (m?.width || 0) ? styles.vertical : ''} ${selected ? styles.border : ''}`} onClick={() => toggleSelectedImage(m.id)}>
+                        <Container  key={m.url} className={`${styles.imageContainer} ${(m?.height || 0) > (m?.width || 0) ? styles.vertical : ''} ${selected ? styles.border : ''}`} onClick={() => toggleSelectedImage(m.id, m.personId)}>
                             { isVideo(m) ? (
                                 <video id="hover-video" src={m.url} muted loop autoPlay playsInline className={styles.image} />
                             ) : (
@@ -196,7 +199,7 @@ const MediaGallery: FC<{media: Media[]}> = ({media}) => {
             })}
             </Column>
             {(!!selectedImages.size) && <Container className={styles.menuSpace}/>}
-            <LightBox mediaId={media[viewImageIndex]?.id} image={mediaSrc} contentType={contentType} index={viewImageIndex + 1} total={media.length} onClose={handleClose} prevImage={prevSrc} nextImage={nextSrc} onPrevious={handlePrev} onNext={handleNext} />
+            <LightBox mediaId={media[viewImageIndex]?.id} personId={media[viewImageIndex]?.personId} image={mediaSrc} contentType={contentType} index={viewImageIndex + 1} total={media.length} onClose={handleClose} prevImage={prevSrc} nextImage={nextSrc} onPrevious={handlePrev} onNext={handleNext} />
             {(selectedImages && !!selectedImages.size) && (
                 <Menu selectedImages={selectedImages} items={menuItems}/>
             )}

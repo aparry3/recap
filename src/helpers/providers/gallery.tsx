@@ -1,5 +1,5 @@
 // UploadContext.ts
-import { ChangeEvent, createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
+import { ChangeEvent, createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import ClientUpload from '@/components/Upload'
 import { Gallery } from '@/lib/types/Gallery';
 import { convertImageToWebP, createMedia, deleteMedia, extractWebPPreview, fetchGalleryImages, fetchMedia, updateMedia } from '../api/mediaClient';
@@ -12,10 +12,9 @@ import UploadStatus from '@/components/UploadStatus';
 import { addFile, readFiles, removeFile, TempFile } from '../clientDb';
 import ConfirmDelete from '@/components/ConfirmDelete';
 import { AlbumMediaData } from '@/lib/types/Album';
-import { add } from 'dexie';
-import CreatePage from '@/components/PersonPage/Create';
 import { updateGallery } from '../api/galleryClient';
 import EditGallery from '@/components/PersonPage/Edit';
+import { fetchAlbums } from '../api/albumClient';
 
 
 export interface OrientationMedia {
@@ -32,12 +31,14 @@ export type OrientationMediaWithFile = OrientationMedia & {file: File, previewFi
 
 interface UploadState {
     media: Media[]
+    albums: AlbumMediaData[]
     person?: GalleryPersonData
     album?: AlbumMediaData
     people: GalleryPersonData[]
     stagedMedia: OrientationMedia[]
     gallery: Gallery
     selectImages: boolean
+    canDelete?: boolean
     selectedImages: Set<string>
     loading: boolean
 } 
@@ -46,12 +47,15 @@ interface UploadActions {
     deleteImages: () => void,
     upload: () => void
     download: () => void
+    setAlbums: (albums: AlbumMediaData[]) => void
     setAlbum: (album?: AlbumMediaData) => void
     setPerson: (personId?: string) => void
     toggleSelectImages: () => void
-    toggleSelectedImage: (imageId: string) => void
+    toggleSelectedImage: (imageId: string, personId: string) => void
+    setSelectedImages: (imageIds: Set<string>) => void
     loadGallery: () => Promise<void>
     openSettings: () => void
+    loadAlbums: () => Promise<void>
 }
 
 type GalleryContextType = UploadState & UploadActions
@@ -72,9 +76,11 @@ const GalleryProvider: React.FC<{ children: React.ReactNode, gallery: Gallery}> 
   const[completeUploads, setCompleteUploads] = useState<number | undefined>();
   const [selectImages, setSelectImages] = useState<boolean>(false)
   const [selectedImages, setSelectedImages] = useState<Set<string>>(new Set())
+  const [selectedMediaUploaders, setSelectedMediaUploaders] = useState<string[]>([])
   const [showConfirmDelete, setShowConfirmDelete] = useState<boolean>(false)
   const [loading, setLoading] = useState<boolean>(true)
   const [showSettings, setShowSettings] = useState<boolean>(false)
+  const [albums, setAlbums] = useState<AlbumMediaData[]>([])
 
   const handleBeginUpload = useCallback(() => {
       if (fileInputRef.current) {
@@ -159,6 +165,11 @@ const GalleryProvider: React.FC<{ children: React.ReactNode, gallery: Gallery}> 
     return orVid
   };
   
+  useEffect(() => {
+    if (selectedImages.size === 0) {
+      setSelectedMediaUploaders([])
+    }
+  }, [selectedImages])
 
   /**
    * Load a list of files into the staged media state.
@@ -175,7 +186,7 @@ const GalleryProvider: React.FC<{ children: React.ReactNode, gallery: Gallery}> 
         }));
       setStagedMedia((prevImages) => [...prevImages, ...filesData]);
     };
-
+    
   const handleFileChange = async(event: ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(event.target.files || []);
     
@@ -273,14 +284,24 @@ const GalleryProvider: React.FC<{ children: React.ReactNode, gallery: Gallery}> 
 
   const initPeople = async (galleryId: string) => {
     const _people = await fetchGalleryPeople(galleryId)
-    console.log(_people)
     setPeople(_people)
+  }
+
+  const loadAlbums = useCallback(async () => {
+    return initAlbums(gallery.id)
+  }, [gallery.id])
+
+  const initAlbums = async (galleryId: string) => {
+    const _albums = await fetchAlbums(galleryId)
+    setAlbums(_albums)
+    setCurrentAlbum((oldAlbum) => _albums.find(a => a.id === oldAlbum?.id))
   }
 
   const loadGallery = useCallback(async () => {
     const [unfinishedImages, files] = await Promise.all([
       initImages(gallery.id),
       readFiles(),
+      initAlbums(gallery.id),
       initPeople(gallery.id),
     ])
     const fileIds = new Set(files.map(f => f.id))
@@ -302,17 +323,23 @@ const GalleryProvider: React.FC<{ children: React.ReactNode, gallery: Gallery}> 
     setSelectImages(!selectImages)
     setSelectedImages(new Set())
   }
-  const toggleSelectedImage = useCallback((id: string) => {
+  const toggleSelectedImage = useCallback((id: string, personId: string) => {
       if (selectedImages.has(id)) {
           selectedImages.delete(id)
+          const index = selectedMediaUploaders.indexOf(personId);
+          if (index !== -1) {
+            selectedMediaUploaders.splice(index, 1)
+            setSelectedMediaUploaders([...selectedMediaUploaders]);
+          }
           const newSelectedImages = new Set(selectedImages)
           setSelectedImages(newSelectedImages)
       } else {
           selectedImages.add(id)
+          setSelectedMediaUploaders([...selectedMediaUploaders, personId])
           const newSelectedImages = new Set(selectedImages)
           setSelectedImages(newSelectedImages)
       }
-  }, [selectedImages])
+  }, [selectedImages, selectedMediaUploaders])
   
   const handleConfirmDelete = useCallback(async () => {
     if (selectedImages.size > 0) {
@@ -323,10 +350,12 @@ const GalleryProvider: React.FC<{ children: React.ReactNode, gallery: Gallery}> 
       await Promise.all(deleteImagePromises).then(_ => {
         setMedia(media.filter(m => !selectedImages.has(m.id)))
       })
+      console.log(currentAlbum)
+      loadGallery()
       setSelectedImages(new Set())
       setSelectImages(false)
     }    
-  }, [selectedImages])
+  }, [selectedImages, loadGallery])
 
   const handleSubmitGallery = async (galleryName: string, theKnot?: string, zola?: string) => {
     setShowSettings(false)
@@ -348,12 +377,18 @@ const GalleryProvider: React.FC<{ children: React.ReactNode, gallery: Gallery}> 
     downloadMedia(gallery.name, Array.from(selectedImages).map(id => media.find(m => m.id === id)!))
   }, [selectedImages, gallery])
 
+  const canDelete = useMemo(() => {
+    console.log(selectedMediaUploaders)
+    const uploaders = new Set(selectedMediaUploaders)
+    return uploaders.size === 1 && uploaders.has(personId)
+  }, [selectedMediaUploaders])
 
   return (
     <GalleryContext.Provider value={{
         deleteImages: () => setShowConfirmDelete(true),
         download: handleDownload,
         upload: handleBeginUpload,
+        canDelete,
         media: media,
         people,
         setPerson,
@@ -364,9 +399,13 @@ const GalleryProvider: React.FC<{ children: React.ReactNode, gallery: Gallery}> 
         gallery,
         selectImages,
         selectedImages,
+        albums,
         toggleSelectImages,
         toggleSelectedImage,
+        setSelectedImages,
+        loadAlbums: () => loadAlbums(),
         loadGallery,
+        setAlbums,
         openSettings: () => setShowSettings(true),
         loading
     }}>
