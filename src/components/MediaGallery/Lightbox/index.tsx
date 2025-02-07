@@ -12,6 +12,7 @@ import Menu, { MenuItem } from "../Menu";
 interface LightBoxProps {
     index: number
     mediaId: string,
+    personId: string,
     total: number
     image?: string;
     onClose: () => void;
@@ -22,16 +23,23 @@ interface LightBoxProps {
     contentType?: string
   }
   
-const LightBox: FC<LightBoxProps> = memo(({ mediaId, image, index, total, onClose, prevImage, nextImage, onNext, onPrevious, contentType }) => {
-    const {gallery, album} = useGallery()
+const LightBox: FC<LightBoxProps> = memo(({ mediaId, personId, image, index, total, onClose, prevImage, nextImage, onNext, onPrevious, contentType }) => {
+    const {gallery, album, selectedImages, setSelectedImages, toggleSelectedImage} = useGallery()
     const [touchStartX, setTouchStartX] = useState<number | null>(null);
     const [touchStartY, setTouchStartY] = useState<number | null>(null);
     const [translateX, setTranslateX] = useState(0);
     const [translateY, setTranslateY] = useState(0);
     const [isAnimating, setIsAnimating] = useState(false);
     const {width, height} = useWindowSize()
-    const [showMenu, setShowMenu] = useState<boolean>(false)
-    const [detailsOpen, setDetailsOpen] = useState<boolean>(false)
+    
+    const handleClose = () => {
+        setSelectedImages(new Set())
+        onClose()
+    }
+
+    const closeMenu = () => {
+        setSelectedImages(new Set())
+    }
     const handleKeyDown = (e: KeyboardEvent) => {
         if (isAnimating) return;
 
@@ -40,7 +48,7 @@ const LightBox: FC<LightBoxProps> = memo(({ mediaId, image, index, total, onClos
         } else if (e.key === "ArrowLeft") {
             triggerAnimation("prev");
         } else if (e.key === "Escape") {
-            onClose();
+            handleClose();
         }
     };
 
@@ -96,9 +104,6 @@ const LightBox: FC<LightBoxProps> = memo(({ mediaId, image, index, total, onClos
         }
     }, [image])
 
-    const openDetails = () => {
-        setDetailsOpen(true)
-    }
     const triggerAnimation = (direction?: "next" | "prev") => {
         setIsAnimating(true);
 
@@ -119,7 +124,7 @@ const LightBox: FC<LightBoxProps> = memo(({ mediaId, image, index, total, onClos
             } else if (direction === "prev") {
                 onPrevious();
             } else {
-                onClose()
+                handleClose()
             }
         }, 300); // Match the animation duration
     };
@@ -169,10 +174,10 @@ const LightBox: FC<LightBoxProps> = memo(({ mediaId, image, index, total, onClos
             <Container className={styles.lightBoxBackground} />
             <Container className={styles.lightboxBlur} />
             <Row className={styles.lightboxHeader}>
-                <Container className={styles.headerIconContainer} onClick={onClose}>
+                <Container className={styles.headerIconContainer} onClick={handleClose}>
                     <FontAwesomeIcon icon={xIcon} className={styles.icon} />
                 </Container>
-                <Container className={styles.headerIconContainer} onClick={() => setShowMenu(true)}>
+                <Container className={styles.headerIconContainer} onClick={() => toggleSelectedImage(mediaId, personId)}>
                     <Actions className={styles.icon}/>
                 </Container>
             </Row>
@@ -240,7 +245,9 @@ const LightBox: FC<LightBoxProps> = memo(({ mediaId, image, index, total, onClos
                 </Container>
 
             </Container>
-            {showMenu && <Menu items={menuItems} selectedImages={new Set([mediaId])} onClose={() => setShowMenu(false)}/> }
+            {(selectedImages && !!selectedImages.size) && (
+                <Menu items={menuItems} selectedImages={selectedImages} onClose={closeMenu}/> 
+            )}
         </Column>
     ) : <></>
 })

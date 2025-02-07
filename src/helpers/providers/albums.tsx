@@ -29,12 +29,10 @@ type AlbumContextType = AlbumState & AlbumActions
 const AlbumContext = createContext<AlbumContextType>({} as AlbumContextType);
 
 const AlbumsProvider: React.FC<{ children: React.ReactNode, galleryId: string}> = ({ children, galleryId }) => {
-    const {album, setAlbum: setGalleryAlbum} = useGallery()
+    const {album, setAlbum: setGalleryAlbum, albums, setAlbums, selectedImages, setSelectedImages, loadAlbums} = useGallery()
     const {personId} = useUser()
-    const [albums, setAlbums] = useState<AlbumMediaData[]>([])
     const [showNewAlbumPage, setShowNewAlbumPage] = useState<boolean>(false)
     const [showSelectAlbums, setShowSelectAlbums] = useState<boolean>(false)
-    const [selectedImages, setSelectedImages] = useState<Set<string>>(new Set())
     const [isEditing, setIsEditing] = useState<boolean>(false)
     const [showConfirmDelete, setShowConfirmDelete] = useState<boolean>(false)
     const setAlbum = useCallback((albumId?: string) => {
@@ -42,11 +40,6 @@ const AlbumsProvider: React.FC<{ children: React.ReactNode, galleryId: string}> 
       setGalleryAlbum(_album)
     }, [albums])
     
-    const loadAlbums = async () => {
-      const _albums = await fetchAlbums(galleryId)
-      setAlbums(_albums)
-    }
-
     useEffect(() => {
       const init = async () => {
         const _albums = await fetchAlbums(galleryId)
@@ -58,13 +51,12 @@ const AlbumsProvider: React.FC<{ children: React.ReactNode, galleryId: string}> 
     const submitAlbum = useCallback(async (name: string) => {
       if (personId) {
         const _album = await createAlbum(galleryId, personId, name)
-        setAlbums((oldAlbums) => [...oldAlbums, {..._album, count: 0, recentMedia: []}])
+        setAlbums([...albums, {..._album, count: 0, recentMedia: []}])
         setShowNewAlbumPage(false)  
       }
-    }, [personId])
+    }, [personId, albums])
 
     const selectAlbums = useCallback((imageIds: Set<string>) => {
-      setSelectedImages(new Set(imageIds))
       setShowSelectAlbums(true)
     }, [])
 
@@ -89,15 +81,16 @@ const AlbumsProvider: React.FC<{ children: React.ReactNode, galleryId: string}> 
       if (album) {
         const newAlbum = await updateAlbum(album.id, _album)
         const newAlbumMedia = {...newAlbum, count: album.count, recentMedia: album.recentMedia}
-        setAlbums((oldAlbums) => oldAlbums.map(alb => alb.id === newAlbum.id ? newAlbumMedia : alb))
+        setAlbums(albums.map(alb => alb.id === newAlbum.id ? newAlbumMedia : alb))
         setGalleryAlbum(newAlbumMedia)
         setIsEditing(false)
       }
-    }, [album])
+    }, [album, albums])
 
     const confirmAlbums = useCallback(async (confirmedAlbumIds: string[]) => {
       setShowSelectAlbums(false)
       await addMediaToAlbums(confirmedAlbumIds, Array.from(selectedImages))
+      setSelectedImages(new Set())
       loadAlbums()
     }, [selectedImages])
 
@@ -105,12 +98,13 @@ const AlbumsProvider: React.FC<{ children: React.ReactNode, galleryId: string}> 
       if (album) {
         const success = await deleteAlbum(album.id)
         if (success) {
-          setAlbums((oldAlbums) => oldAlbums.filter(alb => alb.id !== album.id))
+          setAlbums(albums.filter(alb => alb.id !== album.id))
           setAlbum(undefined)
           setShowConfirmDelete(false)  
+          setSelectedImages(new Set())
         }
       }
-    }, [album])
+    }, [album, albums])
     
     const removeMedia = useCallback(async (mediaIds: Set<string>) => {
       if (album) {
@@ -118,6 +112,7 @@ const AlbumsProvider: React.FC<{ children: React.ReactNode, galleryId: string}> 
         if (success) {
           const newAlbum = {...album, count: album.count - mediaIds.size, recentMedia: (album.recentMedia || []).filter(m => !mediaIds.has(m.id))}
           setGalleryAlbum(newAlbum)
+          setSelectedImages(new Set())
           loadAlbums()
         }
       }
