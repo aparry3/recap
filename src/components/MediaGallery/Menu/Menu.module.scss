@@ -1,6 +1,6 @@
 .selectedImageMenuContainer {
     width: 100%;
-    top: calc(100vh - 5rem);
+    top: calc(100% - 5rem);
     position: fixed;
     z-index: 101;
     background: var(--background-light);
@@ -35,7 +35,7 @@
 }
 @media screen and (max-width: 768px) {
     .selectedImageMenuContainer {
-        top: calc(100vh - 4rem);
+        top: calc(100% - 4rem);
     }
     .selectedImageActionsContainer {
         padding: 0 1rem !important;
