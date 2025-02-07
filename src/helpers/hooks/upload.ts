@@ -5,9 +5,9 @@ interface MultipartUploadPart {
     ETag: string | null
     PartNumber: number
 }
+
   
 async function getPresignedUrl(uploadId: string, key: string, partNumber: number): Promise<string> {
-  console.log(uploadId, key, partNumber)
   const response = await fetch('/api/media/presigned-url', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },

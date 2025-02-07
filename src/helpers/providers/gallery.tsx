@@ -15,6 +15,7 @@ import { AlbumMediaData } from '@/lib/types/Album';
 import { updateGallery } from '../api/galleryClient';
 import EditGallery from '@/components/PersonPage/Edit';
 import { fetchAlbums } from '../api/albumClient';
+import { up } from '../../../migrations/20241103194449_init';
 
 
 export interface OrientationMedia {
@@ -195,12 +196,23 @@ const GalleryProvider: React.FC<{ children: React.ReactNode, gallery: Gallery}> 
     loadFiles(files);
   };
 
-  const doUploadMedia = async (presignedUrls: PresignedUrls, file: File, previewFile: Blob) => {
-    console.log(presignedUrls)
-    const uploaded = presignedUrls.large ? uploadMedia(presignedUrls.large, file) : presignedUrls.uploadId ? uploadLargeMedia(presignedUrls.uploadId, presignedUrls.key, file) : Promise.reject(`Unable to upload file`)
-    const webpUploaded = uploadMedia(presignedUrls.small, previewFile)
-    await Promise.all([uploaded, webpUploaded])
-    return media
+  const doUploadMedia = async (id: string, presignedUrls: PresignedUrls, file: File, previewFile: Blob) => {
+    let mediaUploaded = false
+    let previewUploaded = false
+    
+    let signedUrls = presignedUrls
+    while (!mediaUploaded || !previewUploaded) {
+      const uploadedPromise: Promise<boolean> = mediaUploaded ? Promise.resolve(true) : signedUrls.large ? uploadMedia(signedUrls.large, file) : signedUrls.uploadId ? uploadLargeMedia(signedUrls.uploadId, signedUrls.key, file) : Promise.reject(`Unable to upload file`)
+      const webpUploadedPromise: Promise<boolean> = previewUploaded ? Promise.resolve(true) : uploadMedia(signedUrls.small, previewFile)
+      const [uploaded, webpUploaded] = await Promise.all([uploadedPromise, webpUploadedPromise])
+      mediaUploaded = uploaded
+      previewUploaded = webpUploaded
+      if (!mediaUploaded || !previewUploaded) {
+        const m = await fetchMedia(id)
+        signedUrls = m.presignedUrls
+      }
+    }
+    return true
   }
 
   const insertMedia = useCallback(async (newMedia: OrientationMediaWithFile,  addToAlbum: boolean): Promise<Media> => {
@@ -212,7 +224,7 @@ const GalleryProvider: React.FC<{ children: React.ReactNode, gallery: Gallery}> 
     URL.revokeObjectURL(preview)
 
     await addFile(insertedMedia.id, gallery.id, file, previewFile)
-    await doUploadMedia(presignedUrls, file, previewFile)
+    await doUploadMedia(_media.id, presignedUrls, file, previewFile)
     return _media
   }, [personId, gallery.id, currentAlbum])
 
@@ -261,7 +273,7 @@ const GalleryProvider: React.FC<{ children: React.ReactNode, gallery: Gallery}> 
 
     const unfinishedMediaPromises = files.map(async f => {
       const m = await fetchMedia(f.id)
-      await doUploadMedia(m.presignedUrls, f.file, f.previewFile).then(async _ => {
+      await doUploadMedia(f.id, m.presignedUrls, f.file, f.previewFile).then(async _ => {
         const finishedMedia = await finalizeMedia(m.id)
         setCompleteUploads(oldComplete => (oldComplete || 0) + 1)
         setMedia((oldImages) => [...oldImages, finishedMedia])
