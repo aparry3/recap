@@ -20,6 +20,7 @@ db.version(1).stores({
 
 export const addFile = async (id: string, galleryId: string, file: File, previewFile: Blob): Promise<string> => {
     await db.files.add({id, galleryId, file, previewFile})
+    console.log("finish file")
     return id
 }
 
@@ -30,5 +31,6 @@ export const removeFile = async (id: string): Promise<boolean> => {
 
 export const readFiles = async (): Promise<TempFile[]> => {
     const files = await db.files.toArray()
+    console.log("Files:", files.length)
     return files
 }
