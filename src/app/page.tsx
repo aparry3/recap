@@ -307,8 +307,12 @@ const Footer = () => {
 const HomePage: FC = async ({}) => {
     const personId = cookies().get('personId')?.value
     if (personId) {
-        const person = await selectPerson(personId)
-        if (person) return redirect('/galleries')
+        try {
+            const person = await selectPerson(personId)
+            if (person) return redirect('/galleries')
+        } catch (error) {
+            console.error(`No user found with id: ${personId}`)
+        }
     }
     return (
         <Column as='main' className={styles.body}>
