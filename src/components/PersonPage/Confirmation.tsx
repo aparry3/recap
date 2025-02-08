@@ -1,11 +1,25 @@
-import React, { FC } from 'react';
+"use client"
+import React, { FC, useEffect } from 'react';
 import { Column, Container, Row, Text } from 'react-web-layout-components';
 import Image from 'next/image';
 import styles from './Create.module.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { checkIcon } from '@/lib/icons';
+import { Gallery } from '@/lib/types/Gallery';
+import { Person } from '@/lib/types/Person';
+import useLocalStorage, { setCookie } from '@/helpers/hooks/localStorage';
+import { useRouter } from 'next/navigation';
 
-const Confirmation: FC<{name: string}> = ({name}) => {
+const Confirmation: FC<{person: Person, gallery?: Gallery}> = ({person, gallery}) => {
+  const router = useRouter()
+  const [_, setPersonId] = useLocalStorage<string>('personId', person.id);
+  useEffect(() => {
+    setPersonId(person.id)
+    setCookie('personId', person.id)
+    if (gallery) {
+      router.push(`/${gallery.path}?password=${gallery.password}`)
+    }
+  }, [person, router])
   return (
     <Column as='main' className={styles.personPage} justify='center'>
       <Column className={styles.titleContainer}>
@@ -16,7 +30,7 @@ const Confirmation: FC<{name: string}> = ({name}) => {
             <FontAwesomeIcon icon={checkIcon} className={styles.confirmIcon} />
           </Container>
         <Column as='header' className={styles.heading}>
-          <Text size={1.8}>Thank you, {name}!</Text>
+          <Text size={1.8}>Thank you, {person.name}!</Text>
         </Column>
       </Column>
       <Container className={styles.contentContainer}>

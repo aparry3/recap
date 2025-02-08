@@ -75,10 +75,10 @@ export const fetchVerification = async (verificationId: string): Promise<Verific
     }
 }
 
-export const createVerification = async (personId: string, galleryId: string, email: string, name: string): Promise<Verification> => {
+export const createVerification = async (personId: string, galleryName: string, email: string, name: string): Promise<Verification> => {
     const data = await fetch(`/api/verifications`, {
         method: 'POST',
-        body: JSON.stringify({personId, galleryId, email, name}) 
+        body: JSON.stringify({personId, galleryName, email, name}) 
     }).then(res => res.json())
     return data.verification
 }
