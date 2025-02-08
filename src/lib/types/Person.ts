@@ -18,6 +18,7 @@ export type GalleryPersonData = Person & { count: number; recentMedia?: Media[]}
 export interface VerificationTable {
     id: string
     personId: string
+    galleryId?: string
     verified: boolean
 }
 

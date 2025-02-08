@@ -71,8 +71,12 @@ export const selectPersonGalleries = async (personId: string): Promise<Gallery[]
   return galleries
 }
 
-export const insertVerification = async (personId: string): Promise<Verification> => {
+export const insertVerification = async (personId: string, galleryId?: string): Promise<Verification> => {
   const newVerification = {personId, id: uuidv4(), verified: false} as NewVerification
+  if (galleryId) {
+    newVerification.galleryId = galleryId
+  }
+  newVerification
   const verification = await db.insertInto('verification').values(newVerification).returningAll().executeTakeFirstOrThrow();
   return verification;
 }

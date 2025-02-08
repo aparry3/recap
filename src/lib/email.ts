@@ -1,10 +1,14 @@
 import sgMail from '@sendgrid/mail';
 
 const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY || ''
-const SENDGRID_TEMPLATE_ID = process.env.SENDGRID_TEMPLATE_ID || ''
+
+const SENDGRID_VERIFICATION_ID = process.env.SENDGRID_VERIFICATION_ID || ''
+const SENDGRID_CREATION_ID = process.env.SENDGRID_CREATION_ID || ''
+const SENDGRID_WELCOME_ID = process.env.SENDGRID_WELCOME_ID || ''
+
 const SENDGRID_EMAIL = process.env.SENDGRID_EMAIL || ''
 
-if (!SENDGRID_API_KEY || !SENDGRID_TEMPLATE_ID || !SENDGRID_EMAIL) {
+if (!SENDGRID_API_KEY || !SENDGRID_VERIFICATION_ID || !SENDGRID_EMAIL || !SENDGRID_WELCOME_ID || !SENDGRID_CREATION_ID) {
     throw new Error('SENDGRID_API_KEY or SENDGRID_TEMPLATE_ID || SENDGRID_EMAIL is not set');
 }
 
@@ -19,12 +23,12 @@ export class SendGridClient {
     sgMail.setApiKey(apiKey);
   }
 
-  async sendTemplateEmail(email: string, templateData: TemplateData): Promise<boolean> {
+  async _sendTemplateEmail(email: string, templateData: TemplateData, templateId: string): Promise<boolean> {
     try {
       const response = await sgMail.send({
         to: email,
         from: SENDGRID_EMAIL,
-        templateId: SENDGRID_TEMPLATE_ID,
+        templateId,
         // Ensure template data is properly typed
         dynamicTemplateData: {
           gallery_name: templateData.galleryName,
@@ -40,6 +44,18 @@ export class SendGridClient {
       console.error(error)
       return false
     }
+  }
+
+  async sendVerificationEmail(email: string, templateData: TemplateData): Promise<boolean> {
+    return await this._sendTemplateEmail(email, templateData, SENDGRID_VERIFICATION_ID)
+  }
+
+  async sendCreationEmail(email: string, templateData: TemplateData): Promise<boolean> {
+    return await this._sendTemplateEmail(email, templateData, SENDGRID_CREATION_ID)
+  }
+
+  async sendWelcomeEmail(email: string, templateData: TemplateData): Promise<boolean> {
+    return await this._sendTemplateEmail(email, templateData, SENDGRID_WELCOME_ID)
   }
 }
 
