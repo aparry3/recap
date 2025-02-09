@@ -85,6 +85,7 @@ const CreatePage: FC = () => {
   }, [person])
 
   const handleLogin = async (email: string) => {
+    console.log(email)
     const _person = await fetchPersonByEmail(email)
     if (_person) {
       setTempPerson({personId: _person.id, email, name: _person.name})
