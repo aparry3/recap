@@ -59,10 +59,11 @@ const Highlights = () => {
         <Column as='section' className={styles.highlights} justify='space-between'>
             <Column className={styles.textContainer} padding={0.5}>
                 <Container className={styles.heading} padding={[0, 1]}>
-                    <Text className={styles.headingText} as='h1'>The best collaborative gallery.</Text>
+                    <Text className={styles.headingText} as='h1'>The best collaborative wedding gallery.</Text>
                 </Container>
                 <Container className={styles.subheading} padding={[0, 1]}>
-                    <Text className={styles.subheadingText} as='h2'>Share your gallery link directly with your guests or display the QR code for them to see—on stationery, stickers, or anywhere you choose. and let them easily scan and upload their photos and videos,</Text>
+                    <Text className={styles.subheadingText} as='h2'>Create your wedding gallery and share it with your guests using a printable QR code and one-click share link
+                    </Text>
                 </Container>
             </Column>
             <Container className={styles.highlightsList} >
@@ -70,7 +71,7 @@ const Highlights = () => {
                     <Column className={styles.highlight} padding={2}>
                         <Container className={styles.highlightTitle} padding>
                             <Text className={styles.title}>
-                                Easy.
+                                QR Code
                             </Text>
                         </Container>
                         <Container className={styles.highlightSubtitle} padding>
@@ -90,7 +91,7 @@ const Highlights = () => {
                     <Column className={styles.highlight} padding={2}>
                         <Container className={styles.highlightTitle} padding>
                             <Text className={styles.title}>
-                                Unlimited.
+                                On-Click Link
                             </Text>
                         </Container>
                         <Container className={styles.highlightSubtitle} padding>
@@ -108,26 +109,6 @@ const Highlights = () => {
                             <Row className={styles.highlightScreenshotContainer}>
                                 <Image className={styles.highlightScreenshot} src='/product/peopleMobile.png' alt='qrcode' layout='responsive' height={200} width={200}/>
                             </Row>
-                        </Container>          
-                    </Column>
-                </Container>
-                <Container className={styles.highlightContainer}>
-                    <Column className={styles.highlight} padding={2}>
-                        <Container className={styles.highlightTitle} padding>
-                            <Text className={styles.title}>
-                                Free.
-                            </Text>
-                        </Container>
-                        <Container className={styles.highlightSubtitle} padding>
-                            <Text className={styles.subtitle}>
-                                Your <span className={styles.highlightText}>first gallery</span> free. No strings attached.
-                            </Text>
-                        </Container>  
-                        <Container className={styles.highlightDescription} padding>
-                            <Text>Enjoy your first gallery on us. Create and share a full gallery experience without any cost.</Text>
-                        </Container>
-                        <Container className={styles.media} padding>
-                            <Image className={styles.image} src='/present.png' alt='present' layout='responsive' height={100} width={100}/>
                         </Container>          
                     </Column>
                 </Container>

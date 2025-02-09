@@ -82,7 +82,7 @@ const Login: FC<{onSubmit: (email: string) => void, loginError: string, back: ()
               )}
           </Column>
           <Container className={styles.butonContainer} padding={[2, 0]}>
-            <Button onClick={handleButtonPress} type='submit' disabled={emailError}>
+            <Button onClick={handleButtonPress} disabled={emailError}>
                 <Text size={1.2} weight={600}>Login</Text>
             </Button>
         </Container>
