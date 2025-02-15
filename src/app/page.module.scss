@@ -24,7 +24,9 @@
 .wordmarkContainer {
     height: 100%;
 }
-
+.section {
+    width: 100%;
+}
 .actionButton {
     background: var(--primary);
     color: var(--background-light);
@@ -60,11 +62,26 @@
 }
 
 // HIGHLIGHT
+.tabs {
+    flex-wrap: wrap;
+}
+.tab {
+    border-bottom: var(--primary-light) solid 1px;
+    width: 25vw;
+    padding: 0.5rem;
+    cursor: pointer;
+}
+.active {
+    border-bottom: var(--primary) solid 2px;
+}
+.tabText {
+    font-size: 1.5rem !important;
+}
 .highlights {
     padding: 3rem 0;
 }
 .subheadingText {
-    font-size: 2rem !important;
+    font-size: 1.7rem !important;
     margin: 0.5rem 0;
 }
 
@@ -89,6 +106,7 @@
 }
 .highlightsList {
     flex-wrap: wrap;
+    padding: 1rem 0rem;
 }
 .media {
     flex-grow: 1;
@@ -115,15 +133,69 @@
     box-shadow: 0 0 1.25rem -1rem black;
     border-radius: 0.5rem;
 }
+// EXAMPLES
+.examples {
+    width: 100%;
+}
+
+.examplesList {
+    width: 100%;
+}
+
+.exampleContainer {
+    width: 100%;
+    padding: 1rem;
+}
+.example {
+    width: 100%;
+}
+.exampleDetails {
+    width: 50%;
+}
+.exampleMedia {
+    width: 50%;
+}
+.exampleImage {
+    width: 30% !important;
+}
 
 // USES
 
 .uses {
-    background: var(--background-medium);
+    background: var(--background-light);
     width: 100%;
     height: 30vh;
 }
 
+.carousel {
+    overflow: hidden;
+    width: 100%;  
+}
+.carouselTrack {
+    animation: scroll 15s linear infinite;
+    width: 100%;
+    justify-content: flex-start !important;
+}
+.use {
+    flex: 0 0 auto;     /* Prevent items from shrinking */
+    padding: 1rem 2rem;
+    white-space: nowrap; /* Prevent text wrapping */
+    font-size: 1.2rem;
+    font-weight: 500;
+  }
+.useText {
+    font-size: 1.9rem !important;
+}
+
+@keyframes scroll {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(-50%);
+    }
+}
+  
 // ALBUMS
 
 .albums {
@@ -250,6 +322,25 @@
     width: 100%;
     padding: 1rem;
 }
+.weddingWebsiteImagesContainer {
+    width: 100%;
+    flex-grow: 1;
+    padding: 2rem 0 !important;
+    flex-wrap: wrap;
+    justify-content: center !important;
+}
+.weddingWebsiteImageContainer {
+    width: 30%;
+    min-width: 15rem;
+    flex-shrink: 0;
+}
+.weddingWebsiteImage {
+    width: 100%;
+    height: 8rem;
+    box-shadow: 0 0 1.25rem -1rem black;
+    border-radius: 1rem;
+    background: var(--background-light);
+}
 
 @media only screen and (max-width: 600px) {
     .header {
@@ -257,6 +348,10 @@
             display: none !important;
         }
     };
+    .subheadingText {
+        font-size: 1.4rem !important;
+        margin: 0.5rem 0;
+    }    
     .textContainer {
         width: 100%;
     }
@@ -269,7 +364,33 @@
     .subheading {
         width: 100%;
     }
+    .tabs {
+        width: 100%;
+    }
+    .tab {
+        border-bottom: var(--primary-light) solid 1px;
+        min-width: 30%;
+        width: unset;
+        flex-grow: 1;
+        max-width: 50%;
+        padding: 1.5rem 0.5rem 0.5rem 0.5rem;
+        cursor: pointer;
+    }
+    .active {
+        border-bottom: var(--primary) solid 2px;
+    }
+    .tabText {
+        font-size: 1.1rem !important;
+    }
+    
+    .uses {
+        height: unset;
+    }    
 
+    .carouselTrack {
+        animation: scroll 5s linear infinite;
+    }
+    
     .highlightContainer {
         width: 100%;
         height: 60vh;
@@ -343,6 +464,10 @@
         top: unset;
         left: unset;
     }
+    .weddingWebsiteImageContainer {
+        width: 100%;
+    }
+    
 
     
 }

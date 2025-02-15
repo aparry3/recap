@@ -182,15 +182,15 @@ const ColorContainer: FC<{foregroundColor: Color, backgroundColor: Color, setFor
                     </Container>
                 </Row>
                 <Row>
+                    <Container className={`${styles.colorContainer} ${foregroundColor === Color.TEXT_DARK ? styles.activeContainer : ''}`}>
+                        <Container onClick={() => setForeground(Color.BACKGROUND_LIGHT)} className={`${styles.color} ${foregroundColor === Color.BACKGROUND_LIGHT ? styles.active : ''}`} style={{backgroundColor: Color.BACKGROUND_LIGHT}}/>
+                    </Container>
                     <Container className={`${styles.colorContainer} ${foregroundColor === Color.SECONDARY ? styles.activeContainer : ''}`}>
-                            <Container onClick={() => setForeground(Color.SECONDARY)} className={`${styles.color} ${foregroundColor === Color.SECONDARY ? styles.active : ''}`} style={{backgroundColor: Color.SECONDARY}}/>
-                        </Container>
-                        <Container className={`${styles.colorContainer} ${foregroundColor === Color.SECONDARY_DARK ? styles.activeContainer : ''}`}>
-                            <Container onClick={() => setForeground(Color.SECONDARY_DARK)} className={`${styles.color} ${foregroundColor === Color.SECONDARY_DARK ? styles.active : ''}`} style={{backgroundColor: Color.SECONDARY_DARK}}/>
-                        </Container>
-                        <Container className={`${styles.colorContainer} ${foregroundColor === Color.TEXT_DARK ? styles.activeContainer : ''}`}>
-                            <Container onClick={() => setForeground(Color.TEXT_DARK)} className={`${styles.color} ${foregroundColor === Color.TEXT_DARK ? styles.active : ''}`} style={{backgroundColor: Color.TEXT_DARK}}/>
-                        </Container>
+                        <Container onClick={() => setForeground(Color.SECONDARY)} className={`${styles.color} ${foregroundColor === Color.SECONDARY ? styles.active : ''}`} style={{backgroundColor: Color.SECONDARY}}/>
+                    </Container>
+                    <Container className={`${styles.colorContainer} ${foregroundColor === Color.SECONDARY_DARK ? styles.activeContainer : ''}`}>
+                        <Container onClick={() => setForeground(Color.SECONDARY_DARK)} className={`${styles.color} ${foregroundColor === Color.SECONDARY_DARK ? styles.active : ''}`} style={{backgroundColor: Color.SECONDARY_DARK}}/>
+                    </Container>
                 </Row>
             </Column>
             <Container className={styles.verticalDash} />
