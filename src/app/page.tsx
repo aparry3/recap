@@ -149,70 +149,58 @@ const Examples = () => {
             <Column className={styles.examplesList} >
                 <Container className={styles.exampleContainer}>
                     <Container className={styles.example} padding={2}>
-                        <Column className={styles.exampleDetails} style={{alignItems: 'flex-end'}}>
+                        <Column className={styles.exampleDetails} >
                             <Container className={styles.exampleTitle} padding>
                                 <Text className={styles.title}>
-                                    Before the Wedding
+                                    <Text className={styles.highlightText}>Before</Text> the Wedding
                                 </Text>
                             </Container>
                             <Container className={styles.highlightSubtitle} padding>
                                 <Text className={styles.subtitle}>
-                                    No <span className={styles.highlightText}>App</span>. No <span className={styles.highlightText}>Account</span>. No <span className={styles.highlightText}>Hassle</span>.
+                                    Save the Dates | Invitations.
                                 </Text>
                             </Container>  
-                            <Column className={styles.highlightDescription} padding>
-                                <Text>Save the Dates</Text>
-                                <Text>Invitations</Text>
-                            </Column>
                         </Column>
                         <Container className={styles.exampleMedia} padding>
-                            <Image className={styles.exampleImage} src='/qrcode.png' alt='qrcode' layout='responsive' height={200} width={200}/>
+                            <Image className={styles.exampleImage} src='/product/SaveTheDates.png' alt='example save the dates' layout='responsive' height={200} width={200}/>
                         </Container>          
                     </Container>
                 </Container>
                 <Container className={styles.exampleContainer}>
-                    <Container className={styles.example} padding={2}>
+                    <Container className={`${styles.example} ${styles.reverse}`} padding={2}>
                         <Container className={styles.exampleMedia} padding>
-                            <Image className={styles.exampleImage} src='/qrcode.png' alt='qrcode' layout='responsive' height={200} width={200}/>
+                        <Image className={styles.exampleImage} src='/product/Placecards.png' alt='example wedding day qr codes' layout='responsive' height={200} width={200}/>
                         </Container>          
-                        <Column className={styles.exampleDetails} style={{alignItems: 'flex-start'}}>
+                        <Column className={styles.exampleDetails}>
                             <Container className={styles.exampleTitle} padding>
                                 <Text className={styles.title}>
-                                    At the Wedding
+                                    <Text className={styles.highlightText}>At</Text> the Wedding
                                 </Text>
                             </Container>
                             <Container className={styles.highlightSubtitle} padding>
                                 <Text className={styles.subtitle}>
-                                    No <span className={styles.highlightText}>App</span>. No <span className={styles.highlightText}>Account</span>. No <span className={styles.highlightText}>Hassle</span>.
+                                    Placecards | Table Numbers | Signs.
                                 </Text>
                             </Container>  
-                            <Column className={styles.highlightDescription} padding>
-                                <Text>Save the Dates</Text>
-                                <Text>Invitations</Text>
-                            </Column>
                         </Column>
                     </Container>
                 </Container>
                 <Container className={styles.exampleContainer}>
                     <Container className={styles.example} padding={2}>
-                        <Column className={styles.exampleDetails} style={{alignItems: 'flex-end'}}>
+                        <Column className={styles.exampleDetails}>
                             <Container className={styles.exampleTitle} padding>
                                 <Text className={styles.title}>
-                                    After the Wedding
+                                <Text className={styles.highlightText}>After</Text> the Wedding
                                 </Text>
                             </Container>
                             <Container className={styles.highlightSubtitle} padding>
                                 <Text className={styles.subtitle}>
-                                    No <span className={styles.highlightText}>App</span>. No <span className={styles.highlightText}>Account</span>. No <span className={styles.highlightText}>Hassle</span>.
+                                    Thank you's.
                                 </Text>
                             </Container>  
-                            <Column className={styles.highlightDescription} padding>
-                                <Text>Save the Dates</Text>
-                                <Text>Invitations</Text>
-                            </Column>
                         </Column>
                         <Container className={styles.exampleMedia} padding>
-                            <Image className={styles.exampleImage} src='/qrcode.png' alt='qrcode' layout='responsive' height={200} width={200}/>
+                        <Image className={styles.exampleImage} src='/product/ThankYous.png' alt='example thank you cards' layout='responsive' height={200} width={200}/>
                         </Container>          
                     </Container>
                 </Container>
@@ -220,7 +208,6 @@ const Examples = () => {
         </Column>
     )
 }
-
 
 const Uses = () => {
     return (
@@ -323,19 +310,6 @@ const Albums = () => {
             </Container>
         </Container>
     </Column>
-
-        // <Column as='section' className={styles.albums} padding={2}>
-        //     <Container className={styles.background} />
-        //     <Container className={styles.heading} padding={[0, 1]}>
-        //         <Text className={styles.headingText} as='h1'>An album for everything.</Text>
-        //     </Container>
-        //     <Container className={styles.subheading} padding={[0, 1]}>
-        //         <Text className={styles.subheadingText} as='h2'>Organize with ease and keep track of all of your memories along the way.</Text>
-        //     </Container>
-        //     <Container id="product" style={{ width: '100%', flexGrow: 1}} padding={1}>
-        //         <Image src='/product/albums.png' alt='albums' className={styles.albumImage} layout='responsive' height={572} width={940}/>
-        //     </Container>
-        // </Column>
     )
 }
 
@@ -449,6 +423,9 @@ const Notifications = () => {
             <Container className={styles.subheading} padding={[0, 1]}>
                 <Text className={styles.subheadingText} as='h2'>Use opt in text and email notifications to keep your guests up to date when new photos are uploaded. Make it fun, and prompt your guests to upload photos before the big day.</Text>
             </Container>
+            <Container className={styles.notificationMedia} padding>
+                <Image className={styles.notificationImage} src='/product/NotiGroup.png' alt='notifications group' layout='responsive' height={200} width={200}/>
+            </Container>          
         </Column>
     )
 
