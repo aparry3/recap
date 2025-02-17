@@ -93,9 +93,10 @@
 }
 .title {
     font-size: 2.5rem !important;
+    font-weight: 600 !important;
 }
 .subtitle {
-    font-size: 2rem !important;
+    font-size: 1.5rem !important;
 }
 .highlightContainer {
     height: 70vh;
@@ -148,15 +149,24 @@
 }
 .example {
     width: 100%;
+    flex-wrap: wrap;
 }
+
 .exampleDetails {
     width: 50%;
+    align-items: flex-end !important;
 }
 .exampleMedia {
     width: 50%;
 }
 .exampleImage {
-    width: 30% !important;
+    width: 60% !important;
+}
+.reverse {
+    .exampleDetails {
+        align-items: flex-start !important;
+    }
+    flex-wrap: wrap-reverse;
 }
 
 // USES
@@ -305,6 +315,15 @@
     }
 }
 
+// NOTIFICATIONS
+
+.notificationMedia {
+    width: 100%;
+}
+.notificationImage {
+    width: 40% !important;
+}
+
 // FOOTER
 
 .footer {
@@ -412,6 +431,18 @@
     .details {
         display: none !important;
     }
+    .example {
+        .exampleDetails {
+            width: 100% !important;
+            align-items: center !important;
+        }
+        .exampleMedia {
+            width: 100% !important;
+        }
+        .exampleImage {
+            width: 100% !important;
+        }
+    }
     .appDetailsContainer {
         flex-wrap: wrap;
     }
@@ -431,6 +462,9 @@
             text-align: center !important;
         }
     }
+    .notificationImage {
+        width: 100% !important;
+    }    
     .footer {
         .branding {
             width: 100%;
