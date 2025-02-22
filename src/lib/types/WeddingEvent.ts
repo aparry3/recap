@@ -17,3 +17,5 @@ export interface WeddingEventTable extends WeddingEventDetails{
 export type WeddingEvent = Selectable<WeddingEventTable>
 export type WeddingEventUpdate = Updateable<WeddingEventTable>
 export type NewWeddingEvent = Insertable<WeddingEventTable>
+
+export type NewWeddingEventData = Omit<WeddingEventDetails, 'id'>

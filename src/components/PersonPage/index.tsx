@@ -7,7 +7,7 @@ import styles from './Create.module.scss';
 import Button from '@/components/Button';
 import { Person, NewPersonData } from '@/lib/types/Person';
 
-const PersonPage: FC<{person?: Person | NewPersonData, onSubmit: (name: string, email?: string) => void}> = ({person, onSubmit}) => {
+const PersonPage: FC<{person?: Person | NewPersonData, onSubmit: (name: string, email?: string, phone?: string) => void}> = ({person, onSubmit}) => {
   const [name, setName] = useState(person?.name || '');
   const [phone, setPhone] = useState(person?.phone || '');
   const [email, setEmail] = useState(person?.email || '');
@@ -54,7 +54,7 @@ const PersonPage: FC<{person?: Person | NewPersonData, onSubmit: (name: string, 
 
   const handleButtonPress = () => {
     // Perform any necessary actions with the form data
-    onSubmit(name, email);
+    onSubmit(name, email, phone);
   };
 
   const emailError = useMemo(() => {
@@ -73,7 +73,7 @@ const PersonPage: FC<{person?: Person | NewPersonData, onSubmit: (name: string, 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     // Perform any necessary actions with the form data
-    if (!submitDisabled) onSubmit(name, email);
+    if (!submitDisabled) onSubmit(name, email, phone);
 };
 
 
@@ -130,7 +130,7 @@ const PersonPage: FC<{person?: Person | NewPersonData, onSubmit: (name: string, 
                 value={displayPhone}
                 onChange={handlePhoneChange}
               />
-              {emailError && (
+              {false && (
               <Row style={{width: '100%'}}>
                   <Text>Please enter a valid phone number</Text>
               </Row>
