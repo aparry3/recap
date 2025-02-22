@@ -5,6 +5,7 @@ import { PersonTable, VerificationTable } from "../types/Person"
 import { TagTable } from "../types/Tag"
 import { AlbumTable } from "../types/Album"
 import { AlbumMediaTable, MediaTable } from "../types/Media"
+import { WeddingEventTable } from "../types/WeddingEvent"
 
 export interface Database {
     gallery: GalleryTable,
@@ -16,6 +17,7 @@ export interface Database {
     albumMedia: AlbumMediaTable    
     media: MediaTable
     verification: VerificationTable
+    weddingEvent: WeddingEventTable
 }
 
 const dialect = new PostgresDialect({

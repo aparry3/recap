@@ -28,7 +28,7 @@ export const UserProvider: React.FC<{
     const [person, setPerson] = useState<Person | undefined>(undefined);
     const [loading, setLoading] = useState<boolean>(personLoading);
     const [showValidate, setShowValidate] = useState<boolean>(false)
-    const [tempPerson, setTempPerson] = useState<{personId: string, email?: string, name: string} | undefined>(undefined)
+    const [tempPerson, setTempPerson] = useState<{personId: string, email?: string, phone?: String, name: string} | undefined>(undefined)
     const [verificationId, setVerificationId] = useState<string>('')
 
     const initPerson = async (_personId: string) => {
@@ -45,28 +45,28 @@ export const UserProvider: React.FC<{
       }
     }, [personId, personLoading]);
 
-    const _createPerson = useCallback(async (name: string, email?: string) => {
+    const _createPerson = useCallback(async (name: string, email?: string, phone?: string) => {
       setLoading(true)  
-      const newPerson = await createPerson({name, email}, gallery.id)
+      const newPerson = await createPerson({name, email, phone}, gallery.id)
       setPerson(newPerson)
       setPersonId(newPerson.id)
       setLoading(false)
     }, [gallery.id])
 
-    const submitPerson = useCallback(async (name: string, email?: string) => {
+    const submitPerson = useCallback(async (name: string, email?: string, phone?: string) => {
         setLoading(true)
         if (email) {
           const _person = await fetchPersonByEmail(email)
           if (_person) {
             const verification = await createVerification(_person.id, gallery.name, email, name)
             setVerificationId(verification.id)
-            setTempPerson({personId: _person.id, email, name})
+            setTempPerson({personId: _person.id, email, name, phone})
             setLoading(false)
             setShowValidate(true)
             return
           }
         }
-        await _createPerson(name, email)
+        await _createPerson(name, email, phone)
     }, [gallery.name])
 
     const cancelValidate = () => {

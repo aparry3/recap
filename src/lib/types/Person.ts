@@ -5,6 +5,7 @@ export interface PersonTable {
     id: string
     name: string
     email?: string
+    phone?: string
     created: Date
 }
 

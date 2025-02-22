@@ -7,9 +7,34 @@ import styles from './Create.module.scss';
 import Button from '@/components/Button';
 import { Person, NewPersonData } from '@/lib/types/Person';
 
-const PersonPage: FC<{person?: Person | NewPersonData, onSubmit: (name: string, email?: string) => void}> = ({person, onSubmit}) => {
+const PersonPage: FC<{person?: Person | NewPersonData, onSubmit: (name: string, email?: string, phone?: string) => void}> = ({person, onSubmit}) => {
   const [name, setName] = useState(person?.name || '');
+  const [phone, setPhone] = useState(person?.phone || '');
   const [email, setEmail] = useState(person?.email || '');
+
+  const formatPhoneNumber = (digitsStr: string) => {
+    // Remove any non-digit characters (defensive; our input should already be digits)
+    const cleaned = digitsStr.replace(/\D/g, '');
+    if (cleaned.length === 0) return '';
+    if (cleaned.length < 4) return cleaned;
+    if (cleaned.length < 7) {
+      return `(${cleaned.slice(0, 3)}) ${cleaned.slice(3)}`;
+    }
+    // Limit to 10 digits for formatting.
+    return `(${cleaned.slice(0, 3)}) ${cleaned.slice(3, 6)}-${cleaned.slice(6, 10)}`;
+  };
+
+  // Handler for input change
+  const handlePhoneChange = (value?: string) => {
+    // Remove formatting by stripping non-digits
+    const digits = value ? value.replace(/\D/g, '') : '';
+    // Convert to number if digits exist; otherwise, set to null.
+    const numericValue = digits;
+    setPhone(numericValue);
+  };
+
+  // Derive the display value: if we have a number, convert it back to a string and format.
+  const displayPhone = useMemo(() => phone !== null ? formatPhoneNumber(phone.toString()) : '', [phone]);
 
   useEffect(() => {
    if (person) {
@@ -26,9 +51,10 @@ const PersonPage: FC<{person?: Person | NewPersonData, onSubmit: (name: string, 
     setEmail(value || '');
   };
 
+
   const handleButtonPress = () => {
     // Perform any necessary actions with the form data
-    onSubmit(name, email);
+    onSubmit(name, email, phone);
   };
 
   const emailError = useMemo(() => {
@@ -47,7 +73,7 @@ const PersonPage: FC<{person?: Person | NewPersonData, onSubmit: (name: string, 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     // Perform any necessary actions with the form data
-    if (!submitDisabled) onSubmit(name, email);
+    if (!submitDisabled) onSubmit(name, email, phone);
 };
 
 
@@ -92,6 +118,21 @@ const PersonPage: FC<{person?: Person | NewPersonData, onSubmit: (name: string, 
               {emailError && (
               <Row style={{width: '100%'}}>
                   <Text>Please enter a valid email address</Text>
+              </Row>
+              )}
+          </Column>
+          <Column className={styles.inputContainer}>
+            <Input
+                label="Your Phone (Optional)"
+                type="text"
+                autoComplete='off'
+                name="phone"
+                value={displayPhone}
+                onChange={handlePhoneChange}
+              />
+              {false && (
+              <Row style={{width: '100%'}}>
+                  <Text>Please enter a valid phone number</Text>
               </Row>
               )}
           </Column>
