@@ -8,7 +8,6 @@ export const getUrlHtml = async (url: string) => {
 
 
 export const getUrlBody = async (url: string): Promise<string> => {
-    console.log("get body")
     const html = await getUrlHtml(url)
     try {
         const $ = cheerio.load(html);
@@ -24,34 +23,44 @@ export const getUrlBody = async (url: string): Promise<string> => {
       }
     }
 
-export const getUrlImages = async (url: string): Promise<string[]> => {
-    console.log("get body")
-    const html = await getUrlHtml(url)
-    try {
+    export const getUrlImages = async (url: string): Promise<string[]> => {
+      const html = await getUrlHtml(url);
+      try {
         const $ = cheerio.load(html);
-
-        const lastNav = $('nav').last();
-
-        // Get the first <div> that comes after the last <nav>
-        const targetDiv = lastNav.nextAll('div').first();
-      
-        // Within the target div, find all <img> tags, extract their src attributes, and trim them
+        let targetDiv;
+    
+        // Check if any <nav> elements exist
+        const navElements = $('nav');
+        if (navElements.length > 0) {
+          // If found, use the first <div> following the last <nav>
+          targetDiv = navElements.last().nextAll('div').first();
+        } else {
+          // If no <nav> is found, fallback to the entire document
+          targetDiv = $('body')
+        }
+    
+        // Within targetDiv, find all <img> tags and extract the src attributes
         const srcList: string[] = targetDiv.find('img')
-              .map((_, el) => {
-            const src = $(el).attr('src');
+          .map((_, el) => {
+            let src = $(el).attr('src');
+            console.log(src);
             if (!src) return undefined;
-            // Split the src at "~" and return the first part (before "~")
-            return src.split("~")[0];
-              })
-        .get()
-        // Filter out any undefined values, just in case
-        .filter(src => src !== undefined).filter(src => src.includes("media-api.xogrp.com")) as string[];
+            // Split the src at "~" and return the first part
+            if (src.startsWith('//')) {
+              src = 'https:' + src;
+            }    
+            return src.split("~")[0].split("?")[0];
+          })
+          .get()
+          // Filter out undefined values and only keep the desired image sources
+          .filter(src => src !== undefined)
+          .filter(src => src.includes("media-api.xogrp.com") || src.includes("images.zola.com")) as string[];
     
-      return srcList;
-    } catch (err: any) {
-        console.error(err.message)
-        return []
+        console.log(srcList);
+        return srcList;
+      } catch (err: any) {
+        console.error(err.message);
+        return [];
+      }
     }
-}
     
-
