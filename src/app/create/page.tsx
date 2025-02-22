@@ -48,7 +48,7 @@ const CreatePage: FC = () => {
       _gallery.theknot = theKnot
     }
     if (zola) {
-      _gallery.zola = theKnot
+      _gallery.zola = zola
     }
 
     setStage(1)
