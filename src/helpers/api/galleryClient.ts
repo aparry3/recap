@@ -1,12 +1,12 @@
 import { NewGalleryData, Gallery, GalleryPerson, GalleryUpdate } from "@/lib/types/Gallery";
 
 
-export const createGallery = async (newGallery: NewGalleryData, personId: string): Promise<Gallery> => {
+export const createGallery = async (newGallery: NewGalleryData, personId: string): Promise<Gallery & {images: string[]}> => {
     const data = await fetch('/api/galleries', {
         method: 'POST',
         body: JSON.stringify({...newGallery, personId}) 
     }).then(res => res.json())
-    return data.gallery as Gallery
+    return {...data.gallery, images: data.images} as Gallery & {images: string[]}
 }
 
 export const updateGallery = async (galleryId: string, galleryUpdate: GalleryUpdate): Promise<Gallery> => {
