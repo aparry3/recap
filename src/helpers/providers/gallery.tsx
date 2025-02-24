@@ -254,6 +254,7 @@ const GalleryProvider: React.FC<{ children: React.ReactNode, gallery: Gallery}> 
     await Promise.all(imagePromises)
     const timer = setTimeout(() => {
       setTotalUploads(undefined)
+      setGalleryImages('')
       setCompleteUploads (undefined)  
     }, 500);
   };
