@@ -15,7 +15,6 @@ import { AlbumMediaData } from '@/lib/types/Album';
 import { updateGallery } from '../api/galleryClient';
 import EditGallery from '@/components/PersonPage/Edit';
 import { fetchAlbums } from '../api/albumClient';
-import { up } from '../../../migrations/20241103194449_init';
 
 
 export interface OrientationMedia {
@@ -65,6 +64,7 @@ const GalleryContext = createContext<GalleryContextType>({} as GalleryContextTyp
 
 const GalleryProvider: React.FC<{ children: React.ReactNode, gallery: Gallery}> = ({ children, gallery: propsGallery }) => {
   const [personId] = useLocalStorage<string>('personId', '');
+  const [galleryImages, setGalleryImages] = useLocalStorage<string>('galleryImages', '');
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [media, setMedia] = useState<Media[]>([]);
   const [people, setPeople] = useState<GalleryPersonData[]>([]);
@@ -369,6 +369,30 @@ const GalleryProvider: React.FC<{ children: React.ReactNode, gallery: Gallery}> 
     }    
   }, [selectedImages, loadGallery])
 
+  const convertUrlToFile = async (url: string): Promise<File> => {
+    const response = await fetch(url);
+    const blob = await response.blob();
+    // Extract a file name from the URL; adjust as needed.
+    const fileName = url.substring(url.lastIndexOf('/') + 1);
+    return new File([blob], fileName, { type: blob.type });
+  };
+  
+  useEffect(() => {
+    console.log("Gallery images:", galleryImages);
+    if (galleryImages.length > 0) {
+      Promise.all(galleryImages.split(',').map(url => convertUrlToFile(url)))
+        .then(files => {
+          // Now that you have an array of File objects, call loadFiles.
+          setShowUploadConfirmation(true);
+
+          loadFiles(files);
+        })
+        .catch(error => {
+          console.error("Error converting gallery images:", error);
+        });
+    }
+  }, [galleryImages]);
+  
   const handleSubmitGallery = async (galleryName: string, theKnot?: string, zola?: string) => {
     setShowSettings(false)
     setTotalUploads(1)
@@ -394,7 +418,8 @@ const GalleryProvider: React.FC<{ children: React.ReactNode, gallery: Gallery}> 
     const uploaders = new Set(selectedMediaUploaders)
     return uploaders.size === 1 && uploaders.has(personId)
   }, [selectedMediaUploaders])
-
+  
+  
   return (
     <GalleryContext.Provider value={{
         deleteImages: () => setShowConfirmDelete(true),
