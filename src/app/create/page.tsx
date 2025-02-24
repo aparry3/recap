@@ -19,6 +19,7 @@ const CreatePage: FC = () => {
   const [gallery, setGallery] = useState<NewGalleryData | Gallery>()
   const [person, setPerson] = useState<Person>()
   const [personId, setPersonId] = useLocalStorage<string>('personId', '');
+  const [galleryImages, setGalleryImages] = useLocalStorage<string>('galleryImages', '');
   const [verificationId, setVerificationId] = useState<string | undefined>('verificationId');
   const [tempPerson, setTempPerson] = useState<{email?: string, name: string, personId: string} | undefined>(undefined)
   const [tempGallery, setTempGallery] = useState<{name: string, zola?: string, theKnot?: string} | undefined>()
@@ -65,6 +66,9 @@ const CreatePage: FC = () => {
     }
 
     const _newGallery = await createGallery(_gallery, _person.id)
+    if (_newGallery.images.length > 0) {
+      setGalleryImages(_newGallery.images.join(','))
+    }
     setGallery(_newGallery)
     setPerson(_person)
   }
