@@ -9,6 +9,8 @@ import gemini from '@/lib/gemini'
 import { WeddingEvent, WeddingEventDetails } from '@/lib/types/WeddingEvent';
 import { insertEvents } from '@/lib/db/eventService';
 
+export const maxDuration = 60; // This function can run for a maximum of 5 seconds
+
 export const POST = async (req: Request) => {
     const newGallery: NewGalleryData = await req.json()
     if (!newGallery.personId) {
