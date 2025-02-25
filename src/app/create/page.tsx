@@ -119,8 +119,8 @@ const CreatePage: FC = () => {
   const confirmValidate = async (person: Person) => {
     setPerson(person)
     if (tempGallery) {
-      await submitGallery(tempGallery?.name || '', person.name, person.email, tempGallery?.theKnot, tempGallery?.zola, person)
       setTempPerson(undefined)
+      await submitGallery(tempGallery?.name || '', person.name, person.email, tempGallery?.theKnot, tempGallery?.zola, person)
       setTempGallery(undefined)
       setVerificationId('')  
     } else {
