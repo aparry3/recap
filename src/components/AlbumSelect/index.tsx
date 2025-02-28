@@ -8,7 +8,19 @@ import { AlbumMediaData } from "@/lib/types/Album";
 import AlbumChip from "../AlbumChip";
 
 
-const AlbumSelect: FC<{albums: AlbumMediaData[], createAlbum: () => void, onConfirm: (confirmedAlbumIds: string[]) => void, onCancel: () => void}> = ({albums, createAlbum, onConfirm, onCancel}) => {
+const AlbumSelect: FC<{
+    albums: AlbumMediaData[], 
+    createAlbum: () => void, 
+    onConfirm: (confirmedAlbumIds: string[]) => void, 
+    onCancel: () => void,
+    singleSelect?: boolean
+}> = ({
+    albums, 
+    createAlbum, 
+    onConfirm, 
+    onCancel,
+    singleSelect = false
+}) => {
     
     const [selectedAlbums, setSelectedAlbums] = useState<Set<string>>(new Set())
     
@@ -19,11 +31,18 @@ const AlbumSelect: FC<{albums: AlbumMediaData[], createAlbum: () => void, onConf
             const newSelectedImages = new Set(selectedAlbums)
             setSelectedAlbums(newSelectedImages)
         } else {
-            selectedAlbums.add(id)
-            const newSelectedImages = new Set(selectedAlbums)
-            setSelectedAlbums(newSelectedImages)
+            if (singleSelect) {
+                // If single select mode, clear all previous selections first
+                const newSelectedSet = new Set<string>([id])
+                setSelectedAlbums(newSelectedSet)
+            } else {
+                // Multiple selection mode (original behavior)
+                selectedAlbums.add(id)
+                const newSelectedImages = new Set(selectedAlbums)
+                setSelectedAlbums(newSelectedImages)
+            }
         }
-    }, [selectedAlbums])
+    }, [selectedAlbums, singleSelect])
 
     const handleConfirm = () => {
         onConfirm(Array.from(selectedAlbums))
@@ -40,7 +59,7 @@ const AlbumSelect: FC<{albums: AlbumMediaData[], createAlbum: () => void, onConf
                 <Container className={styles.headerTitle}>
                     <Container className={styles.title}>
                         <Text className={styles.titleText}>
-                            Select Album...
+                            {singleSelect ? 'Select an Album...' : 'Select Albums...'}
                         </Text>
                     </Container>
                 </Container>
