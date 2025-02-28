@@ -3,7 +3,7 @@ import React, { FC, useCallback, useEffect, useState } from 'react';
 import Welcome from './Welcome';
 import Create from '../../components/PersonPage/Create';
 import { createGallery } from '@/helpers/api/galleryClient';
-import { Gallery, NewGallery, NewGalleryData } from '@/lib/types/Gallery';
+import { Gallery, NewGalleryData } from '@/lib/types/Gallery';
 import { Person } from '@/lib/types/Person';
 import { createPerson, createVerification, fetchPerson, fetchPersonByEmail, updatePerson } from '@/helpers/api/personClient';
 import useLocalStorage from '@/helpers/hooks/localStorage';
