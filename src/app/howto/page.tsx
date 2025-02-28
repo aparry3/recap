@@ -3,6 +3,7 @@ import React from 'react';
 import { Column, Container, Row, Text } from 'react-web-layout-components';
 import styles from './page.module.scss';
 import Image from 'next/image';
+import Link from 'next/link';
 import { shareNodesIcon, uploadIcon, albumIcon } from '@/lib/icons';
 import Accordion from './components/Accordion';
 
@@ -148,6 +149,10 @@ const HowToPage: React.FC = () => {
           </Row>
           <Row className={styles.brandingRow}>
             <Text>The best collaborative photo gallery for your next wedding, birthday, or celebration, offering unlimited uploads and collaborators, and easy organization of all of your media.</Text>
+          </Row>
+          <Row className={styles.footerLinks}>
+            <Link href="/terms" className={styles.footerLink}>Terms and Conditions</Link>
+            <Link href="/privacy" className={styles.footerLink}>Privacy Policy</Link>
           </Row>    
         </Column>
       </Container>

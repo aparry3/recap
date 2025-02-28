@@ -35,3 +35,56 @@ body {
   overflow: hidden;
   overscroll-behavior: none; /* Prevent bounce on the body */
 }
+
+/* Improve keyboard focus styles */
+:focus {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+/* Make buttons and links more accessible */
+a, button, [role="button"], input, select, textarea {
+  transition: all 0.2s ease;
+}
+
+a:focus, button:focus, [role="button"]:focus, input:focus, select:focus, textarea:focus {
+  box-shadow: 0 0 0 2px var(--primary);
+}
+
+/* Remove focus outlines from non-interactive elements */
+div:focus, span:focus {
+  outline: none;
+}
+
+/* Ensure high contrast for text */
+@media (prefers-contrast: more) {
+  body {
+    color: black;
+    background-color: white;
+  }
+  a {
+    color: #0000EE;
+  }
+  a:visited {
+    color: #551A8B;
+  }
+}
+
+/* Respect reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

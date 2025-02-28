@@ -55,10 +55,9 @@
 }
 .heroHeadingText {
     text-align: center;
-}
-.heroHeadingText {
     font-size: 4rem !important;
     margin: 1rem 0;
+    line-height: 1.2;
 }
 
 // HIGHLIGHT
@@ -81,12 +80,14 @@
     padding: 3rem 0;
 }
 .subheadingText {
-    font-size: 1.7rem !important;
+    font-size: 1.6rem !important;
     margin: 0.5rem 0;
+    line-height: 1.4;
 }
 
 .headingText {
     font-size: 3rem !important;
+    line-height: 1.2;
 }
 .highlightText {
     color: var(--primary);
@@ -158,9 +159,12 @@
 }
 .exampleMedia {
     width: 50%;
+    display: flex;
+    justify-content: center;
 }
 .exampleImage {
     width: 60% !important;
+    max-width: 400px;
 }
 .reverse {
     .exampleDetails {
@@ -194,7 +198,7 @@
     font-weight: 500;
   }
 .useText {
-    font-size: 1.9rem !important;
+    font-size: 1.5rem !important;
 }
 
 @keyframes scroll {
@@ -226,6 +230,8 @@
 }
 .albumImage {
     width: 50% !important;
+    max-width: 700px;
+    margin: 0 auto;
     box-shadow: 0 0 1.25rem -1rem black;
 }
 
@@ -311,7 +317,7 @@
         width: 100%;
         justify-content: flex-start !important;
         text-align: left !important;
-        font-size: 1.3rem;
+        font-size: 1.1rem;
     }
 }
 
@@ -319,9 +325,12 @@
 
 .notificationMedia {
     width: 100%;
+    display: flex;
+    justify-content: center;
 }
 .notificationImage {
     width: 40% !important;
+    max-width: 600px;
 }
 
 // FOOTER
@@ -341,6 +350,25 @@
     width: 100%;
     padding: 1rem;
 }
+.footerLinks {
+    width: 100%;
+    padding: 1rem;
+    display: flex;
+    gap: 2rem;
+}
+
+.footerLink {
+    color: var(--background-light);
+    text-decoration: none;
+    opacity: 0.8;
+    transition: opacity 0.2s ease;
+    
+    &:hover {
+        opacity: 1;
+        text-decoration: underline;
+    }
+}
+
 .weddingWebsiteImagesContainer {
     width: 100%;
     flex-grow: 1;
@@ -359,6 +387,31 @@
     box-shadow: 0 0 1.25rem -1rem black;
     border-radius: 1rem;
     background: var(--background-light);
+}
+
+.skipLink {
+  position: absolute;
+  left: -9999px;
+  top: auto;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  
+  &:focus {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: auto;
+    height: auto;
+    padding: 16px;
+    background: var(--primary);
+    color: white;
+    z-index: 9999;
+    font-weight: bold;
+    text-decoration: none;
+    border-bottom-right-radius: 8px;
+    outline: none;
+  }
 }
 
 @media only screen and (max-width: 600px) {
@@ -399,7 +452,7 @@
         border-bottom: var(--primary) solid 2px;
     }
     .tabText {
-        font-size: 1.1rem !important;
+        font-size: 1.3rem !important;
     }
     
     .uses {
@@ -416,14 +469,14 @@
         min-height: 550px;
     }
     .title {
-        font-size: 2.3rem !important;
+        font-size: 2.2rem !important;
     }
     .subtitle {
-        font-size: 1.7rem !important;
+        font-size: 1.4rem !important;
     }
 
     .headingText {
-        font-size: 2.3rem !important;
+        font-size: 2.4rem !important;
     }
     .albumImage {
         width: 100% !important;
@@ -501,7 +554,4 @@
     .weddingWebsiteImageContainer {
         width: 100%;
     }
-    
-
-    
 }
