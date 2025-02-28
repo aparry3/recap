@@ -1,0 +1,103 @@
+.accordion {
+  width: 100%;
+  margin-bottom: 1.5rem;
+  border-radius: 0.5rem;
+  background-color: var(--background-medium);
+  overflow: hidden;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+}
+
+.accordionHeader {
+  width: 100%;
+  padding: 1rem 1.5rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid transparent;
+  transition: all 0.2s ease;
+  
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+  }
+  
+  &.open {
+    border-bottom-color: rgba(0, 0, 0, 0.1);
+    background-color: var(--primary-dark);
+    color: var(--background-light);
+    
+    .sectionIcon, .chevron {
+      color: var(--background-light);
+    }
+  }
+}
+
+.iconContainer {
+  margin-right: 1rem;
+  width: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sectionIcon {
+  font-size: 1.25rem;
+  color: var(--primary);
+}
+
+.titleContainer {
+  flex: 1;
+}
+
+.accordionTitle {
+  margin: 0;
+}
+
+.toggleIcon {
+  margin-left: 1rem;
+  width: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.chevron {
+  font-size: 1rem;
+  color: var(--primary);
+  transition: transform 0.3s ease;
+}
+
+.accordionContent {
+  width: 100%;
+  padding: 1.5rem;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 768px) {
+  .accordionHeader {
+    padding: 0.75rem 1rem;
+  }
+  
+  .accordionContent {
+    padding: 1rem;
+  }
+  
+  .iconContainer {
+    margin-right: 0.75rem;
+  }
+} 

@@ -10,17 +10,15 @@ import { useUser } from "@/helpers/providers/user";
 import useAlbums from "@/helpers/providers/albums";
 
 
-const Heading: FC<{onQrClick?: () => void}> = ({onQrClick}) => {
+const Heading: FC<{onQrClick?: () => void, showGalleryName?: boolean}> = ({onQrClick, showGalleryName}) => {
     const {person: user} = useUser()
     const {editAlbum} = useAlbums()
     const {upload, gallery, people, person, album} = useGallery()
-    const name = useMemo(() => person ? person.name : album ? album.name : gallery.name, [person, gallery, album])
-    const count = useMemo(() => person ? person.count : album ? album.count : undefined, [person, album, people])
+    const name = useMemo(() => showGalleryName ? gallery.name : person ? person.name : album ? album.name : gallery.name, [person, gallery, album, showGalleryName])
+    const count = useMemo(() => showGalleryName ? undefined : person ? person.count : album ? album.count : undefined, [person, album, showGalleryName])
     
-    const showEdit = useMemo(() => album && user && album.personId === user.id, [user, album])
-    useEffect(() => {
-        console.log(showEdit)
-    }, [showEdit])
+    const showEdit = useMemo(() => !showGalleryName && album && user && album.personId === user.id, [user, album, showGalleryName])
+
     return (
         <Container className={styles.heading} justify="space-between">
         <Column className={styles.titleContainer} padding>

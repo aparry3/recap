@@ -25,9 +25,19 @@
     }
 }
 .selected {
-    background: var(--background-dark);
+    background: var(--primary-dark);
+    color: var(--background-light);
+    
     &:hover {
-        background: var(--background-medium);
+        background: var(--primary);
+    }
+    
+    .name, .count {
+        color: var(--background-light);
+    }
+    
+    .count {
+        opacity: 0.8;
     }
 }
 .placeholder {
@@ -57,6 +67,7 @@
 .count {
     opacity: 0.5;
 }
+
 @media (max-width: 768px) {
     .albumContainer {
         width: 100%;

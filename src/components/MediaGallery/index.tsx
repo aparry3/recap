@@ -68,42 +68,73 @@ const MediaGallery: FC<{media: Media[]}> = ({media}) => {
           
     }
     const handleNext = useCallback(() => {
+        if (media.length === 0) return;
+        
+        let nextIndex;
         if (viewImageIndex + 1 < media.length) {
-            const imageIndex = viewImageIndex + 1
-            setPrevSrc(mediaSrc)
-            setMediaSrc(nextSrc)
-
-            if (imageIndex + 1 < media.length) {
-                isVideo(media[imageIndex + 1]) ? setNextSrc(media[imageIndex + 1].preview) : loadMedia(media[imageIndex + 1], setNextSrc)
-            } else {
-                setNextSrc(undefined)
-            }
-            loadMedia(media[imageIndex], setMediaSrc, setContentType)
-            setViewImageIndex(imageIndex);
-        }  
+            // Normal case - go to next image
+            nextIndex = viewImageIndex + 1;
+        } else {
+            // Circular navigation - go back to first image
+            nextIndex = 0;
+        }
+        
+        setPrevSrc(mediaSrc);
+        setMediaSrc(nextSrc);
+        
+        // Set up the next image (or circle back to first)
+        const nextNextIndex = nextIndex + 1 < media.length ? nextIndex + 1 : 0;
+        isVideo(media[nextNextIndex]) 
+            ? setNextSrc(media[nextNextIndex].preview) 
+            : loadMedia(media[nextNextIndex], setNextSrc);
+        
+        loadMedia(media[nextIndex], setMediaSrc, setContentType);
+        setViewImageIndex(nextIndex);
     }, [viewImageIndex, media, mediaSrc, nextSrc])
     
     const handlePrev = useCallback(() => {
-        if (viewImageIndex - 1 > -1) {
-            const imageIndex = viewImageIndex - 1
-            setNextSrc(mediaSrc)
-            setMediaSrc(prevSrc)
-
-            if (imageIndex - 1 > -1) {
-                isVideo(media[imageIndex - 1]) ? setPrevSrc(media[imageIndex - 1].preview) : loadMedia(media[imageIndex - 1], setPrevSrc)
-            } else {
-                setPrevSrc(undefined)
-            }
-            loadMedia(media[imageIndex], setMediaSrc, setContentType)
-            setViewImageIndex(imageIndex);  
-          }
-    }, [viewImageIndex, media, mediaSrc, nextSrc])
+        if (media.length === 0) return;
+        
+        let prevIndex;
+        if (viewImageIndex - 1 >= 0) {
+            // Normal case - go to previous image
+            prevIndex = viewImageIndex - 1;
+        } else {
+            // Circular navigation - go to last image
+            prevIndex = media.length - 1;
+        }
+        
+        setNextSrc(mediaSrc);
+        setMediaSrc(prevSrc);
+        
+        // Set up the previous image (or circle back to last)
+        const prevPrevIndex = prevIndex - 1 >= 0 ? prevIndex - 1 : media.length - 1;
+        isVideo(media[prevPrevIndex]) 
+            ? setPrevSrc(media[prevPrevIndex].preview) 
+            : loadMedia(media[prevPrevIndex], setPrevSrc);
+        
+        loadMedia(media[prevIndex], setMediaSrc, setContentType);
+        setViewImageIndex(prevIndex);
+    }, [viewImageIndex, media, mediaSrc, prevSrc])
 
     const setImage = useCallback((index: number) => {
-        loadMedia(media[index], setMediaSrc, setContentType)
-        if (index - 1 > -1) isVideo(media[index - 1]) ? setPrevSrc(media[index - 1].preview) : loadMedia(media[index -1], setPrevSrc)
-        if (index + 1 < media.length) isVideo(media[index + 1]) ? setNextSrc(media[index + 1].preview) : loadMedia(media[index + 1], setNextSrc)
-        setViewImageIndex(index)
+        if (media.length === 0) return;
+        
+        loadMedia(media[index], setMediaSrc, setContentType);
+        
+        // Set up previous image (or circle to last if at first image)
+        const prevIndex = index - 1 >= 0 ? index - 1 : media.length - 1;
+        isVideo(media[prevIndex]) 
+            ? setPrevSrc(media[prevIndex].preview) 
+            : loadMedia(media[prevIndex], setPrevSrc);
+        
+        // Set up next image (or circle to first if at last image)
+        const nextIndex = index + 1 < media.length ? index + 1 : 0;
+        isVideo(media[nextIndex]) 
+            ? setNextSrc(media[nextIndex].preview) 
+            : loadMedia(media[nextIndex], setNextSrc);
+        
+        setViewImageIndex(index);
     }, [media])
 
     const handleClose = () => {
@@ -199,7 +230,19 @@ const MediaGallery: FC<{media: Media[]}> = ({media}) => {
             })}
             </Column>
             {(!!selectedImages.size) && <Container className={styles.menuSpace}/>}
-            <LightBox mediaId={media[viewImageIndex]?.id} personId={media[viewImageIndex]?.personId} image={mediaSrc} contentType={contentType} index={viewImageIndex + 1} total={media.length} onClose={handleClose} prevImage={prevSrc} nextImage={nextSrc} onPrevious={handlePrev} onNext={handleNext} />
+            <LightBox 
+                mediaId={media[viewImageIndex]?.id || ''} 
+                personId={media[viewImageIndex]?.personId || ''} 
+                image={mediaSrc} 
+                contentType={contentType} 
+                index={viewImageIndex + 1} 
+                total={media.length} 
+                onClose={handleClose} 
+                prevImage={prevSrc} 
+                nextImage={nextSrc} 
+                onPrevious={handlePrev} 
+                onNext={handleNext} 
+            />
             {(selectedImages && !!selectedImages.size) && (
                 <Menu selectedImages={selectedImages} items={menuItems}/>
             )}

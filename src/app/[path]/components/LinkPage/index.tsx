@@ -1,6 +1,6 @@
 "use client";
 
-import { checkIcon, downloadIcon, leftIcon, linkIcon, rightIcon, xIcon } from "@/lib/icons"
+import { albumIcon, checkIcon, downIcon, downloadIcon, leftIcon, linkIcon, rightIcon, xIcon } from "@/lib/icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { FC, useCallback, useEffect, useMemo, useState } from "react"
 import { Text, Column, Container, Row } from "react-web-layout-components"
@@ -11,6 +11,8 @@ import useGallery from "@/helpers/providers/gallery";
 import QrCode from "@/components/QrCode";
 import { generateCustomQRCodePNG } from "@/helpers/qrCode";
 import { downloadDataUrlAsPng } from "@/helpers/files";
+import useAlbums from "@/helpers/providers/albums";
+import AlbumSelect from "@/components/AlbumSelect";
 
 
 const BASE = process.env.NEXT_PUBLIC_BASE_URL
@@ -32,9 +34,11 @@ enum Color {
 
 const LinkPage: FC<{open: boolean, onClose: () => void}> = ({onClose, open}) => {
     const {gallery, album} = useGallery()
+    const {albums, setAlbum, createAlbum: createNewAlbum} = useAlbums()
     const [color, setColor] = useState(Color.PRIMARY)
     const [backgroundColor, setBackgroundColor] = useState(Color.BACKGROUND_LIGHT)
     const [copied, setCopied] = useState(false);
+    const [showAlbumSelect, setShowAlbumSelect] = useState(false);
     const albumQP = useMemo(() => album ? `&album=${album.id}` : '', [album])
     const url = useMemo(() => `${BASE}/${gallery.path}?password=${gallery.password}${albumQP}`, [gallery, albumQP])
 
@@ -53,6 +57,25 @@ const LinkPage: FC<{open: boolean, onClose: () => void}> = ({onClose, open}) => 
     
     const logo = '/branding/icon.svg'
 
+    const chooseAlbum = useCallback(() => {
+        setShowAlbumSelect(true);
+    }, []);
+    
+    const confirmAlbum = useCallback((confirmedAlbumIds: string[]) => {
+        if (confirmedAlbumIds.length > 0) {
+            // With singleSelect=true, there will only be one album in the array
+            setAlbum(confirmedAlbumIds[0]);
+        }
+        setShowAlbumSelect(false);
+    }, [setAlbum]);
+    
+    const cancelAlbumSelect = useCallback(() => {
+        setShowAlbumSelect(false);
+    }, []);
+
+    const clearAlbum = useCallback(() => {
+        setAlbum(undefined);
+    }, [setAlbum]);
 
     const generate = async () => {
         const qrCode = await generateCustomQRCodePNG(url, {
@@ -67,7 +90,7 @@ const LinkPage: FC<{open: boolean, onClose: () => void}> = ({onClose, open}) => 
 
     useEffect(() => {
         generate()
-    }, [color, window])
+    }, [color, window, album])
 
 
     const downloadQr = useCallback(() => {
@@ -96,10 +119,30 @@ const LinkPage: FC<{open: boolean, onClose: () => void}> = ({onClose, open}) => 
                 </Container>    
              </Container>
              <Column className={styles.heading}>
-                <Heading />
+                <Heading showGalleryName={true}/>
              </Column>
              <Container className={styles.contentContainer}>
                 <Column className={styles.shareContainer}>
+                    <Container className={styles.section}>
+                        <Container className={styles.buttonContainer}>
+                            <Container className={styles.button} onClick={chooseAlbum}>
+                                <Container className={styles.buttonIcon}>
+                                    <FontAwesomeIcon icon={albumIcon} className={styles.icon}/>
+                                </Container>
+                                <Container className={styles.buttonText}>
+                                    <Text>{album ? album.name : 'Choose Album'}</Text>
+                                </Container>
+                                {album && (
+                                    <Container className={styles.clearButton} onClick={(e) => {
+                                        e.stopPropagation(); // Prevent triggering chooseAlbum
+                                        clearAlbum();
+                                    }}>
+                                        <FontAwesomeIcon icon={xIcon} className={`${styles.icon} ${styles.clearIcon}`}/>
+                                    </Container>
+                                )}
+                            </Container>
+                        </Container>
+                    </Container>
                     <Container className={styles.section}>
                         <Container className={styles.linkContainer} onClick={copyToClipboard}>
                             <Container className={styles.linkIcon}>
@@ -162,6 +205,17 @@ const LinkPage: FC<{open: boolean, onClose: () => void}> = ({onClose, open}) => 
                     </Container>
                 </Column>
              </Container>
+            {showAlbumSelect && 
+                <Container className={styles.albumSelectOverlay}>
+                    <AlbumSelect 
+                        albums={albums} 
+                        createAlbum={createNewAlbum} 
+                        onConfirm={confirmAlbum} 
+                        onCancel={cancelAlbumSelect}
+                        singleSelect={true}
+                    />
+                </Container>
+            }
         </Column>
     ) : <></>
 }
