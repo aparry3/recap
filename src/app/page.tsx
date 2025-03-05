@@ -33,25 +33,24 @@ const Hero = () => {
         <Column as='section' className={styles.hero} justify='space-between'>
             <Column className={styles.textContainer} padding={0.5}>
                 <Container className={styles.heroHeading} padding={[0, 1]}>
-                    <Text weight={700} className={styles.heroHeadingText} as='h1'><span className={styles.highlightText}>Recap</span> and <span className={styles.highlightText}>Relive</span> the best day of your life</Text>
+                    <Text weight={700} className={styles.heroHeadingText} as='h1'><span className={styles.highlightText}>Capture</span>, <span className={styles.highlightText}>Share</span> & <span className={styles.highlightText}>Relive</span> Every Moment of Your Wedding Day</Text>
                 </Container>
                 <Container className={styles.subheading} padding={[0, 1]}>
-                    <Text className={styles.subheadingText} as='h2'>Through the eyes of everyone who was there</Text>
+                    <Text className={styles.subheadingText} as='h2'>One simple QR code collects photos from all your guests - no apps, no accounts, no hassle</Text>
                 </Container>
             </Column>
             <Container id="heroAction" padding={1}>
                 <Link href='/create' className={styles.link}>
                     <Container className={styles.actionButton} padding={1}>
-                        <Text size={1.2} weight={700}>Create your shared gallery</Text>
+                        <Text size={1.2} weight={700}>Create your wedding gallery - Free</Text>
                     </Container>
                 </Link>
             </Container>
             <Container id="product" style={{ width: '100%'}} padding={1}>
-                <Image src='/product/screenshots.png' alt='screenshots' layout='responsive' height={718} width={1369}/>
+                <Image src='/product/screenshots.png' alt='Recap wedding photo gallery app screenshots' layout='responsive' height={718} width={1369}/>
             </Container>
         </Column>
     )
-
 }
 
 // const Highlights = () => {
@@ -97,7 +96,7 @@ const Hero = () => {
 //                             </Text>
 //                         </Container>  
 //                         <Container className={styles.highlightDescription} padding>
-//                             <Text>As easy as scanning the QR Code code and uploading your images. That’s it.</Text>
+//                             <Text>As easy as scanning the QR Code code and uploading your images. That's it.</Text>
 //                         </Container>
 //                         <Container className={styles.media} padding>
 //                             <Image className={styles.image} src='/qrcode.png' alt='qrcode' layout='responsive' height={200} width={200}/>
@@ -139,10 +138,10 @@ const Examples = () => {
         <Column as='section' className={styles.examples} justify='space-between'>
             <Column className={styles.textContainer} padding={0.5}>
                 <Container className={styles.heading} padding={[0, 1]}>
-                    <Text className={styles.headingText} as='h1'>Hassle free photo sharing for you and your guests.</Text>
+                    <Text className={styles.headingText} as='h1'>Collect Every Photo From Every Guest — Without the Chase</Text>
                 </Container>
                 <Container className={styles.subheading} padding={[0, 1]}>
-                    <Text className={styles.subheadingText} as='h2'>Create a gallery for your wedding and stop chasing down photos after the fact. With the QR code we make for your gallery, it's as easy scan and upload for your guests.
+                    <Text className={styles.subheadingText} as='h2'>No more "Please send me those photos!" texts. With our QR code on your wedding stationery, guests can instantly upload photos to your gallery.
                     </Text>
                 </Container>
             </Column>
@@ -157,29 +156,29 @@ const Examples = () => {
                             </Container>
                             <Container className={styles.highlightSubtitle} padding>
                                 <Text className={styles.subtitle}>
-                                    Save the Dates | Invitations.
+                                    Include your QR code on <Text className={styles.highlightText}>Save the Dates</Text> & <Text className={styles.highlightText}>Invitations</Text> to start collecting pre-wedding memories.
                                 </Text>
                             </Container>  
                         </Column>
                         <Container className={styles.exampleMedia} padding>
-                            <Image className={styles.exampleImage} src='/product/SaveTheDates.png' alt='example save the dates' layout='responsive' height={200} width={200}/>
+                            <Image className={styles.exampleImage} src='/product/SaveTheDates.png' alt='QR code on wedding save the dates' layout='responsive' height={200} width={200}/>
                         </Container>          
                     </Container>
                 </Container>
                 <Container className={styles.exampleContainer}>
                     <Container className={`${styles.example} ${styles.reverse}`} padding={2}>
                         <Container className={styles.exampleMedia} padding>
-                        <Image className={styles.exampleImage} src='/product/Placecards.png' alt='example wedding day qr codes' layout='responsive' height={200} width={200}/>
+                        <Image className={styles.exampleImage} src='/product/Placecards.png' alt='QR code on wedding placecards' layout='responsive' height={200} width={200}/>
                         </Container>          
                         <Column className={styles.exampleDetails}>
                             <Container className={styles.exampleTitle} padding>
                                 <Text className={styles.title}>
-                                    <Text className={styles.highlightText}>At</Text> the Wedding
+                                    <Text className={styles.highlightText}>During</Text> the Wedding
                                 </Text>
                             </Container>
                             <Container className={styles.highlightSubtitle} padding>
                                 <Text className={styles.subtitle}>
-                                    Placecards | Table Numbers | Signs.
+                                    Place QR codes on <Text className={styles.highlightText}>Tables</Text>, <Text className={styles.highlightText}>Placecards</Text> & <Text className={styles.highlightText}>Signs</Text> so guests can instantly share their photos.
                                 </Text>
                             </Container>  
                         </Column>
@@ -195,12 +194,12 @@ const Examples = () => {
                             </Container>
                             <Container className={styles.highlightSubtitle} padding>
                                 <Text className={styles.subtitle}>
-                                    Thank you's.
+                                    Include your QR code on <Text className={styles.highlightText}>Thank You</Text> cards to collect even more memories and keep the sharing going.
                                 </Text>
                             </Container>  
                         </Column>
                         <Container className={styles.exampleMedia} padding>
-                        <Image className={styles.exampleImage} src='/product/ThankYous.png' alt='example thank you cards' layout='responsive' height={200} width={200}/>
+                        <Image className={styles.exampleImage} src='/product/ThankYous.png' alt='QR code on wedding thank you cards' layout='responsive' height={200} width={200}/>
                         </Container>          
                     </Container>
                 </Container>
@@ -261,8 +260,11 @@ const Uses = () => {
 const Albums = () => {
     return (
         <Column as='section' className={styles.uses} padding={2}>
-        <Text className={styles.headingText} as='h1'>An album for everything</Text>
-        <Container padding={[0, 0, 0, 0.5]} className={styles.carousel}>
+        <Text className={styles.headingText} as='h1'>Organize Every Moment with Smart Albums</Text>
+        <Container className={styles.subheading} padding={[0, 1]}>
+            <Text className={styles.subheadingText} as='h2'>Create custom albums to tell the complete story of your wedding journey - from engagement photos to honeymoon memories.</Text>
+        </Container>
+        <Container padding={[1, 0, 1, 0.5]} className={styles.carousel}>
             <Container className={styles.carouselTrack}>
                 <Container className={styles.use}>
                     <Text weight={500} className={`${styles.useText} ${styles.highlightText}`}>Engagement</Text>
@@ -283,7 +285,7 @@ const Albums = () => {
                     <Text weight={500} className={`${styles.useText} ${styles.highlightText}`}>Bridal Shower</Text>
                 </Container>
                 <Container className={styles.use}>
-                    <Text weight={500} className={`${styles.useText} ${styles.highlightText}`}>Etc.</Text>
+                    <Text weight={500} className={`${styles.useText} ${styles.highlightText}`}>Honeymoon</Text>
                 </Container>
                 {/* Duplicate */}
                 <Container className={styles.use}>
@@ -305,7 +307,7 @@ const Albums = () => {
                     <Text weight={500} className={`${styles.useText} ${styles.highlightText}`}>Bridal Shower</Text>
                 </Container>
                 <Container className={styles.use}>
-                    <Text weight={500} className={`${styles.useText} ${styles.highlightText}`}>Etc.</Text>
+                    <Text weight={500} className={`${styles.useText} ${styles.highlightText}`}>Honeymoon</Text>
                 </Container>
             </Container>
         </Container>
@@ -394,20 +396,20 @@ const Website = () => {
     return (
         <Column as='section' className={styles.section} padding={2}>
             <Container className={styles.heading} padding={[0, 1]}>
-                <Text className={styles.headingText} as='h1'>Connect your wedding website.</Text>
+                <Text className={styles.headingText} as='h1'>Seamlessly Connect to Your Existing Wedding Website</Text>
             </Container>
             <Container className={styles.subheading} padding={[0, 1]}>
-                <Text className={styles.subheadingText} as='h2'>Already have a wedding website with The Knot or Zola? Link your gallery to your website for easy access all in one place.</Text>
+                <Text className={styles.subheadingText} as='h2'>Already have a wedding website with The Knot or Zola? Link your Recap gallery to provide guests with one central hub for all wedding information and photos.</Text>
             </Container>
             <Container className={styles.weddingWebsiteImagesContainer}>
                 <Container className={styles.weddingWebsiteImageContainer} padding={1}>
                     <Container id="product" className={styles.weddingWebsiteImage} padding={1}>
-                        <Image src='/branding/TheKnot.png' alt='the knot' className={styles.image} layout='responsive' height={572} width={940}/>
+                        <Image src='/branding/TheKnot.png' alt='Recap integrates with The Knot wedding websites' className={styles.image} layout='responsive' height={572} width={940}/>
                     </Container>
                 </Container>
                 <Container className={styles.weddingWebsiteImageContainer} padding={1}>
                     <Container className={styles.weddingWebsiteImage} padding={1}>
-                        <Image src='/branding/Zola.png' alt='zola' className={styles.image} layout='responsive' height={572} width={940}/>
+                        <Image src='/branding/Zola.png' alt='Recap integrates with Zola wedding websites' className={styles.image} layout='responsive' height={572} width={940}/>
                     </Container>
                 </Container>
             </Container>
@@ -418,13 +420,13 @@ const Notifications = () => {
     return (
         <Column as='section' className={styles.app} padding={2}>
             <Container className={styles.heading} padding={[0, 1]}>
-                <Text className={styles.headingText} as='h1'>Keep your guests informed and excited.</Text>
+                <Text className={styles.headingText} as='h1'>Build Excitement with Smart Notifications</Text>
             </Container>
             <Container className={styles.subheading} padding={[0, 1]}>
-                <Text className={styles.subheadingText} as='h2'>Use opt in text and email notifications to keep your guests up to date when new photos are uploaded. Make it fun, and prompt your guests to upload photos before the big day.</Text>
+                <Text className={styles.subheadingText} as='h2'>Opt-in notifications keep everyone engaged and excited when new photos are shared. Send gentle reminders to encourage sharing before, during, and after your special day.</Text>
             </Container>
             <Container className={styles.notificationMedia} padding>
-                <Image className={styles.notificationImage} src='/product/NotiGroup.png' alt='notifications group' layout='responsive' height={200} width={200}/>
+                <Image className={styles.notificationImage} src='/product/NotiGroup.png' alt='Recap wedding photo notification system on mobile devices' layout='responsive' height={200} width={200}/>
             </Container>          
         </Column>
     )
@@ -436,14 +438,23 @@ const Footer = () => {
     return (
         <Container as='footer' className={styles.footer} padding={2}>
             <Container style={{flexGrow: 1}}>
-
+                <Column padding={1}>
+                    <Text size={1.2} weight={600}>Ready to collect all your wedding photos?</Text>
+                    <Container padding={1}>
+                        <Link href='/create' className={styles.link}>
+                            <Container className={styles.actionButton} padding={0.5}>
+                                <Text size={1.2} weight={700}>Create Your Free Gallery</Text>
+                            </Container>
+                        </Link>
+                    </Container>
+                </Column>
             </Container>
             <Column className={styles.branding}>
                 <Row className={styles.brandingRow}>
-                    <Image src='/branding/wordmarkInverse.png' alt='wordmark' layout='intrinsic' height={100} width={100}/>
+                    <Image src='/branding/wordmarkInverse.png' alt='Recap wedding photo sharing platform' layout='intrinsic' height={100} width={100}/>
                 </Row>
                 <Row className={styles.brandingRow}>
-                    <Text>The best collaborative photo gallery for your next wedding, birthday, or celebration, offering unlimited uploads and collaborators, and easy organization of all of your media.</Text>
+                    <Text>The ultimate wedding photo sharing platform that collects every moment from every guest in one beautiful gallery. No app required, unlimited uploads, and easy organization of all your cherished memories.</Text>
                 </Row>    
             </Column>
         </Container>

@@ -90,6 +90,7 @@
 }
 .highlightText {
     color: var(--primary);
+    font-weight: 600 !important;
 }
 .title {
     font-size: 2.5rem !important;
@@ -150,11 +151,15 @@
 .example {
     width: 100%;
     flex-wrap: wrap;
+    text-align: right;
 }
 
 .exampleDetails {
     width: 50%;
     align-items: flex-end !important;
+}
+.highlightSubtitle {
+    width: 70%;
 }
 .exampleMedia {
     width: 50%;
@@ -167,6 +172,7 @@
         align-items: flex-start !important;
     }
     flex-wrap: wrap-reverse;
+    text-align: left;
 }
 
 // USES
@@ -174,7 +180,7 @@
 .uses {
     background: var(--background-light);
     width: 100%;
-    height: 30vh;
+    min-height: 30vh;
 }
 
 .carousel {
@@ -328,7 +334,8 @@
 
 .footer {
     width: 100%;
-    height: 40vh;
+    min-height: 40vh;
+    flex-wrap: wrap;
     background: var(--primary-dark);
     color: var(--background-light);
 }
@@ -421,7 +428,6 @@
     .subtitle {
         font-size: 1.7rem !important;
     }
-
     .headingText {
         font-size: 2.3rem !important;
     }
@@ -432,6 +438,7 @@
         display: none !important;
     }
     .example {
+        text-align: center;
         .exampleDetails {
             width: 100% !important;
             align-items: center !important;
@@ -440,6 +447,9 @@
             width: 100% !important;
         }
         .exampleImage {
+            width: 100% !important;
+        }
+        .highlightSubtitle {
             width: 100% !important;
         }
     }
