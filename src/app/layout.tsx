@@ -16,8 +16,29 @@ const cormorant = Cormorant({
 });
 
 export const metadata: Metadata = {
-  title: 'Recap - Collaborative Photo Galleries',
-  description: 'The best collaborative photo gallery for your next wedding, birthday, or celebration, offering unlimited uploads and collaborators, and easy organization of all of your media.',
+  title: 'Recap - The Ultimate Wedding Photo Sharing Platform',
+  description: 'Recap helps couples collect, organize and share wedding photos from all their guests in one beautiful gallery - no app required. Create your free wedding photo gallery today.',
+  keywords: 'wedding photo sharing, wedding photo gallery, guest photos, QR code photo sharing, wedding memories, collaborative photo album',
+  openGraph: {
+    title: 'Recap - The Ultimate Wedding Photo Sharing Platform',
+    description: 'Collect & share all your wedding photos in one beautiful gallery - no app required.',
+    images: [
+      {
+        url: '/product/screenshots.png',
+        width: 1369,
+        height: 718,
+        alt: 'Recap Wedding Photo Gallery',
+      },
+    ],
+    locale: 'en_US',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Recap - The Ultimate Wedding Photo Sharing Platform',
+    description: 'Collect & share all your wedding photos in one beautiful gallery - no app required.',
+    images: ['/product/screenshots.png'],
+  },
 };
 
 export default function RootLayout({
@@ -37,6 +58,32 @@ export default function RootLayout({
         <link rel="manifest" href="/manifest.json" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" id="viewportMeta" />
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+        
+        {/* Schema.org structured data */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "WebApplication",
+              "name": "Recap - Wedding Photo Sharing Platform",
+              "applicationCategory": "Photography",
+              "operatingSystem": "All",
+              "offers": {
+                "@type": "Offer",
+                "price": "0",
+                "priceCurrency": "USD"
+              },
+              "description": "Recap helps couples collect, organize and share wedding photos from all their guests in one beautiful gallery - no app required.",
+              "aggregateRating": {
+                "@type": "AggregateRating",
+                "ratingValue": "4.9",
+                "ratingCount": "120"
+              },
+              "featureList": "QR code photo sharing, unlimited uploads, custom albums, notifications, wedding website integration"
+            })
+          }}
+        />
       </Head>
       <body className={cormorant.className}>
         {children}

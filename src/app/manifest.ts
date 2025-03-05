@@ -3,10 +3,10 @@ import type { MetadataRoute } from 'next'
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: 'Recap Media',
+    name: 'Recap - Wedding Photo Sharing',
     short_name: 'Recap',
-    description: 'The best collaborative photo gallery for your next wedding, birthday, or celebration, offering unlimited uploads and collaborators, and easy organization of all of your media.',
-    start_url: '/galleries',
+    description: 'Collect & share all your wedding photos in one beautiful gallery - no app required. The simplest way to gather every photo from every guest.',
+    start_url: '/',
     display: 'standalone',
     background_color: '#fff',
     theme_color: '#fff',
