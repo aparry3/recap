@@ -1,6 +1,6 @@
 "use client";
 
-import { albumIcon, checkIcon, downloadIcon, leftIcon, linkIcon, rightIcon, xIcon } from "@/lib/icons"
+import { albumIcon, checkIcon, copyIcon, downloadIcon, leftIcon, linkIcon, rightIcon, xIcon } from "@/lib/icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { FC, useCallback, useEffect, useMemo, useState } from "react"
 import { Text, Column, Container, Row } from "react-web-layout-components"
@@ -110,6 +110,28 @@ const LinkPage: FC<{open: boolean, onClose: () => void}> = ({onClose, open}) => 
         }
     }, [qrCode])
 
+    const copyQrToClipboard = useCallback(async () => {
+        if (qrCode) {
+            try {
+                // Convert base64 to blob
+                const response = await fetch(qrCode);
+                const blob = await response.blob();
+                
+                // Copy to clipboard
+                await navigator.clipboard.write([
+                    new ClipboardItem({
+                        [blob.type]: blob
+                    })
+                ]);
+                
+                setCopied(true);
+                setTimeout(() => setCopied(false), 2000);
+            } catch (err) {
+                console.error('Failed to copy QR code: ', err);
+            }
+        }
+    }, [qrCode]);
+
     return open ?(
         <Column className={styles.qrcodePage}>
             <Container className={`${styles.notificationContainer} ${copied ? styles.show : ''}`}>
@@ -172,9 +194,12 @@ const LinkPage: FC<{open: boolean, onClose: () => void}> = ({onClose, open}) => 
                         </Container>
                     </Container>
                     <Column className={styles.qrCodeContainer}>
-                        <Column className={`${styles.qrCode}`} style={{background: backgroundColor}}>
+                        <Column className={`${styles.qrCode}`} style={{background: backgroundColor}} onClick={copyQrToClipboard} >
                             <QrCode src={qrCode} className={styles.qrCodeImage}/>
                             <QrCode src={inverseQrCode} className={styles.inverseQrCode}/>
+                            <Container className={styles.copy} style={{background: backgroundColor}}>
+                                <FontAwesomeIcon icon={copyIcon} className={styles.copyIcon}/>
+                            </Container>
                         </Column>
                         <Container className={styles.qrOptions}>
                             <ColorContainer foregroundColor={color} backgroundColor={color} setForeground={setColor} setBackground={setBackgroundColor}/>
