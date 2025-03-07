@@ -55,6 +55,21 @@
     border-radius: 0.5rem;
     box-shadow: 0 0 1.25rem -1rem black;
     background: var(--background-light);
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    .inverseQrCode {    
+        display: none !important;
+    }
+    &:hover {
+        .qrCodeImage {
+            display: none !important;
+        }
+        .inverseQrCode {
+            display: flex !important;
+        }
+        background: var(--primary) !important;
+    }
 }
 .qrOptions {
     width: 100%;
@@ -272,3 +287,4 @@
 .clearIcon {
     height: 0.8rem !important;
 }
+

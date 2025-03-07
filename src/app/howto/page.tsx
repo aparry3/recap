@@ -3,7 +3,7 @@ import React from 'react';
 import { Column, Container, Row, Text } from 'react-web-layout-components';
 import styles from './page.module.scss';
 import Image from 'next/image';
-import { shareNodesIcon, uploadIcon, albumIcon } from '@/lib/icons';
+import { shareNodesIcon, uploadIcon, albumIcon, downloadIcon, printIcon, weddingIcon } from '@/lib/icons';
 import Accordion from './components/Accordion';
 
 const HowToPage: React.FC = () => {
@@ -116,11 +116,68 @@ const HowToPage: React.FC = () => {
           />
 
           <Accordion 
-            title="Downloading media from your gallery" 
-            icon={albumIcon}
+            title="Using Recap for your wedding" 
+            icon={weddingIcon}
             content={
               <Column className={styles.accordionContent}>
-                <Text as="p">Save photos and videos from your Recap gallery:</Text>
+                <Text as="p">Make your wedding photo sharing seamless with Recap:</Text>
+                <ol className={styles.stepsList}>
+                  <li>
+                    <Text as="p"><strong>Create your gallery early</strong> - Set up your gallery a few weeks before the wedding</Text>
+                  </li>
+                  <li>
+                    <Text as="p"><strong>Add the QR code to your invitations</strong> - Print the QR code on your save-the-dates or invitations</Text>
+                  </li>
+                  <li>
+                    <Text as="p"><strong>Display at the venue</strong> - Show the QR code at your wedding venue for easy access</Text>
+                  </li>
+                  <li>
+                    <Text as="p"><strong>Create event-specific albums</strong> - Organize photos into albums like "Getting Ready", "Ceremony", "Reception"</Text>
+                  </li>
+                  <li>
+                    <Text as="p"><strong>Download memories</strong> - After the wedding, download all photos to keep forever</Text>
+                  </li>
+                </ol>
+                <Text as="p" className={styles.tip}>
+                  <strong>Pro Tip:</strong> Consider creating a hashtag for your wedding and encouraging guests to use it when sharing photos!
+                </Text>
+              </Column>
+            }
+          />
+
+          <Accordion 
+            title="Printing your QR code for wedding stationary" 
+            icon={printIcon}
+            content={
+              <Column className={styles.accordionContent}>
+                <Text as="p">Add your gallery QR code to your wedding stationary:</Text>
+                <ol className={styles.stepsList}>
+                  <li>
+                    <Text as="p"><strong>Get your QR code</strong> - Open your gallery and click the QR code icon in the top menu</Text>
+                  </li>
+                  <li>
+                    <Text as="p"><strong>Download the QR code</strong> - Click the download button to save the QR code image</Text>
+                  </li>
+                  <li>
+                    <Text as="p"><strong>Add to invitations</strong> - Include the QR code on your save-the-dates, invitations, or wedding programs</Text>
+                  </li>
+                  <li>
+                    <Text as="p"><strong>Display at the venue</strong> - Print a larger version to display at your wedding venue</Text>
+                  </li>
+                </ol>
+                <Text as="p" className={styles.tip}>
+                  <strong>Design Tip:</strong> The QR code works in black and white, so it can match any wedding color scheme!
+                </Text>
+              </Column>
+            }
+          />
+
+          <Accordion 
+            title="Downloading and saving your memories" 
+            icon={downloadIcon}
+            content={
+              <Column className={styles.accordionContent}>
+                <Text as="p">Save your photos and videos from your Recap gallery:</Text>
                 <ol className={styles.stepsList}>
                   <li>
                     <Text as="p"><strong>Individual media</strong> - Open the photo or video you want to save and click the download button</Text>
@@ -130,6 +187,9 @@ const HowToPage: React.FC = () => {
                   </li>
                   <li>
                     <Text as="p"><strong>Entire gallery</strong> - Gallery owners can download all media as a zip file from the gallery options</Text>
+                  </li>
+                  <li>
+                    <Text as="p"><strong>Album downloads</strong> - Download entire albums at once from the album view</Text>
                   </li>
                 </ol>
                 <Text as="p" className={styles.tip}>

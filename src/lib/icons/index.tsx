@@ -1,12 +1,12 @@
 // lib/fontawesome.js
 import { findIconDefinition, icon, IconDefinition, library } from '@fortawesome/fontawesome-svg-core';
 import { faSquare } from '@fortawesome/pro-regular-svg-icons';
-import { faGift, faGear, faQrcode, faFileZipper, faPhotoFilm, faCircleVideo, faDownload, faShareNodes, faLink, faUpload, faGridHorizontal, faHouse, faUser, faBars, faChevronLeft, faX, faCheck, faArrowLeft, faChevronRight, faChevronDown, faChevronUp, faCheckSquare, faTrash, faRectangleHistory } from '@fortawesome/pro-solid-svg-icons';
+import { faGift, faGear, faQrcode, faFileZipper, faPhotoFilm, faCircleVideo, faDownload, faShareNodes, faLink, faUpload, faGridHorizontal, faHouse, faUser, faBars, faChevronLeft, faX, faCheck, faArrowLeft, faChevronRight, faChevronDown, faChevronUp, faCheckSquare, faTrash, faRectangleHistory, faRing, faPrint } from '@fortawesome/pro-solid-svg-icons';
 import { faFacebook, faInstagram } from '@fortawesome/free-brands-svg-icons'
 import {Actions} from './actions'
 
 // Add any icons you want here
-library.add(faGift, faTrash, faGear, faRectangleHistory, faChevronRight, faChevronDown, faChevronUp, faCheck, faX, faArrowLeft, faChevronLeft, faUser, faBars, faHouse, faGridHorizontal, faUpload,faQrcode, faFileZipper, faPhotoFilm, faCircleVideo, faDownload, faShareNodes, faLink, faCheckSquare, faSquare as IconDefinition, faInstagram as IconDefinition, faFacebook as IconDefinition);
+library.add(faGift, faTrash, faGear, faRectangleHistory, faChevronRight, faChevronDown, faChevronUp, faCheck, faX, faArrowLeft, faChevronLeft, faUser, faBars, faHouse, faGridHorizontal, faUpload,faQrcode, faFileZipper, faPhotoFilm, faCircleVideo, faDownload, faShareNodes, faLink, faCheckSquare, faSquare as IconDefinition, faInstagram as IconDefinition, faFacebook as IconDefinition, faRing as IconDefinition, faPrint as IconDefinition);
 
 
 const download = findIconDefinition({ prefix: 'fas', iconName: 'download' })
@@ -87,8 +87,11 @@ export const albumIcon = icon(album)
 const gear = findIconDefinition({ prefix: 'fas', iconName: 'gear' })
 export const gearIcon = icon(gear)
 
+const wedding = findIconDefinition({ prefix: 'fas', iconName: 'ring' })
+export const weddingIcon = icon(wedding)
 
-
+const print = findIconDefinition({ prefix: 'fas', iconName: 'print' })
+export const printIcon = icon(print)
 
 export {Actions}
 

@@ -15,6 +15,7 @@ import Sidebar, { MobileMenu } from "./components/Sidebar";
 import { AlbumsProvider } from "@/helpers/providers/albums";
 import useNavigation, { NavigationProvider } from "@/helpers/providers/navigation";
 import { Album, AlbumMediaData } from "@/lib/types/Album";
+import TutorialOverlay from "@/components/TutorialOverlay";
 
 export enum AppPage {
     HOME = 'HOME',
@@ -48,6 +49,7 @@ const App: FC<{gallery: Gallery, password?: string, album?: AlbumMediaData}> =  
                                 <Sidebar />
                                 <MobileMenu  />
                                 <Content onQrClick={() => setShowQrCode(true)}/>
+                                <TutorialOverlay />
                                 {/* {showUploadConfirmation && <Upload /> } */}
                             </>
                             ): (
