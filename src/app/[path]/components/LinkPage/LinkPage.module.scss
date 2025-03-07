@@ -49,12 +49,47 @@
     padding: 1rem;
 }
 .qrCode {
+    position: relative;
     width: 50%;
     padding: 1rem;
     max-width: 15rem;
     border-radius: 0.5rem;
     box-shadow: 0 0 1.25rem -1rem black;
     background: var(--background-light);
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    .inverseQrCode {    
+        display: none !important;
+    }
+    &:hover {
+        .qrCodeImage {
+            display: none !important;
+        }
+        .inverseQrCode {
+            display: flex !important;
+        }
+        background: var(--primary) !important;
+        .copy {
+            background: var(--primary) !important;
+            color: var(--background-light);
+            }
+        }
+    
+    .copy {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        padding: 1.5rem;
+        background: var(--background-light);
+        color: var(--primary);
+        border-radius: 0.5rem;
+        cursor: pointer;
+    }
+    .copyIcon {
+        height: 1.3rem;
+        width: 1.3rem;
+    }
 }
 .qrOptions {
     width: 100%;
@@ -272,3 +307,4 @@
 .clearIcon {
     height: 0.8rem !important;
 }
+

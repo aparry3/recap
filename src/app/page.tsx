@@ -42,7 +42,7 @@ const Hero = () => {
             <Container id="heroAction" padding={1}>
                 <Link href='/create' className={styles.link}>
                     <Container className={styles.actionButton} padding={1}>
-                        <Text size={1.2} weight={700}>Create your wedding gallery - Free</Text>
+                        <Text size={1.2} weight={700}>Create your wedding gallery</Text>
                     </Container>
                 </Link>
             </Container>

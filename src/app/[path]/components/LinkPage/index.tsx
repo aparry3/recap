@@ -1,6 +1,6 @@
 "use client";
 
-import { albumIcon, checkIcon, downIcon, downloadIcon, leftIcon, linkIcon, rightIcon, xIcon } from "@/lib/icons"
+import { albumIcon, checkIcon, copyIcon, downloadIcon, leftIcon, linkIcon, rightIcon, xIcon } from "@/lib/icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { FC, useCallback, useEffect, useMemo, useState } from "react"
 import { Text, Column, Container, Row } from "react-web-layout-components"
@@ -54,7 +54,8 @@ const LinkPage: FC<{open: boolean, onClose: () => void}> = ({onClose, open}) => 
   
   
     const [qrCode, setQrCode] = useState<string | undefined>()
-    
+    const [inverseQrCode, setInverseQrCode] = useState<string | undefined>()
+
     const logo = '/branding/icon.svg'
 
     const chooseAlbum = useCallback(() => {
@@ -78,14 +79,24 @@ const LinkPage: FC<{open: boolean, onClose: () => void}> = ({onClose, open}) => 
     }, [setAlbum]);
 
     const generate = async () => {
-        const qrCode = await generateCustomQRCodePNG(url, {
+        const _qrCode = await generateCustomQRCodePNG(url, {
             size: 1000,
             foregroundColor: color,
             backgroundColor: '#00000000',
             imageSrc: logo,
             imageSize: 0.2,
         })
-        setQrCode(qrCode)
+
+        const _inverseQrCode = await generateCustomQRCodePNG(url, {
+            size: 1000,
+            foregroundColor: Color.BACKGROUND_LIGHT,
+            backgroundColor: '#00000000',
+            imageSrc: logo,
+            imageSize: 0.2,
+        })
+
+        setQrCode(_qrCode)
+        setInverseQrCode(_inverseQrCode)
     }
 
     useEffect(() => {
@@ -98,6 +109,28 @@ const LinkPage: FC<{open: boolean, onClose: () => void}> = ({onClose, open}) => 
             downloadDataUrlAsPng(qrCode)
         }
     }, [qrCode])
+
+    const copyQrToClipboard = useCallback(async () => {
+        if (qrCode) {
+            try {
+                // Convert base64 to blob
+                const response = await fetch(qrCode);
+                const blob = await response.blob();
+                
+                // Copy to clipboard
+                await navigator.clipboard.write([
+                    new ClipboardItem({
+                        [blob.type]: blob
+                    })
+                ]);
+                
+                setCopied(true);
+                setTimeout(() => setCopied(false), 2000);
+            } catch (err) {
+                console.error('Failed to copy QR code: ', err);
+            }
+        }
+    }, [qrCode]);
 
     return open ?(
         <Column className={styles.qrcodePage}>
@@ -161,8 +194,12 @@ const LinkPage: FC<{open: boolean, onClose: () => void}> = ({onClose, open}) => 
                         </Container>
                     </Container>
                     <Column className={styles.qrCodeContainer}>
-                        <Column className={styles.qrCode} style={{background: backgroundColor}}>
-                            <QrCode src={qrCode}/>
+                        <Column className={`${styles.qrCode}`} style={{background: backgroundColor}} onClick={copyQrToClipboard} >
+                            <QrCode src={qrCode} className={styles.qrCodeImage}/>
+                            <QrCode src={inverseQrCode} className={styles.inverseQrCode}/>
+                            <Container className={styles.copy} style={{background: backgroundColor}}>
+                                <FontAwesomeIcon icon={copyIcon} className={styles.copyIcon}/>
+                            </Container>
                         </Column>
                         <Container className={styles.qrOptions}>
                             <ColorContainer foregroundColor={color} backgroundColor={color} setForeground={setColor} setBackground={setBackgroundColor}/>

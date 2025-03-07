@@ -49,7 +49,7 @@ export async function generateCustomQRCodePNG(
   } = options;
 
   // Generate QR code data as a matrix
-  const qrData = await QRCode.create(text, { errorCorrectionLevel: 'H' });
+  const qrData = await QRCode.create(text, { errorCorrectionLevel: 'Q' });
   const modules = qrData.modules;
   const moduleCount = modules.size;
   const moduleSize = size / moduleCount;
