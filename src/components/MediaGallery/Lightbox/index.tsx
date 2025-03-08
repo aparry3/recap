@@ -8,6 +8,7 @@ import { downloadUrl } from "@/helpers/files";
 import useGallery from "@/helpers/providers/gallery";
 import Menu, { MenuItem } from "../Menu";
 import { useLikes } from "@/helpers/hooks/useLikes";
+import LikeButton from "@/components/LikeButton";
 // import { sharePhotoToFacebook } from "@/helpers/share";
 
 interface LightBoxProps {
@@ -26,7 +27,6 @@ interface LightBoxProps {
   
 const LightBox: FC<LightBoxProps> = memo(({ mediaId, personId, image, index, total, onClose, prevImage, nextImage, onNext, onPrevious, contentType }) => {
     const {gallery, album, selectedImages, setSelectedImages, toggleSelectedImage} = useGallery()
-    const { isLiked, likesCount, toggleLike } = useLikes(mediaId);
     const [touchStartX, setTouchStartX] = useState<number | null>(null);
     const [touchStartY, setTouchStartY] = useState<number | null>(null);
     const [translateX, setTranslateX] = useState(0);
@@ -241,10 +241,7 @@ const LightBox: FC<LightBoxProps> = memo(({ mediaId, personId, image, index, tot
                     <Text size={1.5}>{index}/{total}</Text>
                 </Container>
                 <Container>
-                    <Container className={styles.brandIconContainer} onClick={toggleLike}>
-                        <FontAwesomeIcon icon={isLiked ? heartIcon : heartRegularIcon} className={`${styles.icon} ${isLiked ? styles.liked : ''}`} />
-                        <Text size={1.2} className={styles.likeCount}>{likesCount}</Text>
-                    </Container>
+                    <LikeButton mediaId={mediaId} />
                     <Container className={styles.brandIconContainer} onClick={download}>
                         <FontAwesomeIcon icon={downloadIcon} className={styles.icon} />
                     </Container>

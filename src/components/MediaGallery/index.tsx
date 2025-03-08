@@ -11,6 +11,7 @@ import { isImage, isVideo } from "@/helpers/utils"
 import useAlbums from "@/helpers/providers/albums"
 import { useUser } from "@/helpers/providers/user"
 import Menu, { MenuItem } from "./Menu"
+import LikeButton from "@/components/LikeButton"
 
 
 const MediaGallery: FC<{media: Media[]}> = ({media}) => {
@@ -220,11 +221,23 @@ const MediaGallery: FC<{media: Media[]}> = ({media}) => {
                         )        
                 }
                 return (
-                <Container onTouchStart={(e) => handleTouchStart(e, index)} onTouchEnd={handleTouchEnd} onContextMenu={(e) => {e.preventDefault()}} key={m.url} onMouseOver={() => handleMouseOver(index)} onMouseLeave={() => setHoverIndex(-1)} className={`${styles.imageContainer} ${(m?.height || 0) > (m?.width || 0) ? styles.vertical : ''}`} onClick={() => selectImage(index)}>
+                <Container 
+                    onTouchStart={(e) => handleTouchStart(e, index)} 
+                    onTouchEnd={handleTouchEnd} 
+                    onContextMenu={(e) => {e.preventDefault()}} 
+                    key={m.url} 
+                    onMouseOver={() => handleMouseOver(index)} 
+                    onMouseLeave={() => setHoverIndex(-1)} 
+                    className={`${styles.imageContainer} ${(m?.height || 0) > (m?.width || 0) ? styles.vertical : ''}`} 
+                    onClick={() => selectImage(index)}
+                >
                     { isVideo(m) && (
                         <video id="hover-video" src={m.url} muted loop autoPlay playsInline className={styles.image} style={{display: hoverIndex === index ? 'block' : 'none'}}/>
                     )}
                     <img src={m.preview} alt="image" className={`${styles.image}`} onContextMenu={(e) => e.preventDefault()} style={{display: isImage(m) || hoverIndex !== index ? 'block' : 'none'}}/>
+                    <Container className={`${styles.overlay} ${hoverIndex === index ? styles.visible : ''}`}>
+                        <LikeButton mediaId={m.id} variant="overlay" />
+                    </Container>
                 </Container>
                 )
             })}
