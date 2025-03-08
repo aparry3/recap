@@ -208,6 +208,45 @@ const Examples = () => {
     )
 }
 
+const PricingComparison = () => {
+    const weddingCosts = [
+        { item: 'Venue', cost: 20000 },
+        { item: 'Food & Catering', cost: 15000 },
+        { item: 'Flowers & Decor', cost: 8000 },
+        { item: 'Photographer', cost: 5000 },
+        { item: 'Music & Entertainment', cost: 3500 },
+        { item: 'Wedding Dress', cost: 2500 },
+        { item: 'Recap', cost: 100, isLink: true },
+    ];
+
+    return (
+        <Column as='section' className={styles.pricing} justify='space-between' padding={2}>
+            <Container className={styles.pricingHeading} padding={[0, 1]}>
+                <Text className={styles.headingText} as='h1'>
+                    The most memorable part of your wedding is also the least expensive
+                </Text>
+            </Container>
+            <Column className={styles.pricingTable} padding={2}>
+                {weddingCosts.map((item, index) => (
+                    item.isLink ? (
+                        <Link key={index} href="/create" className={styles.link}>
+                            <Row className={`${styles.pricingItem} ${styles.highlightRow}`} padding={1} justify='space-between'>
+                                <Text className={styles.pricingItemText} weight={600}>{item.item}</Text>
+                                <Text className={styles.pricingCost}>${item.cost.toLocaleString()}</Text>
+                            </Row>
+                        </Link>
+                    ) : (
+                        <Row key={index} className={styles.pricingItem} padding={1} justify='space-between'>
+                            <Text className={styles.pricingItemText} weight={600}>{item.item}</Text>
+                            <Text className={styles.pricingCost}>${item.cost.toLocaleString()}</Text>
+                        </Row>
+                    )
+                ))}
+            </Column>
+        </Column>
+    );
+}
+
 const Uses = () => {
     return (
         <Column as='section' className={styles.uses} padding={2}>
@@ -479,6 +518,7 @@ const HomePage: FC = async ({}) => {
             {/* SCROLLABLE */}
             <Hero />
             <Examples />
+            <PricingComparison />
             {/* <Uses /> */}
             <Albums />
             {/* <Share /> */}
