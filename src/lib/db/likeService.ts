@@ -38,4 +38,14 @@ export const hasLiked = async (mediaId: string, personId: string): Promise<boole
         .executeTakeFirst();
     
     return !!like;
+};
+
+export const getLikesCount = async (mediaId: string): Promise<number> => {
+    const result = await db
+        .selectFrom('likes')
+        .where('mediaId', '=', mediaId)
+        .select(db.fn.count('id').as('count'))
+        .executeTakeFirst();
+    
+    return Number(result?.count || 0);
 }; 

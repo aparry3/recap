@@ -1,4 +1,3 @@
-
 .lightBox {
     position: fixed;
     width: 100%;
@@ -85,8 +84,32 @@
     object-fit:contain;
 }
 .brandIconContainer {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
     padding: 0.5rem;
-    font-size: 1.5rem;
+    border-radius: 0.5rem;
+    transition: background-color 0.2s ease;
+
+    &:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .icon {
+        color: black;
+        height: 1.5rem;
+        width: 1.5rem;
+
+        &.liked {
+            color: #ff4444;
+        }
+    }
+
+    .likeCount {
+        color: black;
+        margin-left: 0.25rem;
+    }
 }
 .countContainer {
     padding: 0.5rem;
