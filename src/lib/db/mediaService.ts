@@ -19,13 +19,13 @@ export const updateMedia = async (mediaId: string, mediaUpdate: MediaUpdate): Pr
 
 export const selectMedia = async (mediaId: string): Promise<Media> => {
   const media = await db.selectFrom('media').where('id', '=', mediaId).selectAll().executeTakeFirstOrThrow();
-  return media;
+  return {...media, url: `${CLOUDFRONT_URL}/${media.url}`, preview: `${CLOUDFRONT_URL}/${media.preview}`} as Media;
 }
+
 export const deleteMedia = async (mediaId: string): Promise<boolean> => {
   const results = await db.deleteFrom('media').where('id', '=', mediaId).executeTakeFirst();
   return results.numDeletedRows > 0;
 }
-
 
 export const selectGalleryMedia = async (galleryId: string): Promise<Media[]> => {
   const media = await db.selectFrom('galleryMedia').where('galleryId', '=', galleryId).fullJoin('media', 'galleryMedia.mediaId', 'media.id').selectAll('media').execute();
@@ -47,13 +47,32 @@ export const selectAlbumMedia = async (albumId: string): Promise<Media[]> => {
     return media as Media[];
   }
 
-  export const selectGalleryPersonMedia = async (galleryId: string, personId: string, limit?: number): Promise<Media[]> => {
-    let mediaQuery = db.selectFrom('galleryMedia').where('galleryId', '=', galleryId).fullJoin('media', 'galleryMedia.mediaId', 'media.id').where('media.personId', '=', personId).selectAll('media').orderBy('media.created', 'desc')
-    if (limit) {
-      mediaQuery = mediaQuery.limit(limit)
-
-    }
-    const media = await mediaQuery.execute();
-    return media.map(m => ({...m, url: `${CLOUDFRONT_URL}/${m.url}`, preview: `${CLOUDFRONT_URL}/${m.preview}`})) as Media[];
+export const selectGalleryPersonMedia = async (galleryId: string, personId: string, limit?: number): Promise<Media[]> => {
+  let mediaQuery = db.selectFrom('galleryMedia').where('galleryId', '=', galleryId).fullJoin('media', 'galleryMedia.mediaId', 'media.id').where('media.personId', '=', personId).selectAll('media').orderBy('media.created', 'desc')
+  if (limit) {
+    mediaQuery = mediaQuery.limit(limit)
   }
+  const media = await mediaQuery.execute();
+  return media.map(m => ({...m, url: `${CLOUDFRONT_URL}/${m.url}`, preview: `${CLOUDFRONT_URL}/${m.preview}`})) as Media[];
+}
+
+export const selectPersonLikedMedia = async (personId: string, limit?: number): Promise<Media[]> => {
+  let mediaQuery = db
+    .selectFrom('likes')
+    .innerJoin('media', 'media.id', 'likes.mediaId')
+    .where('likes.personId', '=', personId)
+    .selectAll('media')
+    .orderBy('likes.created', 'desc');
+
+  if (limit) {
+    mediaQuery = mediaQuery.limit(limit);
+  }
+
+  const media = await mediaQuery.execute();
+  return media.map(m => ({
+    ...m,
+    url: `${CLOUDFRONT_URL}/${m.url}`,
+    preview: `${CLOUDFRONT_URL}/${m.preview}`
+  })) as Media[];
+};
   

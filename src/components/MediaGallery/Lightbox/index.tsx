@@ -3,10 +3,12 @@ import { Column, Container, Row, Text } from "react-web-layout-components";
 import styles from './Lightbox.module.scss'
 import useWindowSize from "@/helpers/hooks/window";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Actions, downloadIcon, leftIcon, rightIcon, xIcon } from "@/lib/icons";
+import { Actions, downloadIcon, leftIcon, rightIcon, xIcon, heartIcon, heartRegularIcon } from "@/lib/icons";
 import { downloadUrl } from "@/helpers/files";
 import useGallery from "@/helpers/providers/gallery";
 import Menu, { MenuItem } from "../Menu";
+import { useLikes } from "@/helpers/hooks/useLikes";
+import LikeButton from "@/components/LikeButton";
 // import { sharePhotoToFacebook } from "@/helpers/share";
 
 interface LightBoxProps {
@@ -239,6 +241,7 @@ const LightBox: FC<LightBoxProps> = memo(({ mediaId, personId, image, index, tot
                     <Text size={1.5}>{index}/{total}</Text>
                 </Container>
                 <Container>
+                    <LikeButton mediaId={mediaId} />
                     <Container className={styles.brandIconContainer} onClick={download}>
                         <FontAwesomeIcon icon={downloadIcon} className={styles.icon} />
                     </Container>
