@@ -3,8 +3,6 @@ import React from 'react';
 import { Column, Container, Row, Text } from 'react-web-layout-components';
 import styles from './page.module.scss';
 import Image from 'next/image';
-import { shareNodesIcon, uploadIcon, albumIcon, downloadIcon, printIcon, weddingIcon } from '@/lib/icons';
-import Accordion from './components/Accordion';
 
 const HowToPage: React.FC = () => {
   return (
@@ -20,184 +18,118 @@ const HowToPage: React.FC = () => {
       <Column as='main' className={styles.mainContent}>
         <Column className={styles.titleContainer}>
           <Text as="h1" size={3} weight={700} className={styles.title}>
-            How to use Recap
+            How to Share Your Gallery
           </Text>
           <Text as="p" size={1.5} className={styles.subtitle}>
-            Learn how to make the most of your Recap galleries
+            Follow these simple steps to share your memories with friends and family
           </Text>
         </Column>
 
-        <Column className={styles.accordionContainer}>
-          <Accordion 
-            title="Sharing your gallery with friends and family" 
-            icon={shareNodesIcon}
-            content={
-              <Column className={styles.accordionContent}>
-                <Text as="p">Sharing your Recap gallery with others is easy. Here's how:</Text>
-                <ol className={styles.stepsList}>
-                  <li>
-                    <Text as="p"><strong>Copy your gallery link</strong> - Open your gallery and click the "Share" button in the top menu</Text>
-                  </li>
-                  <li>
-                    <Text as="p"><strong>Share via QR code</strong> - A QR code is automatically generated for your gallery. Others can scan this code to instantly access your gallery</Text>
-                  </li>
-                  <li>
-                    <Text as="p"><strong>Share directly</strong> - Use the share buttons to directly send your gallery via messaging apps, email, or social media</Text>
-                  </li>
-                  <li>
-                    <Text as="p"><strong>Set permissions</strong> - You can choose whether viewers can only view or also upload their own photos</Text>
-                  </li>
-                </ol>
-                <Text as="p" className={styles.tip}>
-                  <strong>Tip:</strong> For events like weddings, consider printing the QR code on invitations or displaying it at the venue!
+        <Column className={styles.stepsContainer}>
+          {/* Step 1 */}
+          <section className={styles.step}>
+            <Row className={styles.stepHeader}>
+              <Text as="h2" size={2} weight={600}>Step 1: Create Your Albums</Text>
+            </Row>
+            <Row className={styles.stepContent}>
+              <Column className={styles.stepDescription}>
+                <Text as="p">
+                  Organize your wedding photos into clearly labeled albums—Ceremony, Reception, After-Party, or Honeymoon!
                 </Text>
+                <Image 
+                  src="/images/howto/albums-example.svg" 
+                  alt="Example of organized albums" 
+                  width={600} 
+                  height={400}
+                  className={styles.stepImage}
+                />
               </Column>
-            }
-          />
+            </Row>
+          </section>
 
-          <Accordion 
-            title="Uploading images and videos to your gallery" 
-            icon={uploadIcon}
-            content={
-              <Column className={styles.accordionContent}>
-                <Text as="p">Adding media to your Recap gallery is simple:</Text>
-                <ol className={styles.stepsList}>
-                  <li>
-                    <Text as="p"><strong>Open your gallery</strong> - Navigate to your gallery by entering the URL or scanning the QR code</Text>
-                  </li>
-                  <li>
-                    <Text as="p"><strong>Click 'Upload'</strong> - Look for the upload button in the gallery interface</Text>
-                  </li>
-                  <li>
-                    <Text as="p"><strong>Select files</strong> - Choose photos and videos from your device to upload</Text>
-                  </li>
-                  <li>
-                    <Text as="p"><strong>Confirm upload</strong> - Review your selections and confirm to start uploading</Text>
-                  </li>
-                  <li>
-                    <Text as="p"><strong>Wait for completion</strong> - Your media will be processed and added to the gallery</Text>
-                  </li>
-                </ol>
-                <Text as="p" className={styles.tip}>
-                  <strong>Note:</strong> Recap supports most common image formats (JPG, PNG, HEIC) and video formats (MP4, MOV).
+          {/* Step 2 */}
+          <section className={styles.step}>
+            <Row className={styles.stepHeader}>
+              <Text as="h2" size={2} weight={600}>Step 2: Generate Your QR Codes</Text>
+            </Row>
+            <Row className={styles.stepContent}>
+              <Column className={styles.stepDescription}>
+                <Text as="p">
+                  Easily generate beautiful, customized QR codes for your overall gallery or for individual albums.
                 </Text>
+                <Image 
+                  src="/images/howto/qr-stationery.svg" 
+                  alt="QR code on wedding stationery" 
+                  width={600} 
+                  height={400}
+                  className={styles.stepImage}
+                />
               </Column>
-            }
-          />
+            </Row>
+          </section>
 
-          <Accordion 
-            title="Creating and managing albums" 
-            icon={albumIcon}
-            content={
-              <Column className={styles.accordionContent}>
-                <Text as="p">Organize your media into albums to keep everything tidy:</Text>
-                <ol className={styles.stepsList}>
-                  <li>
-                    <Text as="p"><strong>Go to Albums tab</strong> - In your gallery, navigate to the Albums section</Text>
-                  </li>
-                  <li>
-                    <Text as="p"><strong>Create a new album</strong> - Click the "Create Album" button</Text>
-                  </li>
-                  <li>
-                    <Text as="p"><strong>Name your album</strong> - Give your album a descriptive name (e.g., "Ceremony", "Reception")</Text>
-                  </li>
-                  <li>
-                    <Text as="p"><strong>Add photos</strong> - Select photos from your gallery to add to the album</Text>
-                  </li>
-                  <li>
-                    <Text as="p"><strong>Manage albums</strong> - You can edit albums later to add/remove photos or rename them</Text>
-                  </li>
-                </ol>
-                <Text as="p" className={styles.tip}>
-                  <strong>Tip:</strong> Creating themed albums (like "Family Photos" or "Dance Floor") makes it easier for everyone to find specific memories!
+          {/* Step 3 */}
+          <section className={styles.step}>
+            <Row className={styles.stepHeader}>
+              <Text as="h2" size={2} weight={600}>Step 3: Share with Guests</Text>
+            </Row>
+            <Row className={styles.stepContent}>
+              <Column className={styles.stepDescription}>
+                <Text as="p">
+                  Include QR codes in invitations, signage, or stationery. Guests simply scan to join the fun—no app download or login required.
                 </Text>
+                <Image 
+                  src="/images/howto/venue-display.svg" 
+                  alt="QR code display at venue" 
+                  width={600} 
+                  height={400}
+                  className={styles.stepImage}
+                />
               </Column>
-            }
-          />
+            </Row>
+          </section>
 
-          <Accordion 
-            title="Using Recap for your wedding" 
-            icon={weddingIcon}
-            content={
-              <Column className={styles.accordionContent}>
-                <Text as="p">Make your wedding photo sharing seamless with Recap:</Text>
-                <ol className={styles.stepsList}>
-                  <li>
-                    <Text as="p"><strong>Create your gallery early</strong> - Set up your gallery a few weeks before the wedding</Text>
-                  </li>
-                  <li>
-                    <Text as="p"><strong>Add the QR code to your invitations</strong> - Print the QR code on your save-the-dates or invitations</Text>
-                  </li>
-                  <li>
-                    <Text as="p"><strong>Display at the venue</strong> - Show the QR code at your wedding venue for easy access</Text>
-                  </li>
-                  <li>
-                    <Text as="p"><strong>Create event-specific albums</strong> - Organize photos into albums like "Getting Ready", "Ceremony", "Reception"</Text>
-                  </li>
-                  <li>
-                    <Text as="p"><strong>Download memories</strong> - After the wedding, download all photos to keep forever</Text>
-                  </li>
-                </ol>
-                <Text as="p" className={styles.tip}>
-                  <strong>Pro Tip:</strong> Consider creating a hashtag for your wedding and encouraging guests to use it when sharing photos!
+          {/* Step 4 */}
+          <section className={styles.step}>
+            <Row className={styles.stepHeader}>
+              <Text as="h2" size={2} weight={600}>Step 4: Send Friendly Reminders</Text>
+            </Row>
+            <Row className={styles.stepContent}>
+              <Column className={styles.stepDescription}>
+                <Text as="p">
+                  Automate helpful texts or email reminders, gently prompting your guests to share their photos before and after your big day.
                 </Text>
+                <Image 
+                  src="/images/howto/reminder-message.svg" 
+                  alt="Example reminder message" 
+                  width={600} 
+                  height={400}
+                  className={styles.stepImage}
+                />
               </Column>
-            }
-          />
+            </Row>
+          </section>
 
-          <Accordion 
-            title="Printing your QR code for wedding stationary" 
-            icon={printIcon}
-            content={
-              <Column className={styles.accordionContent}>
-                <Text as="p">Add your gallery QR code to your wedding stationary:</Text>
-                <ol className={styles.stepsList}>
-                  <li>
-                    <Text as="p"><strong>Get your QR code</strong> - Open your gallery and click the QR code icon in the top menu</Text>
-                  </li>
-                  <li>
-                    <Text as="p"><strong>Download the QR code</strong> - Click the download button to save the QR code image</Text>
-                  </li>
-                  <li>
-                    <Text as="p"><strong>Add to invitations</strong> - Include the QR code on your save-the-dates, invitations, or wedding programs</Text>
-                  </li>
-                  <li>
-                    <Text as="p"><strong>Display at the venue</strong> - Print a larger version to display at your wedding venue</Text>
-                  </li>
-                </ol>
-                <Text as="p" className={styles.tip}>
-                  <strong>Design Tip:</strong> The QR code works in black and white, so it can match any wedding color scheme!
+          {/* Step 5 */}
+          <section className={styles.step}>
+            <Row className={styles.stepHeader}>
+              <Text as="h2" size={2} weight={600}>Step 5: Watch Your Memories Come Alive</Text>
+            </Row>
+            <Row className={styles.stepContent}>
+              <Column className={styles.stepDescription}>
+                <Text as="p">
+                  Enjoy real-time updates as guests share their favorite moments directly into your wedding gallery.
                 </Text>
+                <Image 
+                  src="/images/howto/gallery-preview.svg" 
+                  alt="Live gallery updates" 
+                  width={600} 
+                  height={400}
+                  className={styles.stepImage}
+                />
               </Column>
-            }
-          />
-
-          <Accordion 
-            title="Downloading and saving your memories" 
-            icon={downloadIcon}
-            content={
-              <Column className={styles.accordionContent}>
-                <Text as="p">Save your photos and videos from your Recap gallery:</Text>
-                <ol className={styles.stepsList}>
-                  <li>
-                    <Text as="p"><strong>Individual media</strong> - Open the photo or video you want to save and click the download button</Text>
-                  </li>
-                  <li>
-                    <Text as="p"><strong>Multiple items</strong> - Select multiple photos/videos by clicking the select option, then use the download button</Text>
-                  </li>
-                  <li>
-                    <Text as="p"><strong>Entire gallery</strong> - Gallery owners can download all media as a zip file from the gallery options</Text>
-                  </li>
-                  <li>
-                    <Text as="p"><strong>Album downloads</strong> - Download entire albums at once from the album view</Text>
-                  </li>
-                </ol>
-                <Text as="p" className={styles.tip}>
-                  <strong>Note:</strong> Downloaded media will be in the original resolution that was uploaded.
-                </Text>
-              </Column>
-            }
-          />
+            </Row>
+          </section>
         </Column>
       </Column>
 
