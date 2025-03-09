@@ -482,7 +482,7 @@ const Footer = () => {
                     <Container padding={1}>
                         <Link href='/create' className={styles.link}>
                             <Container className={styles.actionButton} padding={0.5}>
-                                <Text size={1.2} weight={700}>Create Your Free Gallery</Text>
+                                <Text size={1.2} weight={700}>Create Your Wedding Gallery</Text>
                             </Container>
                         </Link>
                     </Container>
