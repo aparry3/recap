@@ -18,6 +18,9 @@ const Header = () => {
                 </Link>
             </Container>
             <Container className={styles.action} padding={0.5}>
+                <Link href='/howto' className={styles.link}>
+                    <Text weight={600} size={1.2}>How It Works</Text>
+                </Link>
                 <Link href='/create' className={styles.link}>
                     <Container className={styles.actionButton}>
                         <Text weight={700} size={1.2}>Get Started</Text>
