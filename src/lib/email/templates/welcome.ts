@@ -6,8 +6,8 @@ interface WelcomeEmailData {
 
 export const getWelcomeEmailTemplate = ({
     name,
-    howToUrl = 'https://recap.photos/howto',
-    createUrl = 'https://recap.photos/create'
+    howToUrl = 'https://ourweddingrecap.com/howto',
+    createUrl = 'https://ourweddingrecap.com/create'
 }: WelcomeEmailData): string => {
     return `<!DOCTYPE html>
 <html>

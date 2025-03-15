@@ -19,8 +19,8 @@ export interface TemplateData {
   name: string;
 }
 
-const HOW_TO_URL = 'https://recap.photos/howto'
-const CREATE_URL = 'https://recap.photos/create' 
+const HOW_TO_URL = 'https://ourweddingrecap.com/howto'
+const CREATE_URL = 'https://ourweddingrecap.com/create' 
 
 export interface WelcomeEmailData {
   email: string;
