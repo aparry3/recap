@@ -44,11 +44,13 @@ export const POST = async (req: Request) => {
         await insertGalleryPerson(gallery.id, gallery.personId)
         const verification = await insertVerification(gallery.personId, gallery.id)
         
-        sendGridClient.sendCreationEmail(person.email, {
-            galleryName: gallery.name,
-            name: person.name,
-            buttonUrl: `${process.env.BASE_URL}/verification/${verification.id}`
-        })
+        // sendGridClient.sendCreationEmail(person.email, {
+        //     galleryName: gallery.name,
+        //     name: person.name,
+        //     buttonUrl: `${process.env.BASE_URL}/verification/${verification.id}`
+        // })
+        sendGridClient.sendCreationEmail(person.email, person.name)
+
         
     } catch (error: any) {
 
