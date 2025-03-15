@@ -19,14 +19,10 @@ export interface TemplateData {
   name: string;
 }
 
-const HOW_TO_URL = 'https://ourweddingrecap.com/howto'
-const CREATE_URL = 'https://ourweddingrecap.com/create' 
-
 export interface WelcomeEmailData {
   email: string;
   name: string;
-  howToUrl?: string;
-  createUrl?: string;
+  galleryUrl: string;
 }
 
 export class SendGridClient {
@@ -65,7 +61,7 @@ export class SendGridClient {
     return await this._sendTemplateEmail(email, templateData, SENDGRID_WELCOME_ID)
   }
 
-  async sendCreationEmail(email: string, name: string): Promise<boolean> {
+  async sendCreationEmail(email: string, name: string, galleryUrl: string): Promise<boolean> {
     try {
       const response = await sgMail.send({
         to: email,
@@ -73,11 +69,10 @@ export class SendGridClient {
           email: SENDGRID_EMAIL,
           name: 'Recap'
         },
-        subject: 'Welcome to Recap! Let\'s Start Collecting Your Wedding Memories 🎉',
+        subject: 'Your Recap Gallery is Ready! 🎉',
         html: getWelcomeEmailTemplate({
           name,
-          howToUrl: HOW_TO_URL,
-          createUrl: CREATE_URL
+          galleryUrl
         }),
       }).catch(err => {
         throw new Error(`Error sending welcome email:, ${err.response.body.errors[0].message}`)

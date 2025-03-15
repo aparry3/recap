@@ -11,14 +11,27 @@ import Footer from '../components/Footer';
 interface StepSectionProps {
   icon: any;
   title: string;
-  description: string;
+  description: (React.ReactNode | React.ReactNode[])[];
   desktopImage: string;
   mobileImage: string;
   isExpanded: boolean;
   onToggle: () => void;
 }
 
-const StepSection: React.FC<StepSectionProps> = ({ icon, title, description, desktopImage, mobileImage, isExpanded, onToggle }) => {
+const StepSection: React.FC<StepSectionProps> = ({ icon, title, description, isExpanded, onToggle }) => {
+  const renderFormattedText = (text: (React.ReactNode | React.ReactNode[])[]) => {
+    return text.map((item, index) => {
+      if (Array.isArray(item)) {
+        return (
+          <Column key={`list-${index}`} className={styles.bulletList}>
+            {item}
+          </Column>
+        );
+      }
+      return item;
+    });
+  };
+
   return (
     <Column className={`${styles.step} ${isExpanded ? styles.expanded : ''}`} onClick={onToggle}>
       <Container className={styles.stepHeader}>
@@ -33,22 +46,8 @@ const StepSection: React.FC<StepSectionProps> = ({ icon, title, description, des
       </Container>
       {isExpanded && (
         <Column className={styles.stepContent}>
-          <Column className={styles.stepDescription} style={{ gap: '1.5rem' }}>
-            <Text size={1.25}>{description}</Text>
-            <Image 
-              src={desktopImage} 
-              alt={title} 
-              className={styles.desktopAlbumImage}
-              width={800}
-              height={533}
-            />
-            <Image 
-              src={mobileImage} 
-              alt={title} 
-              className={styles.mobileAlbumImage}
-              width={400}
-              height={533}
-            />
+          <Column className={styles.stepDescription}>
+            {renderFormattedText(description)}
           </Column>
         </Column>
       )}
@@ -62,38 +61,86 @@ const HowToPage = () => {
   const steps = [
     {
       icon: albumIcon,
-      title: "Step 1: Create Your Albums",
-      description: "Start by creating custom albums for different moments of your wedding journey. From engagement photos to the ceremony, organize your memories exactly how you want them.",
-      desktopImage: "/product/DesktopAlbums.png",
-      mobileImage: "/product/MobileAlbums.png"
+      title: "Create Your Wedding Gallery",
+      description: [
+        <Text key="header" weight={600} className={styles.stepHeader}>Get started in seconds:</Text>,
+        [
+          <Text key="step1" className={styles.stepItem}>Go to ourweddingrecap.com or click <Text weight={600}className={styles.highlight}>Start Now</Text> above</Text>,
+          <Text key="step2" className={styles.stepItem}>Enter your name, email, and wedding gallery name</Text>,
+          <Text key="step3" className={styles.stepItem}>(Optional) Add your wedding website—we'll sync your photos and events automatically!</Text>,
+        ],
+        <Text key="thanks" weight={600}className={styles.stepHeader}>That's it! You'll get an email with your gallery link.</Text>,
+        <Text key="protip" className={styles.protip}>🎯 Pro Tip: Already made a gallery? Just enter your email on the login page to get a magic link—no password needed!</Text>
+      ],
+      desktopImage: "",
+      mobileImage: ""
     },
     {
       icon: qrcodeIcon,
-      title: "Step 2: Generate Your QR Codes",
-      description: "Get unique QR codes for each album. These codes can be printed on your wedding stationery, making it easy for guests to upload photos to the right album.",
-      desktopImage: "/product/DesktopQR.png",
-      mobileImage: "/product/MobileQR.png"
+      title: "Download & Share Your QR Code",
+      description: [
+        <Text key="intro" className={styles.paragraph}>Every Recap gallery comes with a unique QR code—so guests can start uploading photos immediately.</Text>,
+        <Text key="header" weight={600} className={styles.stepHeader}>📍 Find your QR code:</Text>,
+        [
+          <Text key="step1" className={styles.stepItem}>Tap the QR icon at the top of your gallery</Text>,
+          <Text key="step2" className={styles.stepItem}>Customize the color, choose a specific album, or download the PNG</Text>,
+          <Text key="step3" className={styles.stepItem}>Print it or share the link however you like!</Text>
+        ],
+        <Text key="useHeader" weight={600} className={styles.stepHeader}>💡 Where to Use It:</Text>,
+        [
+          <Text key="use1" className={styles.checkItem}><Text weight={600} className={styles.highlight}>Save-the-dates & invitations</Text> → Guests can start uploading early!</Text>,
+          <Text key="use2" className={styles.checkItem}><Text weight={600} className={styles.highlight}>Wedding signs, table numbers, place cards</Text> → Perfect for easy guest access</Text>,
+          <Text key="use3" className={styles.checkItem}><Text weight={600} className={styles.highlight}>Thank-you cards</Text> → A final reminder to upload any last photos</Text>
+        ]
+      ],
+      desktopImage: "",
+      mobileImage: ""
     },
     {
       icon: shareNodesIcon,
-      title: "Step 3: Share with Guests",
-      description: "Add your QR codes to save-the-dates, invitations, place cards, and more. Guests can scan and upload photos instantly, no app required.",
-      desktopImage: "/product/DesktopShare.png",
-      mobileImage: "/product/MobileShare.png"
+      title: "Guests Upload Photos & Videos—No App, No Account!",
+      description: [
+        <Text key="header" weight={600} className={styles.stepHeader}>When guests scan your QR code:</Text>,
+        [
+          <Text key="step1" className={styles.stepItem}>They instantly access your gallery (or a specific album)</Text>,
+          <Text key="step2" className={styles.stepItem}>They enter their name (no account needed!)</Text>,
+          <Text key="step3" className={styles.stepItem}>They upload photos/videos straight from their camera roll or take a picture on the spot</Text>
+        ],
+        <Text key="privacy" className={styles.protip}>🛡 Privacy Options: Guests can choose to upload privately (only visible to you) or share with everyone in the gallery.</Text>
+      ],
+      desktopImage: "",
+      mobileImage: ""
     },
     {
       icon: weddingIcon,
-      title: "Step 4: Send Friendly Reminders",
-      description: "Keep the photo sharing going with gentle reminders to your guests. Encourage them to share their favorite moments before, during, and after your special day.",
-      desktopImage: "/product/DesktopNoti.png",
-      mobileImage: "/product/MobileNoti.png"
+      title: "Guests Get Helpful Reminders",
+      description: [
+        <Text key="header" weight={600} className={styles.stepHeader}>If guests enter their phone number or email, they'll receive:</Text>,
+        [
+          <Text key="reminder1" className={styles.emojiItem}>📅 Day-of reminders (Where to go, what time, what to wear)</Text>,
+          <Text key="reminder2" className={styles.emojiItem}>📸 Pre-wedding prompts (e.g., "100 days until 'I do!' Upload your favorite photos of us!")</Text>,
+          <Text key="reminder3" className={styles.emojiItem}>🎉 Post-wedding nudge ("Thanks for celebrating with us! Upload your wedding pics here!")</Text>
+        ]
+      ],
+      desktopImage: "",
+      mobileImage: ""
     },
     {
       icon: photoFilmIcon,
-      title: "Step 5: Watch Your Memories Come Alive",
-      description: "Watch as your gallery fills with photos from every guest. Download, share, and relive your wedding day through everyone's eyes.",
-      desktopImage: "/product/DesktopGallery.png",
-      mobileImage: "/product/MobileGallery.png"
+      title: "Manage Your Gallery & Download Everything",
+      description: [
+        <Text key="header" weight={600} className={styles.stepHeader}>After the wedding, you can:</Text>,
+        [
+          <Text key="feature1" className={styles.checkItem}>Download all photos & videos</Text>,
+          <Text key="feature2" className={styles.checkItem}>Organize them into albums</Text>,
+          <Text key="feature3" className={styles.checkItem}>(Coming soon!) Create a wedding recap video</Text>,
+          <Text key="feature4" className={styles.checkItem}>(Coming soon!) Tag guests in photos</Text>
+        ],
+        <Text key="helpHeader" weight={600} className={styles.stepHeader}>💬 Need Help?</Text>,
+        <Text key="help" className={styles.paragraph}>Email us at aaron@ourweddingrecap.com—we'll reply within 12 hours!</Text>
+      ],
+      desktopImage: "",
+      mobileImage: ""
     }
   ];
 
@@ -105,15 +152,18 @@ const HowToPage = () => {
             <Image src="/branding/wordmark.png" alt="Recap" width={100} height={40} />
           </Link>
         </Container>
+        <Link href="/create" className={styles.startButton}>
+          Start Now
+        </Link>
       </Container>
 
       <Column className={styles.mainContent}>
         <Column className={styles.titleContainer}>
           <Text as="h1" weight={700} size={2.5} className={styles.title}>
-            How It Works
+            How to Use Recap for Your Wedding
           </Text>
           <Text size={1.25} className={styles.subtitle}>
-            Five simple steps to collect every photo from every guest
+            The easiest way to collect and share your guests' photos—before, during, and after your wedding! 🎉
           </Text>
         </Column>
 
