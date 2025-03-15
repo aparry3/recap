@@ -8,6 +8,7 @@ import { circleVideoIcon, downloadIcon, photoFilmIcon, shareNodesIcon, zipIcon }
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { selectPerson } from '@/lib/db/personService';
+import Footer from './components/Footer';
 
 const Header = () => {
     return (
@@ -475,33 +476,6 @@ const Notifications = () => {
 
 }
 
-
-const Footer = () => {
-    return (
-        <Container as='footer' className={styles.footer} padding={2}>
-            <Container style={{flexGrow: 1}}>
-                <Column padding={1}>
-                    <Text size={1.2} weight={600}>Ready to collect all your wedding photos?</Text>
-                    <Container padding={1}>
-                        <Link href='/create' className={styles.link}>
-                            <Container className={styles.actionButton} padding={0.5}>
-                                <Text size={1.2} weight={700}>Create Your Wedding Gallery</Text>
-                            </Container>
-                        </Link>
-                    </Container>
-                </Column>
-            </Container>
-            <Column className={styles.branding}>
-                <Row className={styles.brandingRow}>
-                    <Image src='/branding/wordmarkInverse.png' alt='Recap wedding photo sharing platform' layout='intrinsic' height={100} width={100}/>
-                </Row>
-                <Row className={styles.brandingRow}>
-                    <Text>The ultimate wedding photo sharing platform that collects every moment from every guest in one beautiful gallery. No app required, unlimited uploads, and easy organization of all your cherished memories.</Text>
-                </Row>    
-            </Column>
-        </Container>
-    )
-}
 
 const HomePage: FC = async ({}) => {
     const personId = cookies().get('personId')?.value

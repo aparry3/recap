@@ -15,6 +15,27 @@
   width: 100%;
   left: 0;
   right: 0;
+
+  .startButton {
+    background-color: var(--primary);
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 1rem;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    
+    &:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+    
+    @media (max-width: 768px) {
+      padding: 0.5rem 1rem;
+      font-size: 0.875rem;
+    }
+  }
 }
 
 .wordmarkContainer {
@@ -93,7 +114,6 @@
     
     &.expanded {
       min-height: 80vh;
-      max-height: 80vh;
       overflow: hidden;
     }
   }
@@ -142,47 +162,105 @@
   
   .stepContent {
     .stepDescription {
+      padding: 1.5rem;
       gap: 1.5rem;
-      
-      @media (max-width: 768px) {
-        gap: 1rem;
+      display: flex;
+      flex-direction: column;
+      font-size: 1.125rem;
+      line-height: 1.6;
+      color: var(--text-primary);
+      .highlight {
+        color: var(--primary-dark);
+  
       }
-      
-      p {
-        color: #666;
+
+      .bulletList {
+        gap: 0.75rem;
+        align-items: flex-start !important;
+      }
+
+      .paragraph {
+        margin-bottom: 1rem;
+      }
+
+      .stepHeader {
         font-size: 1.25rem;
-        line-height: 1.6;
-        
-        @media (max-width: 768px) {
-          font-size: 1.125rem;
-          line-height: 1.5;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .stepItem {
+        margin-bottom: 0.75rem;
+        padding-left: 1.5rem;
+        position: relative;
+
+        &::before {
+          content: "•";
+          position: absolute;
+          left: 0;
+          color: var(--primary);
         }
       }
 
-      .desktopAlbumImage {
-        display: block;
-        width: 100% !important;
-        height: auto !important;
-        aspect-ratio: 3/2;
-        object-fit: cover;
-        object-position: top center;
-        
-        @media (max-width: 768px) {
-          display: none;
+      .checkItem {
+        margin-bottom: 0.75rem;
+        padding-left: 1.75rem;
+        position: relative;
+
+        &::before {
+          content: "✓";
+          position: absolute;
+          left: 0;
+          color: var(--primary);
+          font-weight: bold;
         }
       }
 
-      .mobileAlbumImage {
-        display: none;
-        width: 100% !important;
-        height: auto !important;
-        aspect-ratio: 3/2;
-        object-fit: cover;
-        object-position: top center;
-        
-        @media (max-width: 768px) {
-          display: block;
-          aspect-ratio: unset;
+      .emojiItem {
+        margin-bottom: 0.75rem;
+        display: flex;
+        align-items: flex-start;
+        gap: 0.75rem;
+      }
+
+      .protip {
+        margin-top: 1rem;
+        padding: 1rem;
+        background-color: rgba(var(--primary-rgb), 0.05);
+        border-radius: 8px;
+        border-left: 4px solid var(--primary);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      span.arrow {
+        color: var(--primary);
+        margin: 0 0.5rem;
+        font-weight: bold;
+      }
+
+      p:has(span[role="img"]) {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.5rem;
+      }
+
+      p:has(span[role="img"]:first-child) {
+        margin-left: 1.5rem;
+        position: relative;
+
+        &::before {
+          content: "";
+          position: absolute;
+          left: -1.5rem;
+          top: 0.5rem;
+          width: 0.5rem;
+          height: 0.5rem;
+          border-radius: 50%;
+          background-color: var(--primary);
         }
       }
     }
