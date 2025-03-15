@@ -12,6 +12,9 @@
   position: sticky;
   top: 0;
   z-index: 10;
+  width: 100%;
+  left: 0;
+  right: 0;
 }
 
 .wordmarkContainer {
@@ -31,7 +34,6 @@
   flex: 1;
   padding: 2rem 1rem;
   max-width: 1200px;
-  margin: 0 auto;
   width: 100%;
   
   @media (max-width: 768px) {
@@ -68,9 +70,10 @@
 
 .stepsContainer {
   gap: 4rem;
-  
+  width: 80%;
   @media (max-width: 768px) {
     gap: 2rem;
+    width: 100%;
   }
 }
 
@@ -79,45 +82,60 @@
   border-radius: 12px;
   padding: 2rem;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  width: 100%;
+  max-width: 800px;
+  transition: all 0.3s ease;
   
   @media (max-width: 768px) {
     padding: 1.25rem;
     border-radius: 8px;
+    min-height: auto;
+    
+    &.expanded {
+      min-height: 80vh;
+      max-height: 80vh;
+      overflow: hidden;
+    }
   }
   
   .stepHeader {
-    margin-bottom: 1.5rem;
-    
-    @media (max-width: 768px) {
-      margin-bottom: 1rem;
-    }
+    align-items: center;
+    gap: 1rem;
+    justify-content: space-between !important;
+    width: 100%;
+    cursor: pointer;
     
     h2 {
       color: #1a1a1a;
       position: relative;
-      padding-left: 2.5rem;
       
       @media (max-width: 768px) {
         font-size: 1.25rem;
-        padding-left: 2rem;
+      }
+    }
+
+    .stepIcon {
+      font-size: 2rem;
+      color: var(--primary);
+      opacity: 0.8;
+      
+      @media (max-width: 768px) {
+        font-size: 1.5rem;
+      }
+    }
+
+    .chevronIcon {
+      font-size: 1.5rem;
+      color: var(--primary);
+      opacity: 0.6;
+      transition: transform 0.3s ease;
+      
+      &.expanded {
+        transform: rotate(180deg);
       }
       
-      &:before {
-        content: '';
-        position: absolute;
-        left: 0;
-        top: 50%;
-        transform: translateY(-50%);
-        width: 2rem;
-        height: 2rem;
-        background: #007AFF;
-        border-radius: 50%;
-        opacity: 0.1;
-        
-        @media (max-width: 768px) {
-          width: 1.5rem;
-          height: 1.5rem;
-        }
+      @media (max-width: 768px) {
+        font-size: 1.25rem;
       }
     }
   }
@@ -132,12 +150,39 @@
       
       p {
         color: #666;
-        font-size: 1.1rem;
+        font-size: 1.25rem;
         line-height: 1.6;
         
         @media (max-width: 768px) {
-          font-size: 1rem;
+          font-size: 1.125rem;
           line-height: 1.5;
+        }
+      }
+
+      .desktopAlbumImage {
+        display: block;
+        width: 100% !important;
+        height: auto !important;
+        aspect-ratio: 3/2;
+        object-fit: cover;
+        object-position: top center;
+        
+        @media (max-width: 768px) {
+          display: none;
+        }
+      }
+
+      .mobileAlbumImage {
+        display: none;
+        width: 100% !important;
+        height: auto !important;
+        aspect-ratio: 3/2;
+        object-fit: cover;
+        object-position: top center;
+        
+        @media (max-width: 768px) {
+          display: block;
+          aspect-ratio: unset;
         }
       }
     }

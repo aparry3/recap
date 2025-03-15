@@ -1,4 +1,5 @@
 import sgMail from '@sendgrid/mail';
+import { getWelcomeEmailTemplate } from './email/templates/welcome';
 
 const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY || ''
 
@@ -16,6 +17,16 @@ export interface TemplateData {
   galleryName: string;
   buttonUrl: string;
   name: string;
+}
+
+const HOW_TO_URL = 'https://recap.photos/howto'
+const CREATE_URL = 'https://recap.photos/create' 
+
+export interface WelcomeEmailData {
+  email: string;
+  name: string;
+  howToUrl?: string;
+  createUrl?: string;
 }
 
 export class SendGridClient {
@@ -50,12 +61,33 @@ export class SendGridClient {
     return await this._sendTemplateEmail(email, templateData, SENDGRID_VERIFICATION_ID)
   }
 
-  async sendCreationEmail(email: string, templateData: TemplateData): Promise<boolean> {
-    return await this._sendTemplateEmail(email, templateData, SENDGRID_CREATION_ID)
-  }
-
   async sendWelcomeEmail(email: string, templateData: TemplateData): Promise<boolean> {
     return await this._sendTemplateEmail(email, templateData, SENDGRID_WELCOME_ID)
+  }
+
+  async sendCreationEmail(email: string, name: string): Promise<boolean> {
+    try {
+      const response = await sgMail.send({
+        to: email,
+        from: {
+          email: SENDGRID_EMAIL,
+          name: 'Recap'
+        },
+        subject: 'Welcome to Recap! Let\'s Start Collecting Your Wedding Memories 🎉',
+        html: getWelcomeEmailTemplate({
+          name,
+          howToUrl: HOW_TO_URL,
+          createUrl: CREATE_URL
+        }),
+      }).catch(err => {
+        throw new Error(`Error sending welcome email:, ${err.response.body.errors[0].message}`)
+      });
+      
+      return response[0].statusCode >= 200 && response[0].statusCode < 300;
+    } catch (error) {
+      console.error('Error sending welcome email:', error);
+      return false;
+    }
   }
 }
 
