@@ -49,7 +49,7 @@ export const POST = async (req: Request) => {
         //     name: person.name,
         //     buttonUrl: `${process.env.BASE_URL}/verification/${verification.id}`
         // })
-        sendGridClient.sendCreationEmail(person.email, person.name)
+        sendGridClient.sendCreationEmail(person.email, person.name, `${process.env.BASE_URL}/${gallery.path}`)
 
         
     } catch (error: any) {
