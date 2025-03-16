@@ -27,6 +27,7 @@
     left: 0;
     padding: 0.5rem;
     gap: 1rem;
+    background: var(--background-light);
 }
 
 .wordmarkContainer {
@@ -440,12 +441,33 @@
     background: var(--background-light);
 }
 
+.mobileMenuButton {
+    display: none;
+}
+
+.mobileMenu {
+    display: none;
+}
+
+.mobileMenuHeader {
+    display: none;
+}
+
+.mobileMenuContent {
+    display: none;
+}
+
+.mobileMenuItem {
+    display: none;
+}
+
 @media only screen and (max-width: 600px) {
     .header {
         .action {
             display: none !important;
         }
-    };
+    }
+    
     .subheadingText {
         font-size: 1.4rem !important;
         margin: 0.5rem 0;
