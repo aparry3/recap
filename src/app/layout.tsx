@@ -59,6 +59,9 @@ export default function RootLayout({
         <meta name="viewport" content="width=device-width, initial-scale=1.0" id="viewportMeta" />
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
         
+        {/* Pinterest domain verification */}
+        <meta name="p:domain_verify" content="fd45aad757d7a7e5692928b4c3260b94" />
+        
         {/* Schema.org structured data */}
         <script
           type="application/ld+json"

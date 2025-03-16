@@ -9,6 +9,7 @@ import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { selectPerson } from '@/lib/db/personService';
 import Footer from './components/Footer';
+import MobileHeader from './components/MobileHeader';
 
 const Header = () => {
     return (
@@ -28,6 +29,7 @@ const Header = () => {
                     </Container>
                 </Link>
             </Container>
+            <MobileHeader />
         </Container>
     )
 }
