@@ -19,6 +19,9 @@ export const metadata: Metadata = {
   title: 'Recap - The Ultimate Wedding Photo Sharing Platform',
   description: 'Recap helps couples collect, organize and share wedding photos from all their guests in one beautiful gallery - no app required. Create your free wedding photo gallery today.',
   keywords: 'wedding photo sharing, wedding photo gallery, guest photos, QR code photo sharing, wedding memories, collaborative photo album',
+  other: {
+    'p:domain_verify': 'fd45aad757d7a7e5692928b4c3260b94'
+  },
   openGraph: {
     title: 'Recap - The Ultimate Wedding Photo Sharing Platform',
     description: 'Collect & share all your wedding photos in one beautiful gallery - no app required.',
