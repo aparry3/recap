@@ -448,14 +448,18 @@ const Website = () => {
             </Container>
             <Container className={styles.weddingWebsiteImagesContainer}>
                 <Container className={styles.weddingWebsiteImageContainer} padding={1}>
-                    <Container id="product" className={styles.weddingWebsiteImage} padding={1}>
-                        <Image src='/branding/TheKnot.png' alt='Recap integrates with The Knot wedding websites' className={styles.image} layout='responsive' height={572} width={940}/>
-                    </Container>
+                    <Link href="/create" className={styles.weddingWebsiteLink}>
+                        <Container id="product" className={styles.weddingWebsiteImage} padding={1}>
+                            <Image src='/branding/TheKnot.png' alt='Recap integrates with The Knot wedding websites' className={styles.image} layout='responsive' height={572} width={940}/>
+                        </Container>
+                    </Link>
                 </Container>
                 <Container className={styles.weddingWebsiteImageContainer} padding={1}>
-                    <Container className={styles.weddingWebsiteImage} padding={1}>
-                        <Image src='/branding/Zola.png' alt='Recap integrates with Zola wedding websites' className={styles.image} layout='responsive' height={572} width={940}/>
-                    </Container>
+                    <Link href="/create" className={styles.weddingWebsiteLink}>
+                        <Container className={styles.weddingWebsiteImage} padding={1}>
+                            <Image src='/branding/Zola.png' alt='Recap integrates with Zola wedding websites' className={styles.image} layout='responsive' height={572} width={940}/>
+                        </Container>
+                    </Link>
                 </Container>
             </Container>
         </Column>

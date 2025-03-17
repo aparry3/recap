@@ -432,6 +432,12 @@
     width: 30%;
     min-width: 15rem;
     flex-shrink: 0;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+
+    &:hover {
+        transform: scale(1.05);
+    }
 }
 .weddingWebsiteImage {
     width: 100%;
@@ -599,6 +605,12 @@
     }
     .weddingWebsiteImageContainer {
         width: 100%;
+    }
+    .weddingWebsiteLink {
+        width: 100%;
+        &:hover {
+            transform: none;
+        }
     }
     
     .pricingTable {
