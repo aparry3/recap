@@ -49,7 +49,16 @@ export const POST = async (req: Request) => {
         //     name: person.name,
         //     buttonUrl: `${process.env.BASE_URL}/verification/${verification.id}`
         // })
-        sendGridClient.sendCreationEmail(person.email, person.name, `${process.env.BASE_URL}/${gallery.path}`)
+        await Promise.all([
+            sendGridClient.sendCreationEmail(person.email, person.name, `${process.env.BASE_URL}/${gallery.path}`),
+            sendGridClient.sendOrderNotification({
+                customerName: person.name,
+                customerEmail: person.email,
+                galleryName: gallery.name,
+                galleryUrl: `${process.env.BASE_URL}/${gallery.path}`,
+                orderDate: new Date().toISOString()
+            })
+        ])
 
         
     } catch (error: any) {

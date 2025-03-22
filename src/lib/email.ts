@@ -1,5 +1,6 @@
 import sgMail from '@sendgrid/mail';
 import { getWelcomeEmailTemplate } from './email/templates/welcome';
+import { getOrderNotificationTemplate } from './email/templates/order_notification';
 
 const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY || ''
 
@@ -8,9 +9,10 @@ const SENDGRID_CREATION_ID = process.env.SENDGRID_CREATION_ID || ''
 const SENDGRID_WELCOME_ID = process.env.SENDGRID_WELCOME_ID || ''
 
 const SENDGRID_EMAIL = process.env.SENDGRID_EMAIL || ''
+const ORDER_NOTIFICATION_EMAIL = process.env.ORDER_NOTIFICATION_EMAIL || ''
 
-if (!SENDGRID_API_KEY || !SENDGRID_VERIFICATION_ID || !SENDGRID_EMAIL || !SENDGRID_WELCOME_ID || !SENDGRID_CREATION_ID) {
-    throw new Error('SENDGRID_API_KEY or SENDGRID_TEMPLATE_ID || SENDGRID_EMAIL is not set');
+if (!SENDGRID_API_KEY || !SENDGRID_VERIFICATION_ID || !SENDGRID_EMAIL || !SENDGRID_WELCOME_ID || !SENDGRID_CREATION_ID || !ORDER_NOTIFICATION_EMAIL) {
+    throw new Error('Required environment variables are not set');
 }
 
 export interface TemplateData {
@@ -23,6 +25,14 @@ export interface WelcomeEmailData {
   email: string;
   name: string;
   galleryUrl: string;
+}
+
+export interface OrderNotificationData {
+    customerName: string;
+    customerEmail: string;
+    galleryName: string;
+    galleryUrl: string;
+    orderDate: string;
 }
 
 export class SendGridClient {
@@ -81,6 +91,27 @@ export class SendGridClient {
       return response[0].statusCode >= 200 && response[0].statusCode < 300;
     } catch (error) {
       console.error('Error sending welcome email:', error);
+      return false;
+    }
+  }
+
+  async sendOrderNotification(data: OrderNotificationData): Promise<boolean> {
+    try {
+      const response = await sgMail.send({
+        to: ORDER_NOTIFICATION_EMAIL,
+        from: {
+          email: SENDGRID_EMAIL,
+          name: 'Recap'
+        },
+        subject: `New Gallery Order - ${data.galleryName}`,
+        html: getOrderNotificationTemplate(data),
+      }).catch(err => {
+        throw new Error(`Error sending order notification email: ${err.response.body.errors[0].message}`)
+      });
+      
+      return response[0].statusCode >= 200 && response[0].statusCode < 300;
+    } catch (error) {
+      console.error('Error sending order notification email:', error);
       return false;
     }
   }
