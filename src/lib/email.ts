@@ -71,7 +71,7 @@ export class SendGridClient {
     return await this._sendTemplateEmail(email, templateData, SENDGRID_WELCOME_ID)
   }
 
-  async sendCreationEmail(email: string, name: string, galleryUrl: string): Promise<boolean> {
+  async sendCreationEmail(email: string, name: string, galleryUrl: string, password: string): Promise<boolean> {
     try {
       const response = await sgMail.send({
         to: email,
@@ -82,7 +82,8 @@ export class SendGridClient {
         subject: 'Your Recap Gallery is Ready! 🎉',
         html: getWelcomeEmailTemplate({
           name,
-          galleryUrl
+          galleryUrl,
+          password: password
         }),
       }).catch(err => {
         throw new Error(`Error sending welcome email:, ${err.response.body.errors[0].message}`)

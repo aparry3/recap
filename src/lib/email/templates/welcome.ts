@@ -1,11 +1,13 @@
 interface WelcomeEmailData {
     name: string;
     galleryUrl: string;
+    password: string;
 }
 
 export const getWelcomeEmailTemplate = ({
     name,
-    galleryUrl
+    galleryUrl,
+    password
 }: WelcomeEmailData): string => {
     return `<!DOCTYPE html>
 <html>
@@ -67,7 +69,7 @@ export const getWelcomeEmailTemplate = ({
                                 <tr>
                                     <td style="padding: 20px; text-align: center;">
                                         <p style="margin: 0 0 15px; font-weight: 600; color: #926C60;">Your personal gallery link:</p>
-                                        <a href="${galleryUrl}" style="color: #CA9B8C; text-decoration: none; font-weight: 500;">${galleryUrl}</a>
+                                        <a href="${galleryUrl}?password=${password}" style="display: inline-block; padding: 12px 24px; background-color: #926C60; color: #FFFFFF; text-decoration: none; border-radius: 4px; font-weight: 600; font-size: 16px;">View Gallery</a>
                                     </td>
                                 </tr>
                             </table>

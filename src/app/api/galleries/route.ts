@@ -50,7 +50,7 @@ export const POST = async (req: Request) => {
         //     buttonUrl: `${process.env.BASE_URL}/verification/${verification.id}`
         // })
         await Promise.all([
-            sendGridClient.sendCreationEmail(person.email, person.name, `${process.env.BASE_URL}/${gallery.path}`),
+            sendGridClient.sendCreationEmail(person.email, person.name, `${process.env.BASE_URL}/${gallery.path}`, gallery.password),
             sendGridClient.sendOrderNotification({
                 customerName: person.name,
                 customerEmail: person.email,
