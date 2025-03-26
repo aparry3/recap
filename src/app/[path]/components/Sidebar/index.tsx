@@ -1,5 +1,5 @@
 "use client"
-import { houseIcon, gridIcon, userIcon, leftIcon, qrcodeIcon, gearIcon } from "@/lib/icons"
+import { houseIcon, gridIcon, userIcon, leftIcon, qrcodeIcon, gearIcon, circleInfoIcon } from "@/lib/icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { FC, useCallback } from "react"
 import { Column, Container, Row, Text } from "react-web-layout-components"
@@ -43,7 +43,7 @@ const SidebarContent: FC<Omit<SidebarProps, 'open'>> = () => {
         </Container>
         <Image src='/branding/wordmark.png' alt='wordmark' layout='intrinsic' height={100} width={100}/>
         <Container className={styles.headerIcon}>
-            <FontAwesomeIcon icon={qrcodeIcon} className={styles.icon}/>
+            <FontAwesomeIcon icon={circleInfoIcon} className={styles.icon}/>
         </Container>    
      </Container>
      <Container className={styles.dash} />

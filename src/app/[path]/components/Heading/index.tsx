@@ -1,6 +1,6 @@
 "use client";
 import Button from "@/components/Button"
-import { gearIcon, qrcodeIcon } from "@/lib/icons"
+import { gearIcon, qrcodeIcon, circleInfoIcon } from "@/lib/icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { Column, Container, Row, Text } from "react-web-layout-components"
 import styles from './Heading.module.scss'
@@ -58,6 +58,11 @@ const Heading: FC<{onQrClick?: () => void, showGalleryName?: boolean}> = ({onQrC
         </Column>
         {onQrClick && (
         <Container className={styles.actionContainer} padding>
+            <Container padding={[0, 0.5]} className={styles.qrContainer}>
+                <Container padding={0.5} className={styles.iconContainer}>
+                    <FontAwesomeIcon icon={circleInfoIcon} className={styles.icon} />
+                </Container>
+            </Container>
             <Container padding={[0, 0.5]} className={styles.qrContainer}>
                 <Container padding={0.5} className={styles.iconContainer} onClick={onQrClick}>
                     <FontAwesomeIcon icon={qrcodeIcon} className={styles.icon} />

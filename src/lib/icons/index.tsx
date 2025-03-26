@@ -1,12 +1,12 @@
 // lib/fontawesome.js
 import { findIconDefinition, icon, IconDefinition, library } from '@fortawesome/fontawesome-svg-core';
-import { faSquare, faHeart as faHeartRegular } from '@fortawesome/pro-regular-svg-icons';
+import { faSquare, faHeart as faHeartRegular, faCircleInfo } from '@fortawesome/pro-regular-svg-icons';
 import { faGift, faGear, faQrcode, faFileZipper, faPhotoFilm, faCircleVideo, faDownload, faShareNodes, faLink, faUpload, faGridHorizontal, faHouse, faUser, faBars, faChevronLeft, faX, faCheck, faArrowLeft, faChevronRight, faChevronDown, faChevronUp, faCheckSquare, faTrash, faRectangleHistory, faRing, faPrint, faCopy, faHeart } from '@fortawesome/pro-solid-svg-icons';
 import { faFacebook, faInstagram } from '@fortawesome/free-brands-svg-icons'
 import {Actions} from './actions'
 
 // Add any icons you want here
-library.add(faGift, faCopy, faTrash, faGear, faRectangleHistory, faChevronRight, faChevronDown, faChevronUp, faCheck, faX, faArrowLeft, faChevronLeft, faUser, faBars, faHouse, faGridHorizontal, faUpload,faQrcode, faFileZipper, faPhotoFilm, faCircleVideo, faDownload, faShareNodes, faLink, faCheckSquare, faSquare as IconDefinition, faInstagram as IconDefinition, faFacebook as IconDefinition, faRing as IconDefinition, faPrint as IconDefinition, faHeart as IconDefinition, faHeartRegular as IconDefinition);
+library.add(faGift, faCopy, faTrash, faGear, faRectangleHistory, faChevronRight, faChevronDown, faChevronUp, faCheck, faX, faArrowLeft, faChevronLeft, faUser, faBars, faHouse, faGridHorizontal, faUpload,faQrcode, faFileZipper, faPhotoFilm, faCircleVideo, faDownload, faShareNodes, faLink, faCheckSquare, faSquare as IconDefinition, faInstagram as IconDefinition, faFacebook as IconDefinition, faRing as IconDefinition, faPrint as IconDefinition, faHeart as IconDefinition, faHeartRegular as IconDefinition, faCircleInfo as IconDefinition);
 
 
 const download = findIconDefinition({ prefix: 'fas', iconName: 'download' })
@@ -101,6 +101,9 @@ export const heartIcon = icon(heart)
 
 const heartRegular = findIconDefinition({ prefix: 'far', iconName: 'heart' })
 export const heartRegularIcon = icon(heartRegular)
+
+const circleInfo = findIconDefinition({ prefix: 'far', iconName: 'circle-info' })
+export const circleInfoIcon = icon(circleInfo)
 
 export {Actions}
 
