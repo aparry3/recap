@@ -235,7 +235,7 @@ const PricingComparison = () => {
             <Column className={styles.pricingTable} padding={2}>
                 {weddingCosts.map((item, index) => (
                     item.isLink ? (
-                        <Link key={index} href="/create" className={styles.link}>
+                        <Link key={index} href="/create" className={styles.priceLink}>
                             <Row className={`${styles.pricingItem} ${styles.highlightRow}`} padding={1} justify='space-between'>
                                 <Text className={styles.pricingItemText} weight={600}>{item.item}</Text>
                                 <Text className={styles.pricingCost}>${item.cost.toLocaleString()}</Text>

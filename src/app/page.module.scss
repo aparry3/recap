@@ -20,6 +20,16 @@
     background: var(--background-light);
 }
 
+.priceLink {
+    cursor: pointer;
+    text-decoration: none;
+    color: var(--primary-dark);
+    width: 100%;
+    &:hover {
+        color: var(--primary);
+    }
+}
+
 .link {
     cursor: pointer;
     text-decoration: none;
