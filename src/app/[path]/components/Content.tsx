@@ -1,7 +1,7 @@
 "use client";
 import { FC, useEffect, useMemo, useRef, useState } from 'react'
 import styles from './Content.module.scss'
-import { Column, Container } from 'react-web-layout-components'
+import { Column } from 'react-web-layout-components'
 import Heading from './Heading'
 import Home from './Pages/Home';
 import Gallery from './Pages/Gallery';
@@ -13,7 +13,7 @@ import RefreshStatusComponent, {RefreshStatus} from '@/components/RefreshStatusC
 import useNavigation from '@/helpers/providers/navigation';
 
 const OVERSCROLL_THRESHOLD = 150
-const Content: FC<{onQrClick: () => void}> = ({onQrClick}) => {
+const Content: FC<{onQrClick: () => void, onInfoClick: () => void}> = ({onQrClick, onInfoClick}) => {
     const {page} = useNavigation()
     const {loadGallery} = useGallery()
     const {loadAlbums} = useAlbums()
@@ -121,7 +121,7 @@ const Content: FC<{onQrClick: () => void}> = ({onQrClick}) => {
       }, [overscrollDistance]);
       return (
         <Column as="section" className={styles.content} containerRef={contentRef}>
-          <Heading onQrClick={onQrClick} />
+          <Heading onQrClick={onQrClick} onInfoClick={onInfoClick} />
           {currentPage}
           <RefreshStatusComponent
             refreshStatus={refreshStatus}

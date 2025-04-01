@@ -14,8 +14,9 @@ import { useUser } from "@/helpers/providers/user"
 import { Tab } from "../Pages/Gallery"
 
 interface SidebarProps {
+    onInfoClick: () => void
 }
-const SidebarContent: FC<Omit<SidebarProps, 'open'>> = () => {
+const SidebarContent: FC<Omit<SidebarProps, 'open'>> = ({onInfoClick}) => {
     const {personId} = useUser()
     const {handlePageChange, page, setShowSidebar, tab, setTab} = useNavigation()
     const {openSettings} = useGallery()
@@ -59,7 +60,7 @@ const SidebarContent: FC<Omit<SidebarProps, 'open'>> = () => {
         </Container>
         <Image src='/branding/wordmark.png' alt='wordmark' layout='intrinsic' height={100} width={100}/>
         <Container className={styles.headerIcon}>
-            <FontAwesomeIcon icon={circleInfoIcon} className={styles.icon}/>
+            <FontAwesomeIcon icon={circleInfoIcon} className={styles.icon} onClick={onInfoClick}/>
         </Container>    
      </Container>
      <Container className={styles.dash} />
