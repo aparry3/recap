@@ -1,9 +1,10 @@
 import React, { FC, useState } from 'react';
-import { Column, Container, Text } from 'react-web-layout-components';
+import { Column, Container, Row, Text } from 'react-web-layout-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { downIcon } from '@/lib/icons';
 import Image from 'next/image';
 import styles from './index.module.scss';
+
 
 interface StepItem {
   title: string;
@@ -54,32 +55,30 @@ const SectionContainer: FC<SectionContainerProps> = ({ section }) => {
         </Container>
         {isExpanded && (
           <Column className={styles.sectionContent}>
-            <Container className={styles.sectionTitleText}>
-              <Text size={1.5}>
+            {section.description && <Container className={styles.sectionDescription}>
+              <Text className={styles.sectionDescriptionText}>
                 {section.description}
               </Text>
-            </Container>
+            </Container>}
             {section.subSections.map((subsection, subsectionIndex) => (
               <React.Fragment key={subsectionIndex}>
-                <Container>
-                  <Text size={2.5}>
+                <Container className={styles.subsectionTitleContainer}>
+                  <Text className={styles.subsectionTitle}>
                     {subsection.title}
                   </Text>
                 </Container>
                 {subsection.steps.map((step, stepIndex) => (
                   <Container key={stepIndex} className={styles.sectionContentItem}>
-                    <Column className={styles.sectionStepNumber}>
-                      <Container className={styles.sectionStepNumber}>
-                        <Text size={4} weight={600}>
-                          {stepIndex + 1}.
-                        </Text>
-                      </Container>
-                    </Column>
+                    <Row className={styles.sectionStepNumber}>
+                      <Text size={4} weight={600}>
+                        {stepIndex + 1}.
+                      </Text>
+                    </Row>
                     <Column className={styles.sectionStep}>
                       {step.items.map((item, itemIndex) => (
                         <Column key={itemIndex} className={styles.sectionStepItem}>
-                          <Container className={styles.sectionStepItemText}>
-                            <Text size={2.5}>
+                          <Container className={styles.sectionStepItemTextContainer}>
+                            <Text className={styles.sectionStepItemText}>
                               {item.title}
                             </Text>
                           </Container>
@@ -101,6 +100,7 @@ const SectionContainer: FC<SectionContainerProps> = ({ section }) => {
                         </Column>
                       ))}
                     </Column>
+                    <Column className={styles.sectionStepSpacer} />
                   </Container>
                 ))}
                 {subsectionIndex !== section.subSections.length - 1 && (
