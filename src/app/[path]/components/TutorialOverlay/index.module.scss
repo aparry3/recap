@@ -1,94 +1,106 @@
-.overlay {
+
+// SIDEBAR
+.tutorialPage {
+  z-index: 110;
+  width: 100%;
+  height: 100dvh;
   position: fixed;
   top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 1000;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  left:0;
+  padding: 0.5rem !important;
+  background: var(--background-medium);
 }
-
-.backdrop {
-  position: absolute;
-  top: 0;
-  left: 0;
+.header {
   width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.7);
-  backdrop-filter: blur(4px);
 }
-
-.tutorialContainer {
-  position: relative;
+.headerIcon {
+  color: var(--primary);
+  cursor: pointer;
+}
+.contentContainer {
+  width: 100%;
+  flex-grow: 1;
+  justify-content: flex-start !important;
+  overflow: auto;
+  scroll-snap-type: x mandatory; /* For horizontal scrolling */
+}
+.sectionContainer {
+  width: 70%;
+  align-items: flex-start !important;
+  justify-content: flex-start !important;
+  scroll-snap-type: x mandatory; /* For horizontal scrolling */
+  padding: 1rem;
+}
+.section {
+  width: 100%;
+  padding: 1rem;
   background-color: var(--background-light);
   border-radius: 1rem;
-  padding: 2rem;
+  flex-grow: 1;
+  justify-content: flex-start !important;
+  overflow: auto;
+  scroll-snap-type: x mandatory; /* For horizontal scrolling */
+  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
+}
+.sectionTitle {
+  width: 100%;
+  justify-content: flex-start !important;
+  overflow: auto;
+}
+.sectionIcon {
+  padding: 1rem;
+}
+.sectionTitleText {
+  flex-grow: 1;
+  justify-content: flex-start !important;
+  overflow: auto;
+}
+.icon {
+  height: 1.5rem;
+  width: 1.5rem;
+  color: var(--primary);
+}
+.sectionContent {
+  width: 100%;
+  padding: 1rem 0;
+  justify-content: flex-start !important;
+  overflow: auto;
+}
+.sectionContentItem {
+  width: 100%;
+  align-items: flex-start !important;
+  justify-content: flex-start !important;
+  overflow: auto;
+}
+.sectionStepNumber {
+  height: 100%;
+  width: 10%;
+}
+.sectionStep {
+  height: 100%;
   width: 90%;
-  max-width: 500px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-  z-index: 1001;
+}
+.sectionStepItemImageContainer {
+  padding: 1rem;
+}
+.sectionStepItemImage {
+  width: 12rem;
+  max-height: 8rem;
+  object-fit: contain;
+}
+.sectionDivider {
+  width: 100%;
+  height: 1px;
+  background-color: var(--primary-dark);
 }
 
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1.5rem;
+@media only screen and (max-width: 768px) {
+  
+  
 }
-
-.closeIcon {
-  cursor: pointer;
-  color: var(--text-dark);
-  opacity: 0.6;
-  transition: opacity 0.2s ease;
-
+.colorContainer {
+  padding: 0.25rem;
   &:hover {
-    opacity: 1;
+      padding:0.0;
   }
 }
-
-.content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  margin-bottom: 2rem;
-
-  .icon {
-    font-size: 2.5rem;
-    color: var(--primary);
-    margin-bottom: 1rem;
-  }
-}
-
-.footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.skipText {
-  color: var(--text-dark);
-  opacity: 0.6;
-  cursor: pointer;
-  transition: opacity 0.2s ease;
-
-  &:hover {
-    opacity: 1;
-  }
-}
-
-@media (max-width: 768px) {
-  .tutorialContainer {
-    padding: 1.5rem;
-    width: 95%;
-  }
-
-  .content {
-    .icon {
-      font-size: 2rem;
-    }
-  }
-} 

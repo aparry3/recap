@@ -48,7 +48,7 @@ const App: FC<{gallery: Gallery, password?: string, album?: AlbumMediaData}> =  
                                 <Sidebar onInfoClick={() => setShowInfo(true)}/>
                                 <MobileMenu onInfoClick={() => setShowInfo(true)}/>
                                 <Content onQrClick={() => setShowQrCode(true)} onInfoClick={() => setShowInfo(true)} />
-                                <TutorialOverlay />
+                                <TutorialOverlay open={showInfo} onClose={() => setShowInfo(false)} />
                                 {/* {showUploadConfirmation && <Upload /> } */}
                             </>
                             ): (
