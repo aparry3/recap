@@ -33,6 +33,9 @@
   flex-direction: column;
   padding: 2rem;
   gap: 2rem;
+  @media only screen and (max-width: 768px) {
+    padding: 1.5rem 0;
+  }
 }
 
 .sectionContainer {
@@ -63,9 +66,16 @@
   color: var(--primary);
 }
 
-.sectionTitleText {
+.sectionTitleTextContainer {
   flex-grow: 1;
   font-weight: 500;
+}
+
+.sectionTitleText {
+  font-size: 2.5rem !important;
+  @media only screen and (max-width: 768px) {
+    font-size: 1.5rem !important;
+  }
 }
 
 .icon {
@@ -119,9 +129,19 @@
 .sectionStepItemText {
   font-weight: 600 !important;
   font-size: 2rem !important;
+  text-align: center;
   color: var(--text-dark);
+  @media only screen and (max-width: 768px) {
+    font-size: 1.5rem !important;
+  }
 }
 
+.sectionStepNumberText {
+  font-size: 6rem !important;
+  @media only screen and (max-width: 768px) {
+    font-size: 3rem !important;
+  }
+}
 .sectionStepItemDescription {
   color: var(--text-medium);
   font-size: 0.9rem;
@@ -158,6 +178,9 @@
 }
 .sectionDescriptionText {
   font-size: 1.5rem !important;
+  @media only screen and (max-width: 768px) {
+    font-size: 1.2rem !important;
+  }
 }
 .subsectionTitleContainer {
   padding: 1rem;
@@ -166,6 +189,10 @@
   font-weight: 700 !important;
   color: var(--text-dark);
   font-size: 2.5rem !important;
+  text-align: center;
+  @media only screen and (max-width: 768px) {
+    font-size: 1.8rem !important;
+  }
 }
 
 @media only screen and (max-width: 768px) {

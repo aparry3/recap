@@ -41,8 +41,8 @@ const SectionContainer: FC<SectionContainerProps> = ({ section }) => {
           <Container className={styles.sectionIcon}>
             <FontAwesomeIcon icon={section.icon} className={styles.icon}/>
           </Container>
-          <Container className={styles.sectionTitleText}>
-            <Text size={2.5}>
+          <Container className={styles.sectionTitleTextContainer}>
+            <Text className={styles.sectionTitleText}>
               {section.title}
             </Text>
           </Container>
@@ -70,7 +70,7 @@ const SectionContainer: FC<SectionContainerProps> = ({ section }) => {
                 {subsection.steps.map((step, stepIndex) => (
                   <Container key={stepIndex} className={styles.sectionContentItem}>
                     <Row className={styles.sectionStepNumber}>
-                      <Text size={4} weight={600}>
+                      <Text className={styles.sectionStepNumberText}>
                         {stepIndex + 1}.
                       </Text>
                     </Row>
