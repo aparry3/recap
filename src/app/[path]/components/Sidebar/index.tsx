@@ -1,5 +1,5 @@
 "use client"
-import { houseIcon, gridIcon, userIcon, leftIcon, qrcodeIcon, gearIcon } from "@/lib/icons"
+import { houseIcon, gridIcon, userIcon, leftIcon, qrcodeIcon, gearIcon, circleInfoIcon } from "@/lib/icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { FC, useCallback } from "react"
 import { Column, Container, Row, Text } from "react-web-layout-components"
@@ -11,12 +11,14 @@ import useGallery from "@/helpers/providers/gallery";
 import useNavigation from "@/helpers/providers/navigation";
 import { TheKnot, Zola } from "@/lib/icons/branding";
 import { useUser } from "@/helpers/providers/user"
+import { Tab } from "../Pages/Gallery"
 
 interface SidebarProps {
+    onInfoClick: () => void
 }
-const SidebarContent: FC<Omit<SidebarProps, 'open'>> = () => {
+const SidebarContent: FC<Omit<SidebarProps, 'open'>> = ({onInfoClick}) => {
     const {personId} = useUser()
-    const {handlePageChange, page, setShowSidebar} = useNavigation()
+    const {handlePageChange, page, setShowSidebar, tab, setTab} = useNavigation()
     const {openSettings} = useGallery()
     const router = useRouter()
     const navigateToGalleries = useCallback(() => {
@@ -35,6 +37,21 @@ const SidebarContent: FC<Omit<SidebarProps, 'open'>> = () => {
     const handleClose = () => {
         setShowSidebar(false)
     }
+
+    const handleGalleryItemClick = (newTab: Tab) => {
+        setTab(newTab)
+        changePage(AppPage.GALLERY)
+    }
+
+    const handleGalleryClick = () => {
+        if (page !== AppPage.GALLERY) {
+            // If not on gallery page, navigate to gallery with current/default tab
+            const targetTab = tab || Tab.PHOTOS;
+            setTab(targetTab);
+            changePage(AppPage.GALLERY);
+        }
+    }
+
     return (
     <>
     <Container className={styles.header} padding>
@@ -43,7 +60,7 @@ const SidebarContent: FC<Omit<SidebarProps, 'open'>> = () => {
         </Container>
         <Image src='/branding/wordmark.png' alt='wordmark' layout='intrinsic' height={100} width={100}/>
         <Container className={styles.headerIcon}>
-            <FontAwesomeIcon icon={qrcodeIcon} className={styles.icon}/>
+            <FontAwesomeIcon icon={circleInfoIcon} className={styles.icon} onClick={onInfoClick}/>
         </Container>    
      </Container>
      <Container className={styles.dash} />
@@ -59,14 +76,27 @@ const SidebarContent: FC<Omit<SidebarProps, 'open'>> = () => {
             </Row>
         </Container>
         <Container className={styles.menuItemContainer}>
-            <Row className={`${styles.menuItem} ${page === AppPage.GALLERY ? styles.active : ''} `} onClick={() => changePage(AppPage.GALLERY)}>
-                <Container className={styles.menuIcon}>
-                    <FontAwesomeIcon icon={gridIcon} className={styles.icon}/>
-                </Container>
-                <Container>
-                    <Text weight={500}>Gallery</Text>
-                </Container>
-            </Row>
+            <Column>
+                <Row className={`${styles.menuItem} ${page === AppPage.GALLERY ? styles.active : ''} `} onClick={handleGalleryClick}>
+                    <Container className={styles.menuIcon}>
+                        <FontAwesomeIcon icon={gridIcon} className={styles.icon}/>
+                    </Container>
+                    <Container>
+                        <Text weight={500}>Gallery</Text>
+                    </Container>
+                </Row>
+                <Column className={styles.submenu}>
+                    <Container className={`${styles.submenuItem} ${page === AppPage.GALLERY && tab === Tab.PHOTOS ? styles.active : ''}`} onClick={() => handleGalleryItemClick(Tab.PHOTOS)}>
+                        <Text weight={500}>Photos</Text>
+                    </Container>
+                    <Container className={`${styles.submenuItem} ${page === AppPage.GALLERY && tab === Tab.ALBUMS ? styles.active : ''}`} onClick={() => handleGalleryItemClick(Tab.ALBUMS)}>
+                        <Text weight={500}>Albums</Text>
+                    </Container>
+                    <Container className={`${styles.submenuItem} ${page === AppPage.GALLERY && tab === Tab.PEOPLE ? styles.active : ''}`} onClick={() => handleGalleryItemClick(Tab.PEOPLE)}>
+                        <Text weight={500}>People</Text>
+                    </Container>
+                </Column>
+            </Column>
         </Container>
         <Container className={styles.menuItemContainer}>
             <Row className={`${styles.menuItem} ${page === AppPage.USER ? styles.active : ''}`} onClick={() => changePage(AppPage.USER)}>

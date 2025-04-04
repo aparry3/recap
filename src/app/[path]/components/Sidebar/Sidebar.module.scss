@@ -2,11 +2,12 @@
 .sidebar {
     height: 100%;
     width: 20%;
-    background: var(--background-medium);
+    background: var(--background-light);
+    border-right: 1px solid var(--background-medium);
 }
 .mobileSidebar {
     display: none !important;
-    background: var(--background-medium);
+    background: var(--background-light);
     z-index: 10;
     width: 100%;
     height:100%;
@@ -45,12 +46,15 @@
     }    
 }
 .menu {
-    width: 80%;
+    width: 100%;
     padding: 1rem 0;
 }
 .menuItemContainer {
     width: 100%;
     padding: 0.1rem 1rem !important;
+    > * {
+        width: 100%;
+    }
 }
 
 .menuItem {
@@ -60,16 +64,17 @@
     padding: 0.75rem;
     width: 100%;
     cursor: pointer;
+    display: flex;
     &:hover{
-        background: var(--primary);
-        color: var(--background-light);
+        background: var(--background-medium);
+        color: var(--primary);
     };
     path {
         fill: var(--primary);
     }
     &:hover {
         path {
-            fill: var(--background-light);
+            fill: var(--primary);
         }    
     }
 }
@@ -102,10 +107,32 @@
     
 }
 
+.submenu {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    padding-top: 0.25rem;
+}
+
+.submenuItem {
+    padding: 0.5rem 0.75rem;
+    width: 100%;
+    cursor: pointer;
+    border-radius: 0.5rem;
+    color: var(--primary);
+    display: flex;
+    align-items: center;
+    font-size: 1rem !important;
+    &:hover {
+        background: var(--background-medium);
+    }
+}
+
 .active{
-    background: var(--primary);
-    color: var(--background-light);
+    background: var(--background-medium);
+    color: var(--primary);
     path {
-        fill: var(--background-light);
+        fill: var(--primary);
     }    
 };

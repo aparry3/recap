@@ -1,11 +1,10 @@
 "use client";
-import React, { FC, useCallback, useEffect, useMemo, useState } from "react"
+import React, { FC, useEffect, useState } from "react"
 import {  Container } from "react-web-layout-components"
 import styles from './page.module.scss'
 import Content from "./components/Content";
 import Header from "./components/Header";
 import QrCode from "./components/LinkPage";
-import useWindowSize from "@/helpers/hooks/window";
 import { GalleryProvider } from "@/helpers/providers/gallery";
 import { Gallery } from "@/lib/types/Gallery";
 import { UserProvider } from "@/helpers/providers/user";
@@ -13,9 +12,9 @@ import useLocalStorage, { setCookie } from "@/helpers/hooks/localStorage";
 import Password from "./components/Password";
 import Sidebar, { MobileMenu } from "./components/Sidebar";
 import { AlbumsProvider } from "@/helpers/providers/albums";
-import useNavigation, { NavigationProvider } from "@/helpers/providers/navigation";
-import { Album, AlbumMediaData } from "@/lib/types/Album";
-import TutorialOverlay from "@/components/TutorialOverlay";
+import { NavigationProvider } from "@/helpers/providers/navigation";
+import { AlbumMediaData } from "@/lib/types/Album";
+import TutorialOverlay from "./components/TutorialOverlay";
 
 export enum AppPage {
     HOME = 'HOME',
@@ -27,7 +26,7 @@ const App: FC<{gallery: Gallery, password?: string, album?: AlbumMediaData}> =  
     const [showQrCode, setShowQrCode] = useState(false)
     const [password, setPassword] = useLocalStorage<string | null>(gallery.id, propsPassword || null)
     const [cleared, setCleared] = useState(password === gallery.password)
-    
+    const [showInfo, setShowInfo] = useState(false)
     useEffect(() => {
         if (password && password === gallery.password) {
             setCleared(true)
@@ -44,19 +43,18 @@ const App: FC<{gallery: Gallery, password?: string, album?: AlbumMediaData}> =  
                         {
                             cleared ? (
                             <>
-                                <Header onQrClick={() => setShowQrCode(true)} />
+                                <Header onQrClick={() => setShowQrCode(true)}/>
                                 {showQrCode && <QrCode onClose={() => setShowQrCode(false)} open={showQrCode}/>}
-                                <Sidebar />
-                                <MobileMenu  />
-                                <Content onQrClick={() => setShowQrCode(true)}/>
-                                <TutorialOverlay />
+                                <Sidebar onInfoClick={() => setShowInfo(true)}/>
+                                <MobileMenu onInfoClick={() => setShowInfo(true)}/>
+                                <Content onQrClick={() => setShowQrCode(true)} onInfoClick={() => setShowInfo(true)} />
+                                <TutorialOverlay open={showInfo} onClose={() => setShowInfo(false)} />
                                 {/* {showUploadConfirmation && <Upload /> } */}
                             </>
                             ): (
                                 <Password password={password || ''} setPassword={setPassword} name={gallery.name}/>
                             )}
                     </Container>
-
                     </NavigationProvider>
                 </AlbumsProvider>
             </GalleryProvider>
