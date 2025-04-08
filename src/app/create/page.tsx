@@ -2,6 +2,7 @@
 import React, { FC, useCallback, useEffect, useState } from 'react';
 import Welcome from './Welcome';
 import Create from '../../components/PersonPage/Create';
+import StripeForm from './components/StripeForm';
 import { createGallery } from '@/helpers/api/galleryClient';
 import { Gallery, NewGalleryData } from '@/lib/types/Gallery';
 import { Person } from '@/lib/types/Person';
@@ -12,15 +13,15 @@ import ValidateUser from '@/components/PersonPage/ValidateUser';
 import Login from './Login';
 import { useRouter } from 'next/navigation';
 
-
 const CreatePage: FC = () => {
   const router = useRouter()
   const [stage, setStage] = useState(0)
   const [gallery, setGallery] = useState<NewGalleryData | Gallery>()
+  const [galleryData, setGalleryData] = useState<{galleryName: string, name: string, email?: string, zola?: string, theKnot?: string, person?: Person}>()
   const [person, setPerson] = useState<Person>()
   const [personId, setPersonId] = useLocalStorage<string>('personId', '');
   const [galleryImages, setGalleryImages] = useLocalStorage<string>('galleryImages', '');
-  const [verificationId, setVerificationId] = useState<string | undefined>('verificationId');
+  const [verificationId, setVerificationId] = useState<string | undefined>(undefined);
   const [tempPerson, setTempPerson] = useState<{email?: string, name: string, personId: string} | undefined>(undefined)
   const [tempGallery, setTempGallery] = useState<{name: string, zola?: string, theKnot?: string} | undefined>()
   const [login, setLogin] = useState(false)
@@ -52,7 +53,6 @@ const CreatePage: FC = () => {
       _gallery.zola = zola
     }
 
-    setStage(1)
     setGallery(_gallery)
 
     let _person: Person
@@ -71,6 +71,7 @@ const CreatePage: FC = () => {
     }
     setGallery(_newGallery)
     setPerson(_person)
+    setStage(1) // Move to payment stage
   }
   
   const handleSubmit = useCallback(async(_galleryName: string, _name: string, _email?: string, theKnot? :string, zola?: string) => {
@@ -79,12 +80,16 @@ const CreatePage: FC = () => {
       _person = await fetchPersonByEmail(_email)
     }
     if (_person && _email) {
+      // Existing user found, start verification process
       const verification = await createVerification(_person.id, _galleryName, _email, _name)
       setVerificationId(verification.id)
       setTempPerson({personId: _person.id, email: _email, name: _name})
       setTempGallery({name: _galleryName, zola, theKnot})
     } else {
-      submitGallery(_galleryName, _name, _email, theKnot, zola, person)
+      // New user, proceed directly to gallery creation
+      setGalleryData({galleryName: _galleryName, name: _name, email: _email, zola, theKnot, person})
+
+      setStage(1) // Move to payment stage
     }
   }, [person])
 
@@ -99,9 +104,11 @@ const CreatePage: FC = () => {
       setLoginError('No user with that email address')
     }
   }
+
   const cancelValidate = () => {
     setTempPerson(undefined)
     setVerificationId(undefined)
+    setStage(0)
   }
 
   const skipValidate = useCallback(async () => {
@@ -113,7 +120,6 @@ const CreatePage: FC = () => {
     setVerificationId(undefined)  
     setTempPerson(undefined)
     setTempGallery(undefined)
-
   }, [tempPerson])
 
   const confirmValidate = async (person: Person) => {
@@ -122,17 +128,64 @@ const CreatePage: FC = () => {
       setTempPerson(undefined)
       await submitGallery(tempGallery?.name || '', person.name, person.email, tempGallery?.theKnot, tempGallery?.zola, person)
       setTempGallery(undefined)
-      setVerificationId('')  
+      setVerificationId(undefined)  
     } else {
       setPersonId(person.id)
       router.push('/galleries')
     }
-
   }
 
-  return (verificationId && tempPerson) ? (
-  <ValidateUser verificationId={verificationId} person={tempPerson} confirm={confirmValidate} onBack={cancelValidate} skip={skipValidate}/>
-  ) : (stage && gallery) ? <Welcome gallery={gallery}/> : login ? <Login back={() => setLogin(false)} loginError={loginError} onSubmit={handleLogin} /> : <Create login={() => setLogin(true)} person={person} onSubmit={handleSubmit}/>;
-};
+  const handlePaymentSuccess = useCallback(async () => {
+    if (galleryData) {
+      setStage(2)
+      await submitGallery(galleryData?.galleryName, galleryData.name, galleryData.email, galleryData.theKnot, galleryData.zola, galleryData.person)
+    }
 
-export default CreatePage;
+  }, [galleryData])
+
+  const handlePaymentCancel = () => {
+    setStage(0)
+  }
+
+  // Show validation if needed
+  if (verificationId && tempPerson) {
+    return (
+      <ValidateUser 
+        verificationId={verificationId} 
+        person={tempPerson} 
+        confirm={confirmValidate} 
+        onBack={cancelValidate} 
+        skip={skipValidate}
+      />
+    )
+  }
+
+  // Show login if requested
+  if (login) {
+    return <Login back={() => setLogin(false)} loginError={loginError} onSubmit={handleLogin} />
+  }
+
+  // Show create form
+  if (stage === 0) {
+    return <Create login={() => setLogin(true)} person={person} onSubmit={handleSubmit} />
+  }
+
+  // Show payment form
+  if (stage === 1 && galleryData) {
+    return (
+      <StripeForm 
+        onSuccess={handlePaymentSuccess}
+        onCancel={handlePaymentCancel}
+      />
+    )
+  }
+
+  // Show welcome page
+  if (stage === 2 && gallery) {
+    return <Welcome gallery={gallery} />
+  }
+
+  return null
+}
+
+export default CreatePage

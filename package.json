@@ -24,6 +24,8 @@
     "@fortawesome/react-fontawesome": "^0.2.2",
     "@google/generative-ai": "^0.22.0",
     "@sendgrid/mail": "^8.1.4",
+    "@stripe/react-stripe-js": "^2.4.0",
+    "@stripe/stripe-js": "^2.4.0",
     "@types/pg": "^8.11.10",
     "@vercel/functions": "^1.5.0",
     "@vercel/postgres": "^0.10.0",
@@ -40,6 +42,7 @@
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-web-layout-components": "^1.0.6",
+    "stripe": "^14.17.0",
     "tailwindcss": "^3.4.14",
     "uuid": "^11.0.2"
   },
