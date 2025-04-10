@@ -45,13 +45,21 @@ const Hero = () => {
                     <Text className={styles.subheadingText} as='h2'>One simple QR code collects photos from all your guests - no apps, no accounts, no hassle</Text>
                 </Container>
             </Column>
-            <Container id="heroAction" padding={1}>
+            <Column id="heroAction" padding={1}>
                 <Link href='/create' className={styles.link}>
                     <Container className={styles.actionButton} padding={1}>
                         <Text size={1.2} weight={700}>Create your wedding gallery</Text>
                     </Container>
                 </Link>
-            </Container>
+                <Container className={styles.exampleLink} padding={[0.5, 0]}>
+                    <Text size={1.2} weight={500}>or</Text>
+                </Container>
+                <Container className={styles.exampleLink} padding={[0.5, 0]}>
+                    <Link href="https://www.ourweddingrecap.com/maria-and-jake?password=H8TH" className={styles.link}>
+                        <Text size={1.2} weight={500}>View an Example Gallery</Text>
+                    </Link>
+                </Container>
+            </Column>
             <Container id="product" style={{ width: '100%'}} padding={1}>
                 <Image src='/product/screenshots.png' alt='Recap wedding photo gallery app screenshots' layout='responsive' height={718} width={1369}/>
             </Container>
