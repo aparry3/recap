@@ -222,7 +222,7 @@ const PricingComparison = () => {
         { item: 'Photographer', cost: 5000 },
         { item: 'Music & Entertainment', cost: 3500 },
         { item: 'Wedding Dress', cost: 2500 },
-        { item: 'Recap', cost: 100, isLink: true },
+        { item: 'Recap', cost: 149, isLink: true },
     ];
 
     return (
