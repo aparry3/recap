@@ -3,6 +3,7 @@ import type { Metadata } from 'next'
 import { Cormorant } from 'next/font/google'
 import { config } from '@fortawesome/fontawesome-svg-core';
 import Head from 'next/head';
+import { GoogleAnalytics } from '@next/third-parties/google'
 
 config.autoAddCss = false; // Disable automatic CSS addition
 
@@ -103,6 +104,7 @@ export default function RootLayout({
           <CookieBanner />
         </CookieConsentProvider> */}
       </body>
+      <GoogleAnalytics gaId="G-X6FF37S3TQ" />
     </html>
   )
 }
