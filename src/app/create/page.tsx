@@ -71,7 +71,7 @@ const CreatePage: FC = () => {
     }
     setGallery(_newGallery)
     setPerson(_person)
-    setStage(1) // Move to payment stage
+    setStage(2) // Move to welcome stage
   }
   
   const handleSubmit = useCallback(async(_galleryName: string, _name: string, _email?: string, theKnot? :string, zola?: string) => {
