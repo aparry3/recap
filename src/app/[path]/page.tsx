@@ -6,7 +6,7 @@ import { Gallery } from "@/lib/types/Gallery";
 import { cookies } from "next/headers";
 import { AlbumMediaData } from "@/lib/types/Album";
 import { selectAlbum } from "@/lib/db/albumService";
-import { Metadata, ResolvingMetadata } from "next";
+import { Metadata } from "next";
 
 interface PageProps {
     params: {path: string};
@@ -28,8 +28,28 @@ export async function generateMetadata(
     }
       
     return {
-      title: `Recap - ${gallery.name}`,
-      description: `Share your photos and videos with ${gallery.name}. Recap is the best way to share your photos and videos for everyone at your wedding.`,
+        title: `Recap - ${gallery.name}`,
+        description: `Share your photos and videos with ${gallery.name}. Recap is the best way to share your photos and videos for everyone at your wedding.`,
+        openGraph: {
+            title: `Recap - ${gallery.name}`,
+            description: `Share your photos and videos with ${gallery.name}. Recap is the best way to share your photos and videos for everyone at your wedding.`,
+            images: [
+                {
+                    url: '/branding/screenshots.png',
+                    width: 1369,
+                    height: 718,
+                    alt: 'Recap Wedding Photo Gallery',
+                },
+            ],
+            locale: 'en_US',
+            type: 'website',
+        },
+        twitter: {
+            card: 'summary_large_image',
+            title: `Recap - ${gallery.name}`,
+            description: `Share your photos and videos with ${gallery.name}. Recap is the best way to share your photos and videos for everyone at your wedding.`,
+            images: ['/branding/wordmark.png'],
+        },
     }
   }
   
