@@ -10,6 +10,9 @@
 .detailsHeader {
   width: 100%;
   align-items: flex-start !important;
+  @media (max-width: 768px) {
+    align-items: center !important;
+  }
 }
 .actions {
   position: absolute;
@@ -39,7 +42,9 @@
   overflow-y: auto;
   justify-content: flex-start !important;
   @media (max-width: 768px) {
+    padding-top: 2rem;
     width: 100%;
+    overflow-y: unset;
   }
 }
 .detailsContainer {
@@ -48,6 +53,7 @@
   height: 60%;
   @media (max-width: 768px) {
     width: 100%;
+    height: auto;
   }
   align-items: flex-start !important;
 }
