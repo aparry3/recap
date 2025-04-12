@@ -230,7 +230,7 @@ const PricingComparison = () => {
         { item: 'Photographer', cost: 5000 },
         { item: 'Music & Entertainment', cost: 3500 },
         { item: 'Wedding Dress', cost: 2500 },
-        { item: 'Recap', cost: 149, isLink: true },
+        { item: 'Recap', cost: 59, isLink: true },
     ];
 
     return (
@@ -246,7 +246,7 @@ const PricingComparison = () => {
                         <Link key={index} href="/create" className={styles.priceLink}>
                             <Row className={`${styles.pricingItem} ${styles.highlightRow}`} padding={1} justify='space-between'>
                                 <Text className={styles.pricingItemText} weight={600}>{item.item}</Text>
-                                <Text className={styles.pricingCost}>${item.cost.toLocaleString()}</Text>
+                                <Text className={styles.pricingLinkCost}>${item.cost.toLocaleString()}</Text>
                             </Row>
                         </Link>
                     ) : (
