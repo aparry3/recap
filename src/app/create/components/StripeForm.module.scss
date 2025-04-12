@@ -5,6 +5,11 @@
 }
 .page {
   position: relative;
+  height: 100%;
+}
+.detailsHeader {
+  width: 100%;
+  align-items: flex-start !important;
 }
 .actions {
   position: absolute;
@@ -12,6 +17,11 @@
   top: 0;
   left: 0;
   width: 100%;
+}
+.header {
+  width: 100%;
+  justify-content: flex-start !important;
+  align-items: flex-start !important;
 }
 .submitButton {
   width: 100%;
@@ -22,9 +32,55 @@
 .backButton {
   cursor: pointer;
 }
+.paymentContainer {
+  padding: 1rem;
+  width: 35%;
+  height: 100%;
+  overflow-y: auto;
+  justify-content: flex-start !important;
+  @media (max-width: 768px) {
+    width: 100%;
+  }
+}
+.detailsContainer {
+  padding: 1rem;
+  width: 35%;
+  height: 60%;
+  @media (max-width: 768px) {
+    width: 100%;
+  }
+  align-items: flex-start !important;
+}
 .submitButtonContainer {
   padding: 1rem 0;
   width: 100%;
+}
+.checkoutText {
+  color: grey;
+}
+.productNameText {
+  justify-content: space-between !important;
+  align-items: flex-start !important;
+}
+.productName {
+  padding: 0.5rem 0;
+  width: 100%;
+  align-items: flex-end !important;
+}
+.priceText {
+  color: var(--primary-dark);
+  font-size: 5rem !important;
+}
+.productDescription {
+  padding: 0.5rem 0;
+  width: 100%;
+  align-items: flex-start !important;
+}
+.productDescriptionItem {
+  width: 100%;
+}
+.productDescriptionItemIcon {
+  color: var(--primary-dark);
 }
 
 @media (max-width: 768px) {

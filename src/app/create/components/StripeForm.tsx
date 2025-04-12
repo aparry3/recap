@@ -13,7 +13,7 @@ import styles from './StripeForm.module.scss';
 import Button from '@/components/Button';
 import Image from 'next/image';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { leftIcon } from '@/lib/icons';
+import { checkIcon, leftIcon } from '@/lib/icons';
 
 // Initialize Stripe with publishable key
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
@@ -79,7 +79,7 @@ const CheckoutForm: FC<CheckoutFormProps> = ({ onSuccess }) => {
                 disabled={!stripe || loading}
               >
                 <Text size={1.1} weight={500}>
-                  {loading ? 'Processing...' : 'Pay Now - $150'}
+                  {loading ? 'Processing...' : 'Pay Now - $59'}
                 </Text>
               </Button>
             </Container>
@@ -113,16 +113,56 @@ const StripeForm: FC<StripeFormProps> = ({onCancel, onSuccess}) => {
           </Container>
         </Container>
       </Container>
-      <Column className={styles.titleContainer}>
-        <Row as='header' padding={1}>
+      <Column className={styles.detailsContainer}>
+        <Column as='header' padding={1} className={styles.detailsHeader}>
           <Image src='/branding/wordmark.png' alt='wordmark' layout='intrinsic' height={100} width={100}/>
-        </Row>
+        </Column>
         <Column as='header' className={styles.header}>
-          <Text size={1.4}>Complete Your</Text>
-          <Text size={2.5} weight={500}>Payment</Text>
+          <Container className={styles.productName} justify='space-between'>
+            <Column className={styles.productNameText}>
+              <Container padding={[0.5, 0]}className={styles.checkoutText}>
+                <Text size={1.4} weight={500}>Checkout</Text>
+              </Container>
+              <Text size={1.6} weight={500}>Gallery Unlimited</Text>
+            </Column>
+            <Container className={styles.priceText}>
+              <Text size={3} weight={500}>$59</Text>
+            </Container>
+          </Container>
+          <Column className={styles.productDescription}>
+            <Container padding={[0.5, 0]}className={styles.title}>
+              <Text size={1.2} weight={500}>Includes:</Text>
+            </Container>
+            <Column className={styles.productDescriptionItems}>
+              <Row className={styles.productDescriptionItem}>
+                <Container padding={0.5}className={styles.productDescriptionItemIcon}>
+                  <FontAwesomeIcon icon={checkIcon} />
+                </Container>
+                <Container padding={0.5}className={styles.productDescriptionItemText}>
+                  <Text size={1.2} weight={500}>Unlimited Uploads, Downloads, Albums, and Guests</Text>
+                </Container>
+              </Row>
+              <Row className={styles.productDescriptionItem}  >
+                <Container padding={0.5}className={styles.productDescriptionItemIcon}>
+                  <FontAwesomeIcon icon={checkIcon} />
+                </Container>
+                <Container padding={0.5}className={styles.productDescriptionItemText}>
+                  <Text size={1.2} weight={500}>Custom Gallery and Album QR Code and shareable link</Text>
+                </Container>
+              </Row>
+              <Row className={styles.productDescriptionItem}  >
+                <Container padding={0.5}className={styles.productDescriptionItemIcon}>
+                  <FontAwesomeIcon icon={checkIcon} />
+                </Container>
+                <Container padding={0.5}className={styles.productDescriptionItemText}>
+                  <Text size={1.2} weight={500}>Guest text message notifications and upload reminders</Text>
+                </Container>
+              </Row>
+            </Column>
+          </Column>
         </Column>
       </Column>
-      <Container className={styles.contentContainer}>
+      <Container className={styles.paymentContainer}>
         <Column className={styles.content}>
         { clientSecret ? (
           <Elements stripe={stripePromise} options={{ clientSecret }}>
