@@ -27,6 +27,11 @@ const CreatePage: FC = () => {
   const [login, setLogin] = useState(false)
   const [loginError, setLoginError] = useState('')
 
+  // Add scroll to top effect when stage changes
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [stage]);
+
   const populatePerson = async (personId: string) => {
     try {
       const _person = await fetchPerson(personId)
