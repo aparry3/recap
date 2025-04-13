@@ -20,7 +20,7 @@ const CreatePage: FC = () => {
   const [galleryData, setGalleryData] = useState<{galleryName: string, name: string, email?: string, zola?: string, theKnot?: string, person?: Person}>()
   const [person, setPerson] = useState<Person>()
   const [personId, setPersonId] = useLocalStorage<string>('personId', '');
-  const [galleryImages, setGalleryImages] = useLocalStorage<string>('galleryImages', '');
+  const [_, setGalleryImages] = useLocalStorage<string>('galleryImages', '');
   const [verificationId, setVerificationId] = useState<string | undefined>(undefined);
   const [tempPerson, setTempPerson] = useState<{email?: string, name: string, personId: string} | undefined>(undefined)
   const [tempGallery, setTempGallery] = useState<{name: string, zola?: string, theKnot?: string} | undefined>()

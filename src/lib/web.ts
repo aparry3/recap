@@ -1,4 +1,26 @@
 import * as cheerio from 'cheerio';
+import { Gallery, NewGalleryData } from './types/Gallery';
+import { WeddingEvent, WeddingEventDetails } from './types/WeddingEvent';
+import gemini from './gemini';
+import { insertEvents } from './db/eventService';
+
+export const handleWeddingWebsites = async (gallery: Gallery): Promise<{images: string[], events: WeddingEvent[]}> => {
+  let images: string[] = []
+  let details: WeddingEventDetails[] = []
+  let events: WeddingEvent[] = []
+
+  const photoUrl = gallery.theknot ? `${gallery.theknot}/photos` : `${gallery.zola}/photo`
+  const eventUrl = gallery.theknot ? gallery.theknot : `${gallery.zola}/event`
+
+  const [webContent, _images] = await Promise.all([getUrlBody(eventUrl), getUrlImages(photoUrl)])
+  images = _images
+  if (webContent) {
+      details = await gemini.extractEvents(webContent)
+      events = await insertEvents(gallery.id, details)
+  }
+  return {images, events}
+
+}
 
 export const getUrlHtml = async (url: string) => {
     const response = await fetch(url)

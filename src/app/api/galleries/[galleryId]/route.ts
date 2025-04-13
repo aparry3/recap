@@ -1,15 +1,27 @@
 // src/app/api/galleries/route.ts
-import { updateGallery } from '@/lib/db/galleryService';
+import { selectGallery, updateGallery } from '@/lib/db/galleryService';
 import { GalleryUpdate } from '@/lib/types/Gallery';
+import { WeddingEvent } from '@/lib/types/WeddingEvent';
+import { handleWeddingWebsites } from '@/lib/web';
 import { NextResponse } from 'next/server';
 
 
 export const PUT = async (req: Request, ctx: { params: { galleryId: string } }) => {
     const galleryUpdate: GalleryUpdate = await req.json()
     const { galleryId } = ctx.params
+
+    let images: string[] = []
+    let events: WeddingEvent[] = []
+    let gallery = await selectGallery(galleryId)
+    const isNewWeddingSite = (galleryUpdate.theknot && !gallery.theknot) || (galleryUpdate.zola && !gallery.zola)
     try {
-        const gallery = await updateGallery(galleryId, galleryUpdate)
-        return NextResponse.json({gallery}, {status: 200})
+        gallery = await updateGallery(galleryId, galleryUpdate)
+        if (isNewWeddingSite) {
+            const webResults = await handleWeddingWebsites(gallery)
+            images = webResults.images
+            events = webResults.events
+        }    
+        return NextResponse.json({gallery, images, events}, {status: 200})
     } catch (error: any) {
         return NextResponse.json({messgae: error.message}, {status: 500})
     }
