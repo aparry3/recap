@@ -240,6 +240,25 @@ const PricingComparison = () => {
                     The most memorable part of your wedding is also the least expensive
                 </Text>
             </Container>
+            <Column className={styles.pricingHeading} padding={[2, 1]}>
+                <Container className={styles.subheading} padding={[0, 1]}>
+                    <Text className={styles.subheadingText} as='h2'>
+                        Unlimited photos. Unlimited guests. Unlimited memories
+                    </Text>
+                </Container>
+                <Column className={styles.pricingTextContainer}>
+                    <Container className={styles.subheading} padding={[0, 1]}>
+                        <Text className={styles.pricingText} >
+                            All for just
+                        </Text>
+                    </Container>
+                    <Container className={styles.subheading} padding={[0, 1]}>
+                        <Text size={5} className={styles.price}>
+                            $59
+                        </Text>
+                    </Container>
+                </Column>
+            </Column>
             <Column className={styles.pricingTable} padding={2}>
                 {weddingCosts.map((item, index) => (
                     item.isLink ? (
