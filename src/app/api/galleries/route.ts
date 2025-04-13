@@ -3,11 +3,9 @@ import { insertGallery } from '@/lib/db/galleryService';
 import { insertGalleryPerson, insertVerification, selectPerson } from '@/lib/db/personService';
 import { sendGridClient } from '@/lib/email';
 import { NewGalleryData } from '@/lib/types/Gallery';
-import { getUrlBody, getUrlImages } from '@/lib/web';
+import { handleWeddingWebsites } from '@/lib/web';
 import { NextResponse } from 'next/server';
-import gemini from '@/lib/gemini'
-import { WeddingEvent, WeddingEventDetails } from '@/lib/types/WeddingEvent';
-import { insertEvents } from '@/lib/db/eventService';
+import { WeddingEvent } from '@/lib/types/WeddingEvent';
 
 export const maxDuration = 60; // This function can run for a maximum of 5 seconds
 
@@ -24,31 +22,17 @@ export const POST = async (req: Request) => {
     const gallery = await insertGallery(newGallery)
 
     let images: string[] = []
-    let details: WeddingEventDetails[] = []
     let events: WeddingEvent[] = []
-    if (newGallery.theknot || newGallery.zola) {
-        console.log(newGallery.theknot)
-        const photoUrl = newGallery.theknot ? `${newGallery.theknot}/photos` : `${newGallery.zola}/photo`
-        const eventUrl = newGallery.theknot ? newGallery.theknot : `${newGallery.zola}/event`
-
-        console.log(photoUrl, eventUrl)
-        const [webContent, _images] = await Promise.all([getUrlBody(eventUrl), getUrlImages(photoUrl)])
-        images = _images
-        if (webContent) {
-            details = await gemini.extractEvents(webContent)
-            events = await insertEvents(gallery.id, details)
-        }
+    if (gallery.theknot || gallery.zola) {
+        const webResults = await handleWeddingWebsites(gallery)
+        images = webResults.images
+        events = webResults.events
     }
     
     try {
         await insertGalleryPerson(gallery.id, gallery.personId)
         const verification = await insertVerification(gallery.personId, gallery.id)
         
-        // sendGridClient.sendCreationEmail(person.email, {
-        //     galleryName: gallery.name,
-        //     name: person.name,
-        //     buttonUrl: `${process.env.BASE_URL}/verification/${verification.id}`
-        // })
         await Promise.all([
             sendGridClient.sendCreationEmail(person.email, person.name, `${process.env.BASE_URL}/${gallery.path}`, gallery.password),
             sendGridClient.sendOrderNotification({

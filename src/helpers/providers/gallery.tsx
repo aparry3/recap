@@ -15,6 +15,7 @@ import { AlbumMediaData } from '@/lib/types/Album';
 import { updateGallery } from '../api/galleryClient';
 import EditGallery from '@/components/PersonPage/Edit';
 import { fetchAlbums } from '../api/albumClient';
+import SyncStatus from '@/components/SyncStatus';
 
 
 export interface OrientationMedia {
@@ -82,6 +83,7 @@ const GalleryProvider: React.FC<{ children: React.ReactNode, gallery: Gallery}> 
   const [loading, setLoading] = useState<boolean>(true)
   const [showSettings, setShowSettings] = useState<boolean>(false)
   const [albums, setAlbums] = useState<AlbumMediaData[]>([])
+  const [syncingWebsite, setSyncingWebsite] = useState<boolean>(false)
 
   const handleBeginUpload = useCallback(() => {
       if (fileInputRef.current) {
@@ -261,6 +263,7 @@ const GalleryProvider: React.FC<{ children: React.ReactNode, gallery: Gallery}> 
 
   const cancelImages = () => {
     setStagedMedia([])
+    setGalleryImages('')
     setShowConfirmDelete(false)
     setShowUploadConfirmation(false);
   };
@@ -385,7 +388,7 @@ const GalleryProvider: React.FC<{ children: React.ReactNode, gallery: Gallery}> 
         .then(files => {
           // Now that you have an array of File objects, call loadFiles.
           setShowUploadConfirmation(true);
-
+          setSyncingWebsite(false)
           loadFiles(files);
         })
         .catch(error => {
@@ -398,12 +401,19 @@ const GalleryProvider: React.FC<{ children: React.ReactNode, gallery: Gallery}> 
     setShowSettings(false)
     setTotalUploads(1)
     setTotalUploads(0)
+    const isNewWeddingWebsite = (theKnot && !gallery.theknot) || (zola && !gallery.zola)
+    if (isNewWeddingWebsite) {
+      setSyncingWebsite(true)
+    }
     const _newGallery = await updateGallery(gallery.id, {
       name: galleryName,
       path: `${galleryName.toLowerCase().replaceAll(' ', '-')}`,
       zola,
       theknot: theKnot
     })
+    if (_newGallery.images.length > 0) {
+      setGalleryImages(_newGallery.images.join(','))
+    }
     setCompleteUploads(1)
     setGallery(_newGallery)
     setTotalUploads(0)
@@ -460,6 +470,7 @@ const GalleryProvider: React.FC<{ children: React.ReactNode, gallery: Gallery}> 
     {showUploadConfirmation && <ClientUpload album={currentAlbum} media={stagedMedia} collaboratorCount={people.length} upload={handleBeginUpload} onConfirm={confirmMedia} onCancel={cancelImages}/>}
     {showSettings && (<EditGallery gallery={gallery} close={() => setShowSettings(false)} onSubmit={handleSubmitGallery} />)}
     <UploadStatus total={totalUploads} complete={completeUploads}/>
+    <SyncStatus open={syncingWebsite}/>
     </GalleryContext.Provider>
   );
 };

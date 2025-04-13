@@ -1,20 +1,20 @@
-import { NewGalleryData, Gallery, GalleryPerson, GalleryUpdate } from "@/lib/types/Gallery";
+import { NewGalleryData, Gallery, GalleryPerson, GalleryUpdate, GalleryWithImagesAndEvents } from "@/lib/types/Gallery";
 
 
-export const createGallery = async (newGallery: NewGalleryData, personId: string): Promise<Gallery & {images: string[]}> => {
+export const createGallery = async (newGallery: NewGalleryData, personId: string): Promise<GalleryWithImagesAndEvents> => {
     const data = await fetch('/api/galleries', {
         method: 'POST',
         body: JSON.stringify({...newGallery, personId}) 
     }).then(res => res.json())
-    return {...data.gallery, images: data.images} as Gallery & {images: string[]}
+    return {...data.gallery, images: data.images} as GalleryWithImagesAndEvents
 }
 
-export const updateGallery = async (galleryId: string, galleryUpdate: GalleryUpdate): Promise<Gallery> => {
+export const updateGallery = async (galleryId: string, galleryUpdate: GalleryUpdate): Promise<GalleryWithImagesAndEvents> => {
     const data = await fetch(`/api/galleries/${galleryId}`, {
         method: 'PUT',
         body: JSON.stringify(galleryUpdate) 
     }).then(res => res.json())
-    return data.gallery as Gallery
+    return {...data.gallery, images: data.images, events: data.events} as GalleryWithImagesAndEvents
 }
 
 
