@@ -1,16 +1,19 @@
 'use client';
-import React, { FC, FormEvent, MouseEvent, useEffect, useMemo, useState } from 'react';
+import React, { FC, FormEvent, useEffect, useMemo, useState } from 'react';
 import { Column, Container, Form, Row, Text } from 'react-web-layout-components';
 import Image from 'next/image';
 import Input from '@/components/Input';
 import styles from './Create.module.scss';
 import Button from '@/components/Button';
 import { Person, NewPersonData } from '@/lib/types/Person';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { checkSquareIcon, squareIcon } from '@/lib/icons';
 
-const PersonPage: FC<{person?: Person | NewPersonData, onSubmit: (name: string, email?: string, phone?: string) => void}> = ({person, onSubmit}) => {
+const PersonPage: FC<{person?: Person | NewPersonData, onSubmit: (name: string, email?: string, phone?: string, receiveMessages?: boolean) => void}> = ({person, onSubmit}) => {
   const [name, setName] = useState(person?.name || '');
   const [phone, setPhone] = useState(person?.phone || '');
   const [email, setEmail] = useState(person?.email || '');
+  const [receiveMessages, setReceiveMessages] = useState(true);
 
   const formatPhoneNumber = (digitsStr: string) => {
     // Remove any non-digit characters (defensive; our input should already be digits)
@@ -31,6 +34,10 @@ const PersonPage: FC<{person?: Person | NewPersonData, onSubmit: (name: string, 
     // Convert to number if digits exist; otherwise, set to null.
     const numericValue = digits;
     setPhone(numericValue);
+    // If phone number is entered, default opt-in to true
+    if (numericValue.length > 0) {
+      setReceiveMessages(true);
+    }
   };
 
   // Derive the display value: if we have a number, convert it back to a string and format.
@@ -54,7 +61,7 @@ const PersonPage: FC<{person?: Person | NewPersonData, onSubmit: (name: string, 
 
   const handleButtonPress = () => {
     // Perform any necessary actions with the form data
-    onSubmit(name, email, phone);
+    onSubmit(name, email, phone, receiveMessages);
   };
 
   const emailError = useMemo(() => {
@@ -73,7 +80,7 @@ const PersonPage: FC<{person?: Person | NewPersonData, onSubmit: (name: string, 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     // Perform any necessary actions with the form data
-    if (!submitDisabled) onSubmit(name, email, phone);
+    if (!submitDisabled) onSubmit(name, email, phone, receiveMessages);
 };
 
 
@@ -136,6 +143,19 @@ const PersonPage: FC<{person?: Person | NewPersonData, onSubmit: (name: string, 
               </Row>
               )}
           </Column>
+          <Row className={`${styles.inputContainer} ${styles.checkboxRow}`}>
+            <Container 
+              onClick={() => phone && setReceiveMessages(!receiveMessages)}
+              className={`${styles.checkboxContainer} ${!phone ? styles.disabled : ''}`}
+            >
+              <FontAwesomeIcon 
+                icon={receiveMessages ? checkSquareIcon : squareIcon} 
+                className={styles.checkboxIcon}
+                size="lg"
+              />
+            </Container>
+            <Text>Opt in to text messages</Text>
+          </Row>
           <Container className={styles.buttonContainer}>
             <Button className={styles.button} onClick={handleButtonPress} type='submit' disabled={submitDisabled}>
               <Text size={1.2} weight={600}>Submit</Text>

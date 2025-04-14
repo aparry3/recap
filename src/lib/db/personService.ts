@@ -52,8 +52,8 @@ export const selectPeopleMedia = async (galleryId: string): Promise<GalleryPerso
     return await Promise.all(personPromises) as GalleryPersonData[];
 }
 
-export const insertGalleryPerson = async (galleryId: string, personId: string): Promise<GalleryPerson> => {
-  const galleryPerson = await db.insertInto('galleryPerson').values({galleryId, personId}).returningAll().executeTakeFirstOrThrow();
+export const insertGalleryPerson = async (galleryId: string, personId: string, receiveMessages?: boolean): Promise<GalleryPerson> => {
+  const galleryPerson = await db.insertInto('galleryPerson').values({galleryId, personId, receiveMessages}).returningAll().executeTakeFirstOrThrow();
   return galleryPerson;
 }
 

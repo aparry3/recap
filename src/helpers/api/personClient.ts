@@ -2,31 +2,32 @@ import { Gallery } from "@/lib/types/Gallery";
 import { GalleryPersonData, NewPersonData, Person, PersonUpdate, Verification } from "@/lib/types/Person";
 
 
-export const createPerson = async (newPerson: NewPersonData, galleryId?: string): Promise<Person> => {
+export const createPerson = async (newPerson: NewPersonData, galleryId?: string, receiveMessages?: boolean): Promise<Person> => {
     const data = await fetch(`/api/people`, {
         method: 'POST',
         body: JSON.stringify({...newPerson}) 
     }).then(res => res.json())
     const person = data.person
     if (galleryId) {
-        await createGalleryPerson(galleryId, person.id)
+        await createGalleryPerson(galleryId, person.id, receiveMessages)
     }
     return person
 }
 
-export const createGalleryPerson = async (galleryId: string, personId: string): Promise<Person> => {
+export const createGalleryPerson = async (galleryId: string, personId: string, receiveMessages?: boolean): Promise<Person> => {
     const data = await fetch(`/api/galleries/${galleryId}/people`, {
         method: 'POST',
-        body: JSON.stringify({personId, galleryId}) 
+        body: JSON.stringify({personId, galleryId, receiveMessages}) 
     }).then(res => res.json())
     return data.person
 }
 
 
-export const updatePerson = async (personId: string, personUpdate: PersonUpdate): Promise<Person> => {
+export const updatePerson = async (personId: string, personUpdate: PersonUpdate & {receiveMessages?: boolean}): Promise<Person> => {
+    const {receiveMessages, ...rest} = personUpdate
     const data = await fetch(`/api/people/${personId}`, {
         method: 'PUT',
-        body: JSON.stringify({...personUpdate}) 
+        body: JSON.stringify({...rest}) 
     }).then(res => res.json())
     return data.person
 }
