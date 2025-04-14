@@ -22,6 +22,7 @@ export interface GalleryPersonTable {
     galleryId: string
     personId: string
     coverPhotoId?: string
+    receiveMessages?: boolean
 }
 
 export type GalleryWithImagesAndEvents =Gallery & {images: string[], events?: WeddingEvent[]}
