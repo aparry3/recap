@@ -1,4 +1,9 @@
 User-agent: *
-Disallow:
+Allow: /
+Disallow: /api/
+Disallow: /_next/
+Disallow: /static/
+Disallow: /admin/
+Disallow: /private/
 
-Sitemap: http://recapphotos.com/sitemap.xml
+Sitemap: https://www.ourweddingrecap.com/sitemap.xml
