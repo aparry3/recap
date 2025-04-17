@@ -27,6 +27,18 @@ const Footer: FC = () => {
                 <Row className={styles.brandingRow}>
                     <Text>The ultimate wedding photo sharing platform that collects every moment from every guest in one beautiful gallery. No app required, unlimited uploads, and easy organization of all your cherished memories.</Text>
                 </Row>    
+                <Row className={styles.brandingRow}>
+                    <Text>Recap is a property of Parry Technology and Media LLC</Text>
+                </Row>
+                <Row className={styles.brandingRow}>
+                    <Link href="/terms" className={styles.link}>
+                        <Text>Terms and Conditions</Text>
+                    </Link>
+                    <Text style={{ margin: '0 0.5rem' }}>|</Text>
+                    <Link href="/privacy" className={styles.link}>
+                        <Text>Privacy Policy</Text>
+                    </Link>
+                </Row>
             </Column>
         </Container>
     )
