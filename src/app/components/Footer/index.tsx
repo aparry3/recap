@@ -28,7 +28,7 @@ const Footer: FC = () => {
                     <Text>The ultimate wedding photo sharing platform that collects every moment from every guest in one beautiful gallery. No app required, unlimited uploads, and easy organization of all your cherished memories.</Text>
                 </Row>    
                 <Row className={styles.brandingRow}>
-                    <Text>Recap is a property of Parry Technology and Media LLC</Text>
+                    <Text style={{ opacity: 0.7 }}>Recap is a property of Parry Technology and Media LLC</Text>
                 </Row>
                 <Row className={styles.brandingRow}>
                     <Link href="/terms" className={styles.link}>

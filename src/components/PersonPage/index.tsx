@@ -161,6 +161,9 @@ const PersonPage: FC<{person?: Person | NewPersonData, onSubmit: (name: string, 
               <Text size={1.2} weight={600}>Submit</Text>
             </Button>
           </Container>
+          <Container className={styles.copyright}>
+            <Text style={{ opacity: 0.7 }}>Recap is a property of Parry Technology and Media LLC</Text>
+          </Container>
         </Form>
       </Container>
     </Container>

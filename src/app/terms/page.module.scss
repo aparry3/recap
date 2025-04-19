@@ -7,16 +7,19 @@
 .header {
     padding: 1rem 2rem;
     border-bottom: 1px solid var(--background-medium);
+    background-color: var(--background-light);
 }
 
 .content {
     max-width: 800px;
     margin: 0 auto;
     padding: 2rem;
+    color: var(--text-dark);
 }
 
 .title {
     margin-bottom: 1rem;
+    color: var(--primary-dark);
 }
 
 .lastUpdated {
@@ -30,11 +33,13 @@
 
     h2 {
         margin-bottom: 1rem;
+        color: var(--primary-dark);
     }
 
     p {
         line-height: 1.6;
         margin-bottom: 1rem;
+        color: var(--text-dark);
     }
 
     ul {
@@ -44,6 +49,7 @@
         li {
             margin-bottom: 0.5rem;
             line-height: 1.6;
+            color: var(--text-dark);
         }
     }
 } 

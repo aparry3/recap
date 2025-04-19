@@ -68,8 +68,8 @@ const CreatePage: FC<{person?: Person | NewPersonData, login: () => void,onSubmi
 
 
   const submitDisabled = useMemo(() => {
-    return !email || !name || !galleryName|| emailError
-  }, [email, emailError, name, galleryName])
+    return !name || !galleryName|| emailError
+  }, [emailError, name, galleryName])
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -183,6 +183,9 @@ const CreatePage: FC<{person?: Person | NewPersonData, login: () => void,onSubmi
             </Button>
           </Container>
         </Form>
+      </Container>
+      <Container className={styles.copyright}>
+        <Text style={{ opacity: 0.7 }}>Recap is a property of Parry Technology and Media LLC</Text>
       </Container>
     </Container>
   );
