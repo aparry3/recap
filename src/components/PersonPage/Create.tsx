@@ -11,7 +11,7 @@ import { leftIcon } from '@/lib/icons';
 import { useRouter } from 'next/navigation';
 
 
-const CreatePage: FC<{person?: Person | NewPersonData, login: () => void,onSubmit: (galleryName: string,name: string, email: string, theKnot?: string, zola?: string) => void}> = ({login, person, onSubmit}) => {
+const CreatePage: FC<{person?: Person | NewPersonData, login: () => void, isAdmin?: boolean, onSubmit: (galleryName: string,name: string, email: string, theKnot?: string, zola?: string) => void}> = ({login, person, onSubmit, isAdmin = false}) => {
     const router = useRouter()
   const [name, setName] = useState(person?.name || '');
   const [galleryName, setGalleryName] = useState('');
@@ -95,7 +95,7 @@ const CreatePage: FC<{person?: Person | NewPersonData, login: () => void,onSubmi
           <Image src='/branding/wordmark.png' alt='wordmark' layout='intrinsic' height={100} width={100}/>
         </Row>
         <Column as='header' className={styles.header}>
-          <Text size={1.4}>Create a</Text>
+          <Text size={1.4}>{isAdmin ? 'Admin - Create a' : 'Create a'}</Text>
           <Text size={2.5} weight={500}>New Gallery</Text>
         </Column>
         <Container className={styles.buttonContainer} padding={[2, 0]}>
@@ -103,14 +103,16 @@ const CreatePage: FC<{person?: Person | NewPersonData, login: () => void,onSubmi
             <Text size={1.2} weight={600}>Submit</Text>
           </Button>
         </Container>
+        {!isAdmin && (
         <Column as='header' className={styles.header}>
           <Text size={1.1}>or</Text>
           <Container  padding={1}>
             <Button className={styles.button} onClick={login} >
               <Text size={1.2} weight={600}>Login</Text>
             </Button>
-        </Container>
+          </Container>
         </Column>
+        )}
       </Column>
 
       <Container className={styles.contentContainer}>
@@ -179,7 +181,7 @@ const CreatePage: FC<{person?: Person | NewPersonData, login: () => void,onSubmi
           </Column>
           <Container className={styles.buttonContainer}>
             <Button className={styles.button} onClick={handleButtonPress} disabled={submitDisabled}>
-              <Text size={1.2} weight={600}>Submit</Text>
+              <Text size={1.2} weight={600}>{isAdmin ? 'Create for User' : 'Submit'}</Text>
             </Button>
           </Container>
         </Form>
