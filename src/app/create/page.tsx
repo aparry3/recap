@@ -1,5 +1,5 @@
 "use client"
-import React, { FC, useCallback, useEffect, useState } from 'react';
+import React, { FC, useCallback, useEffect, useState, useMemo } from 'react';
 import Welcome from './Welcome';
 import Create from '../../components/PersonPage/Create';
 import StripeForm from './components/StripeForm';
@@ -26,6 +26,11 @@ const CreatePage: FC = () => {
   const [tempGallery, setTempGallery] = useState<{name: string, zola?: string, theKnot?: string} | undefined>()
   const [login, setLogin] = useState(false)
   const [loginError, setLoginError] = useState('')
+  
+  // Check if user is admin based on their email domain
+  const isAdmin = useMemo(() => {
+    return person?.email?.endsWith('ourweddingrecap.com') || false
+  }, [person])
 
   // Add scroll to top effect when stage changes
   useEffect(() => {
@@ -63,7 +68,10 @@ const CreatePage: FC = () => {
     let _person: Person
     if (!person || person.email !== _email) {
       _person = await createPerson({name: _name, email: _email})
-      setPersonId(_person.id)
+      // Only update personId in localStorage if we're not an admin creating for someone else
+      if (!isAdmin) {
+        setPersonId(_person.id)
+      }
     } else if (person.name !== _name) {
       _person = await updatePerson(person.id, {name: _name, email: _email})
     } else {
@@ -75,7 +83,12 @@ const CreatePage: FC = () => {
       setGalleryImages(_newGallery.images.join(','))
     }
     setGallery(_newGallery)
-    setPerson(_person)
+    
+    // If we're not an admin, update the current person state
+    if (!isAdmin) {
+      setPerson(_person)
+    }
+    
     setStage(2) // Move to welcome stage
   }
   
@@ -84,6 +97,22 @@ const CreatePage: FC = () => {
     if (_email && person?.email !== _email) {
       _person = await fetchPersonByEmail(_email)
     }
+    
+    // If admin mode is enabled, skip payment and verification
+    if (isAdmin) {
+      if (_person && _email) {
+        // Create gallery for existing user directly
+        setGalleryData({galleryName: _galleryName, name: _name, email: _email, zola, theKnot, person: _person})
+        await submitGallery(_galleryName, _name, _email, theKnot, zola, _person)
+      } else {
+        // Create gallery for new user directly
+        setGalleryData({galleryName: _galleryName, name: _name, email: _email, zola, theKnot, person})
+        await submitGallery(_galleryName, _name, _email, theKnot, zola, person)
+      }
+      return
+    }
+    
+    // Normal user flow
     if (_person && _email) {
       // Existing user found, start verification process
       const verification = await createVerification(_person.id, _galleryName, _email, _name)
@@ -96,7 +125,7 @@ const CreatePage: FC = () => {
 
       setStage(1) // Move to payment stage
     }
-  }, [person])
+  }, [person, isAdmin])
 
   const handleLogin = async (email: string) => {
     console.log(email)
@@ -172,7 +201,7 @@ const CreatePage: FC = () => {
 
   // Show create form
   if (stage === 0) {
-    return <Create login={() => setLogin(true)} person={person} onSubmit={handleSubmit} />
+    return <Create login={() => setLogin(true)} person={person} onSubmit={handleSubmit} isAdmin={isAdmin} />
   }
 
   // Show payment form
@@ -187,7 +216,7 @@ const CreatePage: FC = () => {
 
   // Show welcome page
   if (stage === 2 && gallery) {
-    return <Welcome gallery={gallery} />
+    return <Welcome gallery={gallery} isAdmin={isAdmin} />
   }
 
   return null

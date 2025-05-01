@@ -9,7 +9,7 @@ import { linkIcon, qrcodeIcon } from '@/lib/icons';
 import { useRouter } from 'next/navigation';
 import { Gallery, NewGalleryData } from '@/lib/types/Gallery';
 
-const Welcome: FC<{gallery: Gallery | NewGalleryData}> = ({gallery}) => {
+const Welcome: FC<{gallery: Gallery | NewGalleryData, isAdmin?: boolean}> = ({gallery, isAdmin = false}) => {
   const router = useRouter()
 
   const handleNext = () => {
@@ -17,6 +17,13 @@ const Welcome: FC<{gallery: Gallery | NewGalleryData}> = ({gallery}) => {
       window.localStorage.setItem((gallery as Gallery).id, gallery.password)
     }
     router.push(`${gallery.path}?password=${gallery.password}`)
+  }
+
+  const goToGallery = () => {
+    if (window !== undefined) {
+      window.localStorage.setItem((gallery as Gallery).id, gallery.password)
+    }
+    window.location.href = `/${gallery.path}?password=${gallery.password}`
   }
 
   const disabled = useMemo(() => !gallery.hasOwnProperty('id'), [gallery])
@@ -32,9 +39,15 @@ const Welcome: FC<{gallery: Gallery | NewGalleryData}> = ({gallery}) => {
           <Text size={2.5} weight={500}>{gallery.name}</Text>
         </Column>
         <Container className={styles.buttonContainer} padding={[2, 0]}>
-          <Button onClick={handleNext} type='submit' disabled={disabled}>
-            <Text size={1.2} weight={600}>Next</Text>
-          </Button>
+          {isAdmin ? (
+            <Button onClick={goToGallery} type='submit' disabled={disabled}>
+              <Text size={1.2} weight={600}>Go to Gallery</Text>
+            </Button>
+          ) : (
+            <Button onClick={handleNext} type='submit' disabled={disabled}>
+              <Text size={1.2} weight={600}>Next</Text>
+            </Button>
+          )}
         </Container>
       </Column>
       <Container className={styles.contentContainer}>
@@ -61,15 +74,21 @@ const Welcome: FC<{gallery: Gallery | NewGalleryData}> = ({gallery}) => {
             </Container>
           </Container>
           <Container className={styles.section}>
-            <Text size={1}>Don’t worry, you can always access your QR and Link from your dashboard by pressing:</Text>
+            <Text size={1}>Don't worry, you can always access your QR and Link from your dashboard by pressing:</Text>
           </Container>
           <Container className={styles.section}>
             <FontAwesomeIcon icon={qrcodeIcon} className={styles.qrCode}/>
           </Container>
           <Container className={styles.buttonContainer} padding={[4, 0]}>
-            <Button type='submit' onClick={handleNext} disabled={disabled}>
-              <Text size={1.2} weight={600}>Next</Text>
-            </Button>
+            {isAdmin ? (
+              <Button type='submit' onClick={goToGallery} disabled={disabled}>
+                <Text size={1.2} weight={600}>Go to Gallery</Text>
+              </Button>
+            ) : (
+              <Button type='submit' onClick={handleNext} disabled={disabled}>
+                <Text size={1.2} weight={600}>Next</Text>
+              </Button>
+            )}
           </Container>
         </Column>
       </Container>
