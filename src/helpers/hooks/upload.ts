@@ -47,44 +47,97 @@ const maxPartsAtOnce = 10
 
 export const uploadMedia = async (presignedUrl: string, file: File | Blob): Promise<boolean> => {
   try {
-      const data = await fetch(presignedUrl, {
+      const response = await fetch(presignedUrl, {
           method: 'PUT',
           headers: {
               'Content-Type': file.type,
           },
           body: file,
       })
-      return data.status === 200
-  }  catch (error) {
-      console.log(error)
-      return false
+      
+      if (!response.ok) {
+        const status = response.status;
+        let errorDetail = '';
+        try {
+          errorDetail = await response.text();
+        } catch (e) {
+          console.error('Could not read error response text', e);
+        }
+        
+        console.error(`Upload failed with status ${status}: ${errorDetail}`);
+        
+        if (status === 403) {
+          console.error('Got 403 Forbidden - presigned URL might have expired');
+          throw new Error('Presigned URL expired');
+        }
+        
+        throw new Error(`Upload failed with status ${status}`);
+      }
+      
+      return true;
+  } catch (error) {
+      console.error('Upload error:', error);
+      return false;
   }
 }
 
 export async function uploadLargeMedia(uploadId: string, key: string, file: File): Promise<boolean> {    
   const fileParts = Math.ceil(file.size / partSize);
+  const parts: MultipartUploadPart[] = [];
+  const maxConcurrent = maxPartsAtOnce;
+
+  // Use a sliding window approach to maintain constant concurrency
+  let activeTasks = 0;
+  let nextPartNumber = 1;
   
-  const parts: MultipartUploadPart[] = []
-
-  for (let partNumber = 1; partNumber <= fileParts; partNumber += maxPartsAtOnce) {
-    const partsPromises: Promise<MultipartUploadPart>[] = []
-
-    let finalPartNumber = partNumber
-    for (let i = partNumber; i < Math.min(partNumber + maxPartsAtOnce, fileParts + 1); i++) {
-        const begin = (i - 1) * partSize;
-        const end = i * partSize;
-        file.slice(begin, end)
-        partsPromises.push(uploadPart(uploadId, key, i, file.slice(begin, end)));
-        finalPartNumber += 1
+  return new Promise((resolve, reject) => {
+    // Function to start a new part upload
+    const uploadNextPart = () => {
+      if (nextPartNumber > fileParts) {
+        // No more parts to start
+        return;
+      }
+      
+      const partNumber = nextPartNumber++;
+      activeTasks++;
+      
+      const begin = (partNumber - 1) * partSize;
+      const end = partNumber * partSize;
+      const slice = file.slice(begin, end);
+      
+      uploadPart(uploadId, key, partNumber, slice)
+        .then(part => {
+          parts.push(part);
+          activeTasks--;
+          
+          // Check if all parts are uploaded
+          if (parts.length === fileParts) {
+            // All parts done, sort them by part number and complete the upload
+            const sortedParts = [...parts].sort((a, b) => a.PartNumber - b.PartNumber);
+            console.log("All parts uploaded, completing", sortedParts);
+            completeMultipartUpload(uploadId, key, sortedParts)
+              .then(({url}) => resolve(!!url))
+              .catch(reject);
+          } else {
+            // Start another upload if there are more parts
+            if (nextPartNumber <= fileParts) {
+              uploadNextPart();
+            }
+          }
+        })
+        .catch(error => {
+          console.error(`Error uploading part ${partNumber}:`, error);
+          activeTasks--;
+          reject(error);
+        });
+    };
+    
+    // Initialize uploads up to the concurrent limit
+    for (let i = 0; i < Math.min(maxConcurrent, fileParts); i++) {
+      uploadNextPart();
     }
-    const batchParts = await Promise.all(partsPromises);
-    // setFinishedParts(oldFinishedParts =>  oldFinishedParts += (finalPartNumber - partNumber))
-    parts.push(...batchParts);
-  }
-
-  const {url} = await completeMultipartUpload(uploadId, key, parts);
-  return !!url
-};
+  });
+}
 
 // export const useUploadFile = () => {
 //   const [loading, setLoading] = useState<boolean>(false)
@@ -139,9 +192,14 @@ export async function downloadMedia(galleryName: string, mediaList: Media[]): Pr
 
     // Create a link element to trigger the download
     const link = document.createElement('a');
-    link.href = URL.createObjectURL(blob);
+    const objectUrl = URL.createObjectURL(blob);
+    link.href = objectUrl;
     link.download = media.id;
+    document.body.appendChild(link);
     link.click();
+    document.body.removeChild(link);
+    // Clean up the URL object to prevent memory leaks
+    URL.revokeObjectURL(objectUrl);
 
   } else {
     const zip = new JSZip();
@@ -156,9 +214,14 @@ export async function downloadMedia(galleryName: string, mediaList: Media[]): Pr
         zip.generateAsync({ type: 'blob' }).then((content) => {
           // Create a link to download the zip file
           const link = document.createElement('a');
-          link.href = URL.createObjectURL(content);
+          const objectUrl = URL.createObjectURL(content);
+          link.href = objectUrl;
           link.download = `${galleryName}.zip`;
+          document.body.appendChild(link);
           link.click();
+          document.body.removeChild(link);
+          // Clean up the URL object to prevent memory leaks
+          URL.revokeObjectURL(objectUrl);
         });
       }
   }

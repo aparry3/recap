@@ -17,6 +17,8 @@ import EditGallery from '@/components/PersonPage/Edit';
 import { fetchAlbums } from '../api/albumClient';
 import SyncStatus from '@/components/SyncStatus';
 
+// Define constants at the top level
+const CONCURRENT_UPLOADS = 5; // Number of concurrent uploads to maintain
 
 export interface OrientationMedia {
     url: string;
@@ -201,72 +203,237 @@ const GalleryProvider: React.FC<{ children: React.ReactNode, gallery: Gallery}> 
   const doUploadMedia = async (id: string, presignedUrls: PresignedUrls, file: File, previewFile: Blob) => {
     let mediaUploaded = false
     let previewUploaded = false
+    let retryCount = 0
+    const MAX_RETRIES = 3
     
     let signedUrls = presignedUrls
-    while (!mediaUploaded || !previewUploaded) {
-      const uploadedPromise: Promise<boolean> = mediaUploaded ? Promise.resolve(true) : signedUrls.large ? uploadMedia(signedUrls.large, file) : signedUrls.uploadId ? uploadLargeMedia(signedUrls.uploadId, signedUrls.key, file) : Promise.reject(`Unable to upload file`)
-      const webpUploadedPromise: Promise<boolean> = previewUploaded ? Promise.resolve(true) : uploadMedia(signedUrls.small, previewFile)
-      const [uploaded, webpUploaded] = await Promise.all([uploadedPromise, webpUploadedPromise])
-      mediaUploaded = uploaded
-      previewUploaded = webpUploaded
-      if (!mediaUploaded || !previewUploaded) {
-        const m = await fetchMedia(id)
-        signedUrls = m.presignedUrls
+    while ((!mediaUploaded || !previewUploaded) && retryCount < MAX_RETRIES) {
+      try {
+        // If we're retrying, always fetch fresh presigned URLs first
+        if (retryCount > 0) {
+          console.log(`Refreshing presigned URLs for media ${id} (attempt ${retryCount})`)
+          const refreshedMedia = await fetchMedia(id)
+          signedUrls = refreshedMedia.presignedUrls
+        }
+        
+        const uploadedPromise: Promise<boolean> = mediaUploaded 
+          ? Promise.resolve(true) 
+          : signedUrls.large 
+            ? uploadMedia(signedUrls.large, file) 
+            : signedUrls.uploadId 
+              ? uploadLargeMedia(signedUrls.uploadId, signedUrls.key, file) 
+              : Promise.reject(`Unable to upload file`)
+        
+        const webpUploadedPromise: Promise<boolean> = previewUploaded 
+          ? Promise.resolve(true) 
+          : uploadMedia(signedUrls.small, previewFile)
+        
+        // Add timeout to prevent hanging
+        const timeoutPromise = new Promise<never>((_, reject) => {
+          setTimeout(() => reject(new Error('Upload timed out')), 60000) // 60 second timeout
+        })
+        
+        const [uploaded, webpUploaded] = await Promise.race([
+          Promise.all([uploadedPromise, webpUploadedPromise]),
+          timeoutPromise.then(() => { throw new Error('Upload timed out') })
+        ])
+        
+        mediaUploaded = uploaded
+        previewUploaded = webpUploaded
+        
+        if (!mediaUploaded || !previewUploaded) {
+          retryCount++
+          console.log(`Some parts not uploaded for media ${id}. Retry ${retryCount} of ${MAX_RETRIES}`)
+        }
+      } catch (error) {
+        retryCount++
+        console.error(`Upload error for media ${id}:`, error)
+        console.log(`Retrying upload for media ${id}. Attempt ${retryCount} of ${MAX_RETRIES}`)
+        
+        // Add exponential backoff delay
+        await new Promise(resolve => setTimeout(resolve, 1000 * Math.pow(2, retryCount)))
       }
     }
+    
+    if (!mediaUploaded || !previewUploaded) {
+      console.error(`Failed to upload media ${id} after ${MAX_RETRIES} attempts`)
+      throw new Error(`Failed to upload media ${id} after ${MAX_RETRIES} attempts`)
+    }
+    
     return true
   }
 
-  const insertMedia = useCallback(async (newMedia: OrientationMediaWithFile,  addToAlbum: boolean): Promise<Media> => {
+  const insertMedia = useCallback(async (newMedia: OrientationMediaWithFile, addToAlbum: boolean): Promise<Media & {presignedUrls: PresignedUrls, file: File, previewFile: Blob}> => {
     const {file, previewFile, preview, url, isVertical, ..._newMedia} = newMedia
-    const insertedMedia = await createMedia({..._newMedia, personId}, gallery.id, currentAlbum && addToAlbum ? currentAlbum.id : undefined)
-    const {presignedUrls, ..._media} = insertedMedia
-    //Add Temp File
-    URL.revokeObjectURL(url)
-    URL.revokeObjectURL(preview)
-
-    await addFile(insertedMedia.id, gallery.id, file, previewFile)
-    await doUploadMedia(_media.id, presignedUrls, file, previewFile)
-    return _media
+    try {
+      // First create the media record on the server
+      const insertedMedia = await createMedia({..._newMedia, personId}, gallery.id, currentAlbum && addToAlbum ? currentAlbum.id : undefined)
+      
+      // Clean up object URLs to prevent memory leaks
+      if (url) URL.revokeObjectURL(url)
+      if (preview) URL.revokeObjectURL(preview)
+      
+      // Then store files in IndexedDB for persistence
+      await addFile(insertedMedia.id, gallery.id, file, previewFile)
+      
+      return {...insertedMedia, file, previewFile}
+    } catch (error) {
+      console.error("Error inserting media:", error)
+      // Clean up object URLs in case of error
+      if (url) URL.revokeObjectURL(url)
+      if (preview) URL.revokeObjectURL(preview)
+      throw error
+    }
   }, [personId, gallery.id, currentAlbum])
 
   const finalizeMedia = async (id: string): Promise<Media> => {
-    const [media] = await Promise.all([
-      updateMedia(id, {uploaded: true}),
-      removeFile(id)
-    ])
-    return media
+    try {
+      const media = await updateMedia(id, {uploaded: true});
+      await removeFile(id);
+      return media;
+    } catch (error) {
+      console.error(`Error finalizing media ${id}:`, error);
+      // Still try to remove the file from IndexedDB even if the update fails
+      try {
+        await removeFile(id);
+      } catch (removeError) {
+        console.error(`Error removing file ${id} from IndexedDB:`, removeError);
+      }
+      throw error;
+    }
   }
 
   const confirmMedia = async (confirmedImages: OrientationMediaWithFile[], addToAlbum: boolean) => {
-    console.log(addToAlbum, confirmedImages, currentAlbum)
-    setStagedMedia(confirmedImages)
-    setTotalUploads(confirmedImages.length)
-    setCompleteUploads(0)
-    const imagePromises = confirmedImages.map(image => insertMedia(image, addToAlbum).then(async media => {
-      const m = await finalizeMedia(media.id)
-      setCompleteUploads(oldComplete => (oldComplete || 0) + 1)
-      setMedia((oldImages) => [...oldImages, m])
-      if (currentAlbum && addToAlbum) {
-        setCurrentAlbum({...currentAlbum, recentMedia: [m, ...(currentAlbum?.recentMedia || [])]})
+    setStagedMedia(confirmedImages);
+    setTotalUploads(confirmedImages.length);
+    setCompleteUploads(0);
+    
+    const uploadedImages = await Promise.all(confirmedImages.map(image => insertMedia(image, addToAlbum)))
+    // Create a queue of all images to upload
+    const queue = [...uploadedImages];
+    const inProgress = new Set(); // Track ongoing uploads
+    const results: Media[] = []; // Store completed upload results
+    
+    // Process function that maintains CONCURRENT_UPLOADS active uploads
+    const processQueue = async () => {
+      // While we have capacity and items in the queue, start new uploads
+      while (inProgress.size < CONCURRENT_UPLOADS && queue.length > 0) {
+        const image = queue.shift()!;
+        inProgress.add(image.id);
+        
+        try {
+        // Start the upload process
+        await doUploadMedia(image.id, image.presignedUrls, image.file, image.previewFile)
+        const m = await finalizeMedia(image.id);
+        results.push(m);
+        setCompleteUploads(oldComplete => (oldComplete || 0) + 1);
+        setMedia((oldImages) => [...oldImages, m]);
+        if (currentAlbum && addToAlbum) {
+          setCurrentAlbum({...currentAlbum, recentMedia: [m, ...(currentAlbum?.recentMedia || [])]});
+          }
+        } catch (err) {
+          console.error("Upload failed:", err);
+        } finally {
+          // Remove from in-progress set and process next item
+          inProgress.delete(image.id);
+          // If there are items in the queue, process the next one
+          if (queue.length > 0) {
+              processQueue();
+            }
+            // If we're done with everything, clean up
+            if (inProgress.size === 0 && queue.length === 0) {
+              finishUploads();
+            }
+        }
       }
-    }))
-    setShowUploadConfirmation(false);
-    setStagedMedia([]);
-    await Promise.all(imagePromises)
-    const timer = setTimeout(() => {
-      setTotalUploads(undefined)
-      setGalleryImages('')
-      setCompleteUploads (undefined)  
-    }, 500);
-  };
+    };
+    
+    // Function to handle cleanup after all uploads complete
+    const finishUploads = () => {
+      // Clean up any remaining object URLs
+      confirmedImages.forEach(image => {
+        // These may already be revoked in insertMedia, but it's good to be thorough
+        if (image.url) URL.revokeObjectURL(image.url);
+        if (image.preview) URL.revokeObjectURL(image.preview);
+      });
+      
+      setShowUploadConfirmation(false);
+      setStagedMedia([]);
+      
+      const timer = setTimeout(() => {
+        setTotalUploads(undefined);
+        setGalleryImages('');
+        setCompleteUploads(undefined);  
+      }, 500);
+    };
+    
+    // Start the initial batch of uploads
+    await processQueue();
+  }
 
   const cancelImages = () => {
+    // Release object URLs for all staged media
+    stagedMedia.forEach(media => {
+      if (media.url) URL.revokeObjectURL(media.url);
+      if (media.preview) URL.revokeObjectURL(media.preview);
+    });
     setStagedMedia([])
     setGalleryImages('')
     setShowConfirmDelete(false)
     setShowUploadConfirmation(false);
   };
+
+  // const handleUnfinishedUploads = useCallback(async (files: TempFile[]) => {
+  //   if (files.length === 0) {
+  //     return
+  //   }
+  //   setTotalUploads(files.length)
+  //   setCompleteUploads(0)
+
+  //   // Create a queue of unfinished files to process
+  //   const queue = [...files];
+  //   const inProgress = new Set(); // Track ongoing uploads
+  //   const results: Media[] = []; // Store completed results
+    
+  //   // Process function that maintains CONCURRENT_UPLOADS active uploads
+  //   const processQueue = async () => {
+  //     // While we have capacity and items in the queue, start new uploads
+  //     while (inProgress.size < CONCURRENT_UPLOADS && queue.length > 0) {
+  //       const file = queue.shift()!;
+  //       inProgress.add(file.id);
+        
+  //       try {
+  //         // Start the upload process
+  //         const m = await fetchMedia(file.id);
+  //         await doUploadMedia(file.id, m.presignedUrls, file.file, file.previewFile);
+  //         const finishedMedia = await finalizeMedia(m.id);
+  //         results.push(finishedMedia);
+  //         setCompleteUploads(oldComplete => (oldComplete || 0) + 1);
+  //         setMedia((oldImages) => [...oldImages, finishedMedia]);
+  //       } catch (err) {
+  //         console.error("Unfinished upload failed:", err);
+  //       } finally {
+  //         // Remove from in-progress set and process next item
+  //         inProgress.delete(file.id);
+  //         // If there are items in the queue, process the next one
+  //         if (queue.length > 0) {
+  //           processQueue();
+  //         }
+  //         // If we're done with everything, clean up
+  //         if (inProgress.size === 0 && queue.length === 0) {
+  //           // All uploads completed, clean up
+  //           const timer = setTimeout(() => {
+  //             setTotalUploads(undefined);
+  //             setCompleteUploads(undefined);
+  //           }, 500);
+  //         }
+  //       }
+  //     }
+  //   };
+    
+  //   // Start the initial batch of uploads
+  //   await processQueue();
+  // }, [])
 
   const handleUnfinishedUploads = useCallback(async (files: TempFile[]) => {
     if (files.length === 0) {
@@ -277,6 +444,9 @@ const GalleryProvider: React.FC<{ children: React.ReactNode, gallery: Gallery}> 
 
     const unfinishedMediaPromises = files.map(async f => {
       const m = await fetchMedia(f.id)
+      console.log(m)
+      console.log(f.file.size)
+      console.log(f.previewFile.size)
       await doUploadMedia(f.id, m.presignedUrls, f.file, f.previewFile).then(async _ => {
         const finishedMedia = await finalizeMedia(m.id)
         setCompleteUploads(oldComplete => (oldComplete || 0) + 1)
@@ -291,6 +461,7 @@ const GalleryProvider: React.FC<{ children: React.ReactNode, gallery: Gallery}> 
     }, 500);
 
   }, [])
+
 
   const initImages = async (galleryId: string) => {
     const _media = await fetchGalleryImages(galleryId)
