@@ -27,9 +27,16 @@ const MediaGallery: FC<{media: Media[]}> = ({media}) => {
     
     const loadMedia = (media: Media, setMethod: Dispatch<SetStateAction<string | undefined>>, setContentTypeMethod?: Dispatch<SetStateAction<string | undefined>>) => {
         if (media?.url) {
+            // First clean up any existing objectURL that might be in the state
+            setMethod(prevSrc => {
+                if (prevSrc && prevSrc.startsWith('blob:')) {
+                    URL.revokeObjectURL(prevSrc);
+                }
+                return media.preview; // Set to preview initially while loading
+            });
+
             if (isImage(media)) {
               // Handle image loading
-              setMethod(media.preview)
               const fullImage = new Image();
               fullImage.src = media.url;
               fullImage.onload = () => {
@@ -41,32 +48,13 @@ const MediaGallery: FC<{media: Media[]}> = ({media}) => {
                 // You can choose to keep the preview or set a fallback image
               };
             } else if (isVideo(media)) {
-              // Handle video loading
-              setMethod(media.url)
-              setContentTypeMethod?.(media.contentType)
-            //   const videoElement = document.createElement("video");
-            //   videoElement.muted = true; // Ensure autoplay works
-            //     videoElement.playsInline = true; // Avoid fullscreen mode on mobile
-            //   videoElement.src = media.url;
-            //   videoElement.preload = "auto"; // Preload the video data
-            //   videoElement.oncanplay = () => {
-            //     console.log("Video loaded:", media.url);
-            //     setMethod(media.url);
-            //     setLoaded(true);
-            //   };
-            //   videoElement.onerror = () => {
-            //     console.error("Failed to load video:", media.url);
-            //     // You can choose to keep the preview or set a fallback media
-            //     setLoaded(true); // Consider marking as "loaded" to avoid spinner loops
-            //   };
+              // Handle video loading - use the url directly since we're not creating blob URLs
+              setMethod(media.url);
+              setContentTypeMethod?.(media.contentType);
             } else {
               console.warn("Unsupported media type:", media.contentType);
             }
           }
-        
-          // Reset to preview when media changes
-        //   setMethod(media?.preview);
-          
     }
     const handleNext = useCallback(() => {
         if (media.length === 0) return;
@@ -139,6 +127,17 @@ const MediaGallery: FC<{media: Media[]}> = ({media}) => {
     }, [media])
 
     const handleClose = () => {
+        // Clean up any object URLs when closing the lightbox
+        if (mediaSrc && mediaSrc.startsWith('blob:')) {
+            URL.revokeObjectURL(mediaSrc);
+        }
+        if (nextSrc && nextSrc.startsWith('blob:')) {
+            URL.revokeObjectURL(nextSrc);
+        }
+        if (prevSrc && prevSrc.startsWith('blob:')) {
+            URL.revokeObjectURL(prevSrc);
+        }
+        
         setMediaSrc(undefined)
         setNextSrc(undefined)
         setPrevSrc(undefined)
@@ -149,6 +148,22 @@ const MediaGallery: FC<{media: Media[]}> = ({media}) => {
     useEffect(() => {
         handleClose()
     }, [media])
+
+    // Cleanup effect for when the component unmounts
+    useEffect(() => {
+        return () => {
+            // Clean up any remaining object URLs
+            if (mediaSrc && mediaSrc.startsWith('blob:')) {
+                URL.revokeObjectURL(mediaSrc);
+            }
+            if (nextSrc && nextSrc.startsWith('blob:')) {
+                URL.revokeObjectURL(nextSrc);
+            }
+            if (prevSrc && prevSrc.startsWith('blob:')) {
+                URL.revokeObjectURL(prevSrc);
+            }
+        };
+    }, [mediaSrc, nextSrc, prevSrc]);
     
     const [hoverIndex, setHoverIndex] = useState<number>(-1)
     const touchTimerRef = useRef<NodeJS.Timeout | null>(null);
