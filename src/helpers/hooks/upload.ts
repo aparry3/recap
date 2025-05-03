@@ -191,13 +191,18 @@ export async function downloadMedia(galleryName: string, mediaList: Media[]): Pr
         const media = mediaList[0];
         const response = await fetch(media.url);
         const blob = await response.blob();
-        const file = new File([blob], media.id, { type: blob.type });
+        
+        // Get file extension from MIME type or URL
+        const fileExtension = getFileExtension(media.url, blob.type);
+        const fileName = `${media.id}${fileExtension}`;
+        
+        const file = new File([blob], fileName, { type: blob.type });
         
         // Try to share the file
         if (navigator.canShare({ files: [file] })) {
           await navigator.share({
             files: [file],
-            title: media.id,
+            title: fileName,
           });
           return;
         }
@@ -206,7 +211,12 @@ export async function downloadMedia(galleryName: string, mediaList: Media[]): Pr
         const filePromises = mediaList.map(async (media) => {
           const response = await fetch(media.url);
           const blob = await response.blob();
-          return new File([blob], media.id, { type: blob.type });
+          
+          // Get file extension from MIME type or URL
+          const fileExtension = getFileExtension(media.url, blob.type);
+          const fileName = `${media.id}${fileExtension}`;
+          
+          return new File([blob], fileName, { type: blob.type });
         });
         
         const files = await Promise.all(filePromises);
@@ -235,11 +245,15 @@ export async function downloadMedia(galleryName: string, mediaList: Media[]): Pr
     const response = await fetch(media.url);
     const blob = await response.blob();
 
+    // Get file extension from MIME type or URL
+    const fileExtension = getFileExtension(media.url, blob.type);
+    const fileName = `${media.id}${fileExtension}`;
+
     // Create a link element to trigger the download
     const link = document.createElement('a');
     const objectUrl = URL.createObjectURL(blob);
     link.href = objectUrl;
-    link.download = media.id;
+    link.download = fileName;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -253,7 +267,12 @@ export async function downloadMedia(galleryName: string, mediaList: Media[]): Pr
         // Add the media to the zip if not a direct download
         const response = await fetch(media.url);
         const blob = await response.blob();
-        zip.file(media.id, blob);
+        
+        // Get file extension from MIME type or URL
+        const fileExtension = getFileExtension(media.url, blob.type);
+        const fileName = `${media.id}${fileExtension}`;
+        
+        zip.file(fileName, blob);
       }
       if (Object.keys(zip.files).length > 0) {
         zip.generateAsync({ type: 'blob' }).then((content) => {
@@ -272,6 +291,29 @@ export async function downloadMedia(galleryName: string, mediaList: Media[]): Pr
   }
 }
 
+// Helper function to determine file extension from MIME type or URL
+function getFileExtension(url: string, mimeType: string): string {
+  // First try to get extension from URL
+  const urlExtension = url.split('.').pop()?.toLowerCase();
+  if (urlExtension && ['jpg', 'jpeg', 'png', 'gif', 'webp', 'mp4', 'mov', 'webm'].includes(urlExtension)) {
+    return `.${urlExtension}`;
+  }
+  
+  // If URL doesn't have a usable extension, determine from MIME type
+  const mimeTypeMap: Record<string, string> = {
+    'image/jpeg': '.jpg',
+    'image/jpg': '.jpg',
+    'image/png': '.png',
+    'image/gif': '.gif',
+    'image/webp': '.webp',
+    'video/mp4': '.mp4',
+    'video/quicktime': '.mov',
+    'video/webm': '.webm',
+    'application/pdf': '.pdf'
+  };
+  
+  return mimeTypeMap[mimeType] || '';
+}
 
 export async function uploadHtml(rawHtml: string, propsId: string): Promise<{mediaLink: string, id: string}> {    
   const payload = {html: rawHtml, id: propsId}
