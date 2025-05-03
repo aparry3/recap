@@ -47,17 +47,37 @@ const maxPartsAtOnce = 10
 
 export const uploadMedia = async (presignedUrl: string, file: File | Blob): Promise<boolean> => {
   try {
-      const data = await fetch(presignedUrl, {
+      const response = await fetch(presignedUrl, {
           method: 'PUT',
           headers: {
               'Content-Type': file.type,
           },
           body: file,
       })
-      return data.status === 200
-  }  catch (error) {
-      console.log(error)
-      return false
+      
+      if (!response.ok) {
+        const status = response.status;
+        let errorDetail = '';
+        try {
+          errorDetail = await response.text();
+        } catch (e) {
+          console.error('Could not read error response text', e);
+        }
+        
+        console.error(`Upload failed with status ${status}: ${errorDetail}`);
+        
+        if (status === 403) {
+          console.error('Got 403 Forbidden - presigned URL might have expired');
+          throw new Error('Presigned URL expired');
+        }
+        
+        throw new Error(`Upload failed with status ${status}`);
+      }
+      
+      return true;
+  } catch (error) {
+      console.error('Upload error:', error);
+      return false;
   }
 }
 

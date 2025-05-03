@@ -19,7 +19,7 @@ export const updateMedia = async (mediaId: string, mediaUpdate: MediaUpdate): Pr
 
 export const selectMedia = async (mediaId: string): Promise<Media> => {
   const media = await db.selectFrom('media').where('id', '=', mediaId).selectAll().executeTakeFirstOrThrow();
-  return {...media, url: `${CLOUDFRONT_URL}/${media.url}`, preview: `${CLOUDFRONT_URL}/${media.preview}`} as Media;
+  return media;
 }
 
 export const deleteMedia = async (mediaId: string): Promise<boolean> => {
