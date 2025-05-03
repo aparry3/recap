@@ -184,7 +184,52 @@ export async function uploadLargeMedia(uploadId: string, key: string, file: File
 // }
 
 export async function downloadMedia(galleryName: string, mediaList: Media[]): Promise<void> {
-
+  // Check if Web Share API is available
+  if (navigator.canShare) {
+    try {
+      if (mediaList.length === 1) {
+        const media = mediaList[0];
+        const response = await fetch(media.url);
+        const blob = await response.blob();
+        const file = new File([blob], media.id, { type: blob.type });
+        
+        // Try to share the file
+        if (navigator.canShare({ files: [file] })) {
+          await navigator.share({
+            files: [file],
+            title: media.id,
+          });
+          return;
+        }
+      } else {
+        // For multiple files, try sharing them directly as an array
+        const filePromises = mediaList.map(async (media) => {
+          const response = await fetch(media.url);
+          const blob = await response.blob();
+          return new File([blob], media.id, { type: blob.type });
+        });
+        
+        const files = await Promise.all(filePromises);
+        
+        // Try to share multiple files directly
+        if (navigator.canShare({ files })) {
+          await navigator.share({
+            files,
+            title: galleryName,
+          });
+          return;
+        }
+        
+        // If sharing multiple files is not supported, fall back to zip method
+        // (This code will only execute if the above sharing attempt fails or isn't supported)
+      }
+    } catch (error) {
+      console.error('Sharing failed:', error);
+      // Fall back to download if sharing fails
+    }
+  }
+  
+  // Fall back to download approach if Web Share API is not available or failed
   if (mediaList.length === 1) {
     const media = mediaList[0]
     const response = await fetch(media.url);
