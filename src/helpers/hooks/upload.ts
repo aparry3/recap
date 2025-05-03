@@ -202,28 +202,26 @@ export async function downloadMedia(galleryName: string, mediaList: Media[]): Pr
           return;
         }
       } else {
-        // For multiple files, we'll create a zip and try to share that
-        const zip = new JSZip();
-        
-        for (const media of mediaList) {
+        // For multiple files, try sharing them directly as an array
+        const filePromises = mediaList.map(async (media) => {
           const response = await fetch(media.url);
           const blob = await response.blob();
-          zip.file(media.id, blob);
+          return new File([blob], media.id, { type: blob.type });
+        });
+        
+        const files = await Promise.all(filePromises);
+        
+        // Try to share multiple files directly
+        if (navigator.canShare({ files })) {
+          await navigator.share({
+            files,
+            title: galleryName,
+          });
+          return;
         }
         
-        if (Object.keys(zip.files).length > 0) {
-          const content = await zip.generateAsync({ type: 'blob' });
-          const file = new File([content], `${galleryName}.zip`, { type: 'application/zip' });
-          
-          // Try to share the zip file
-          if (navigator.canShare({ files: [file] })) {
-            await navigator.share({
-              files: [file],
-              title: `${galleryName}.zip`,
-            });
-            return;
-          }
-        }
+        // If sharing multiple files is not supported, fall back to zip method
+        // (This code will only execute if the above sharing attempt fails or isn't supported)
       }
     } catch (error) {
       console.error('Sharing failed:', error);
