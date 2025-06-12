@@ -29,6 +29,9 @@
     background: var(--text-dark);
     opacity: 0.5;
 }
+.titleContainer {
+    flex-grow: 1;
+}
 .subtitleContainer {
     width: 100%;
 }
