@@ -5,8 +5,8 @@ import { Gallery } from '@/lib/types/Gallery';
 import { convertImageToWebP, createMedia, deleteMedia, extractWebPPreview, fetchGalleryImages, fetchMedia, updateMedia } from '../api/mediaClient';
 import useLocalStorage from '../hooks/localStorage';
 import { Media, PresignedUrls } from '@/lib/types/Media';
-import { fetchGalleryPeople } from '../api/personClient';
-import { GalleryPersonData } from '@/lib/types/Person';
+import { fetchGalleryPeople, getPersonByEmail, createPerson, addPersonToGallery } from '../api/personClient';
+import { GalleryPersonData, Person, NewPersonData } from '@/lib/types/Person';
 import { downloadMedia, uploadLargeMedia, uploadMedia } from '../hooks/upload';
 import UploadStatus from '@/components/UploadStatus';
 import { addFile, readFiles, removeFile, TempFile } from '../clientDb';
@@ -568,7 +568,7 @@ const GalleryProvider: React.FC<{ children: React.ReactNode, gallery: Gallery}> 
     }
   }, [galleryImages]);
   
-  const handleSubmitGallery = async (galleryName: string, theKnot?: string, zola?: string) => {
+  const handleSubmitGallery = async (galleryName: string, theKnot?: string, zola?: string, additionalOwners?: string) => {
     setShowSettings(false)
     setTotalUploads(1)
     setTotalUploads(0)
@@ -587,6 +587,30 @@ const GalleryProvider: React.FC<{ children: React.ReactNode, gallery: Gallery}> 
     }
     setCompleteUploads(1)
     setGallery(_newGallery)
+
+    if (additionalOwners && additionalOwners.trim() !== '') {
+      const ownerEmailsOrUsernames = additionalOwners.split(',').map(email => email.trim()).filter(email => email);
+      for (const emailOrUsername of ownerEmailsOrUsernames) {
+        try {
+          let person = await getPersonByEmail(emailOrUsername);
+          if (!person) {
+            // For simplicity, using email as name. Adjust if NewPersonData requires more fields.
+            person = await createPerson({ email: emailOrUsername, name: emailOrUsername });
+          }
+          if (person) {
+            // Add person to gallery with 'owner' type.
+            // Assuming receiveMessages defaults or is not critical here.
+            await addPersonToGallery(gallery.id, person.id, 'owner', true);
+            // Optionally, refresh people list or gallery object if needed
+            // await initPeople(gallery.id);
+          }
+        } catch (error) {
+          console.error(`Error processing additional owner ${emailOrUsername}:`, error);
+          // Decide how to handle errors: continue, stop, notify user?
+        }
+      }
+    }
+
     setTotalUploads(0)
     setCompleteUploads(0)
   }

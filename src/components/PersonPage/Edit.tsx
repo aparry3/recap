@@ -10,17 +10,19 @@ import { leftIcon } from '@/lib/icons';
 import { Gallery } from '@/lib/types/Gallery';
 
 
-const EditGallery: FC<{gallery: Gallery, close: () => void, onSubmit: (galleryName: string, theKnot?: string, zola?: string) => void}> = ({gallery, close, onSubmit}) => {
+const EditGallery: FC<{gallery: Gallery, close: () => void, onSubmit: (galleryName: string, theKnot?: string, zola?: string, additionalOwners?: string) => void}> = ({gallery, close, onSubmit}) => {
   const [galleryName, setGalleryName] = useState(gallery ? gallery.name : '');
 
   const [theKnot, setTheKnot] = useState(gallery ? (gallery.theknot || '') : '');
   const [zola, setZola] = useState(gallery ? (gallery.zola || '') : '');
+  const [additionalOwners, setAdditionalOwners] = useState('');
 
   useEffect(() => {
     if (gallery) {
        setGalleryName(gallery.name)
        setTheKnot(gallery.theknot || '')
        setZola(gallery.zola || '')
+       // Note: additionalOwners are not part of the gallery object, so not pre-filled from there
     } 
    }, [gallery])
  
@@ -35,15 +37,19 @@ const EditGallery: FC<{gallery: Gallery, close: () => void, onSubmit: (galleryNa
     setZola(value || '');
   };
 
+  const handleAdditionalOwnersChange = (value?: string) => {
+    setAdditionalOwners(value || '');
+  };
+
   const handleButtonPress = () => {
     // Perform any necessary actions with the form data
-    onSubmit(galleryName, theKnot, zola);
+    onSubmit(galleryName, theKnot, zola, additionalOwners);
   };
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     // Perform any necessary actions with the form data
-    if (!!galleryName) onSubmit(galleryName, theKnot, zola);
+    if (!!galleryName) onSubmit(galleryName, theKnot, zola, additionalOwners);
 };
 
   const url = useMemo(() => `https://ourweddingrecap.com/${galleryName.toLowerCase().replaceAll(' ', '-')}`, [galleryName]);
@@ -111,6 +117,14 @@ const EditGallery: FC<{gallery: Gallery, close: () => void, onSubmit: (galleryNa
               autoComplete='off'
               value={zola}
               onChange={handleZolaChange}
+            />
+            <Input
+              label="Additional Owners (comma-separated emails or usernames)"
+              type="text"
+              name="additional_owners"
+              autoComplete='off'
+              value={additionalOwners}
+              onChange={handleAdditionalOwnersChange}
             />
           </Column>
           <Container className={styles.buttonContainer}>

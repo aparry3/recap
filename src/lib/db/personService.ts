@@ -29,16 +29,19 @@ export const selectPersonByEmail = async (email: string): Promise<Person> => {
 
 export const selectPeopleMedia = async (galleryId: string): Promise<GalleryPersonData[]> => {
     const people = await db.selectFrom('person')
+    .innerJoin('galleryPerson', 'galleryPerson.personId', 'person.id')
     .leftJoin('media', 'media.personId', 'person.id') // Join to count media for each person
     .leftJoin('galleryMedia', 'galleryMedia.mediaId', 'media.id')
     .select([
       'person.id',
       'person.name',
       'person.email',
+      'galleryPerson.ownerType', // Added ownerType
       db.fn.count('media.id').as('count'),
     ])
     .where('galleryMedia.galleryId', '=', galleryId)
-    .groupBy(['person.id']) // Only group by person ID
+    .where('galleryPerson.galleryId', '=', galleryId) // Ensure we are getting ownerType for the correct gallery
+    .groupBy(['person.id', 'galleryPerson.ownerType']) // Group by ownerType as well
     .execute();
 
     const personPromises = people.map(async p => {
@@ -52,8 +55,8 @@ export const selectPeopleMedia = async (galleryId: string): Promise<GalleryPerso
     return await Promise.all(personPromises) as GalleryPersonData[];
 }
 
-export const insertGalleryPerson = async (galleryId: string, personId: string, receiveMessages?: boolean): Promise<GalleryPerson> => {
-  const galleryPerson = await db.insertInto('galleryPerson').values({galleryId, personId, receiveMessages}).returningAll().executeTakeFirstOrThrow();
+export const insertGalleryPerson = async (galleryId: string, personId: string, receiveMessages?: boolean, ownerType?: string): Promise<GalleryPerson> => {
+  const galleryPerson = await db.insertInto('galleryPerson').values({galleryId, personId, receiveMessages, ownerType: ownerType || null}).returningAll().executeTakeFirstOrThrow();
   return galleryPerson;
 }
 

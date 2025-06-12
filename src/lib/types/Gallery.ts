@@ -21,6 +21,7 @@ export interface GalleryMediaTable {
 export interface GalleryPersonTable {
     galleryId: string
     personId: string
+    ownerType: string
     coverPhotoId?: string
     receiveMessages?: boolean
 }
