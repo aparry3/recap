@@ -568,7 +568,7 @@ const GalleryProvider: React.FC<{ children: React.ReactNode, gallery: Gallery}> 
     }
   }, [galleryImages]);
   
-  const handleSubmitGallery = async (galleryName: string, theKnot?: string, zola?: string) => {
+  const handleSubmitGallery = async (galleryName: string, owners: string[], theKnot?: string, zola?: string, date?: string) => {
     setShowSettings(false)
     setTotalUploads(1)
     setTotalUploads(0)
@@ -580,7 +580,9 @@ const GalleryProvider: React.FC<{ children: React.ReactNode, gallery: Gallery}> 
       name: galleryName,
       path: `${galleryName.toLowerCase().replaceAll(' ', '-')}`,
       zola,
-      theknot: theKnot
+      theknot: theKnot,
+      owners,
+      date: date ? new Date(date) : undefined
     })
     if (_newGallery.images.length > 0) {
       setGalleryImages(_newGallery.images.join(','))

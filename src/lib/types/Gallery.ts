@@ -11,6 +11,7 @@ export interface GalleryTable {
     password: string
     zola?: string
     theknot?: string
+    owners: string[]
 }
 
 export interface GalleryMediaTable {

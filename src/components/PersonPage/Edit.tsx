@@ -1,5 +1,5 @@
 'use client';
-import React, { FC, FormEvent, MouseEvent, useEffect, useMemo, useState } from 'react';
+import React, { FC, FormEvent, useEffect, useMemo, useState } from 'react';
 import { Column, Container, Form, Row, Text } from 'react-web-layout-components';
 import Image from 'next/image';
 import Input from '@/components/Input';
@@ -8,19 +8,24 @@ import Button from '@/components/Button';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { leftIcon } from '@/lib/icons';
 import { Gallery } from '@/lib/types/Gallery';
+import { faTimes } from '@fortawesome/free-solid-svg-icons';
 
 
-const EditGallery: FC<{gallery: Gallery, close: () => void, onSubmit: (galleryName: string, theKnot?: string, zola?: string) => void}> = ({gallery, close, onSubmit}) => {
+const EditGallery: FC<{gallery: Gallery, close: () => void, onSubmit: (galleryName: string, owners: string[], theKnot?: string, zola?: string, date?: string) => void}> = ({gallery, close, onSubmit}) => {
   const [galleryName, setGalleryName] = useState(gallery ? gallery.name : '');
-
   const [theKnot, setTheKnot] = useState(gallery ? (gallery.theknot || '') : '');
   const [zola, setZola] = useState(gallery ? (gallery.zola || '') : '');
+  const [date, setDate] = useState(gallery ? (gallery.date ? new Date(gallery.date).toISOString().split('T')[0] : '') : '');
+  const [owners, setOwners] = useState(gallery ? (gallery.owners || [gallery.personId]) : []);
+  const [ownerInput, setOwnerInput] = useState('');
 
   useEffect(() => {
     if (gallery) {
        setGalleryName(gallery.name)
        setTheKnot(gallery.theknot || '')
        setZola(gallery.zola || '')
+       setDate(gallery.date ? new Date(gallery.date).toISOString().split('T')[0] : '')
+       setOwners(gallery.owners || [gallery.personId])
     } 
    }, [gallery])
  
@@ -35,18 +40,56 @@ const EditGallery: FC<{gallery: Gallery, close: () => void, onSubmit: (galleryNa
     setZola(value || '');
   };
 
+  const handleDateChange = (value?: string) => {
+    setDate(value || '');
+  };
+
+  // const handleOwnerChange = (value?: string) => {
+  //   setOwner(value || '');
+  // };
+
   const handleButtonPress = () => {
     // Perform any necessary actions with the form data
-    onSubmit(galleryName, theKnot, zola);
+    onSubmit(galleryName, owners, theKnot, zola, date);
   };
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     // Perform any necessary actions with the form data
-    if (!!galleryName) onSubmit(galleryName, theKnot, zola);
+    if (!!galleryName) onSubmit(galleryName, owners, theKnot, zola, date);
 };
 
   const url = useMemo(() => `https://ourweddingrecap.com/${galleryName.toLowerCase().replaceAll(' ', '-')}`, [galleryName]);
+
+  // Owners field handlers
+  const handleOwnerInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setOwnerInput(e.target.value);
+  };
+
+  const handleAddOwners = () => {
+    if (!ownerInput.trim()) return;
+    // Split by comma or semicolon, trim, filter valid emails, and deduplicate
+    const emails = ownerInput
+      .split(/[;,]/)
+      .map(e => e.trim())
+      .filter(e => e && !owners.includes(e));
+    if (emails.length) {
+      setOwners([...owners, ...emails]);
+      setOwnerInput('');
+    }
+  };
+
+  const handleRemoveOwner = (email: string) => {
+    setOwners(owners.filter(o => o !== email));
+  };
+
+  const handleOwnerInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      handleAddOwners();
+    }
+  };
+
   return (
     <Container as='main' className={styles.editPage}>
       <Row className={styles.actionHeader}>
@@ -112,6 +155,39 @@ const EditGallery: FC<{gallery: Gallery, close: () => void, onSubmit: (galleryNa
               value={zola}
               onChange={handleZolaChange}
             />
+            <Input
+              label="Wedding Date"
+              type="date"
+              name="date"
+              autoComplete='off'
+              value={date}
+              onChange={handleDateChange}
+            />
+          </Column>
+          <Column className={styles.inputContainer}>
+            <label style={{ fontWeight: 500, marginBottom: 4 }}>Owners</label>
+            <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 4 }}>
+              <input
+                type="text"
+                placeholder="Enter email address (or multiple emails separated by commas)"
+                value={ownerInput}
+                onChange={handleOwnerInputChange}
+                onKeyDown={handleOwnerInputKeyDown}
+                style={{ flex: 1, padding: 8, borderRadius: 6, border: '1px solid #ccc', fontSize: 16 }}
+              />
+              <Button type="button" onClick={handleAddOwners} style={{ minWidth: 60 }}>Add</Button>
+            </div>
+            <div style={{ color: '#888', fontSize: 14, marginBottom: 8 }}>
+              You can add multiple emails at once by separating them with commas or semicolons
+            </div>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 8 }}>
+              {owners.map(email => (
+                <span key={email} style={{ display: 'flex', alignItems: 'center', background: '#f5f5f7', borderRadius: 999, padding: '6px 14px', fontWeight: 600, fontSize: 16 }}>
+                  {email}
+                  <FontAwesomeIcon icon={faTimes} style={{ marginLeft: 8, cursor: 'pointer' }} onClick={() => handleRemoveOwner(email)} />
+                </span>
+              ))}
+            </div>
           </Column>
           <Container className={styles.buttonContainer}>
             <Button className={styles.button} onClick={handleButtonPress} type='submit' disabled={!galleryName}>

@@ -9,16 +9,19 @@ import { Person, NewPersonData } from '@/lib/types/Person';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { leftIcon } from '@/lib/icons';
 import { useRouter } from 'next/navigation';
+import { faTimes } from '@fortawesome/free-solid-svg-icons';
 
 
-const CreatePage: FC<{person?: Person | NewPersonData, login: () => void, isAdmin?: boolean, onSubmit: (galleryName: string,name: string, email: string, theKnot?: string, zola?: string) => void}> = ({login, person, onSubmit, isAdmin = false}) => {
+const CreatePage: FC<{person?: Person | NewPersonData, login: () => void, isAdmin?: boolean, onSubmit: (galleryName: string, owners: string[], name: string, email: string, theKnot?: string, zola?: string, date?: string) => void}> = ({login, person, onSubmit, isAdmin = false}) => {
     const router = useRouter()
   const [name, setName] = useState(person?.name || '');
   const [galleryName, setGalleryName] = useState('');
   const [email, setEmail] = useState(person?.email || '');
-
+  const [date, setDate] = useState('');
   const [theKnot, setTheKnot] = useState('');
   const [zola, setZola] = useState('');
+  const [owners, setOwners] = useState<string[]>([]);
+  const [ownerInput, setOwnerInput] = useState('');
 
   useEffect(() => {
    if (person) {
@@ -50,12 +53,42 @@ const CreatePage: FC<{person?: Person | NewPersonData, login: () => void, isAdmi
     setZola(value || '');
   };
 
+  const handleDateChange = (value?: string) => {
+    setDate(value || '');
+  };
 
+  // Owners field handlers
+  const handleOwnerInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setOwnerInput(e.target.value);
+  };
+
+  const handleAddOwners = () => {
+    if (!ownerInput.trim()) return;
+    // Split by comma or semicolon, trim, filter valid emails, and deduplicate
+    const emails = ownerInput
+      .split(/[;,]/)
+      .map(e => e.trim())
+      .filter(e => e && !owners.includes(e));
+    if (emails.length) {
+      setOwners([...owners, ...emails]);
+      setOwnerInput('');
+    }
+  };
+
+  const handleRemoveOwner = (email: string) => {
+    setOwners(owners.filter(o => o !== email));
+  };
+
+  const handleOwnerInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      handleAddOwners();
+    }
+  };
 
   const handleButtonPress = () => {
-    console.log("handle press")
     // Perform any necessary actions with the form data
-    onSubmit(galleryName, name, email, theKnot, zola);
+    onSubmit(galleryName, owners, name, email, theKnot, zola, date);
   };
 
   const emailError = useMemo(() => {
@@ -74,7 +107,7 @@ const CreatePage: FC<{person?: Person | NewPersonData, login: () => void, isAdmi
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     // Perform any necessary actions with the form data
-    if (!submitDisabled) onSubmit(galleryName, name, email, theKnot, zola);
+    if (!submitDisabled) onSubmit(galleryName, owners, name, email, theKnot, zola, date);
 };
 
   const url = useMemo(() => `https://ourweddingrecap.com/${galleryName.toLowerCase().replaceAll(' ', '-')}`, [galleryName]);
@@ -178,6 +211,40 @@ const CreatePage: FC<{person?: Person | NewPersonData, login: () => void, isAdmi
               value={zola}
               onChange={handleZolaChange}
             />
+          </Column>
+          <Column className={styles.inputContainer}>
+            <Input
+                label="Wedding Date"
+                type="date"
+                autoComplete='off'
+                name="date"
+                value={date}
+                onChange={handleDateChange}
+              />
+          </Column>
+          <Column className={styles.inputContainer}>
+            <div style={{ display: 'flex', flexDirection: 'row', gap: 8, alignItems: 'flex-end', width: '100%' }}>
+              <Input
+                label="Owner"
+                type="text"
+                value={ownerInput}
+                onChange={value => setOwnerInput(value || '')}
+                onKeyDown={handleOwnerInputKeyDown}
+                style={{ width: '100%' }}
+              />
+              <Button type="button" onClick={handleAddOwners} style={{ minWidth: 60, marginBottom: 8 }}>Add</Button>
+            </div>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, margin: '12px 0 8px 0', justifyContent: 'flex-start', width: '100%' }}>
+              {owners.map(email => (
+                <span key={email} style={{ display: 'flex', alignItems: 'center', background: '#f5f5f7', borderRadius: 999, padding: '6px 14px', fontWeight: 600, fontSize: 16 }}>
+                  {email}
+                  <FontAwesomeIcon icon={faTimes} style={{ marginLeft: 8, cursor: 'pointer' }} onClick={() => handleRemoveOwner(email)} />
+                </span>
+              ))}
+            </div>
+            <div style={{ color: '#888', fontSize: 14, marginBottom: 8 }}>
+              You can add multiple emails at once by separating them with commas or semicolons
+            </div>
           </Column>
           <Container className={styles.buttonContainer}>
             <Button className={styles.button} onClick={handleButtonPress} disabled={submitDisabled}>
