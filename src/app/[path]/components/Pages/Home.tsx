@@ -3,13 +3,13 @@ import { FC } from 'react'
 import styles from '../Content.module.scss'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Column, Container, Row, Text } from 'react-web-layout-components'
-import { uploadIcon, zipIcon, photoFilmIcon } from '@/lib/icons'
+import { uploadIcon, zipIcon, photoFilmIcon, checkSquareIcon, squareIcon } from '@/lib/icons'
 import useGallery from '@/helpers/providers/gallery';
 import MediaGallery from '@/components/MediaGallery';
 
 
 const Home: FC = () => {
-    const {media} = useGallery()
+    const {media, selectImages, toggleSelectImages} = useGallery()
 
     return (
         <>
@@ -58,7 +58,15 @@ const Home: FC = () => {
             </Column>
             <Column className={styles.section} padding>
                 <Row className={styles.title}>
-                    <Text size={2} weight={500}>Recent Uploads</Text>
+                    <Row className={styles.titleContainer}>
+                        <Text size={2} weight={500}>Recent Uploads</Text>
+                    </Row>
+                    <Container className={styles.selectContainer} onClick={toggleSelectImages}>
+                        <Text>Select</Text>
+                        <Container className={styles.checkContainer}>
+                            <FontAwesomeIcon icon={selectImages ? checkSquareIcon : squareIcon} className={styles.icon}/>
+                        </Container>
+                    </Container>
                 </Row>
                 <Container className={styles.line} style={{width: '100%'}}/>
                 <Column className={styles.gallery}>
