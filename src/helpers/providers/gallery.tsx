@@ -5,14 +5,14 @@ import { Gallery } from '@/lib/types/Gallery';
 import { convertImageToWebP, createMedia, deleteMedia, extractWebPPreview, fetchGalleryImages, fetchMedia, updateMedia } from '../api/mediaClient';
 import useLocalStorage from '../hooks/localStorage';
 import { Media, PresignedUrls } from '@/lib/types/Media';
-import { fetchGalleryPeople, getPersonByEmail, createPerson, addPersonToGallery } from '../api/personClient';
-import { GalleryPersonData, Person, NewPersonData } from '@/lib/types/Person';
+import { fetchGalleryPeople, fetchPersonByEmail, createPerson } from '../api/personClient';
+import { GalleryPersonData } from '@/lib/types/Person';
 import { downloadMedia, uploadLargeMedia, uploadMedia } from '../hooks/upload';
 import UploadStatus from '@/components/UploadStatus';
 import { addFile, readFiles, removeFile, TempFile } from '../clientDb';
 import ConfirmDelete from '@/components/ConfirmDelete';
 import { AlbumMediaData } from '@/lib/types/Album';
-import { updateGallery } from '../api/galleryClient';
+import { addPersonToGallery, updateGallery } from '../api/galleryClient';
 import EditGallery from '@/components/PersonPage/Edit';
 import { fetchAlbums } from '../api/albumClient';
 import SyncStatus from '@/components/SyncStatus';
@@ -592,7 +592,7 @@ const GalleryProvider: React.FC<{ children: React.ReactNode, gallery: Gallery}> 
       const ownerEmailsOrUsernames = additionalOwners.split(',').map(email => email.trim()).filter(email => email);
       for (const emailOrUsername of ownerEmailsOrUsernames) {
         try {
-          let person = await getPersonByEmail(emailOrUsername);
+          let person = await fetchPersonByEmail(emailOrUsername);
           if (!person) {
             // For simplicity, using email as name. Adjust if NewPersonData requires more fields.
             person = await createPerson({ email: emailOrUsername, name: emailOrUsername });
