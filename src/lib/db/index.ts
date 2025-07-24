@@ -7,6 +7,7 @@ import { AlbumTable } from "../types/Album"
 import { AlbumMediaTable, MediaTable } from "../types/Media"
 import { WeddingEventTable } from "../types/WeddingEvent"
 import { LikeTable } from "../types/Like"
+import { AdminActionTable } from "../types/AdminAction"
 
 export interface Database {
     gallery: GalleryTable,
@@ -20,6 +21,7 @@ export interface Database {
     verification: VerificationTable
     weddingEvent: WeddingEventTable
     likes: LikeTable
+    adminActions: AdminActionTable
 }
 
 const dialect = new PostgresDialect({

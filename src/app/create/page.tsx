@@ -27,9 +27,9 @@ const CreatePage: FC = () => {
   const [login, setLogin] = useState(false)
   const [loginError, setLoginError] = useState('')
   
-  // Check if user is admin based on their email domain
+  // Check if user is admin based on database flag
   const isAdmin = useMemo(() => {
-    return person?.email?.endsWith('ourweddingrecap.com') || false
+    return person?.isAdmin || false
   }, [person])
 
   // Add scroll to top effect when stage changes

@@ -7,6 +7,7 @@ export interface PersonTable {
     email?: string
     phone?: string
     created: Date
+    isAdmin: boolean
 }
 
 export type Person = Selectable<PersonTable>
