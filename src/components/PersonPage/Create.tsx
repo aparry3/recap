@@ -11,7 +11,7 @@ import { leftIcon } from '@/lib/icons';
 import { useRouter } from 'next/navigation';
 
 
-const CreatePage: FC<{person?: Person | NewPersonData, login: () => void, isAdmin?: boolean, onSubmit: (galleryName: string,name: string, email: string, theKnot?: string, zola?: string) => void}> = ({login, person, onSubmit, isAdmin = false}) => {
+const CreatePage: FC<{person?: Person | NewPersonData, login: () => void, isAdmin?: boolean, onSubmit: (galleryName: string,name: string, email: string, theKnot?: string, zola?: string, additionalOwners?: string[]) => void}> = ({login, person, onSubmit, isAdmin = false}) => {
     const router = useRouter()
   const [name, setName] = useState(person?.name || '');
   const [galleryName, setGalleryName] = useState('');
@@ -19,6 +19,8 @@ const CreatePage: FC<{person?: Person | NewPersonData, login: () => void, isAdmi
 
   const [theKnot, setTheKnot] = useState('');
   const [zola, setZola] = useState('');
+  const [additionalOwnerInput, setAdditionalOwnerInput] = useState('');
+  const [additionalOwners, setAdditionalOwners] = useState<string[]>([]);
 
   useEffect(() => {
    if (person) {
@@ -50,12 +52,31 @@ const CreatePage: FC<{person?: Person | NewPersonData, login: () => void, isAdmi
     setZola(value || '');
   };
 
+  const handleAdditionalOwnerInputChange = (value?: string) => {
+    setAdditionalOwnerInput(value || '');
+  };
 
+  const addAdditionalOwners = () => {
+    if (!additionalOwnerInput.trim()) return;
+    
+    // Split by comma or space and filter out empty strings
+    const newEmails = additionalOwnerInput
+      .split(/[,\s]+/)
+      .map(email => email.trim())
+      .filter(email => email && !additionalOwners.includes(email));
+    
+    setAdditionalOwners(prev => [...prev, ...newEmails]);
+    setAdditionalOwnerInput('');
+  };
+
+  const removeAdditionalOwner = (emailToRemove: string) => {
+    setAdditionalOwners(prev => prev.filter(email => email !== emailToRemove));
+  };
 
   const handleButtonPress = () => {
     console.log("handle press")
     // Perform any necessary actions with the form data
-    onSubmit(galleryName, name, email, theKnot, zola);
+    onSubmit(galleryName, name, email, theKnot, zola, additionalOwners);
   };
 
   const emailError = useMemo(() => {
@@ -74,7 +95,7 @@ const CreatePage: FC<{person?: Person | NewPersonData, login: () => void, isAdmi
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     // Perform any necessary actions with the form data
-    if (!submitDisabled) onSubmit(galleryName, name, email, theKnot, zola);
+    if (!submitDisabled) onSubmit(galleryName, name, email, theKnot, zola, additionalOwners);
 };
 
   const url = useMemo(() => `https://ourweddingrecap.com/${galleryName.toLowerCase().replaceAll(' ', '-')}`, [galleryName]);
@@ -178,6 +199,73 @@ const CreatePage: FC<{person?: Person | NewPersonData, login: () => void, isAdmi
               value={zola}
               onChange={handleZolaChange}
             />
+          </Column>
+          <Column className={styles.inputContainer} padding={0.5}>
+            <Container className={styles.galleryNamePrompt}>
+              <Text size={1.3}>Additional Owner Emails</Text>
+            </Container>
+            <Row style={{ gap: '8px', alignItems: 'flex-end' }}>
+              <Container style={{ flex: 1 }}>
+                <Input
+                  label="Enter emails (comma or space separated)"
+                  type="text"
+                  name="additional_owners"
+                  autoComplete='off'
+                  value={additionalOwnerInput}
+                  onChange={handleAdditionalOwnerInputChange}
+                />
+              </Container>
+              <Button 
+                type="button" 
+                onClick={addAdditionalOwners}
+                disabled={!additionalOwnerInput.trim()}
+                style={{ 
+                  padding: '8px 16px', 
+                  minHeight: '40px',
+                  fontSize: '14px'
+                }}
+              >
+                Add
+              </Button>
+            </Row>
+            {additionalOwners.length > 0 && (
+              <Column style={{ gap: '8px', marginTop: '12px' }}>
+                <Row style={{ flexWrap: 'wrap', gap: '8px' }}>
+                  {additionalOwners.map((email, index) => (
+                    <Row 
+                      key={index} 
+                      style={{ 
+                        backgroundColor: '#f0f0f0', 
+                        padding: '6px 12px', 
+                        borderRadius: '16px',
+                        alignItems: 'center',
+                        gap: '8px',
+                        fontSize: '14px'
+                      }}
+                    >
+                      <Text size={0.9}>{email}</Text>
+                      <Container 
+                        onClick={() => removeAdditionalOwner(email)}
+                        style={{ 
+                          cursor: 'pointer',
+                          width: '16px',
+                          height: '16px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          borderRadius: '50%',
+                          backgroundColor: '#ccc',
+                          fontSize: '12px',
+                          fontWeight: 'bold'
+                        }}
+                      >
+                        ×
+                      </Container>
+                    </Row>
+                  ))}
+                </Row>
+              </Column>
+            )}
           </Column>
           <Container className={styles.buttonContainer}>
             <Button className={styles.button} onClick={handleButtonPress} disabled={submitDisabled}>
