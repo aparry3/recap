@@ -65,6 +65,8 @@ const CreatePage: FC = () => {
     
     // If admin is creating for someone else, set createdBy to admin's ID
     // person is the current logged-in user (admin), targetPerson is who the gallery is for
+    // TODO change this so that we just wait until creation and at the last minute set the createdBy to the personId since
+    // we wont update person if admin, but if not admin, maybe we should update personId to the targetPersonId
     if (isAdmin && person && (!targetPerson || targetPerson.email !== person.email || _email !== person.email)) {
       _gallery.createdBy = person.id
     }
@@ -73,10 +75,10 @@ const CreatePage: FC = () => {
 
     let _person: Person
     if (!targetPerson || targetPerson.email !== _email) {
-      _person = await createPerson({name: _name, email: _email, isAdmin: false})
+      _person = await createPerson({name: _name, email: _email, isAdmin: false}, undefined, undefined, isAdmin ? person?.id : undefined)
       // Never update personId when admin is creating for someone else
       // Only update if it's the current user creating their own gallery
-      if (!isAdmin || (_email === person?.email)) {
+      if (!isAdmin || !person || (_email === person?.email)) {
         setPersonId(_person.id)
       }
     } else if (targetPerson.name !== _name) {
@@ -86,6 +88,9 @@ const CreatePage: FC = () => {
     }
 
     const _newGallery = await createGallery(_gallery, _person.id)
+    if (isAdmin) {
+      router.push(`/admin`)
+    }
     if (_newGallery.images.length > 0) {
       setGalleryImages(_newGallery.images.join(','))
     }
