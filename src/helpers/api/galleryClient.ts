@@ -4,6 +4,9 @@ import { NewGalleryData, Gallery, GalleryPerson, GalleryUpdate, GalleryWithImage
 export const createGallery = async (newGallery: NewGalleryData, personId: string): Promise<GalleryWithImagesAndEvents> => {
     const data = await fetch('/api/galleries', {
         method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
         body: JSON.stringify({...newGallery, personId}) 
     }).then(res => res.json())
     return {...data.gallery, images: data.images} as GalleryWithImagesAndEvents

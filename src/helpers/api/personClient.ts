@@ -2,8 +2,8 @@ import { Gallery } from "@/lib/types/Gallery";
 import { GalleryPersonData, NewPersonData, Person, PersonUpdate, Verification } from "@/lib/types/Person";
 
 
-export const createPerson = async (newPerson: NewPersonData, galleryId?: string, receiveMessages?: boolean): Promise<Person> => {
-    const data = await fetch(`/api/people`, {
+export const createPerson = async (newPerson: NewPersonData, galleryId?: string, receiveMessages?: boolean, admin?: string): Promise<Person> => {
+    const data = await fetch(`/api/people${admin ? `?admin=${admin}` : ''}`, {
         method: 'POST',
         body: JSON.stringify({...newPerson}) 
     }).then(res => res.json())

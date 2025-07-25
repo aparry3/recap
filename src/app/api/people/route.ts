@@ -6,16 +6,19 @@ import { NextRequest, NextResponse } from 'next/server';
 
 
 export const POST = async (req: Request) => {
+    const url = new URL(req.url);
+    const admin = url.searchParams.get('admin');
     const {...newPerson}: NewPersonData & {galleryId: string} = await req.json()
     try {
         const person = await insertPerson(newPerson)
-        cookies().set('personId', person.id, {
-            secure: process.env.NODE_ENV === 'production', // HTTPS-only in production
-            sameSite: 'lax', // Helps with CSRF protection
-            maxAge: 60 * 60 * 24 * 365, // 1 year
-            path: '/',
-            });
-        
+        if (!admin) {
+            cookies().set('personId', person.id, {
+                secure: process.env.NODE_ENV === 'production', // HTTPS-only in production
+                sameSite: 'lax', // Helps with CSRF protection
+                maxAge: 60 * 60 * 24 * 365, // 1 year
+                path: '/',
+                });
+        }
         return NextResponse.json({person}, {status: 200})
     } catch (error: any) {
         return NextResponse.json({error: error.message}, {status: 400})

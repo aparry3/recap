@@ -93,3 +93,13 @@ export const selectVerification = async (verificationId: string): Promise<Verifi
   return verification;
 }
 
+export const isPersonAdmin = async (personId: string): Promise<boolean> => {
+  const person = await db.selectFrom('person').where('id', '=', personId).select('isAdmin').executeTakeFirst();
+  return person?.isAdmin || false;
+}
+
+export const updatePersonAdminStatus = async (personId: string, isAdmin: boolean): Promise<Person> => {
+  const person = await db.updateTable('person').set({isAdmin}).where('id', '=', personId).returningAll().executeTakeFirstOrThrow();
+  return person;
+}
+

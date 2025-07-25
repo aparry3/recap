@@ -27,9 +27,9 @@ const CreatePage: FC = () => {
   const [login, setLogin] = useState(false)
   const [loginError, setLoginError] = useState('')
   
-  // Check if user is admin based on their email domain
+  // Check if user is admin based on database flag
   const isAdmin = useMemo(() => {
-    return person?.email?.endsWith('ourweddingrecap.com') || false
+    return person?.isAdmin || false
   }, [person])
 
   // Add scroll to top effect when stage changes
@@ -53,7 +53,7 @@ const CreatePage: FC = () => {
     }
   }, [personId])
 
-  const submitGallery = async (_galleryName: string, _name: string, _email?: string, theKnot? :string, zola?: string, person?: Person) => {
+  const submitGallery = async (_galleryName: string, _name: string, _email?: string, theKnot? :string, zola?: string, targetPerson?: Person) => {
     const url = `${_galleryName.toLowerCase().replaceAll(' ', '-')}`
     let _gallery = {name: _galleryName, path: url, password: generateRandomString(4)} as NewGalleryData
     if (theKnot) {
@@ -62,30 +62,42 @@ const CreatePage: FC = () => {
     if (zola) {
       _gallery.zola = zola
     }
+    
+    // If admin is creating for someone else, set createdBy to admin's ID
+    // person is the current logged-in user (admin), targetPerson is who the gallery is for
+    // TODO change this so that we just wait until creation and at the last minute set the createdBy to the personId since
+    // we wont update person if admin, but if not admin, maybe we should update personId to the targetPersonId
+    if (isAdmin && person && (!targetPerson || targetPerson.email !== person.email || _email !== person.email)) {
+      _gallery.createdBy = person.id
+    }
 
     setGallery(_gallery)
 
     let _person: Person
-    if (!person || person.email !== _email) {
-      _person = await createPerson({name: _name, email: _email})
-      // Only update personId in localStorage if we're not an admin creating for someone else
-      if (!isAdmin) {
+    if (!targetPerson || targetPerson.email !== _email) {
+      _person = await createPerson({name: _name, email: _email, isAdmin: false}, undefined, undefined, isAdmin ? person?.id : undefined)
+      // Never update personId when admin is creating for someone else
+      // Only update if it's the current user creating their own gallery
+      if (!isAdmin || !person || (_email === person?.email)) {
         setPersonId(_person.id)
       }
-    } else if (person.name !== _name) {
-      _person = await updatePerson(person.id, {name: _name, email: _email})
+    } else if (targetPerson.name !== _name) {
+      _person = await updatePerson(targetPerson.id, {name: _name, email: _email})
     } else {
-      _person = person
+      _person = targetPerson
     }
 
     const _newGallery = await createGallery(_gallery, _person.id)
+    if (isAdmin) {
+      router.push(`/admin`)
+    }
     if (_newGallery.images.length > 0) {
       setGalleryImages(_newGallery.images.join(','))
     }
     setGallery(_newGallery)
     
-    // If we're not an admin, update the current person state
-    if (!isAdmin) {
+    // Only update person state if not admin or if creating for self
+    if (!isAdmin || (_email === person?.email)) {
       setPerson(_person)
     }
     
@@ -147,24 +159,33 @@ const CreatePage: FC = () => {
 
   const skipValidate = useCallback(async () => {
     if (tempPerson && tempGallery) {
-      const person = await createPerson({name: tempPerson.name, email: tempPerson.email})
-      setPerson(person)
-      await submitGallery(tempGallery?.name || '', person.name, person.email, tempGallery?.theKnot, tempGallery?.zola, person)
+      const newPerson = await createPerson({name: tempPerson.name, email: tempPerson.email, isAdmin: false})
+      // Only update person state if not admin or if creating for self
+      if (!isAdmin || (tempPerson.email === person?.email)) {
+        setPerson(newPerson)
+      }
+      await submitGallery(tempGallery?.name || '', newPerson.name, newPerson.email, tempGallery?.theKnot, tempGallery?.zola, newPerson)
     }
     setVerificationId(undefined)  
     setTempPerson(undefined)
     setTempGallery(undefined)
-  }, [tempPerson])
+  }, [tempPerson, isAdmin, person])
 
-  const confirmValidate = async (person: Person) => {
-    setPerson(person)
+  const confirmValidate = async (validatedPerson: Person) => {
+    // Only update person state if not admin or if validating self
+    if (!isAdmin || (validatedPerson.email === person?.email)) {
+      setPerson(validatedPerson)
+    }
     if (tempGallery) {
       setTempPerson(undefined)
-      await submitGallery(tempGallery?.name || '', person.name, person.email, tempGallery?.theKnot, tempGallery?.zola, person)
+      await submitGallery(tempGallery?.name || '', validatedPerson.name, validatedPerson.email, tempGallery?.theKnot, tempGallery?.zola, validatedPerson)
       setTempGallery(undefined)
       setVerificationId(undefined)  
     } else {
-      setPersonId(person.id)
+      // Only update personId if not admin or if validating self
+      if (!isAdmin || (validatedPerson.email === person?.email)) {
+        setPersonId(validatedPerson.id)
+      }
       router.push('/galleries')
     }
   }
