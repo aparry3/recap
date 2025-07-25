@@ -3,150 +3,211 @@ import React, { useEffect, useState } from 'react';
 import { Container, Row, Column, Text } from 'react-web-layout-components';
 import styles from './page.module.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faImages, faUsers, faCamera, faChartLine } from '@fortawesome/free-solid-svg-icons';
+import { faSearch, faEllipsisV, faPlus, faUserPlus } from '@fortawesome/free-solid-svg-icons';
 import Button from '@/components/Button';
+import Input from '@/components/Input';
 import { useRouter } from 'next/navigation';
-import { fetchAdminStats } from '@/helpers/api/adminClient';
 import Loading from '@/components/Loading';
+import Link from 'next/link';
+import Image from 'next/image';
 
-interface AdminStats {
-  totalGalleries: number;
-  totalUsers: number;
-  totalPhotos: number;
-  totalRevenue: number;
-  recentActivity: Array<{
-    id: string;
-    action: string;
-    targetType?: string;
-    targetId?: string;
-    created: string;
-  }>;
+interface GalleryWithStats {
+  id: string;
+  name: string;
+  path: string;
+  password: string;
+  created: string;
+  weddingDate?: string;
+  contributorsCount: number;
+  photosCount: number;
+}
+
+interface UserWithAccess {
+  id: string;
+  name: string;
+  email?: string;
+  created: string;
+  galleriesCount: number;
 }
 
 export default function AdminDashboard() {
   const router = useRouter();
-  const [stats, setStats] = useState<AdminStats | null>(null);
+  const [galleries, setGalleries] = useState<GalleryWithStats[]>([]);
+  const [users, setUsers] = useState<UserWithAccess[]>([]);
   const [loading, setLoading] = useState(true);
+  const [gallerySearch, setGallerySearch] = useState('');
+  const [userSearch, setUserSearch] = useState('');
 
   useEffect(() => {
-    const loadStats = async () => {
+    const loadData = async () => {
       try {
-        const data = await fetchAdminStats();
-        setStats(data);
+        setLoading(true);
+        // const [galleriesData, usersData] = await Promise.all([
+        //   (async () => ({galleries: []})) as Promise<{galleries: GalleryWithStats[]}>,
+        //   (async () => ({users: []})) as Promise<{users: UserWithAccess[]}>
+        // ]);
+        // setGalleries(galleriesData.galleries);
+        // setUsers(usersData.users);
       } catch (error) {
-        console.error('Failed to load stats:', error);
+        console.error('Failed to load admin data:', error);
       } finally {
         setLoading(false);
       }
     };
 
-    loadStats();
-  }, []);
+    loadData();
+  }, [gallerySearch, userSearch]);
+
+  const getStatus = (created: string) => {
+    const now = new Date();
+    const createdDate = new Date(created);
+    const daysSinceCreation = (now.getTime() - createdDate.getTime()) / (1000 * 60 * 60 * 24);
+    return daysSinceCreation < 30 ? 'active' : 'inactive';
+  };
 
   if (loading) {
     return <Loading />;
   }
 
-  const statCards = [
-    {
-      icon: faImages,
-      label: 'Total Galleries',
-      value: stats?.totalGalleries || 0,
-      color: '#ec4899',
-    },
-    {
-      icon: faUsers,
-      label: 'Total Users',
-      value: stats?.totalUsers || 0,
-      color: '#3b82f6',
-    },
-    {
-      icon: faCamera,
-      label: 'Total Photos',
-      value: stats?.totalPhotos || 0,
-      color: '#10b981',
-    },
-    {
-      icon: faChartLine,
-      label: 'Total Revenue',
-      value: `$${(stats?.totalRevenue || 0).toFixed(2)}`,
-      color: '#f59e0b',
-    },
-  ];
-
   return (
-    <Column className={styles.dashboard}>
+    <Column className={styles.adminPage}>
       <Container className={styles.header}>
-        <Text size={2.5} weight={600}>Admin Dashboard</Text>
-        <Text size={1.1} className={styles.subtitle}>
-          Manage galleries and administrators
-        </Text>
+        <Row className={styles.titleRow}>
+          <Link href="/">
+            <Image src='/branding/wordmark.png' alt='Recap' width={60} height={60} />
+          </Link>
+          <Column className={styles.title}>
+            <Text size={2.5} weight={600}>Admin Dashboard</Text>
+            <Text size={1.1} className={styles.subtitle}>
+              Manage galleries and administrators
+            </Text>
+          </Column>
+        </Row>
       </Container>
 
-      <Row className={styles.statsGrid}>
-        {statCards.map((card, index) => (
-          <Container key={index} className={styles.statCard}>
-            <Container className={styles.iconContainer} style={{ backgroundColor: `${card.color}20` }}>
-              <FontAwesomeIcon icon={card.icon} className={styles.statIcon} style={{ color: card.color }} />
+      <Container className={styles.content}>
+        {/* Galleries Section */}
+        <Container className={styles.section}>
+          <Row className={styles.sectionHeader}>
+            <Column>
+              <Text size={1.8} weight={600}>Galleries</Text>
+              <Text size={1} className={styles.sectionSubtitle}>
+                Manage wedding galleries and their settings
+              </Text>
+            </Column>
+            <Button
+              className={styles.createButton}
+              onClick={() => router.push('/create')}
+            >
+              <FontAwesomeIcon icon={faPlus} className={styles.buttonIcon} />
+              <Text>Create New Gallery</Text>
+            </Button>
+          </Row>
+
+          <Container className={styles.searchContainer}>
+            <Container className={styles.searchWrapper}>
+              <FontAwesomeIcon icon={faSearch} className={styles.searchIcon} />
+              <input
+                className={styles.searchInput}
+                placeholder="Search galleries..."
+                value={gallerySearch}
+                onChange={(e) => setGallerySearch(e.target.value)}
+                type="search"
+              />
             </Container>
-            <Text size={2} weight={600} className={styles.statValue}>
-              {card.value}
-            </Text>
-            <Text size={0.9} className={styles.statLabel}>
-              {card.label}
-            </Text>
           </Container>
-        ))}
-      </Row>
 
-      <Container className={styles.section}>
-        <Row className={styles.sectionHeader}>
-          <Text size={1.5} weight={600}>Quick Actions</Text>
-        </Row>
-        <Row className={styles.quickActions}>
-          <Button
-            className={styles.actionButton}
-            onClick={() => router.push('/admin/galleries/create')}
-          >
-            <Text>Create Gallery for User</Text>
-          </Button>
-          <Button
-            className={styles.actionButton}
-            onClick={() => router.push('/admin/users/invite')}
-          >
-            <Text>Bulk Invite Users</Text>
-          </Button>
-          <Button
-            className={styles.actionButton}
-            onClick={() => router.push('/admin/tools/export')}
-          >
-            <Text>Export Data</Text>
-          </Button>
-        </Row>
-      </Container>
+          <Container className={styles.tableContainer}>
+            <table className={styles.table}>
+              <thead>
+                <tr>
+                  <th>Gallery</th>
+                  <th>Wedding Date</th>
+                  <th>Contributors</th>
+                  <th>Photos</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {galleries.map((gallery) => {
+                  const status = getStatus(gallery.created);
+                  return (
+                    <tr key={gallery.id}>
+                      <td>{gallery.name}</td>
+                      <td>{gallery.weddingDate || new Date(gallery.created).toLocaleDateString()}</td>
+                      <td>{gallery.contributorsCount}</td>
+                      <td>{gallery.photosCount}</td>
+                      <td>
+                        <span className={`${styles.status} ${styles[status]}`}>
+                          {status}
+                        </span>
+                      </td>
+                      <td>
+                        <button
+                          className={styles.actionButton}
+                          onClick={() => router.push(`/${gallery.path}?password=${gallery.password}`)}
+                        >
+                          <FontAwesomeIcon icon={faEllipsisV} />
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </Container>
+        </Container>
 
-      <Container className={styles.section}>
-        <Row className={styles.sectionHeader}>
-          <Text size={1.5} weight={600}>Recent Activity</Text>
-        </Row>
-        <Column className={styles.activityList}>
-          {stats?.recentActivity?.map((activity) => (
-            <Container key={activity.id} className={styles.activityItem}>
-              <Row>
-                <Text size={0.95}>
-                  {activity.action}
-                  {activity.targetType && ` - ${activity.targetType}`}
-                </Text>
-                <Text size={0.85} className={styles.activityTime}>
-                  {new Date(activity.created).toLocaleString()}
-                </Text>
-              </Row>
-            </Container>
-          ))}
-          {(!stats?.recentActivity || stats.recentActivity.length === 0) && (
-            <Text className={styles.noActivity}>No recent activity</Text>
-          )}
-        </Column>
+        {/* Admin Management Section */}
+        <Container className={styles.section}>
+          <Row className={styles.sectionHeader}>
+            <Column>
+              <Text size={1.8} weight={600}>Admin Management</Text>
+              <Text size={1} className={styles.sectionSubtitle}>
+                Manage administrative users
+              </Text>
+            </Column>
+            <Button
+              className={styles.createButton}
+              onClick={() => router.push('/admin/create-admin')}
+            >
+              <FontAwesomeIcon icon={faUserPlus} className={styles.buttonIcon} />
+              <Text>Create Admin</Text>
+            </Button>
+          </Row>
+
+          <Container className={styles.tableContainer}>
+            <table className={styles.table}>
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>Role</th>
+                  <th>Date Added</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {users.map((user) => (
+                  <tr key={user.id}>
+                    <td>{user.name}</td>
+                    <td>{user.email || 'No email'}</td>
+                    <td>
+                      <span className={styles.role}>Admin</span>
+                    </td>
+                    <td>{new Date(user.created).toLocaleDateString()}</td>
+                    <td>
+                      <button className={styles.actionButton}>
+                        <FontAwesomeIcon icon={faEllipsisV} />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </Container>
+        </Container>
       </Container>
     </Column>
   );

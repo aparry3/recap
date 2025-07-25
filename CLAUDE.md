@@ -127,3 +127,8 @@ Required environment variables (see `.env.example` if present):
 ### Development Tips
 
 - Be sure to use .env.local when developing
+- When making feature and UI changes, be sure to run the server using `source .env.local` & `pnpm dev`, and navigate to the changes on the website at http://localhost:3000
+
+### UI Component Guidelines
+
+- IMPORTANT!! Claude should always use components from the npm package react-web-layout-components, and should be sure to read the libraries docs to understand how to use the components to layout UI components and pages
