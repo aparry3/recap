@@ -53,7 +53,7 @@ const CreatePage: FC = () => {
     }
   }, [personId])
 
-  const submitGallery = async (_galleryName: string, _name: string, _email?: string, theKnot? :string, zola?: string, person?: Person) => {
+  const submitGallery = async (_galleryName: string, _name: string, _email?: string, theKnot? :string, zola?: string, targetPerson?: Person) => {
     const url = `${_galleryName.toLowerCase().replaceAll(' ', '-')}`
     let _gallery = {name: _galleryName, path: url, password: generateRandomString(4)} as NewGalleryData
     if (theKnot) {
@@ -62,20 +62,26 @@ const CreatePage: FC = () => {
     if (zola) {
       _gallery.zola = zola
     }
+    
+    // If admin is creating for someone else, set createdBy to admin's ID
+    // person is the current logged-in user (admin), targetPerson is who the gallery is for
+    if (isAdmin && person && (!targetPerson || targetPerson.email !== person.email || _email !== person.email)) {
+      _gallery.createdBy = person.id
+    }
 
     setGallery(_gallery)
 
     let _person: Person
-    if (!person || person.email !== _email) {
+    if (!targetPerson || targetPerson.email !== _email) {
       _person = await createPerson({name: _name, email: _email, isAdmin: false})
       // Only update personId in localStorage if we're not an admin creating for someone else
       if (!isAdmin) {
         setPersonId(_person.id)
       }
-    } else if (person.name !== _name) {
-      _person = await updatePerson(person.id, {name: _name, email: _email})
+    } else if (targetPerson.name !== _name) {
+      _person = await updatePerson(targetPerson.id, {name: _name, email: _email})
     } else {
-      _person = person
+      _person = targetPerson
     }
 
     const _newGallery = await createGallery(_gallery, _person.id)

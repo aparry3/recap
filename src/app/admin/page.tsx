@@ -46,6 +46,8 @@ export default function AdminDashboard() {
           fetchAdminGalleries(1, gallerySearch),
           fetchAdminUsers(1, userSearch)
         ]);
+        console.log('Galleries data:', galleriesData);
+        console.log('Users data:', usersData);
         setGalleries(galleriesData.galleries);
         setUsers(usersData.users);
       } catch (error) {
@@ -130,30 +132,38 @@ export default function AdminDashboard() {
                 </tr>
               </thead>
               <tbody>
-                {galleries.map((gallery) => {
-                  const status = getStatus(gallery.created);
-                  return (
-                    <tr key={gallery.id}>
-                      <td>{gallery.name}</td>
-                      <td>{gallery.weddingDate || new Date(gallery.created).toLocaleDateString()}</td>
-                      <td>{gallery.contributorsCount}</td>
-                      <td>{gallery.photosCount}</td>
-                      <td>
-                        <span className={`${styles.status} ${styles[status]}`}>
-                          {status}
-                        </span>
-                      </td>
-                      <td>
-                        <button
-                          className={styles.actionButton}
-                          onClick={() => router.push(`/${gallery.path}?password=${gallery.password}`)}
-                        >
-                          <FontAwesomeIcon icon={faEllipsisV} />
-                        </button>
-                      </td>
-                    </tr>
-                  );
-                })}
+                {galleries.length === 0 ? (
+                  <tr>
+                    <td colSpan={6} style={{ textAlign: 'center', padding: '2rem' }}>
+                      No galleries found
+                    </td>
+                  </tr>
+                ) : (
+                  galleries.map((gallery) => {
+                    const status = getStatus(gallery.created);
+                    return (
+                      <tr key={gallery.id}>
+                        <td>{gallery.name}</td>
+                        <td>{gallery.weddingDate || new Date(gallery.created).toLocaleDateString()}</td>
+                        <td>{gallery.contributorsCount}</td>
+                        <td>{gallery.photosCount}</td>
+                        <td>
+                          <span className={`${styles.status} ${styles[status]}`}>
+                            {status}
+                          </span>
+                        </td>
+                        <td>
+                          <button
+                            className={styles.actionButton}
+                            onClick={() => router.push(`/${gallery.path}?password=${gallery.password}`)}
+                          >
+                            <FontAwesomeIcon icon={faEllipsisV} />
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  })
+                )}
               </tbody>
             </table>
           </Container>

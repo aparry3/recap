@@ -23,8 +23,11 @@ export const POST = async (req: Request) => {
     if (!person ||  !person.email) {
         return NextResponse.json({error: 'Email is required'}, {status: 400})
     }
-    const gallery = await insertGallery(newGallery)
 
+    console.log('newGallery', newGallery)
+
+    const gallery = await insertGallery(newGallery)
+    console.log('gallery', gallery)
     let images: string[] = []
     let events: WeddingEvent[] = []
     if (gallery.theknot || gallery.zola) {

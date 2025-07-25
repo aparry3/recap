@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { requireAdmin } from '@/lib/admin/middleware';
 import { db } from '@/lib/db';
-import { logAdminAction } from '@/lib/db/adminService';
 
 export async function GET(request: NextRequest) {
   try {
@@ -38,15 +37,6 @@ export async function GET(request: NextRequest) {
       .limit(limit)
       .offset(offset)
       .execute();
-
-    // Log the search action
-    await logAdminAction(
-      admin.id,
-      'VIEW_GALLERIES',
-      'gallery_list',
-      undefined,
-      { search, page }
-    );
 
     return NextResponse.json({
       galleries: galleries.map(g => ({
