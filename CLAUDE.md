@@ -123,3 +123,7 @@ Required environment variables (see `.env.example` if present):
 - Functional components with hooks
 - Async/await for all asynchronous operations
 - Error boundaries for robust error handling
+
+### Development Tips
+
+- Be sure to use .env.local when developing

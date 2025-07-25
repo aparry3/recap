@@ -32,6 +32,30 @@ export async function checkAdminAuth(request: NextRequest): Promise<{ isAdmin: b
     }
 }
 
+export async function requireAdmin() {
+    const cookieStore = cookies();
+    const personId = (await cookieStore).get('personId')?.value;
+    
+    if (!personId) {
+        throw new Error('Unauthorized: No user session');
+    }
+    
+    const person = await selectPersonById(personId);
+    
+    if (!person || !person.isAdmin) {
+        throw new Error('Unauthorized: Admin access required');
+    }
+    
+    return person;
+}
+
+export async function isUserAdmin(personId: string | null | undefined): Promise<boolean> {
+    if (!personId) return false;
+    
+    const person = await selectPersonById(personId);
+    return person?.isAdmin || false;
+}
+
 export function createAdminMiddleware() {
     return async function adminMiddleware(request: NextRequest) {
         const { isAdmin, error } = await checkAdminAuth(request);
