@@ -33,23 +33,19 @@ interface UserWithAccess {
 export default function AdminDashboard() {
   const router = useRouter();
   const [galleries, setGalleries] = useState<GalleryWithStats[]>([]);
-  const [users, setUsers] = useState<UserWithAccess[]>([]);
   const [loading, setLoading] = useState(true);
   const [gallerySearch, setGallerySearch] = useState('');
-  const [userSearch, setUserSearch] = useState('');
 
   useEffect(() => {
     const loadData = async () => {
       try {
         setLoading(true);
-        const [galleriesData, usersData] = await Promise.all([
+        const [galleriesData] = await Promise.all([
           fetchAdminGalleries(1, gallerySearch),
-          fetchAdminUsers(1, userSearch)
+          // fetchAdminUsers(1, userSearch)
         ]);
         console.log('Galleries data:', galleriesData);
-        console.log('Users data:', usersData);
         setGalleries(galleriesData.galleries);
-        setUsers(usersData.users);
       } catch (error) {
         console.error('Failed to load admin data:', error);
       } finally {
@@ -58,7 +54,7 @@ export default function AdminDashboard() {
     };
 
     loadData();
-  }, [gallerySearch, userSearch]);
+  }, [gallerySearch]);
 
   const getStatus = (created: string) => {
     const now = new Date();
@@ -75,9 +71,6 @@ export default function AdminDashboard() {
     <Column className={styles.adminPage}>
       <Container className={styles.header}>
         <Row className={styles.titleRow}>
-          <Link href="/">
-            <Image src='/branding/wordmark.png' alt='Recap' width={60} height={60} />
-          </Link>
           <Column className={styles.title}>
             <Text size={2.5} weight={600}>Admin Dashboard</Text>
             <Text size={1.1} className={styles.subtitle}>
@@ -97,13 +90,6 @@ export default function AdminDashboard() {
                 Manage wedding galleries and their settings
               </Text>
             </Column>
-            <Button
-              className={styles.createButton}
-              onClick={() => router.push('/create')}
-            >
-              <FontAwesomeIcon icon={faPlus} className={styles.buttonIcon} />
-              <Text>Create New Gallery</Text>
-            </Button>
           </Row>
 
           <Container className={styles.searchContainer}>
@@ -116,6 +102,16 @@ export default function AdminDashboard() {
                 onChange={(e) => setGallerySearch(e.target.value)}
                 type="search"
               />
+            </Container>
+            <Container padding={1} justify='space-between'>
+              <Button
+                className={styles.createButton}
+                onClick={() => router.push('/create')}
+              >
+                  <FontAwesomeIcon icon={faPlus} className={styles.buttonIcon} />
+                <Text>Create New Gallery</Text>
+              </Button>
+
             </Container>
           </Container>
 
@@ -170,7 +166,7 @@ export default function AdminDashboard() {
         </Column>
 
         {/* Admin Management Section */}
-        <Column className={styles.section}>
+        {/* <Column className={styles.section}>
           <Row className={styles.sectionHeader}>
             <Column>
               <Text size={1.8} weight={600}>Admin Management</Text>
@@ -217,7 +213,7 @@ export default function AdminDashboard() {
               </tbody>
             </table>
           </Container>
-        </Column>
+        </Column> */}
       </Column>
     </Column>
   );

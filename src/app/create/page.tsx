@@ -74,8 +74,9 @@ const CreatePage: FC = () => {
     let _person: Person
     if (!targetPerson || targetPerson.email !== _email) {
       _person = await createPerson({name: _name, email: _email, isAdmin: false})
-      // Only update personId in localStorage if we're not an admin creating for someone else
-      if (!isAdmin) {
+      // Never update personId when admin is creating for someone else
+      // Only update if it's the current user creating their own gallery
+      if (!isAdmin || (_email === person?.email)) {
         setPersonId(_person.id)
       }
     } else if (targetPerson.name !== _name) {
@@ -90,8 +91,8 @@ const CreatePage: FC = () => {
     }
     setGallery(_newGallery)
     
-    // If we're not an admin, update the current person state
-    if (!isAdmin) {
+    // Only update person state if not admin or if creating for self
+    if (!isAdmin || (_email === person?.email)) {
       setPerson(_person)
     }
     
@@ -153,24 +154,33 @@ const CreatePage: FC = () => {
 
   const skipValidate = useCallback(async () => {
     if (tempPerson && tempGallery) {
-      const person = await createPerson({name: tempPerson.name, email: tempPerson.email, isAdmin: false})
-      setPerson(person)
-      await submitGallery(tempGallery?.name || '', person.name, person.email, tempGallery?.theKnot, tempGallery?.zola, person)
+      const newPerson = await createPerson({name: tempPerson.name, email: tempPerson.email, isAdmin: false})
+      // Only update person state if not admin or if creating for self
+      if (!isAdmin || (tempPerson.email === person?.email)) {
+        setPerson(newPerson)
+      }
+      await submitGallery(tempGallery?.name || '', newPerson.name, newPerson.email, tempGallery?.theKnot, tempGallery?.zola, newPerson)
     }
     setVerificationId(undefined)  
     setTempPerson(undefined)
     setTempGallery(undefined)
-  }, [tempPerson])
+  }, [tempPerson, isAdmin, person])
 
-  const confirmValidate = async (person: Person) => {
-    setPerson(person)
+  const confirmValidate = async (validatedPerson: Person) => {
+    // Only update person state if not admin or if validating self
+    if (!isAdmin || (validatedPerson.email === person?.email)) {
+      setPerson(validatedPerson)
+    }
     if (tempGallery) {
       setTempPerson(undefined)
-      await submitGallery(tempGallery?.name || '', person.name, person.email, tempGallery?.theKnot, tempGallery?.zola, person)
+      await submitGallery(tempGallery?.name || '', validatedPerson.name, validatedPerson.email, tempGallery?.theKnot, tempGallery?.zola, validatedPerson)
       setTempGallery(undefined)
       setVerificationId(undefined)  
     } else {
-      setPersonId(person.id)
+      // Only update personId if not admin or if validating self
+      if (!isAdmin || (validatedPerson.email === person?.email)) {
+        setPersonId(validatedPerson.id)
+      }
       router.push('/galleries')
     }
   }

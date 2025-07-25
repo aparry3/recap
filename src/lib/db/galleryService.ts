@@ -39,3 +39,44 @@ export const insertGalleryMedia = async (galleryId: string, mediaId: string): Pr
     const galleryMedia = await db.insertInto('galleryMedia').values({galleryId, mediaId}).returningAll().executeTakeFirstOrThrow();
     return galleryMedia;
 }
+
+export const selectGalleriesForAdmin = async (adminId: string, page: number = 1, search?: string, limit: number = 20) => {
+    const offset = (page - 1) * limit;
+    
+    let query = db
+        .selectFrom('gallery')
+        .leftJoin('galleryPerson', 'gallery.id', 'galleryPerson.galleryId')
+        .leftJoin('galleryMedia', 'gallery.id', 'galleryMedia.galleryId')
+        .select([
+            'gallery.id',
+            'gallery.name',
+            'gallery.path',
+            'gallery.password',
+            'gallery.created',
+            'gallery.date as weddingDate',
+            db.fn.count('galleryPerson.personId').distinct().as('contributorsCount'),
+            db.fn.count('galleryMedia.mediaId').distinct().as('photosCount'),
+        ])
+        .where('gallery.createdBy', '=', adminId)
+        .groupBy(['gallery.id']);
+
+    if (search) {
+        query = query.where('gallery.name', 'ilike', `%${search}%`);
+    }
+
+    const galleries = await query
+        .orderBy('gallery.created', 'desc')
+        .limit(limit)
+        .offset(offset)
+        .execute();
+
+    return {
+        galleries: galleries.map(g => ({
+            ...g,
+            contributorsCount: Number(g.contributorsCount) || 0,
+            photosCount: Number(g.photosCount) || 0,
+        })),
+        page,
+        limit,
+    };
+}
