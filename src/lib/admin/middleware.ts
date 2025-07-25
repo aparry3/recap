@@ -40,7 +40,7 @@ export async function requireAdmin() {
         throw new Error('Unauthorized: No user session');
     }
     
-    const person = await selectPersonById(personId);
+    const person = await selectPerson(personId);
     
     if (!person || !person.isAdmin) {
         throw new Error('Unauthorized: Admin access required');
@@ -52,7 +52,7 @@ export async function requireAdmin() {
 export async function isUserAdmin(personId: string | null | undefined): Promise<boolean> {
     if (!personId) return false;
     
-    const person = await selectPersonById(personId);
+    const person = await selectPerson(personId);
     return person?.isAdmin || false;
 }
 

@@ -52,10 +52,12 @@ export async function logAdminAction(
   metadata?: any
 ): Promise<AdminAction> {
   return await insertAdminAction({
+    id: uuidv4(),
     adminId,
     action,
     targetType,
     targetId,
-    metadata
+    metadata,
+    created: new Date()
   })
 }

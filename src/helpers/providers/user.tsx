@@ -47,7 +47,7 @@ export const UserProvider: React.FC<{
 
     const _createPerson = useCallback(async (name: string, email?: string, phone?: string, receiveMessages?: boolean) => {
       setLoading(true)  
-      const newPerson = await createPerson({name, email, phone}, gallery.id, receiveMessages)
+      const newPerson = await createPerson({name, email, phone, isAdmin: false}, gallery.id, receiveMessages)
       setPerson(newPerson)
       setPersonId(newPerson.id)
       setLoading(false)

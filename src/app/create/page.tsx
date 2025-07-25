@@ -67,7 +67,7 @@ const CreatePage: FC = () => {
 
     let _person: Person
     if (!person || person.email !== _email) {
-      _person = await createPerson({name: _name, email: _email})
+      _person = await createPerson({name: _name, email: _email, isAdmin: false})
       // Only update personId in localStorage if we're not an admin creating for someone else
       if (!isAdmin) {
         setPersonId(_person.id)
@@ -147,7 +147,7 @@ const CreatePage: FC = () => {
 
   const skipValidate = useCallback(async () => {
     if (tempPerson && tempGallery) {
-      const person = await createPerson({name: tempPerson.name, email: tempPerson.email})
+      const person = await createPerson({name: tempPerson.name, email: tempPerson.email, isAdmin: false})
       setPerson(person)
       await submitGallery(tempGallery?.name || '', person.name, person.email, tempGallery?.theKnot, tempGallery?.zola, person)
     }
