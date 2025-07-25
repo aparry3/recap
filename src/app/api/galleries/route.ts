@@ -14,6 +14,10 @@ export const POST = async (req: Request) => {
     if (!newGallery.personId) {
         return NextResponse.json({error: 'No personId provided'}, {status: 400})
     }
+    
+    // Add the creator (same as person for regular users, admin for admin-created)
+    newGallery.createdBy = newGallery.createdBy || newGallery.personId;
+    
     const person = await selectPerson(newGallery.personId)
 
     if (!person ||  !person.email) {

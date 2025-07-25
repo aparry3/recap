@@ -42,35 +42,35 @@ This checklist provides step-by-step implementation tasks for enhancing the admi
 ## Phase 2: Database Schema Update
 
 ### 2.1 Create Migration
-- [ ] Create new migration file `/migrations/20250127000000_add_gallery_creator.ts`
-- [ ] Add migration up function:
-  - [ ] Add `created_by` column to gallery table
-  - [ ] Add foreign key reference to person.id
-  - [ ] Add `ON DELETE SET NULL` constraint
-  - [ ] Create index `gallery_created_by_idx`
-- [ ] Add migration down function:
-  - [ ] Drop index `gallery_created_by_idx`
-  - [ ] Drop column `created_by`
-- [ ] Run migration: `tsx migrate.ts`
+- [x] Create new migration file `/migrations/20250725000000_add_gallery_creator.ts`
+- [x] Add migration up function:
+  - [x] Add `created_by` column to gallery table
+  - [x] Add foreign key reference to person.id
+  - [x] Add `ON DELETE SET NULL` constraint
+  - [x] Create index `gallery_created_by_idx`
+- [x] Add migration down function:
+  - [x] Drop index `gallery_created_by_idx`
+  - [x] Drop column `created_by`
+- [x] Run migration: `tsx migrate.ts up`
 
 ### 2.2 Update Type Definitions
-- [ ] Update `/src/lib/types/Gallery.ts`:
-  - [ ] Add `createdBy?: string` to `GalleryTable` interface
-  - [ ] Ensure `NewGalleryData` type includes optional `createdBy`
+- [x] Update `/src/lib/types/Gallery.ts`:
+  - [x] Add `createdBy?: string` to `GalleryTable` interface
+  - [x] Ensure `NewGalleryData` type includes optional `createdBy`
 
 ## Phase 3: Update Gallery Creation Logic
 
 ### 3.1 Update Gallery Service
-- [ ] Update `/src/lib/db/galleryService.ts`:
-  - [ ] Modify `insertGallery()` to include `createdBy` field if provided
-  - [ ] Ensure the field is properly passed to the database insert
+- [x] Update `/src/lib/db/galleryService.ts`:
+  - [x] Modify `insertGallery()` to include `createdBy` field if provided
+  - [x] Ensure the field is properly passed to the database insert
 
 ### 3.2 Update Gallery Creation API
-- [ ] Update `/src/app/api/galleries/route.ts`:
-  - [ ] Add logic to set `createdBy` field:
-    - [ ] Use `newGallery.createdBy` if provided
-    - [ ] Default to `newGallery.personId` for regular users
-  - [ ] Ensure field is passed to `insertGallery()`
+- [x] Update `/src/app/api/galleries/route.ts`:
+  - [x] Add logic to set `createdBy` field:
+    - [x] Use `newGallery.createdBy` if provided
+    - [x] Default to `newGallery.personId` for regular users
+  - [x] Ensure field is passed to `insertGallery()`
 
 ## Phase 4: Admin Gallery Management Endpoints
 

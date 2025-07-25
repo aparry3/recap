@@ -4,7 +4,11 @@ import {v4 as uuidv4} from 'uuid';
 
 
 export const insertGallery = async (newGalleryData: NewGalleryData): Promise<Gallery> => {
-    const newGallery = {...newGalleryData, id: uuidv4()} as NewGallery
+    const newGallery = {
+        ...newGalleryData, 
+        id: uuidv4(),
+        createdBy: newGalleryData.createdBy // Include creator if provided
+    } as NewGallery
 
     const gallery = await db.insertInto('gallery').values(newGallery).returningAll().executeTakeFirstOrThrow();
     return gallery;
