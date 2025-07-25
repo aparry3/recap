@@ -5,8 +5,8 @@ import styles from './page.module.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch, faEllipsisV, faPlus, faUserPlus } from '@fortawesome/free-solid-svg-icons';
 import Button from '@/components/Button';
-import Input from '@/components/Input';
 import { useRouter } from 'next/navigation';
+import { fetchAdminGalleries, fetchAdminUsers } from '@/helpers/api/adminClient';
 import Loading from '@/components/Loading';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -42,12 +42,12 @@ export default function AdminDashboard() {
     const loadData = async () => {
       try {
         setLoading(true);
-        // const [galleriesData, usersData] = await Promise.all([
-        //   (async () => ({galleries: []})) as Promise<{galleries: GalleryWithStats[]}>,
-        //   (async () => ({users: []})) as Promise<{users: UserWithAccess[]}>
-        // ]);
-        // setGalleries(galleriesData.galleries);
-        // setUsers(usersData.users);
+        const [galleriesData, usersData] = await Promise.all([
+          fetchAdminGalleries(1, gallerySearch),
+          fetchAdminUsers(1, userSearch)
+        ]);
+        setGalleries(galleriesData.galleries);
+        setUsers(usersData.users);
       } catch (error) {
         console.error('Failed to load admin data:', error);
       } finally {
@@ -85,9 +85,9 @@ export default function AdminDashboard() {
         </Row>
       </Container>
 
-      <Container className={styles.content}>
+      <Column className={styles.content}>
         {/* Galleries Section */}
-        <Container className={styles.section}>
+        <Column className={styles.section}>
           <Row className={styles.sectionHeader}>
             <Column>
               <Text size={1.8} weight={600}>Galleries</Text>
@@ -157,10 +157,10 @@ export default function AdminDashboard() {
               </tbody>
             </table>
           </Container>
-        </Container>
+        </Column>
 
         {/* Admin Management Section */}
-        <Container className={styles.section}>
+        <Column className={styles.section}>
           <Row className={styles.sectionHeader}>
             <Column>
               <Text size={1.8} weight={600}>Admin Management</Text>
@@ -207,8 +207,8 @@ export default function AdminDashboard() {
               </tbody>
             </table>
           </Container>
-        </Container>
-      </Container>
+        </Column>
+      </Column>
     </Column>
   );
 }

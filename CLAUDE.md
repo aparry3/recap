@@ -132,3 +132,7 @@ Required environment variables (see `.env.example` if present):
 ### UI Component Guidelines
 
 - IMPORTANT!! Claude should always use components from the npm package react-web-layout-components, and should be sure to read the libraries docs to understand how to use the components to layout UI components and pages
+
+### Development Documentation Guidelines
+
+- When implementing features using markdown documentation, you MUST update the documentation as you complete steps
