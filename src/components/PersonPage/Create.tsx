@@ -21,11 +21,11 @@ const CreatePage: FC<{person?: Person | NewPersonData, login: () => void, isAdmi
   const [zola, setZola] = useState('');
 
   useEffect(() => {
-   if (person) {
+   if (person && !isAdmin) {
       setName(person.name)
       setEmail(person.email || '')
    } 
-  }, [person])
+  }, [person, isAdmin])
 
   const back = () => {
     router.back()
@@ -135,7 +135,7 @@ const CreatePage: FC<{person?: Person | NewPersonData, login: () => void, isAdmi
           </Column>
           <Column className={styles.inputContainer}>
             <Input
-                label="Your Name"
+                label={isAdmin ? "Who is this gallery for?" : "Your Name"}
                 type="text"
                 autoComplete='off'
                 name="name"
@@ -145,7 +145,7 @@ const CreatePage: FC<{person?: Person | NewPersonData, login: () => void, isAdmi
           </Column>
           <Column className={styles.inputContainer}>
             <Input
-                label="Your Email"
+                label={isAdmin ? "Email for this gallery?" : "Your Email"}
                 type="text"
                 autoComplete='off'
                 name="email"
