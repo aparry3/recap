@@ -11,6 +11,7 @@ import Loading from '@/components/Loading';
 import Link from 'next/link';
 import Image from 'next/image';
 import CreateGalleryModal from './CreateGalleryModal';
+import CreateAdminModal from './CreateAdminModal';
 import Toast from './Toast';
 
 interface GalleryWithStats {
@@ -28,6 +29,7 @@ interface UserWithAccess {
   id: string;
   name: string;
   email?: string;
+  phone?: string;
   created: string;
   galleriesCount: number;
 }
@@ -35,9 +37,11 @@ interface UserWithAccess {
 export default function AdminDashboard() {
   const router = useRouter();
   const [galleries, setGalleries] = useState<GalleryWithStats[]>([]);
+  const [adminUsers, setAdminUsers] = useState<UserWithAccess[]>([]);
   const [loading, setLoading] = useState(true);
   const [gallerySearch, setGallerySearch] = useState('');
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showCreateAdminModal, setShowCreateAdminModal] = useState(false);
   const [copiedGalleryId, setCopiedGalleryId] = useState<string | null>(null);
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error'; visible: boolean }>({
     message: '',
@@ -49,12 +53,14 @@ export default function AdminDashboard() {
     const loadData = async () => {
       try {
         setLoading(true);
-        const [galleriesData] = await Promise.all([
+        const [galleriesData, usersData] = await Promise.all([
           fetchAdminGalleries(1, gallerySearch),
-          // fetchAdminUsers(1, userSearch)
+          fetchAdminUsers(1)
         ]);
         console.log('Galleries data:', galleriesData);
+        console.log('Admin users data:', usersData);
         setGalleries(galleriesData.galleries);
+        setAdminUsers(usersData.users);
       } catch (error) {
         console.error('Failed to load admin data:', error);
       } finally {
@@ -75,6 +81,21 @@ export default function AdminDashboard() {
       } catch (error) {
         console.error('Failed to reload galleries:', error);
         showToast('Failed to reload galleries', 'error');
+      }
+    };
+    loadData();
+  };
+
+  const handleAdminCreated = () => {
+    // Reload admin users after creating a new one
+    const loadData = async () => {
+      try {
+        const usersData = await fetchAdminUsers(1);
+        setAdminUsers(usersData.users);
+        showToast('Admin user created successfully!', 'success');
+      } catch (error) {
+        console.error('Failed to reload admin users:', error);
+        showToast('Failed to reload admin users', 'error');
       }
     };
     loadData();
@@ -226,7 +247,7 @@ export default function AdminDashboard() {
         </Column>
 
         {/* Admin Management Section */}
-        {/* <Column className={styles.section}>
+        <Column className={styles.section}>
           <Row className={styles.sectionHeader}>
             <Column>
               <Text size={1.8} weight={600}>Admin Management</Text>
@@ -236,10 +257,10 @@ export default function AdminDashboard() {
             </Column>
             <Button
               className={styles.createButton}
-              onClick={() => router.push('/admin/create-admin')}
+              onClick={() => setShowCreateAdminModal(true)}
             >
               <FontAwesomeIcon icon={faUserPlus} className={styles.buttonIcon} />
-              <Text>Create Admin</Text>
+              <Text>Add Admin</Text>
             </Button>
           </Row>
 
@@ -249,37 +270,50 @@ export default function AdminDashboard() {
                 <tr>
                   <th>Name</th>
                   <th>Email</th>
-                  <th>Role</th>
+                  <th>Phone</th>
                   <th>Date Added</th>
-                  <th>Actions</th>
                 </tr>
               </thead>
               <tbody>
-                {users.map((user) => (
-                  <tr key={user.id}>
-                    <td>{user.name}</td>
-                    <td>{user.email || 'No email'}</td>
-                    <td>
-                      <span className={styles.role}>Admin</span>
-                    </td>
-                    <td>{new Date(user.created).toLocaleDateString()}</td>
-                    <td>
-                      <button className={styles.actionButton}>
-                        <FontAwesomeIcon icon={faEllipsisV} />
-                      </button>
+                {adminUsers.length === 0 ? (
+                  <tr>
+                    <td colSpan={4} style={{ textAlign: 'center', padding: '2rem' }}>
+                      No admin users found
                     </td>
                   </tr>
-                ))}
+                ) : (
+                  adminUsers.map((user) => (
+                    <tr key={user.id}>
+                      <td>{user.name}</td>
+                      <td>{user.email || 'No email'}</td>
+                      <td>
+                        {user.phone || <span style={{ color: '#9ca3af', fontStyle: 'italic' }}>Not provided</span>}
+                      </td>
+                      <td>{new Date(user.created).toLocaleDateString()}</td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           </Container>
-        </Column> */}
+          <Container padding={1}>
+            <Text size={0.9} className={styles.totalCount}>
+              Total admin users: {adminUsers.length}
+            </Text>
+          </Container>
+        </Column>
       </Column>
 
       <CreateGalleryModal
         isOpen={showCreateModal}
         onClose={() => setShowCreateModal(false)}
         onSuccess={handleGalleryCreated}
+      />
+      
+      <CreateAdminModal
+        isOpen={showCreateAdminModal}
+        onClose={() => setShowCreateAdminModal(false)}
+        onSuccess={handleAdminCreated}
       />
       
       <Toast

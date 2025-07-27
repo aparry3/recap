@@ -48,7 +48,11 @@ export const fetchAdminUsers = async (
   const admins = await response.json();
   // Transform to include galleriesCount
   const users = admins.map((admin: Person) => ({
-    ...admin,
+    id: admin.id,
+    name: admin.name,
+    email: admin.email,
+    phone: admin.phone,
+    created: admin.created,
     galleriesCount: 0 // This would be populated from a real query
   }));
   
@@ -74,6 +78,27 @@ export const createAdminGallery = async (galleryData: {
   if (!response.ok) {
     const error = await response.json();
     throw new Error(error.error || 'Failed to create gallery');
+  }
+  
+  return response.json();
+};
+
+export const createAdmin = async (adminData: {
+  name: string;
+  email: string;
+  phone?: string;
+}) => {
+  const response = await fetch('/api/admin/admins', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(adminData)
+  });
+  
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error || 'Failed to create admin');
   }
   
   return response.json();
