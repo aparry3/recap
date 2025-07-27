@@ -1,0 +1,105 @@
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modalContent {
+  background: white;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 500px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+}
+
+.modalBody {
+  padding: 2rem;
+}
+
+.modalHeader {
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.closeButton {
+  background: none;
+  border: none;
+  font-size: 2rem;
+  line-height: 1;
+  color: #6b7280;
+  cursor: pointer;
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s;
+
+  &:hover {
+    color: #374151;
+  }
+}
+
+.input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border-color 0.2s;
+
+  &:focus {
+    outline: none;
+    border-color: #c084a9;
+  }
+
+  &::placeholder {
+    color: #6b7280;
+  }
+}
+
+.error {
+  background-color: #fee;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  border: 1px solid #fcc;
+}
+
+.modalFooter {
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #e5e7eb;
+  gap: 1rem;
+}
+
+.formColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.fieldColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.cancelButton {
+  background-color: #f3f4f6;
+  color: #374151;
+  
+  &:hover {
+    background-color: #e5e7eb;
+  }
+}

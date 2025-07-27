@@ -54,3 +54,27 @@ export const fetchAdminUsers = async (
   
   return { users };
 };
+
+export const createAdminGallery = async (galleryData: {
+  ownerName: string;
+  ownerEmail: string;
+  galleryName: string;
+  weddingDate?: string;
+  theKnot?: string;
+  zola?: string;
+}) => {
+  const response = await fetch('/api/admin/galleries', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(galleryData)
+  });
+  
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error || 'Failed to create gallery');
+  }
+  
+  return response.json();
+};
