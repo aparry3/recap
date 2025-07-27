@@ -16,12 +16,12 @@ const AdminVerification: React.FC<AdminVerificationProps> = ({ status, errorMess
     <Column as='main' className={styles.verificationPage} justify='center'>
       <Column className={styles.contentContainer}>
         <Row as='header' padding={1} justify='center'>
-          <Image src='/branding/wordmark.png' alt='Recap' layout='intrinsic' height={100} width={100}/>
+          <Image src='/branding/wordmark.png' alt='Recap' height={50} width={150} style={{objectFit: 'contain'}}/>
         </Row>
         
         <Container className={styles.verificationContent}>
           {status === 'loading' && (
-            <Column align='center' className={styles.statusContainer}>
+            <Column className={styles.statusContainer}>
               <FontAwesomeIcon icon={faSpinner} className={styles.loadingIcon} spin />
               <Text size={1.5} className={styles.statusText}>
                 Verifying your admin access...
@@ -30,7 +30,7 @@ const AdminVerification: React.FC<AdminVerificationProps> = ({ status, errorMess
           )}
 
           {status === 'success' && (
-            <Column align='center' className={styles.statusContainer}>
+            <Column className={styles.statusContainer}>
               <Container className={styles.iconContainer}>
                 <FontAwesomeIcon icon={faCheckCircle} className={styles.successIcon} />
               </Container>
@@ -47,7 +47,7 @@ const AdminVerification: React.FC<AdminVerificationProps> = ({ status, errorMess
           )}
 
           {status === 'error' && (
-            <Column align='center' className={styles.statusContainer}>
+            <Column className={styles.statusContainer}>
               <Container className={styles.iconContainer}>
                 <FontAwesomeIcon icon={faExclamationCircle} className={styles.errorIcon} />
               </Container>

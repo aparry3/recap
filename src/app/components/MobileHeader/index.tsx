@@ -31,7 +31,7 @@ const MobileHeader: FC<MobileHeaderProps> = ({ buttonText, buttonHref }) => {
                     <Container className={styles.mobileMenuHeader}>
                         <Container className={styles.wordmarkContainer} padding={0.5}>
                             <Link href="/">
-                                <Image src='/branding/wordmark.png' alt='wordmark' layout='intrinsic' height={100} width={100}/>
+                                <Image src='/branding/wordmark.png' alt='wordmark' height={40} width={120} style={{objectFit: 'contain'}}/>
                             </Link>
                         </Container>
                         <Container padding={0.5} onClick={toggleMobileMenu} className={styles.closeButton}>

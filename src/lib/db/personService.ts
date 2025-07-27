@@ -76,7 +76,6 @@ export const insertVerification = async (personId: string, galleryId?: string): 
   if (galleryId) {
     newVerification.galleryId = galleryId
   }
-  newVerification
   const verification = await db.insertInto('verification').values(newVerification).returningAll().executeTakeFirstOrThrow();
   return verification;
 }

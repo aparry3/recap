@@ -1,5 +1,5 @@
 "use client";
-import { FC, useEffect, useMemo, useState } from 'react'
+import { FC, useMemo, useState } from 'react'
 import styles from './Gallery.module.scss'
 import { Column, Container, Row, Text } from 'react-web-layout-components'
 import Photos from '../Tabs/Photos';

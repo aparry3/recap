@@ -47,7 +47,7 @@ const Header: FC = async () => {
         <Container as='header' className={styles.header} justify='space-between'>
             <Container className={styles.wordmarkContainer} padding={0.5}>
                 <Link href="/">
-                    <Image src='/branding/wordmark.png' alt='wordmark' height={100} width={100}/>
+                    <Image src='/branding/wordmark.png' alt='wordmark' height={50} width={150} style={{objectFit: 'contain'}}/>
                 </Link>
             </Container>
             <Container className={styles.action} padding={0.5}>
