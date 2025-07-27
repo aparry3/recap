@@ -1,0 +1,122 @@
+@import '@/lib/scss/_tokens.scss';
+
+.verificationPage {
+  min-height: 100vh;
+  background-color: $color-brand-bg;
+  padding: 2rem;
+}
+
+.contentContainer {
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: 3rem 2rem;
+}
+
+.verificationContent {
+  margin-top: 3rem;
+}
+
+.statusContainer {
+  text-align: center;
+  gap: 1.5rem;
+}
+
+.iconContainer {
+  margin-bottom: 1rem;
+}
+
+.loadingIcon {
+  font-size: 3rem;
+  color: $color-brand-secondary;
+}
+
+.successIcon {
+  font-size: 4rem;
+  color: #4CAF50;
+}
+
+.errorIcon {
+  font-size: 4rem;
+  color: #f44336;
+}
+
+.welcomeText {
+  color: $color-brand-secondary;
+  margin-bottom: 0.5rem;
+}
+
+.statusText {
+  color: $color-text-secondary;
+  font-size: 1.1rem;
+  margin-bottom: 1rem;
+}
+
+.redirectText {
+  color: $color-text-tertiary;
+  font-size: 0.9rem;
+  font-style: italic;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+.errorTitle {
+  color: #f44336;
+  margin-bottom: 0.5rem;
+}
+
+.errorMessage {
+  color: $color-text-secondary;
+  font-size: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.helpTextContainer {
+  margin-top: 2rem;
+  padding-top: 2rem;
+  border-top: 1px solid $color-border;
+}
+
+.helpText {
+  color: $color-text-tertiary;
+  font-size: 0.9rem;
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.6;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+// Mobile responsiveness
+@media (max-width: 768px) {
+  .verificationPage {
+    padding: 1rem;
+  }
+
+  .contentContainer {
+    padding: 2rem 1.5rem;
+  }
+
+  .successIcon,
+  .errorIcon {
+    font-size: 3rem;
+  }
+
+  .welcomeText,
+  .errorTitle {
+    font-size: 1.5rem;
+  }
+
+  .statusText {
+    font-size: 1rem;
+  }
+}
