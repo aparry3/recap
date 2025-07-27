@@ -1,6 +1,7 @@
 import sgMail from '@sendgrid/mail';
 import { getWelcomeEmailTemplate } from './email/templates/welcome';
 import { getOrderNotificationTemplate } from './email/templates/order_notification';
+import { getAdminInvitationEmailTemplate } from './email/templates/admin-invitation';
 
 const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY || ''
 
@@ -33,6 +34,12 @@ export interface OrderNotificationData {
     galleryName: string;
     galleryUrl: string;
     orderDate: string;
+}
+
+export interface AdminInvitationData {
+    name: string;
+    email: string;
+    verificationUrl: string;
 }
 
 export class SendGridClient {
@@ -113,6 +120,30 @@ export class SendGridClient {
       return response[0].statusCode >= 200 && response[0].statusCode < 300;
     } catch (error) {
       console.error('Error sending order notification email:', error);
+      return false;
+    }
+  }
+
+  async sendAdminInvitationEmail(data: AdminInvitationData): Promise<boolean> {
+    try {
+      const response = await sgMail.send({
+        to: data.email,
+        from: {
+          email: SENDGRID_EMAIL,
+          name: 'Recap'
+        },
+        subject: "You've been added as an admin to Recap!",
+        html: getAdminInvitationEmailTemplate({
+          name: data.name,
+          verificationUrl: data.verificationUrl
+        }),
+      }).catch(err => {
+        throw new Error(`Error sending admin invitation email: ${err.response.body.errors[0].message}`)
+      });
+      
+      return response[0].statusCode >= 200 && response[0].statusCode < 300;
+    } catch (error) {
+      console.error('Error sending admin invitation email:', error);
       return false;
     }
   }
