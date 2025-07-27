@@ -103,3 +103,37 @@ export const updatePersonAdminStatus = async (personId: string, isAdmin: boolean
   return person;
 }
 
+export const selectPersonWithGalleryStatus = async (personId: string): Promise<Person & { hasGalleries: boolean }> => {
+  try {
+    // Get person data
+    const person = await selectPerson(personId);
+    
+    // Check if person owns any galleries or is the creator
+    const ownedGalleries = await db.selectFrom('gallery')
+      .select('id')
+      .where(eb => eb.or([
+        eb('personId', '=', personId),
+        eb('createdBy', '=', personId)
+      ]))
+      .limit(1)
+      .execute();
+    
+    // If they own galleries, no need to check membership
+    if (ownedGalleries.length > 0) {
+      return { ...person, hasGalleries: true };
+    }
+    
+    // Check if person is a member of any galleries
+    const galleryMemberships = await db.selectFrom('galleryPerson')
+      .select('galleryId')
+      .where('personId', '=', personId)
+      .limit(1)
+      .execute();
+    
+    return { ...person, hasGalleries: galleryMemberships.length > 0 };
+  } catch (error) {
+    console.error('Error in selectPersonWithGalleryStatus:', error);
+    throw error;
+  }
+}
+

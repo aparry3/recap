@@ -17,6 +17,7 @@ const cormorant = Cormorant({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || 'https://recap.photos'),
   title: 'Recap - The Ultimate Wedding Photo Sharing Platform',
   description: 'Recap helps couples collect, organize and share wedding photos from all their guests in one beautiful gallery - no app required. Create your free wedding photo gallery today.',
   keywords: 'wedding photo sharing, wedding photo gallery, guest photos, QR code photo sharing, wedding memories, collaborative photo album',
