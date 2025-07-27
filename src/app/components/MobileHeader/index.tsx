@@ -8,17 +8,12 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { menuIcon, xIcon } from '@/lib/icons';
 import styles from './MobileHeader.module.scss';
 
-interface AuthState {
-    isAuthenticated: boolean;
-    hasGalleries: boolean;
-    personId?: string;
-}
-
 interface MobileHeaderProps {
-    authState?: AuthState;
+    buttonText: string;
+    buttonHref: string;
 }
 
-const MobileHeader: FC<MobileHeaderProps> = ({ authState }) => {
+const MobileHeader: FC<MobileHeaderProps> = ({ buttonText, buttonHref }) => {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
     const toggleMobileMenu = () => {
@@ -50,14 +45,12 @@ const MobileHeader: FC<MobileHeaderProps> = ({ authState }) => {
                             </Container>
                         </Link>
                         <Link 
-                            href={authState?.isAuthenticated && authState?.hasGalleries ? '/galleries' : '/create'} 
+                            href={buttonHref} 
                             className={styles.link} 
                             onClick={toggleMobileMenu}
                         >
                             <Container className={styles.mobileMenuItem}>
-                                <Text weight={700} size={1.2}>
-                                    {authState?.isAuthenticated && authState?.hasGalleries ? 'Galleries' : 'Get Started'}
-                                </Text>
+                                <Text weight={700} size={1.2}>{buttonText}</Text>
                             </Container>
                         </Link>
                     </Column>

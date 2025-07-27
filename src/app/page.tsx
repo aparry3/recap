@@ -11,29 +11,43 @@ import { selectPersonWithGalleryStatus } from '@/lib/db/personService';
 import Footer from './components/Footer';
 import MobileHeader from './components/MobileHeader';
 
-interface AuthState {
-    isAuthenticated: boolean;
-    hasGalleries: boolean;
-    personId?: string;
-}
 
-interface HeaderProps {
-    authState?: AuthState;
-}
+const Header: FC = async () => {
+    let isAuthenticated = false;
+    let hasGalleries = false;
+    let shouldRedirectToAdmin = false;
 
-const Header: FC<HeaderProps> = ({ authState }) => {
-    const buttonText = authState?.isAuthenticated && authState?.hasGalleries 
-        ? 'Galleries' 
-        : 'Get Started';
-    const buttonHref = authState?.isAuthenticated && authState?.hasGalleries 
-        ? '/galleries' 
-        : '/create';
+    const personId = cookies().get('personId')?.value;
+    if (personId) {
+        try {
+            const personWithStatus = await selectPersonWithGalleryStatus(personId);
+            if (personWithStatus) {
+                // Check admin status first
+                if (personWithStatus.isAdmin) {
+                    shouldRedirectToAdmin = true;
+                } else {
+                    isAuthenticated = true;
+                    hasGalleries = personWithStatus.hasGalleries;
+                }
+            }
+        } catch (error) {
+            console.error(`Error checking user status:`, error);
+        }
+    }
 
+    // Handle redirect outside of try-catch
+    if (shouldRedirectToAdmin) {
+        redirect('/admin');
+    }
+
+    const buttonText = isAuthenticated && hasGalleries ? 'Galleries' : 'Get Started';
+    const buttonHref = isAuthenticated && hasGalleries ? '/galleries' : '/create';
+    
     return (
         <Container as='header' className={styles.header} justify='space-between'>
             <Container className={styles.wordmarkContainer} padding={0.5}>
                 <Link href="/">
-                    <Image src='/branding/wordmark.png' alt='wordmark' layout='intrinsic' height={100} width={100}/>
+                    <Image src='/branding/wordmark.png' alt='wordmark' height={100} width={100}/>
                 </Link>
             </Container>
             <Container className={styles.action} padding={0.5}>
@@ -46,7 +60,7 @@ const Header: FC<HeaderProps> = ({ authState }) => {
                     </Container>
                 </Link>
             </Container>
-            <MobileHeader authState={authState} />
+            <MobileHeader buttonText={buttonText} buttonHref={buttonHref} />
         </Container>
     )
 }
@@ -78,7 +92,7 @@ const Hero = () => {
                 </Container>
             </Column>
             <Container id="product" style={{ width: '100%'}} padding={1}>
-                <Image src='/product/screenshots.png' alt='Recap wedding photo gallery app screenshots' layout='responsive' height={718} width={1369}/>
+                <Image src='/product/screenshots.png' alt='Recap wedding photo gallery app screenshots' height={718} width={1369} style={{width: '100%', height: 'auto'}}/>
             </Container>
         </Column>
     )
@@ -192,14 +206,14 @@ const Examples = () => {
                             </Container>  
                         </Column>
                         <Container className={styles.exampleMedia} padding>
-                            <Image className={styles.exampleImage} src='/product/SaveTheDates.png' alt='QR code on wedding save the dates' layout='responsive' height={200} width={200}/>
+                            <Image className={styles.exampleImage} src='/product/SaveTheDates.png' alt='QR code on wedding save the dates' height={200} width={200}/>
                         </Container>          
                     </Container>
                 </Container>
                 <Container className={styles.exampleContainer}>
                     <Container className={`${styles.example} ${styles.reverse}`} padding={2}>
                         <Container className={styles.exampleMedia} padding>
-                        <Image className={styles.exampleImage} src='/product/Placecards.png' alt='QR code on wedding placecards' layout='responsive' height={200} width={200}/>
+                        <Image className={styles.exampleImage} src='/product/Placecards.png' alt='QR code on wedding placecards' height={200} width={200}/>
                         </Container>          
                         <Column className={styles.exampleDetails}>
                             <Container className={styles.exampleTitle} padding>
@@ -230,7 +244,7 @@ const Examples = () => {
                             </Container>  
                         </Column>
                         <Container className={styles.exampleMedia} padding>
-                        <Image className={styles.exampleImage} src='/product/ThankYous.png' alt='QR code on wedding thank you cards' layout='responsive' height={200} width={200}/>
+                        <Image className={styles.exampleImage} src='/product/ThankYous.png' alt='QR code on wedding thank you cards' height={200} width={200}/>
                         </Container>          
                     </Container>
                 </Container>
@@ -414,10 +428,10 @@ const Share = () => {
                 <Text className={styles.subheadingText} as='h2'>Download, export and share your photos in one click.</Text>
             </Container>
             <Column className={styles.product} style={{ width: '100%', flexGrow: 1}} padding={1}>
-                <Image src='/product/imageView.png' alt='albums' className={styles.albumImage} layout='responsive' height={572} width={940}/>
+                <Image src='/product/imageView.png' alt='albums' className={styles.albumImage} height={572} width={940}/>
                 <Container className={styles.shareCards} padding>
                     <Column className={styles.magnifyContainer}>
-                        <Image src='/product/magnify.png' alt='magnify' className={styles.magnify} layout='responsive' height={500} width={500}/>
+                        <Image src='/product/magnify.png' alt='magnify' className={styles.magnify} height={500} width={500}/>
                         <Container padding>
                             <Text size={1.3}>Share to social media with one click.</Text>
                         </Container>
@@ -494,14 +508,14 @@ const Website = () => {
                 <Container className={styles.weddingWebsiteImageContainer} padding={1}>
                     <Link href="/create" className={styles.weddingWebsiteLink}>
                         <Container id="product" className={styles.weddingWebsiteImage} padding={1}>
-                            <Image src='/branding/TheKnot.png' alt='Recap integrates with The Knot wedding websites' className={styles.image} layout='responsive' height={572} width={940}/>
+                            <Image src='/branding/TheKnot.png' alt='Recap integrates with The Knot wedding websites' className={styles.image} height={572} width={940}/>
                         </Container>
                     </Link>
                 </Container>
                 <Container className={styles.weddingWebsiteImageContainer} padding={1}>
                     <Link href="/create" className={styles.weddingWebsiteLink}>
                         <Container className={styles.weddingWebsiteImage} padding={1}>
-                            <Image src='/branding/Zola.png' alt='Recap integrates with Zola wedding websites' className={styles.image} layout='responsive' height={572} width={940}/>
+                            <Image src='/branding/Zola.png' alt='Recap integrates with Zola wedding websites' className={styles.image} height={572} width={940}/>
                         </Container>
                     </Link>
                 </Container>
@@ -519,7 +533,7 @@ const Notifications = () => {
                 <Text className={styles.subheadingText} as='h2'>Opt-in notifications keep everyone engaged and excited when new photos are shared. Send gentle reminders to encourage sharing before, during, and after your special day.</Text>
             </Container>
             <Container className={styles.notificationMedia} padding>
-                <Image className={styles.notificationImage} src='/product/NotiGroup.png' alt='Recap wedding photo notification system on mobile devices' layout='responsive' height={200} width={200}/>
+                <Image className={styles.notificationImage} src='/product/NotiGroup.png' alt='Recap wedding photo notification system on mobile devices' height={200} width={200}/>
             </Container>          
         </Column>
     )
@@ -528,37 +542,10 @@ const Notifications = () => {
 
 
 const HomePage: FC = async ({}) => {
-    let authState: AuthState = {
-        isAuthenticated: false,
-        hasGalleries: false
-    };
-
-    const personId = cookies().get('personId')?.value;
-    if (personId) {
-        try {
-            const personWithStatus = await selectPersonWithGalleryStatus(personId);
-            if (personWithStatus) {
-                // Check admin status first
-                if (personWithStatus.isAdmin) {
-                    return redirect('/admin');
-                }
-                
-                // Set auth state
-                authState = {
-                    isAuthenticated: true,
-                    hasGalleries: personWithStatus.hasGalleries,
-                    personId: personId
-                };
-            }
-        } catch (error) {
-            console.error(`Error checking user status:`, error);
-        }
-    }
-
     return (
         <Column as='main' className={styles.body}>
             {/* FIXED/STICKY */}
-            <Header authState={authState} />
+            <Header />
 
             {/* SCROLLABLE */}
             <Hero />
