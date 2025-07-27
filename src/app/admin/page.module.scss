@@ -2,11 +2,20 @@
   min-height: 100vh;
   background-color: #f8f9fa;
   padding: 2rem;
+  width: 100%;
+  max-width: 100%;
+  @media (max-width: 768px) {
+    padding: 1rem;
+  }
 }
 
 .header {
-  max-width: 1200px;
+  max-width: 100%;
   margin: 0 auto 3rem;
+  
+  @media (max-width: 768px) {
+    margin: 0 auto 1.5rem;
+  }
 }
 
 .titleRow {
@@ -16,6 +25,12 @@
 
 .title {
   gap: 0.25rem;
+  
+  h1 {
+    @media (max-width: 768px) {
+      font-size: 1.75rem;
+    }
+  }
 }
 
 .subtitle {
@@ -23,12 +38,15 @@
 }
 
 .content {
-  max-width: 1200px;
+  max-width: 100%;
   margin: 0 auto;
 }
 
 .section {
   margin-bottom: 3rem;
+  @media (max-width: 768px) {
+    width: 100%;
+  }
 }
 
 .sectionHeader {
@@ -51,11 +69,23 @@
 
 .searchContainer {
   margin-bottom: 1rem;
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
 }
 
 .searchWrapper {
   position: relative;
   max-width: 400px;
+  flex: 1;
+  
+  @media (max-width: 768px) {
+    max-width: 100%;
+  }
 }
 
 .searchIcon {
@@ -91,11 +121,24 @@
   border-radius: 0.5rem;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   overflow: hidden;
+  
+  @media (max-width: 768px) {
+    overflow-x: auto;
+    width: 100%;
+    max-width: 100%;
+    -webkit-overflow-scrolling: touch;
+  }
 }
 
 .table {
   width: 100%;
   border-collapse: collapse;
+  min-width: 600px;
+  
+  @media (max-width: 768px) {
+    font-size: 0.875rem;
+    min-width: 100%;
+  }
   
   th {
     background-color: #f9fafb;
@@ -107,12 +150,22 @@
     text-transform: uppercase;
     letter-spacing: 0.05em;
     border-bottom: 1px solid #e5e7eb;
+    white-space: nowrap;
+    
+    @media (max-width: 768px) {
+      padding: 0.75rem 0.5rem;
+      font-size: 0.75rem;
+    }
   }
   
   td {
     padding: 1rem;
     border-bottom: 1px solid #f3f4f6;
     color: #374151;
+    
+    @media (max-width: 768px) {
+      padding: 0.75rem 0.5rem;
+    }
   }
   
   tbody tr {
@@ -157,6 +210,13 @@
 .actionButtons {
   gap: 0.5rem;
   justify-content: center;
+  
+  @media (max-width: 768px) {
+    gap: 0.5rem;
+    justify-content: flex-start;
+    display: flex;
+    width: 100%;
+  }
 }
 
 .actionButton {
@@ -177,9 +237,194 @@
   &:active {
     transform: scale(0.95);
   }
+  
+  @media (max-width: 768px) {
+    padding: 0.75rem 1rem;
+    background-color: #f3f4f6;
+    font-size: 1rem;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    
+    &:hover {
+      background-color: #e5e7eb;
+    }
+    
+    svg {
+      font-size: 1.25rem;
+    }
+  }
 }
 
 .totalCount {
   color: #6b7280;
   font-style: italic;
+}
+
+.createButton {
+  white-space: nowrap;
+  
+  @media (max-width: 768px) {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+// Mobile-only content
+.mobileOnly {
+  display: none;
+  
+  @media (max-width: 768px) {
+    display: block;
+    margin-top: 0.25rem;
+  }
+}
+
+// Responsive table adjustments
+@media (max-width: 768px) {
+  .tableContainer {
+    overflow: visible;
+    background: transparent;
+    box-shadow: none;
+    padding: 0;
+    border-radius: 0;
+  }
+  
+  .table {
+    display: block;
+    width: 100%;
+    
+    thead {
+      display: none;
+    }
+    
+    tbody {
+      display: block;
+      width: 100%;
+    }
+    
+    tr {
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 1rem;
+      background: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 0.5rem;
+      padding: 1rem;
+      width: 100%;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      box-sizing: border-box;
+      
+      &:hover {
+        background-color: white;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+    }
+    
+    td {
+      display: block;
+      padding: 0.25rem 0;
+      border: none;
+      width: 100%;
+      box-sizing: border-box;
+      
+      &:before {
+        content: attr(data-label);
+        font-weight: 600;
+        color: #6b7280;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        display: block;
+        margin-bottom: 0.25rem;
+      }
+      
+      // Gallery/Name title
+      &:first-child {
+        font-weight: 600;
+        font-size: 1.1rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 1px solid #f3f4f6;
+        margin-bottom: 0.75rem;
+        
+        &:before {
+          display: none;
+        }
+        
+        .mobileOnly {
+          font-weight: 400;
+          font-size: 0.875rem !important;
+          margin-top: 0.25rem;
+        }
+      }
+      
+      // Actions
+      &:last-child {
+        padding-top: 0.75rem;
+        border-top: 1px solid #f3f4f6;
+        margin-top: 0.5rem;
+        display: block;
+        width: 100%;
+        
+        &:before {
+          display: none;
+        }
+      }
+    }
+    
+    // Create a flex container for stats
+    tr::after {
+      content: "";
+      display: table;
+      clear: both;
+    }
+  }
+  
+  // Gallery table specific adjustments
+  .galleryTable {
+    td {
+      // Hide wedding date and status columns
+      &:nth-child(2),
+      &:nth-child(5) {
+        display: none;
+      }
+      
+      // Contributors and Photos in a row
+      &:nth-child(3),
+      &:nth-child(4) {
+        display: inline-block;
+        width: 50%;
+        float: left;
+        padding: 0.5rem 0;
+      }
+    }
+  }
+  
+  // Admin table specific adjustments
+  .adminTable {
+    td {
+      // Hide phone and date columns
+      &:nth-child(3),
+      &:nth-child(4) {
+        display: none;
+      }
+      
+      // Email takes full width
+      &:nth-child(2) {
+        width: 100%;
+        padding: 0.5rem 0;
+      }
+    }
+  }
+}
+
+// Section adjustments
+.section {
+  margin-bottom: 3rem;
+  
+  @media (max-width: 768px) {
+    margin-bottom: 2rem;
+  }
 }
