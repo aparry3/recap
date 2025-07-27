@@ -1,8 +1,6 @@
-@import '@/lib/scss/_tokens.scss';
-
 .verificationPage {
   min-height: 100vh;
-  background-color: $color-brand-bg;
+  background-color: var(--background-medium);
   padding: 2rem;
 }
 
@@ -31,7 +29,7 @@
 
 .loadingIcon {
   font-size: 3rem;
-  color: $color-brand-secondary;
+  color: var(--secondary);
 }
 
 .successIcon {
@@ -45,18 +43,19 @@
 }
 
 .welcomeText {
-  color: $color-brand-secondary;
+  color: var(--secondary-dark);
   margin-bottom: 0.5rem;
 }
 
 .statusText {
-  color: $color-text-secondary;
+  color: var(--text-dark);
   font-size: 1.1rem;
   margin-bottom: 1rem;
 }
 
 .redirectText {
-  color: $color-text-tertiary;
+  color: var(--text-dark);
+  opacity: 0.7;
   font-size: 0.9rem;
   font-style: italic;
   animation: pulse 1.5s ease-in-out infinite;
@@ -68,7 +67,7 @@
 }
 
 .errorMessage {
-  color: $color-text-secondary;
+  color: var(--text-dark);
   font-size: 1rem;
   margin-bottom: 1.5rem;
 }
@@ -76,11 +75,12 @@
 .helpTextContainer {
   margin-top: 2rem;
   padding-top: 2rem;
-  border-top: 1px solid $color-border;
+  border-top: 1px solid #e0e0e0;
 }
 
 .helpText {
-  color: $color-text-tertiary;
+  color: var(--text-dark);
+  opacity: 0.6;
   font-size: 0.9rem;
 }
 
