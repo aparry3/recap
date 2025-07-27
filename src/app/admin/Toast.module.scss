@@ -1,0 +1,36 @@
+.toast {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  z-index: 1001;
+  transform: translateY(100px);
+  opacity: 0;
+  transition: all 0.3s ease;
+  
+  &.visible {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.toastContent {
+  padding: 1rem 1.5rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.success .toastContent {
+  background-color: #10b981;
+  color: white;
+}
+
+.error .toastContent {
+  background-color: #ef4444;
+  color: white;
+}
+
+.icon {
+  font-size: 1.1rem;
+}

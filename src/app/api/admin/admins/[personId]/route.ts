@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { requireAdmin } from '@/lib/admin/middleware';
 import { updatePerson } from '@/lib/db/personService';
-import { logAdminAction } from '@/lib/db/adminService';
 
 export async function DELETE(
   request: NextRequest,
@@ -20,14 +19,6 @@ export async function DELETE(
 
     // Remove admin status
     const updatedPerson = await updatePerson(personId, { isAdmin: false });
-
-    await logAdminAction(
-      admin.id,
-      'REVOKE_ADMIN',
-      'person',
-      personId,
-      { revokedFrom: updatedPerson.email }
-    );
 
     return NextResponse.json({ success: true });
   } catch (error) {

@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { requireAdmin } from '@/lib/admin/middleware';
 import { db } from '@/lib/db';
-import { selectAdminActions } from '@/lib/db/adminService';
 
 export const dynamic = 'force-dynamic';
 
@@ -30,15 +29,12 @@ export async function GET(request: NextRequest) {
     // For now, we'll return 0 for revenue as we don't have payment tracking yet
     const totalRevenue = 0;
 
-    // Get recent admin activity
-    const recentActivity = await selectAdminActions(undefined, 10);
-
     return NextResponse.json({
       totalGalleries: Number(totalGalleries?.count || 0),
       totalUsers: Number(totalUsers?.count || 0),
       totalPhotos: Number(totalPhotos?.count || 0),
       totalRevenue,
-      recentActivity,
+      recentActivity: [] // Empty array for now since we removed admin actions
     });
   } catch (error) {
     console.error('Admin stats error:', error);
