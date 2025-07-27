@@ -6,6 +6,7 @@ import { generateRandomString } from '@/helpers/utils';
 import { sendGridClient } from '@/lib/email';
 import { handleWeddingWebsites } from '@/lib/web';
 import { NewGalleryData } from '@/lib/types/Gallery';
+import { Person } from '@/lib/types/Person';
 
 export async function GET(request: NextRequest) {
   try {
@@ -43,16 +44,17 @@ export async function POST(request: NextRequest) {
     }
 
     // Find or create person by email
-    let person = await selectPersonByEmail(ownerEmail);
-    
-    if (!person) {
-      // Create new person
+    let person: Person;
+    try {
+    person = await selectPersonByEmail(ownerEmail);
+  } catch (error) {
       person = await insertPerson({
         name: ownerName,
         email: ownerEmail,
         isAdmin: false
       });
     }
+
 
     // Create gallery data
     const galleryPath = galleryName.toLowerCase().replaceAll(' ', '-');
@@ -72,6 +74,7 @@ export async function POST(request: NextRequest) {
     // Create gallery
     const gallery = await insertGallery(newGalleryData);
 
+    console.log('gallery', gallery)
     // Handle wedding website scraping if URLs provided
     let images: string[] = [];
     let events: any[] = [];
@@ -89,6 +92,7 @@ export async function POST(request: NextRequest) {
     // Add person to gallery
     await insertGalleryPerson(gallery.id, person.id);
 
+    console.log('person', person)
     // Send welcome email
     let emailStatus = 'not_sent';
     try {

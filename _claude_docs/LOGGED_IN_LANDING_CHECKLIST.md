@@ -3,7 +3,7 @@
 ## Overview
 This checklist provides step-by-step implementation tasks for updating the landing page to provide personalized experiences for logged-in users, gallery members/owners, and admin users.
 
-## Phase 1: Database Service Layer
+## Phase 1: Database Service Layer ✓
 
 ### 1.1 Create Gallery Association Check Service
 - [ ] Update `/src/lib/db/galleryService.ts`:
@@ -15,17 +15,17 @@ This checklist provides step-by-step implementation tasks for updating the landi
   - [ ] Consider adding caching for performance (optional)
 
 ### 1.2 Alternative: Extend Person Service
-- [ ] OR update `/src/lib/db/personService.ts`:
-  - [ ] Add `selectPersonWithGalleryStatus(personId: string)` function
-    - [ ] Return person data plus `hasGalleries` boolean field
-    - [ ] Use a single efficient query with joins or subqueries
+- [x] OR update `/src/lib/db/personService.ts`:
+  - [x] Add `selectPersonWithGalleryStatus(personId: string)` function
+    - [x] Return person data plus `hasGalleries` boolean field
+    - [x] Use a single efficient query with joins or subqueries
 
-## Phase 2: Update HomePage Component
+## Phase 2: Update HomePage Component ✓
 
 ### 2.1 Modify Server Component Logic
-- [ ] Update `/src/app/page.tsx`:
-  - [ ] Import `checkUserHasGalleries` or `selectPersonWithGalleryStatus`
-  - [ ] Modify the existing cookie check logic:
+- [x] Update `/src/app/page.tsx`:
+  - [x] Import `checkUserHasGalleries` or `selectPersonWithGalleryStatus`
+  - [x] Modify the existing cookie check logic:
     ```typescript
     const personId = cookies().get('personId')?.value
     if (personId) {
@@ -47,9 +47,9 @@ This checklist provides step-by-step implementation tasks for updating the landi
     ```
 
 ### 2.2 Pass Props to Header Component
-- [ ] Update HomePage component:
-  - [ ] Add props to pass authentication state to Header
-  - [ ] Consider creating an interface for auth state:
+- [x] Update HomePage component:
+  - [x] Add props to pass authentication state to Header
+  - [x] Consider creating an interface for auth state:
     ```typescript
     interface AuthState {
       isAuthenticated: boolean
@@ -57,13 +57,13 @@ This checklist provides step-by-step implementation tasks for updating the landi
       personId?: string
     }
     ```
-  - [ ] Pass authState to Header component
+  - [x] Pass authState to Header component
 
-## Phase 3: Update Header Component
+## Phase 3: Update Header Component ✓
 
 ### 3.1 Make Header Dynamic
-- [ ] Update Header component in `/src/app/page.tsx`:
-  - [ ] Add props interface:
+- [x] Update Header component in `/src/app/page.tsx`:
+  - [x] Add props interface:
     ```typescript
     interface HeaderProps {
       authState?: {
@@ -72,8 +72,8 @@ This checklist provides step-by-step implementation tasks for updating the landi
       }
     }
     ```
-  - [ ] Update component signature: `const Header: FC<HeaderProps> = ({ authState }) => {`
-  - [ ] Modify the action button logic:
+  - [x] Update component signature: `const Header: FC<HeaderProps> = ({ authState }) => {`
+  - [x] Modify the action button logic:
     ```typescript
     const buttonText = authState?.isAuthenticated && authState?.hasGalleries 
       ? 'Galleries' 
@@ -82,12 +82,12 @@ This checklist provides step-by-step implementation tasks for updating the landi
       ? '/galleries' 
       : '/create'
     ```
-  - [ ] Update the Link component to use dynamic values
+  - [x] Update the Link component to use dynamic values
 
 ### 3.2 Update Mobile Header
-- [ ] Check if MobileHeader component needs similar updates
-- [ ] Pass authState props if MobileHeader shows action buttons
-- [ ] Ensure consistency between desktop and mobile experiences
+- [x] Check if MobileHeader component needs similar updates
+- [x] Pass authState props if MobileHeader shows action buttons
+- [x] Ensure consistency between desktop and mobile experiences
 
 ## Phase 4: Error Handling & Edge Cases
 

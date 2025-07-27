@@ -3,6 +3,8 @@ import { requireAdmin } from '@/lib/admin/middleware';
 import { db } from '@/lib/db';
 import { selectAdminActions } from '@/lib/db/adminService';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(request: NextRequest) {
   try {
     const admin = await requireAdmin();
