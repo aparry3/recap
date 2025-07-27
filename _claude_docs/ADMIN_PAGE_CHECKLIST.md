@@ -111,17 +111,17 @@ This checklist provides step-by-step implementation tasks for enhancing the admi
 ## Phase 6: Admin-Specific Features
 
 ### 6.1 Add Gallery Action Buttons
-- [ ] Update admin page gallery table actions:
-  - [ ] Import additional icons (`faEye`, `faLink`)
-  - [ ] Replace single ellipsis button with action buttons:
-    - [ ] View button - opens gallery in new tab with password
-    - [ ] Copy Link button - copies full URL with password to clipboard
-  - [ ] Add proper titles/tooltips to buttons
-  - [ ] Style buttons appropriately
+- [x] Update admin page gallery table actions:
+  - [x] Import additional icons (`faEye`, `faLink`)
+  - [x] Replace single ellipsis button with action buttons:
+    - [x] View button - opens gallery in new tab with password
+    - [x] Copy Link button - copies full URL with password to clipboard
+  - [x] Add proper titles/tooltips to buttons
+  - [x] Style buttons appropriately
 
 ### 6.2 Add Toast Notifications (Optional)
-- [ ] Consider adding toast for successful link copy
-- [ ] Consider adding toast for API errors
+- [x] Consider adding toast for successful link copy
+- [x] Consider adding toast for API errors
 
 ## Testing Checklist
 

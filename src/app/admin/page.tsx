@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { Container, Row, Column, Text } from 'react-web-layout-components';
 import styles from './page.module.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSearch, faEllipsisV, faPlus, faUserPlus } from '@fortawesome/free-solid-svg-icons';
+import { faSearch, faEllipsisV, faPlus, faUserPlus, faEye, faLink, faCheck } from '@fortawesome/free-solid-svg-icons';
 import Button from '@/components/Button';
 import { useRouter } from 'next/navigation';
 import { fetchAdminGalleries, fetchAdminUsers } from '@/helpers/api/adminClient';
@@ -11,6 +11,7 @@ import Loading from '@/components/Loading';
 import Link from 'next/link';
 import Image from 'next/image';
 import CreateGalleryModal from './CreateGalleryModal';
+import Toast from './Toast';
 
 interface GalleryWithStats {
   id: string;
@@ -37,6 +38,12 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(true);
   const [gallerySearch, setGallerySearch] = useState('');
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [copiedGalleryId, setCopiedGalleryId] = useState<string | null>(null);
+  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error'; visible: boolean }>({
+    message: '',
+    type: 'success',
+    visible: false
+  });
 
   useEffect(() => {
     const loadData = async () => {
@@ -64,11 +71,21 @@ export default function AdminDashboard() {
       try {
         const galleriesData = await fetchAdminGalleries(1, gallerySearch);
         setGalleries(galleriesData.galleries);
+        showToast('Gallery created successfully!', 'success');
       } catch (error) {
         console.error('Failed to reload galleries:', error);
+        showToast('Failed to reload galleries', 'error');
       }
     };
     loadData();
+  };
+
+  const showToast = (message: string, type: 'success' | 'error') => {
+    setToast({ message, type, visible: true });
+    // Hide toast after 3 seconds
+    setTimeout(() => {
+      setToast(prev => ({ ...prev, visible: false }));
+    }, 3000);
   };
 
   const getStatus = (created: string) => {
@@ -76,6 +93,24 @@ export default function AdminDashboard() {
     const createdDate = new Date(created);
     const daysSinceCreation = (now.getTime() - createdDate.getTime()) / (1000 * 60 * 60 * 24);
     return daysSinceCreation < 30 ? 'active' : 'inactive';
+  };
+
+  const handleCopyLink = async (gallery: GalleryWithStats) => {
+    const url = `${window.location.origin}/${gallery.path}?password=${gallery.password}`;
+    try {
+      await navigator.clipboard.writeText(url);
+      setCopiedGalleryId(gallery.id);
+      showToast('Gallery link copied to clipboard!', 'success');
+      // Clear the copied state after 2 seconds
+      setTimeout(() => setCopiedGalleryId(null), 2000);
+    } catch (err) {
+      console.error('Failed to copy:', err);
+      showToast('Failed to copy link', 'error');
+    }
+  };
+
+  const handleViewGallery = (gallery: GalleryWithStats) => {
+    window.open(`/${gallery.path}?password=${gallery.password}`, '_blank');
   };
 
   if (loading) {
@@ -164,12 +199,22 @@ export default function AdminDashboard() {
                           </span>
                         </td>
                         <td>
-                          <button
-                            className={styles.actionButton}
-                            onClick={() => router.push(`/${gallery.path}?password=${gallery.password}`)}
-                          >
-                            <FontAwesomeIcon icon={faEllipsisV} />
-                          </button>
+                          <Row className={styles.actionButtons}>
+                            <button
+                              className={styles.actionButton}
+                              onClick={() => handleViewGallery(gallery)}
+                              title="View gallery"
+                            >
+                              <FontAwesomeIcon icon={faEye} />
+                            </button>
+                            <button
+                              className={styles.actionButton}
+                              onClick={() => handleCopyLink(gallery)}
+                              title="Copy gallery link"
+                            >
+                              <FontAwesomeIcon icon={copiedGalleryId === gallery.id ? faCheck : faLink} />
+                            </button>
+                          </Row>
                         </td>
                       </tr>
                     );
@@ -235,6 +280,12 @@ export default function AdminDashboard() {
         isOpen={showCreateModal}
         onClose={() => setShowCreateModal(false)}
         onSuccess={handleGalleryCreated}
+      />
+      
+      <Toast
+        message={toast.message}
+        type={toast.type}
+        isVisible={toast.visible}
       />
     </Column>
   );
