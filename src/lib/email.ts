@@ -6,13 +6,11 @@ import { getAdminInvitationEmailTemplate } from './email/templates/admin-invitat
 const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY || ''
 
 const SENDGRID_VERIFICATION_ID = process.env.SENDGRID_VERIFICATION_ID || ''
-const SENDGRID_CREATION_ID = process.env.SENDGRID_CREATION_ID || ''
-const SENDGRID_WELCOME_ID = process.env.SENDGRID_WELCOME_ID || ''
 
 const SENDGRID_EMAIL = process.env.SENDGRID_EMAIL || ''
 const ORDER_NOTIFICATION_EMAIL = process.env.ORDER_NOTIFICATION_EMAIL || ''
 
-if (!SENDGRID_API_KEY || !SENDGRID_VERIFICATION_ID || !SENDGRID_EMAIL || !SENDGRID_WELCOME_ID || !SENDGRID_CREATION_ID || !ORDER_NOTIFICATION_EMAIL) {
+if (!SENDGRID_API_KEY || !SENDGRID_VERIFICATION_ID || !SENDGRID_EMAIL || !ORDER_NOTIFICATION_EMAIL) {
     throw new Error('Required environment variables are not set');
 }
 
@@ -72,10 +70,6 @@ export class SendGridClient {
 
   async sendVerificationEmail(email: string, templateData: TemplateData): Promise<boolean> {
     return await this._sendTemplateEmail(email, templateData, SENDGRID_VERIFICATION_ID)
-  }
-
-  async sendWelcomeEmail(email: string, templateData: TemplateData): Promise<boolean> {
-    return await this._sendTemplateEmail(email, templateData, SENDGRID_WELCOME_ID)
   }
 
   async sendCreationEmail(email: string, name: string, galleryUrl: string, password: string): Promise<boolean> {
