@@ -75,27 +75,27 @@ This checklist provides step-by-step implementation tasks for enhancing the admi
 ## Phase 4: Admin Gallery Management Endpoints
 
 ### 4.1 Update Admin Galleries GET Endpoint
-- [ ] Update `/src/app/api/admin/galleries/route.ts` GET handler:
-  - [ ] Add proper gallery stats query with joins
-  - [ ] Include contributor count using `galleryPerson` join
-  - [ ] Include photo count using `galleryMedia` join
-  - [ ] Add search functionality for gallery names
-  - [ ] Implement pagination with limit and offset
-  - [ ] Return formatted response with counts as numbers
+- [x] Update `/src/app/api/admin/galleries/route.ts` GET handler:
+  - [x] Add proper gallery stats query with joins
+  - [x] Include contributor count using `galleryPerson` join
+  - [x] Include photo count using `galleryMedia` join
+  - [x] Add search functionality for gallery names
+  - [x] Implement pagination with limit and offset
+  - [x] Return formatted response with counts as numbers
 
 ### 4.2 Create Admin Gallery POST Endpoint
-- [ ] Add POST handler to `/src/app/api/admin/galleries/route.ts`:
-  - [ ] Validate required fields (ownerName, ownerEmail, galleryName)
-  - [ ] Find or create person by email
-  - [ ] Create gallery with:
-    - [ ] Generated password
-    - [ ] Formatted path (lowercase, hyphenated)
-    - [ ] `createdBy` set to admin.id
-    - [ ] Optional wedding date, TheKnot, and Zola URLs
-  - [ ] Handle wedding website scraping if URLs provided
-  - [ ] Add person to gallery
-  - [ ] Send welcome email to gallery owner
-  - [ ] Return gallery object and email status
+- [x] Add POST handler to `/src/app/api/admin/galleries/route.ts`:
+  - [x] Validate required fields (ownerName, ownerEmail, galleryName)
+  - [x] Find or create person by email
+  - [x] Create gallery with:
+    - [x] Generated password
+    - [x] Formatted path (lowercase, hyphenated)
+    - [x] `createdBy` set to admin.id
+    - [x] Optional wedding date, TheKnot, and Zola URLs
+  - [x] Handle wedding website scraping if URLs provided
+  - [x] Add person to gallery
+  - [x] Send welcome email to gallery owner
+  - [x] Return gallery object and email status
 
 ## Phase 5: Update Create Page for Admin Mode
 
