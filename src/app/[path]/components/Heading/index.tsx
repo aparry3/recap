@@ -4,7 +4,7 @@ import { gearIcon, qrcodeIcon, circleInfoIcon } from "@/lib/icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { Column, Container, Row, Text } from "react-web-layout-components"
 import styles from './Heading.module.scss'
-import { FC, useEffect, useMemo } from "react";
+import { FC, useMemo } from "react";
 import useGallery from "@/helpers/providers/gallery";
 import { useUser } from "@/helpers/providers/user";
 import useAlbums from "@/helpers/providers/albums";

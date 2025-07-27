@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { requireAdmin } from '@/lib/admin/middleware';
 import { db } from '@/lib/db';
-import { updatePerson, insertPerson, selectPersonByEmail } from '@/lib/db/personService';
+import { updatePerson, insertPerson, selectPersonByEmail, insertVerification } from '@/lib/db/personService';
+import { sendGridClient } from '@/lib/email';
 
 export async function GET(request: NextRequest) {
   try {
@@ -98,7 +99,30 @@ export async function POST(request: NextRequest) {
       });
     }
     
-    return NextResponse.json(personResult, { status: isNewUser ? 201 : 200 });
+    // Send admin invitation email
+    let emailSent = false;
+    try {
+      const verification = await insertVerification(personResult!.id);
+      const verificationUrl = `${process.env.BASE_URL}/admin/verify/${verification.id}`;
+      
+      emailSent = await sendGridClient.sendAdminInvitationEmail({
+        name: personResult!.name,
+        email: personResult!.email!,
+        verificationUrl
+      });
+      
+      if (emailSent) {
+        console.log(`Admin invitation email sent to ${personResult!.email}`);
+      }
+    } catch (emailError) {
+      console.error('Failed to send admin invitation email:', emailError);
+      // Don't fail the entire operation if email fails
+    }
+    
+    return NextResponse.json({
+      ...personResult,
+      emailSent
+    }, { status: isNewUser ? 201 : 200 });
   } catch (error) {
     console.error('Create admin error:', error);
     return NextResponse.json(

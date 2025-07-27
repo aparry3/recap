@@ -70,8 +70,8 @@ export async function generateCustomQRCodePNG(
 
   // Handle the center image
   let imagePixelData: ImageData | null = null;
-  let imageDimensions = { width: 0, height: 0 };
-  let imagePosition = { x: 0, y: 0 }
+  const imageDimensions = { width: 0, height: 0 };
+  const imagePosition = { x: 0, y: 0 }
   if (imageSrc) {
     const image = await loadSvg(imageSrc, foregroundColor);
     imageDimensions.width = size * imageSize;

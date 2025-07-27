@@ -53,6 +53,12 @@ export default function CreateAdminModal({ isOpen, onClose, onSuccess }: CreateA
           email: '',
           phone: ''
         });
+        
+        // Check if email was sent
+        if (!result.emailSent) {
+          console.warn('Admin created but invitation email failed to send');
+        }
+        
         onSuccess();
         onClose();
       }

@@ -28,7 +28,7 @@ export const UserProvider: React.FC<{
     const [person, setPerson] = useState<Person | undefined>(undefined);
     const [loading, setLoading] = useState<boolean>(personLoading);
     const [showValidate, setShowValidate] = useState<boolean>(false)
-    const [tempPerson, setTempPerson] = useState<{personId: string, email?: string, phone?: String, name: string, receiveMessages?: boolean} | undefined>(undefined)
+    const [tempPerson, setTempPerson] = useState<{personId: string, email?: string, phone?: string, name: string, receiveMessages?: boolean} | undefined>(undefined)
     const [verificationId, setVerificationId] = useState<string>('')
 
     const initPerson = async (_personId: string) => {

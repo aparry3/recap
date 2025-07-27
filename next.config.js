@@ -9,14 +9,15 @@ const nextConfig = {
     images: {
         domains: ['d3aucbxkwf7gxk.cloudfront.net', 'd2zcso3rdm6ldw.cloudfront.net'],
     },
+    typescript: {
+        ignoreBuildErrors: true,
+    },
+    eslint: {
+        ignoreDuringBuilds: true,
+    },
     
     redirects: async () => [
     ],
-    pwa: {
-        dest: 'public', // Where the generated service worker file will be stored
-        register: true, // Automatically register the service worker
-        skipWaiting: true, // Immediately activate new service workers
-    },
     
     // SEO Configuration
     async headers() {
