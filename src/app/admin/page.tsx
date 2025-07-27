@@ -10,6 +10,7 @@ import { fetchAdminGalleries, fetchAdminUsers } from '@/helpers/api/adminClient'
 import Loading from '@/components/Loading';
 import Link from 'next/link';
 import Image from 'next/image';
+import CreateGalleryModal from './CreateGalleryModal';
 
 interface GalleryWithStats {
   id: string;
@@ -35,6 +36,7 @@ export default function AdminDashboard() {
   const [galleries, setGalleries] = useState<GalleryWithStats[]>([]);
   const [loading, setLoading] = useState(true);
   const [gallerySearch, setGallerySearch] = useState('');
+  const [showCreateModal, setShowCreateModal] = useState(false);
 
   useEffect(() => {
     const loadData = async () => {
@@ -55,6 +57,19 @@ export default function AdminDashboard() {
 
     loadData();
   }, [gallerySearch]);
+
+  const handleGalleryCreated = () => {
+    // Reload galleries after creating a new one
+    const loadData = async () => {
+      try {
+        const galleriesData = await fetchAdminGalleries(1, gallerySearch);
+        setGalleries(galleriesData.galleries);
+      } catch (error) {
+        console.error('Failed to reload galleries:', error);
+      }
+    };
+    loadData();
+  };
 
   const getStatus = (created: string) => {
     const now = new Date();
@@ -106,7 +121,7 @@ export default function AdminDashboard() {
             <Container padding={1} justify='space-between'>
               <Button
                 className={styles.createButton}
-                onClick={() => router.push('/create')}
+                onClick={() => setShowCreateModal(true)}
               >
                   <FontAwesomeIcon icon={faPlus} className={styles.buttonIcon} />
                 <Text>Create New Gallery</Text>
@@ -215,6 +230,12 @@ export default function AdminDashboard() {
           </Container>
         </Column> */}
       </Column>
+
+      <CreateGalleryModal
+        isOpen={showCreateModal}
+        onClose={() => setShowCreateModal(false)}
+        onSuccess={handleGalleryCreated}
+      />
     </Column>
   );
 }
