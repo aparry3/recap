@@ -2,11 +2,19 @@
   min-height: 100vh;
   background-color: #f8f9fa;
   padding: 2rem;
+  
+  @media (max-width: 768px) {
+    padding: 1rem;
+  }
 }
 
 .header {
   max-width: 1200px;
   margin: 0 auto 3rem;
+  
+  @media (max-width: 768px) {
+    margin: 0 auto 1.5rem;
+  }
 }
 
 .titleRow {
@@ -16,6 +24,12 @@
 
 .title {
   gap: 0.25rem;
+  
+  h1 {
+    @media (max-width: 768px) {
+      font-size: 1.75rem;
+    }
+  }
 }
 
 .subtitle {
@@ -51,11 +65,23 @@
 
 .searchContainer {
   margin-bottom: 1rem;
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
 }
 
 .searchWrapper {
   position: relative;
   max-width: 400px;
+  flex: 1;
+  
+  @media (max-width: 768px) {
+    max-width: 100%;
+  }
 }
 
 .searchIcon {
@@ -91,11 +117,21 @@
   border-radius: 0.5rem;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   overflow: hidden;
+  
+  @media (max-width: 768px) {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
 }
 
 .table {
   width: 100%;
   border-collapse: collapse;
+  min-width: 600px;
+  
+  @media (max-width: 768px) {
+    font-size: 0.875rem;
+  }
   
   th {
     background-color: #f9fafb;
@@ -107,12 +143,22 @@
     text-transform: uppercase;
     letter-spacing: 0.05em;
     border-bottom: 1px solid #e5e7eb;
+    white-space: nowrap;
+    
+    @media (max-width: 768px) {
+      padding: 0.75rem 0.5rem;
+      font-size: 0.75rem;
+    }
   }
   
   td {
     padding: 1rem;
     border-bottom: 1px solid #f3f4f6;
     color: #374151;
+    
+    @media (max-width: 768px) {
+      padding: 0.75rem 0.5rem;
+    }
   }
   
   tbody tr {
@@ -157,6 +203,10 @@
 .actionButtons {
   gap: 0.5rem;
   justify-content: center;
+  
+  @media (max-width: 768px) {
+    gap: 0.25rem;
+  }
 }
 
 .actionButton {
@@ -182,4 +232,59 @@
 .totalCount {
   color: #6b7280;
   font-style: italic;
+}
+
+.createButton {
+  white-space: nowrap;
+  
+  @media (max-width: 768px) {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+// Mobile-only content
+.mobileOnly {
+  display: none;
+  
+  @media (max-width: 768px) {
+    display: block;
+    margin-top: 0.25rem;
+  }
+}
+
+// Responsive table adjustments
+@media (max-width: 768px) {
+  .table {
+    min-width: auto;
+  }
+  
+  // Gallery table - hide wedding date and status columns
+  .galleryTable {
+    th:nth-child(2), // Wedding Date
+    td:nth-child(2),
+    th:nth-child(5), // Status
+    td:nth-child(5) {
+      display: none;
+    }
+  }
+  
+  // Admin table - hide phone and date columns on mobile
+  .adminTable {
+    th:nth-child(3), // Phone
+    td:nth-child(3),
+    th:nth-child(4), // Date Added (shown inline)
+    td:nth-child(4) {
+      display: none;
+    }
+  }
+}
+
+// Section adjustments
+.section {
+  margin-bottom: 3rem;
+  
+  @media (max-width: 768px) {
+    margin-bottom: 2rem;
+  }
 }

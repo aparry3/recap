@@ -174,20 +174,17 @@ export default function AdminDashboard() {
                 type="search"
               />
             </Container>
-            <Container padding={1} justify='space-between'>
-              <Button
-                className={styles.createButton}
-                onClick={() => setShowCreateModal(true)}
-              >
-                  <FontAwesomeIcon icon={faPlus} className={styles.buttonIcon} />
-                <Text>Create New Gallery</Text>
-              </Button>
-
-            </Container>
+            <Button
+              className={styles.createButton}
+              onClick={() => setShowCreateModal(true)}
+            >
+              <FontAwesomeIcon icon={faPlus} className={styles.buttonIcon} />
+              <Text>Create New Gallery</Text>
+            </Button>
           </Container>
 
           <Container className={styles.tableContainer}>
-            <table className={styles.table}>
+            <table className={`${styles.table} ${styles.galleryTable}`}>
               <thead>
                 <tr>
                   <th>Gallery</th>
@@ -210,7 +207,12 @@ export default function AdminDashboard() {
                     const status = getStatus(gallery.created);
                     return (
                       <tr key={gallery.id}>
-                        <td>{gallery.name}</td>
+                        <td>
+                          <div>{gallery.name}</div>
+                          <div className={styles.mobileOnly} style={{ fontSize: '0.875rem', color: '#6b7280' }}>
+                            {gallery.weddingDate || new Date(gallery.created).toLocaleDateString()}
+                          </div>
+                        </td>
                         <td>{gallery.weddingDate || new Date(gallery.created).toLocaleDateString()}</td>
                         <td>{gallery.contributorsCount}</td>
                         <td>{gallery.photosCount}</td>
@@ -244,6 +246,7 @@ export default function AdminDashboard() {
               </tbody>
             </table>
           </Container>
+
         </Column>
 
         {/* Admin Management Section */}
@@ -265,7 +268,7 @@ export default function AdminDashboard() {
           </Row>
 
           <Container className={styles.tableContainer}>
-            <table className={styles.table}>
+            <table className={`${styles.table} ${styles.adminTable}`}>
               <thead>
                 <tr>
                   <th>Name</th>
@@ -284,7 +287,12 @@ export default function AdminDashboard() {
                 ) : (
                   adminUsers.map((user) => (
                     <tr key={user.id}>
-                      <td>{user.name}</td>
+                      <td>
+                        <div>{user.name}</div>
+                        <div className={styles.mobileOnly} style={{ fontSize: '0.875rem', color: '#6b7280' }}>
+                          {new Date(user.created).toLocaleDateString()}
+                        </div>
+                      </td>
                       <td>{user.email || 'No email'}</td>
                       <td>
                         {user.phone || <span style={{ color: '#9ca3af', fontStyle: 'italic' }}>Not provided</span>}
@@ -296,6 +304,7 @@ export default function AdminDashboard() {
               </tbody>
             </table>
           </Container>
+
           <Container padding={1}>
             <Text size={0.9} className={styles.totalCount}>
               Total admin users: {adminUsers.length}
