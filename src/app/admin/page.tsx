@@ -92,7 +92,7 @@ export default function AdminDashboard() {
       try {
         const usersData = await fetchAdminUsers(1);
         setAdminUsers(usersData.users);
-        showToast('Admin user created successfully!', 'success');
+        showToast('Admin access granted successfully!', 'success');
       } catch (error) {
         console.error('Failed to reload admin users:', error);
         showToast('Failed to reload admin users', 'error');

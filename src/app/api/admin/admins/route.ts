@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import { requireAdmin } from '@/lib/admin/middleware';
 import { db } from '@/lib/db';
 import { updatePerson, insertPerson, selectPersonByEmail } from '@/lib/db/personService';
-import { logAdminAction } from '@/lib/db/adminService';
 
 export async function GET(request: NextRequest) {
   try {
@@ -14,8 +13,6 @@ export async function GET(request: NextRequest) {
       .where('isAdmin', '=', true)
       .orderBy('created', 'desc')
       .execute();
-
-    await logAdminAction(admin.id, 'VIEW_ADMINS');
 
     return NextResponse.json(admins);
   } catch (error) {
@@ -36,14 +33,6 @@ export async function POST(request: NextRequest) {
     if (body.personId) {
       // Legacy support: Update existing person to be admin
       const updatedPerson = await updatePerson(body.personId, { isAdmin: true });
-      
-      await logAdminAction(
-        admin.id,
-        'GRANT_ADMIN',
-        'person',
-        body.personId,
-        { grantedTo: updatedPerson.email }
-      );
       
       return NextResponse.json(updatedPerson);
     }
@@ -69,40 +58,47 @@ export async function POST(request: NextRequest) {
     }
     
     // Check if email already exists
+    let personResult;
+    let isNewUser = false;
+    
     try {
       const existingPerson = await selectPersonByEmail(email);
       if (existingPerson) {
-        return NextResponse.json(
-          { error: 'A user with this email already exists' },
-          { status: 409 }
-        );
+        // Update existing person to be admin
+        if (existingPerson.isAdmin) {
+          return NextResponse.json(
+            { message: 'User is already an admin', person: existingPerson },
+            { status: 200 }
+          );
+        }
+        
+        // Update existing user to admin
+        personResult = await updatePerson(existingPerson.id, { 
+          isAdmin: true,
+          // Update name and phone if provided
+          name,
+          phone: phone || existingPerson.phone
+        });
+      } else {
+        // Person not found, create new
+        isNewUser = true;
       }
     } catch (error) {
-      // Person not found, which is what we want
+      // Person not found, create new
+      isNewUser = true;
     }
     
-    // Create new admin user
-    const newAdmin = await insertPerson({
-      name,
-      email,
-      phone: phone || undefined,
-      isAdmin: true
-    });
+    if (isNewUser) {
+      // Create new admin user
+      personResult = await insertPerson({
+        name,
+        email,
+        phone: phone || undefined,
+        isAdmin: true
+      });
+    }
     
-    await logAdminAction(
-      admin.id,
-      'CREATE_ADMIN',
-      'person',
-      newAdmin.id,
-      { 
-        createdAdmin: {
-          name: newAdmin.name,
-          email: newAdmin.email
-        }
-      }
-    );
-    
-    return NextResponse.json(newAdmin, { status: 201 });
+    return NextResponse.json(personResult, { status: isNewUser ? 201 : 200 });
   } catch (error) {
     console.error('Create admin error:', error);
     return NextResponse.json(

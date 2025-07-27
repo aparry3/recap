@@ -57,11 +57,7 @@ export default function CreateAdminModal({ isOpen, onClose, onSuccess }: CreateA
         onClose();
       }
     } catch (err: any) {
-      if (err.message?.includes('already exists')) {
-        setFieldErrors({ email: 'A user with this email already exists' });
-      } else {
-        setError(err.message || 'Failed to create admin');
-      }
+      setError(err.message || 'Failed to create admin');
     } finally {
       setLoading(false);
     }
