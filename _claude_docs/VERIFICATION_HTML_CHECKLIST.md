@@ -13,22 +13,22 @@ This checklist guides the migration of the user verification email from SendGrid
 ## Phase 1: Create HTML Email Templates
 
 ### 1.1 User Verification Email Template
-- [ ] Create `/src/lib/email/templates/user-verification.ts`:
-  - [ ] Create interface `UserVerificationEmailData` with fields:
+- [x] Create `/src/lib/email/templates/user-verification.ts`:
+  - [x] Create interface `UserVerificationEmailData` with fields:
     - `name: string`
     - `galleryName: string`
     - `verificationUrl: string`
-  - [ ] Create `getUserVerificationEmailTemplate()` function
-  - [ ] Design HTML email template with:
-    - [ ] Subject: "Verify your email for {galleryName}"
-    - [ ] Recap branding (consistent with admin-invitation template)
-    - [ ] Personalized greeting: "Hi {name},"
-    - [ ] Body text explaining email verification is needed
-    - [ ] CTA button: "Verify Email"
-    - [ ] Fallback text link for email clients that block buttons
-    - [ ] Mobile-responsive table-based layout
-    - [ ] Footer with copyright
-  - [ ] Use same color scheme and styling as admin-invitation template:
+  - [x] Create `getUserVerificationEmailTemplate()` function
+  - [x] Design HTML email template with:
+    - [x] Subject: "Verify your email for {galleryName}"
+    - [x] Recap branding (consistent with admin-invitation template)
+    - [x] Personalized greeting: "Hi {name},"
+    - [x] Body text explaining email verification is needed
+    - [x] CTA button: "Verify Email"
+    - [x] Fallback text link for email clients that block buttons
+    - [x] Mobile-responsive table-based layout
+    - [x] Footer with copyright
+  - [x] Use same color scheme and styling as admin-invitation template:
     - Background: `#FDF8F7`
     - Primary color: `#926C60`
     - Header background: `#EFD5D0`
@@ -38,37 +38,37 @@ This checklist guides the migration of the user verification email from SendGrid
 ## Phase 2: Email Service Updates
 
 ### 2.1 Update SendGrid Client Methods
-- [ ] Modify `/src/lib/email.ts`:
-  - [ ] Import new email template:
-    - [ ] `getUserVerificationEmailTemplate` from `'./email/templates/user-verification'`
-  - [ ] Update `sendVerificationEmail()` method:
-    - [ ] Remove call to `_sendTemplateEmail`
-    - [ ] Implement direct `sgMail.send()` call similar to other methods
-    - [ ] Use HTML template with inline CSS
-    - [ ] Map existing `TemplateData` interface fields to template
-    - [ ] Add proper subject line: "Verify your email for {galleryName}"
-    - [ ] Include proper error handling with try-catch
-  - [ ] Remove `_sendTemplateEmail()` method entirely (no longer needed)
+- [x] Modify `/src/lib/email.ts`:
+  - [x] Import new email template:
+    - [x] `getUserVerificationEmailTemplate` from `'./email/templates/user-verification'`
+  - [x] Update `sendVerificationEmail()` method:
+    - [x] Remove call to `_sendTemplateEmail`
+    - [x] Implement direct `sgMail.send()` call similar to other methods
+    - [x] Use HTML template with inline CSS
+    - [x] Map existing `TemplateData` interface fields to template
+    - [x] Add proper subject line: "Verify your email for {galleryName}"
+    - [x] Include proper error handling with try-catch
+  - [x] Remove `_sendTemplateEmail()` method entirely (no longer needed)
 
 ### 2.2 Clean Up Template ID Dependencies
-- [ ] Remove/deprecate environment variable:
-  - [ ] `SENDGRID_VERIFICATION_ID` (after migration is stable)
-- [ ] Update environment variable validation to remove `SENDGRID_VERIFICATION_ID` requirement
-- [ ] Document removal in `.env.example`
+- [x] Remove/deprecate environment variable:
+  - [x] `SENDGRID_VERIFICATION_ID` (after migration is stable)
+- [x] Update environment variable validation to remove `SENDGRID_VERIFICATION_ID` requirement
+- [ ] Document removal in `.env.example` (deferred until stable)
 
 ## Phase 3: Data Mapping & Compatibility
 
 ### 3.1 Verification Email Data Mapping
-- [ ] Update `/src/app/api/verifications/route.ts`:
-  - [ ] Ensure data structure matches new template requirements
-  - [ ] Map `buttonUrl` to `verificationUrl` for consistency
-  - [ ] Verify all required fields are provided
+- [x] Update `/src/app/api/verifications/route.ts`:
+  - [x] Ensure data structure matches new template requirements
+  - [x] Map `buttonUrl` to `verificationUrl` for consistency
+  - [x] Verify all required fields are provided
 
 ### 3.2 Template Data Interfaces
-- [ ] Ensure consistent naming across all email templates:
-  - [ ] Use `verificationUrl` instead of `buttonUrl`
-  - [ ] Standardize field names across templates
-  - [ ] Create shared types if applicable
+- [x] Ensure consistent naming across all email templates:
+  - [x] Use `verificationUrl` instead of `buttonUrl`
+  - [x] Standardize field names across templates
+  - [x] Create shared types if applicable
 
 ## Phase 4: Testing & Validation
 
