@@ -7,11 +7,28 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { circleVideoIcon, downloadIcon, photoFilmIcon, shareNodesIcon, zipIcon } from '@/lib/icons';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
-import { selectPerson } from '@/lib/db/personService';
+import { selectPersonWithGalleryStatus } from '@/lib/db/personService';
 import Footer from './components/Footer';
 import MobileHeader from './components/MobileHeader';
 
-const Header = () => {
+interface AuthState {
+    isAuthenticated: boolean;
+    hasGalleries: boolean;
+    personId?: string;
+}
+
+interface HeaderProps {
+    authState?: AuthState;
+}
+
+const Header: FC<HeaderProps> = ({ authState }) => {
+    const buttonText = authState?.isAuthenticated && authState?.hasGalleries 
+        ? 'Galleries' 
+        : 'Get Started';
+    const buttonHref = authState?.isAuthenticated && authState?.hasGalleries 
+        ? '/galleries' 
+        : '/create';
+
     return (
         <Container as='header' className={styles.header} justify='space-between'>
             <Container className={styles.wordmarkContainer} padding={0.5}>
@@ -23,13 +40,13 @@ const Header = () => {
                 <Link href='/howto' className={styles.link}>
                     <Text weight={600} size={1.2}>How It Works</Text>
                 </Link>
-                <Link href='/create' className={styles.link}>
+                <Link href={buttonHref} className={styles.link}>
                     <Container className={styles.actionButton}>
-                        <Text weight={700} size={1.2}>Get Started</Text>
+                        <Text weight={700} size={1.2}>{buttonText}</Text>
                     </Container>
                 </Link>
             </Container>
-            <MobileHeader />
+            <MobileHeader authState={authState} />
         </Container>
     )
 }
@@ -511,19 +528,37 @@ const Notifications = () => {
 
 
 const HomePage: FC = async ({}) => {
-    const personId = cookies().get('personId')?.value
+    let authState: AuthState = {
+        isAuthenticated: false,
+        hasGalleries: false
+    };
+
+    const personId = cookies().get('personId')?.value;
     if (personId) {
         try {
-            const person = await selectPerson(personId)
-            if (person) return redirect('/galleries')
+            const personWithStatus = await selectPersonWithGalleryStatus(personId);
+            if (personWithStatus) {
+                // Check admin status first
+                if (personWithStatus.isAdmin) {
+                    return redirect('/admin');
+                }
+                
+                // Set auth state
+                authState = {
+                    isAuthenticated: true,
+                    hasGalleries: personWithStatus.hasGalleries,
+                    personId: personId
+                };
+            }
         } catch (error) {
-            console.error(`No user found with id: ${personId}`)
+            console.error(`Error checking user status:`, error);
         }
     }
+
     return (
         <Column as='main' className={styles.body}>
             {/* FIXED/STICKY */}
-            <Header />
+            <Header authState={authState} />
 
             {/* SCROLLABLE */}
             <Hero />
