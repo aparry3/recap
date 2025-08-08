@@ -12,6 +12,7 @@ export async function GET(request: NextRequest) {
     const totalGalleries = await db
       .selectFrom('gallery')
       .select(db.fn.count('id').as('count'))
+      .where('deletedAt', 'is', null as any)
       .executeTakeFirst();
 
     // Get total users

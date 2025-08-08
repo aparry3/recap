@@ -19,18 +19,22 @@ export const updateGallery = async (galleryId: string, galleryUpdate: GalleryUpd
     return gallery;
 }
 
-export const selectGallery = async (galleryId: string): Promise<Gallery> => {
-    const gallery = await db.selectFrom('gallery').where('id', '=', galleryId).selectAll().executeTakeFirstOrThrow();
+export const selectGallery = async (galleryId: string, includeDeleted: boolean = false): Promise<Gallery> => {
+    const query = db.selectFrom('gallery').where('id', '=', galleryId);
+    const filtered = includeDeleted ? query : query.where('deletedAt', 'is', null as any);
+    const gallery = await filtered.selectAll().executeTakeFirstOrThrow();
     return gallery;
 }
 
-export const selectGalleryByPath = async (path: string): Promise<Gallery> => {
-    const gallery = await db.selectFrom('gallery').where('path', '=', path).selectAll().executeTakeFirstOrThrow();
+export const selectGalleryByPath = async (path: string, includeDeleted: boolean = false): Promise<Gallery> => {
+    const query = db.selectFrom('gallery').where('path', '=', path);
+    const filtered = includeDeleted ? query : query.where('deletedAt', 'is', null as any);
+    const gallery = await filtered.selectAll().executeTakeFirstOrThrow();
     return gallery;
 }
 
 export const selectGalleries = async (): Promise<Gallery[]> => {
-    const galleries = await db.selectFrom('gallery').selectAll().execute();
+    const galleries = await db.selectFrom('gallery').where('deletedAt', 'is', null as any).selectAll().execute();
     return galleries;
 }
 
