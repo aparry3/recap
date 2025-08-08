@@ -12,6 +12,7 @@ export interface GalleryTable {
     zola?: string
     theknot?: string
     createdBy?: string  // Add this line - tracks who created the gallery
+    deletedAt?: Date    // Soft-delete timestamp
 }
 
 export interface GalleryMediaTable {

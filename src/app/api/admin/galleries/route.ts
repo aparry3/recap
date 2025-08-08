@@ -15,8 +15,9 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const page = parseInt(searchParams.get('page') || '1');
     const search = searchParams.get('search') || '';
+    const statusParam = (searchParams.get('status') || 'active') as 'active' | 'deleted';
 
-    const result = await selectGalleriesForAdmin(admin.id, page, search);
+    const result = await selectGalleriesForAdmin(admin.id, page, search, 20, statusParam);
 
     return NextResponse.json(result);
   } catch (error) {

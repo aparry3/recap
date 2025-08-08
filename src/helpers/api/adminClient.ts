@@ -26,12 +26,30 @@ export const fetchAdminGalleries = async (
 ): Promise<{ galleries: GalleryWithStats[] }> => {
   const params = new URLSearchParams({
     page: page.toString(),
-    ...(search && { search })
+    ...(search && { search }),
+    status: 'active'
   });
   
   const response = await fetch(`/api/admin/galleries?${params}`);
   if (!response.ok) {
     throw new Error('Failed to fetch galleries');
+  }
+  return response.json();
+};
+
+export const fetchAdminDeletedGalleries = async (
+  page: number = 1,
+  search?: string
+): Promise<{ galleries: GalleryWithStats[] }> => {
+  const params = new URLSearchParams({
+    page: page.toString(),
+    ...(search && { search }),
+    status: 'deleted'
+  });
+  
+  const response = await fetch(`/api/admin/galleries?${params}`);
+  if (!response.ok) {
+    throw new Error('Failed to fetch deleted galleries');
   }
   return response.json();
 };
@@ -101,5 +119,27 @@ export const createAdmin = async (adminData: {
     throw new Error(error.error || 'Failed to create admin');
   }
   
+  return response.json();
+};
+
+export const deleteAdminGallery = async (galleryId: string): Promise<{ success: boolean }> => {
+  const response = await fetch(`/api/admin/galleries/${galleryId}`, {
+    method: 'DELETE'
+  });
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error || 'Failed to delete gallery');
+  }
+  return response.json();
+};
+
+export const restoreAdminGallery = async (galleryId: string): Promise<{ success: boolean }> => {
+  const response = await fetch(`/api/admin/galleries/${galleryId}/restore`, {
+    method: 'PUT'
+  });
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error || 'Failed to restore gallery');
+  }
   return response.json();
 };

@@ -6,11 +6,13 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch, faPlus, faUserPlus, faEye, faLink, faCheck } from '@fortawesome/free-solid-svg-icons';
 import Button from '@/components/Button';
 import { useRouter } from 'next/navigation';
-import { fetchAdminGalleries, fetchAdminUsers } from '@/helpers/api/adminClient';
+import { fetchAdminGalleries, fetchAdminUsers, fetchAdminDeletedGalleries, deleteAdminGallery, restoreAdminGallery } from '@/helpers/api/adminClient';
 import Loading from '@/components/Loading';
 import CreateGalleryModal from './CreateGalleryModal';
 import CreateAdminModal from './CreateAdminModal';
 import Toast from './Toast';
+import ConfirmDelete from '@/components/ConfirmDelete';
+import { faTrash, faUndo } from '@fortawesome/free-solid-svg-icons';
 
 interface GalleryWithStats {
   id: string;
@@ -45,19 +47,24 @@ export default function AdminDashboard() {
     type: 'success',
     visible: false
   });
+  const [deletedGalleries, setDeletedGalleries] = useState<GalleryWithStats[]>([]);
+  const [showConfirmDelete, setShowConfirmDelete] = useState(false);
+  const [galleryToDelete, setGalleryToDelete] = useState<GalleryWithStats | null>(null);
 
   useEffect(() => {
     const loadData = async () => {
       try {
         setLoading(true);
-        const [galleriesData, usersData] = await Promise.all([
+        const [galleriesData, usersData, deletedData] = await Promise.all([
           fetchAdminGalleries(1, gallerySearch),
-          fetchAdminUsers(1)
+          fetchAdminUsers(1),
+          fetchAdminDeletedGalleries(1, gallerySearch)
         ]);
         console.log('Galleries data:', galleriesData);
         console.log('Admin users data:', usersData);
         setGalleries(galleriesData.galleries);
         setAdminUsers(usersData.users);
+        setDeletedGalleries(deletedData.galleries);
       } catch (error) {
         console.error('Failed to load admin data:', error);
       } finally {
@@ -129,6 +136,39 @@ export default function AdminDashboard() {
 
   const handleViewGallery = (gallery: GalleryWithStats) => {
     window.open(`/${gallery.path}?password=${gallery.password}`, '_blank');
+  };
+
+  const handleDeleteGallery = (gallery: GalleryWithStats) => {
+    setGalleryToDelete(gallery);
+    setShowConfirmDelete(true);
+  };
+
+  const confirmDeleteGallery = async () => {
+    if (!galleryToDelete) return;
+    try {
+      setShowConfirmDelete(false);
+      await deleteAdminGallery(galleryToDelete.id);
+      setGalleries(prev => prev.filter(g => g.id !== galleryToDelete.id));
+      setDeletedGalleries(prev => [{...galleryToDelete}, ...prev]);
+      showToast('Gallery moved to Deleted', 'success');
+    } catch (error) {
+      console.error('Failed to delete gallery:', error);
+      showToast('Failed to delete gallery', 'error');
+    } finally {
+      setGalleryToDelete(null);
+    }
+  };
+
+  const handleRestoreGallery = async (gallery: GalleryWithStats) => {
+    try {
+      await restoreAdminGallery(gallery.id);
+      setDeletedGalleries(prev => prev.filter(g => g.id !== gallery.id));
+      setGalleries(prev => [gallery, ...prev]);
+      showToast('Gallery restored', 'success');
+    } catch (error) {
+      console.error('Failed to restore gallery:', error);
+      showToast('Failed to restore gallery', 'error');
+    }
   };
 
   if (loading) {
@@ -236,6 +276,14 @@ export default function AdminDashboard() {
                               <FontAwesomeIcon icon={copiedGalleryId === gallery.id ? faCheck : faLink} />
                               <span className={styles.mobileOnly}> {copiedGalleryId === gallery.id ? 'Copied!' : 'Copy Link'}</span>
                             </button>
+                            <button
+                              className={styles.actionButton}
+                              onClick={() => handleDeleteGallery(gallery)}
+                              title="Delete gallery"
+                            >
+                              <FontAwesomeIcon icon={faTrash} />
+                              <span className={styles.mobileOnly}> Delete</span>
+                            </button>
                           </Row>
                         </td>
                       </tr>
@@ -310,6 +358,68 @@ export default function AdminDashboard() {
             </Text>
           </Container>
         </Column>
+
+        {/* Deleted Galleries Section */}
+        <Column className={styles.section}>
+          <Row className={styles.sectionHeader}>
+            <Column>
+              <Text size={1.8} weight={600}>Deleted Galleries</Text>
+              <Text size={1} className={styles.sectionSubtitle}>
+                Recently deleted galleries (soft-deleted)
+              </Text>
+            </Column>
+          </Row>
+
+          <Container className={styles.tableContainer}>
+            <table className={`${styles.table} ${styles.galleryTable}`}>
+              <thead>
+                <tr>
+                  <th>Gallery</th>
+                  <th>Wedding Date</th>
+                  <th>Contributors</th>
+                  <th>Photos</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {deletedGalleries.length === 0 ? (
+                  <tr>
+                    <td colSpan={5} style={{ textAlign: 'center', padding: '2rem' }}>
+                      No deleted galleries
+                    </td>
+                  </tr>
+                ) : (
+                  deletedGalleries.map((gallery) => (
+                    <tr key={gallery.id}>
+                      <td data-label="Gallery">
+                        <div>{gallery.name}</div>
+                        <div className={styles.mobileOnly} style={{ fontSize: '0.875rem', color: '#6b7280' }}>
+                          {gallery.weddingDate || new Date(gallery.created).toLocaleDateString()}
+                        </div>
+                      </td>
+                      <td data-label="Wedding Date">{gallery.weddingDate || new Date(gallery.created).toLocaleDateString()}</td>
+                      <td data-label="Contributors">{gallery.contributorsCount}</td>
+                      <td data-label="Photos">{gallery.photosCount}</td>
+                      <td data-label="Actions">
+                        <Row className={styles.actionButtons}>
+                          <button
+                            className={styles.actionButton}
+                            onClick={() => handleRestoreGallery(gallery)}
+                            title="Restore gallery"
+                          >
+                            <FontAwesomeIcon icon={faUndo} />
+                            <span className={styles.mobileOnly}> Restore</span>
+                          </button>
+                        </Row>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </Container>
+
+        </Column>
       </Column>
 
       <CreateGalleryModal
@@ -329,6 +439,13 @@ export default function AdminDashboard() {
         type={toast.type}
         isVisible={toast.visible}
       />
+
+      {showConfirmDelete && (
+        <ConfirmDelete 
+          onCancel={() => { setShowConfirmDelete(false); setGalleryToDelete(null); }}
+          onConfirm={confirmDeleteGallery}
+        />
+      )}
     </Column>
   );
 }
