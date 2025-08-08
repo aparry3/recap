@@ -40,7 +40,7 @@ export const insertGalleryMedia = async (galleryId: string, mediaId: string): Pr
     return galleryMedia;
 }
 
-export const selectGalleriesForAdmin = async (adminId: string, page: number = 1, search?: string, limit: number = 20) => {
+export const selectGalleriesForAdmin = async (adminId: string, page: number = 1, search?: string, limit: number = 20, status: 'active' | 'deleted' = 'active') => {
     const offset = (page - 1) * limit;
     
     let query = db
@@ -59,6 +59,13 @@ export const selectGalleriesForAdmin = async (adminId: string, page: number = 1,
         ])
         .where('gallery.createdBy', '=', adminId)
         .groupBy(['gallery.id']);
+
+    // Filter by deletion status
+    if (status === 'active') {
+        query = query.where('gallery.deletedAt', 'is', null);
+    } else if (status === 'deleted') {
+        query = query.where('gallery.deletedAt', 'is not', null);
+    }
 
     if (search) {
         query = query.where('gallery.name', 'ilike', `%${search}%`);
@@ -79,4 +86,22 @@ export const selectGalleriesForAdmin = async (adminId: string, page: number = 1,
         page,
         limit,
     };
+}
+
+export const softDeleteGallery = async (galleryId: string): Promise<boolean> => {
+    const result = await db
+      .updateTable('gallery')
+      .set({ deletedAt: new Date() })
+      .where('id', '=', galleryId)
+      .executeTakeFirst();
+    return !!result.numUpdatedRows;
+}
+
+export const restoreGallery = async (galleryId: string): Promise<boolean> => {
+    const result = await db
+      .updateTable('gallery')
+      .set({ deletedAt: null })
+      .where('id', '=', galleryId)
+      .executeTakeFirst();
+    return !!result.numUpdatedRows;
 }
