@@ -67,6 +67,7 @@ export const selectPersonGalleries = async (personId: string): Promise<Gallery[]
   .leftJoin('gallery', 'gallery.id', 'galleryPerson.galleryId') // Join to count media for each person
   .selectAll('gallery')
   .where('galleryPerson.personId', '=', personId)
+  .where('gallery.deletedAt', 'is', null as any)
   .execute() as Gallery[];
   return galleries
 }
@@ -114,6 +115,7 @@ export const selectPersonWithGalleryStatus = async (personId: string): Promise<P
         eb('personId', '=', personId),
         eb('createdBy', '=', personId)
       ]))
+      .where('deletedAt', 'is', null as any)
       .limit(1)
       .execute();
     

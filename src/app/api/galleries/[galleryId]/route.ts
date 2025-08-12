@@ -27,8 +27,13 @@ export const PUT = async (req: Request, ctx: { params: { galleryId: string } }) 
     }
 };
 
-export const GET = async (req: Request, ctx: { params: { galleryId: string } }) => {
-    const galleryUpdate: GalleryUpdate = await req.json()
+export const GET = async (_req: Request, ctx: { params: { galleryId: string } }) => {
     const { galleryId } = ctx.params
+    try {
+        const gallery = await selectGallery(galleryId)
+        return NextResponse.json({ gallery }, { status: 200 })
+    } catch (error: any) {
+        return NextResponse.json({ error: 'Gallery not found' }, { status: 404 })
+    }
 };
 

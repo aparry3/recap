@@ -6,11 +6,20 @@ import { insertMedia, selectGalleryMedia } from '@/lib/db/mediaService';
 import { updateGalleryPerson } from '@/lib/db/personService';
 import { NewMediaData } from '@/lib/types/Media';
 import { NextResponse } from 'next/server';
+import { selectGallery } from '@/lib/db/galleryService';
 
 
 export const POST = async (req: Request, ctx: { params: { galleryId: string } }) => {
     const newMedia: NewMediaData & {albumId: string} = await req.json()
     const { galleryId } = ctx.params
+
+    // Guard: block uploads to deleted/non-existent galleries
+    try {
+        await selectGallery(galleryId);
+    } catch {
+        return NextResponse.json({ error: 'Gallery not found' }, { status: 404 });
+    }
+
     const {albumId, ..._newMedia} = newMedia
     const media = await insertMedia(_newMedia)
     const presignedUrlPromise = media.contentType.startsWith('image') ? generatePresignedUrl(media.url, media.contentType) : Promise.resolve(null)
@@ -33,6 +42,13 @@ export const POST = async (req: Request, ctx: { params: { galleryId: string } })
 
 export const GET = async (_: Request, ctx: { params: { galleryId: string } }) => {
     const { galleryId } = ctx.params
+
+    // Guard: block reads for deleted/non-existent galleries
+    try {
+        await selectGallery(galleryId);
+    } catch {
+        return NextResponse.json({ error: 'Gallery not found' }, { status: 404 });
+    }
 
     try {
         const media = await selectGalleryMedia(galleryId)
