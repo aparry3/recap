@@ -3,7 +3,7 @@ import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
 
 export const WEBP_TYPE = 'image/webp'
-export const CLOUDFRONT_URL = process.env.AWS_CLOUDFRONT_URL || ''
+export const CLOUDFRONT_URL = process.env.ASSETS_CLOUDFRONT_URL || ''
 
 const s3Client = new S3Client([{
     accessKeyId: process.env.AWS_ACCESS_KEY_ID,

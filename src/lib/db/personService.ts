@@ -4,7 +4,7 @@ import { Person, NewPerson, PersonUpdate, NewPersonData, GalleryPersonData, Veri
 import {v4 as uuidv4} from 'uuid';
 import { selectGalleryPersonMedia } from "./mediaService";
 
-const CLOUDFRONT_URL = process.env.AWS_CLOUDFRONT_URL || ''
+const CLOUDFRONT_URL = process.env.ASSETS_CLOUDFRONT_URL || ''
 export const insertPerson = async (newPersonData: NewPersonData): Promise<Person> => {
     const newPerson = {...newPersonData, id: uuidv4()} as NewPerson
     const person = await db.insertInto('person').values(newPerson).returningAll().executeTakeFirstOrThrow();

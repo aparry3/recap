@@ -2,7 +2,7 @@ import { db } from ".";
 import { NewMedia, MediaUpdate, NewMediaData, Media } from "../types/Media";
 import {v4 as uuidv4} from 'uuid';
 
-const CLOUDFRONT_URL = process.env.AWS_CLOUDFRONT_URL || ''
+const CLOUDFRONT_URL = process.env.ASSETS_CLOUDFRONT_URL || ''
 
 export const insertMedia = async (newMediaData: NewMediaData): Promise<Media> => {
     const id = uuidv4()
