@@ -1,7 +1,7 @@
 // lib/fontawesome.js
 import { findIconDefinition, icon, IconDefinition, library } from '@fortawesome/fontawesome-svg-core';
-import { faSquare, faHeart as faHeartRegular, faCircleInfo } from '@fortawesome/pro-regular-svg-icons';
-import { faGift, faGear, faQrcode, faFileZipper, faPhotoFilm, faCircleVideo, faDownload, faShareNodes, faLink, faUpload, faGridHorizontal, faHouse, faUser, faBars, faChevronLeft, faX, faCheck, faArrowLeft, faChevronRight, faChevronDown, faChevronUp, faCheckSquare, faTrash, faRectangleHistory, faRing, faPrint, faCopy, faHeart } from '@fortawesome/pro-solid-svg-icons';
+import { faSquare, faHeart as faHeartRegular } from '@fortawesome/free-regular-svg-icons';
+import { faGift, faGear, faQrcode, faFileZipper, faPhotoFilm, faVideo as faCircleVideo, faDownload, faShareNodes, faLink, faUpload, faGripHorizontal as faGridHorizontal, faHouse, faUser, faBars, faChevronLeft, faX, faCheck, faArrowLeft, faChevronRight, faChevronDown, faChevronUp, faCheckSquare, faTrash, faHistory as faRectangleHistory, faRing, faPrint, faCopy, faHeart, faInfoCircle as faCircleInfo } from '@fortawesome/free-solid-svg-icons';
 import { faFacebook, faInstagram } from '@fortawesome/free-brands-svg-icons'
 import {Actions} from './actions'
 
