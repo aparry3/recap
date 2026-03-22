@@ -3,7 +3,7 @@ import { MediaUpdate } from "../types/Media";
 import {v4 as uuidv4} from 'uuid';
 import { NewWeddingEventData, WeddingEvent, WeddingEventDetails } from "../types/WeddingEvent";
 
-const CLOUDFRONT_URL = process.env.ASSETS_CLOUDFRONT_URL || ''
+const CLOUDFRONT_URL = process.env.AWS_CLOUDFRONT_URL || ''
 
 export const insertEvents = async (galleryId: string, newEventData: WeddingEventDetails[]): Promise<WeddingEvent[]> => {
     const newEvents = newEventData.map(e => ({...e, id: uuidv4(), galleryId}))

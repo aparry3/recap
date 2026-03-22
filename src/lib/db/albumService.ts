@@ -3,7 +3,7 @@ import { Album, AlbumUpdate, NewAlbumData, AlbumMediaData } from "../types/Album
 import {v4 as uuidv4} from 'uuid';
 import { AlbumMedia, Media } from "../types/Media";
 
-const CLOUDFRONT_URL = process.env.ASSETS_CLOUDFRONT_URL || ''
+const CLOUDFRONT_URL = process.env.AWS_CLOUDFRONT_URL || ''
 
 export const insertAlbum = async (galleryId: string, newAlbum: NewAlbumData): Promise<Album> => {
   const id = uuidv4()
