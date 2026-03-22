@@ -10,6 +10,7 @@ import { fetchAdminGalleries, fetchAdminUsers, fetchAdminDeletedGalleries, delet
 import Loading from '@/components/Loading';
 import CreateGalleryModal from './CreateGalleryModal';
 import CreateAdminModal from './CreateAdminModal';
+import { formatLocaleDateString } from '@/helpers/dates';
 import Toast from './Toast';
 import ConfirmDelete from '@/components/ConfirmDelete';
 import { faTrash, faUndo } from '@fortawesome/free-solid-svg-icons';
@@ -247,10 +248,10 @@ export default function AdminDashboard() {
                         <td data-label="Gallery">
                           <div>{gallery.name}</div>
                           <div className={styles.mobileOnly} style={{ fontSize: '0.875rem', color: '#6b7280' }}>
-                            {gallery.weddingDate || new Date(gallery.created).toLocaleDateString()}
+                            {gallery.weddingDate ? formatLocaleDateString(gallery.weddingDate) : new Date(gallery.created).toLocaleDateString()}
                           </div>
                         </td>
-                        <td data-label="Wedding Date">{gallery.weddingDate || new Date(gallery.created).toLocaleDateString()}</td>
+                        <td data-label="Wedding Date">{gallery.weddingDate ? formatLocaleDateString(gallery.weddingDate) : new Date(gallery.created).toLocaleDateString()}</td>
                         <td data-label="Contributors">{gallery.contributorsCount}</td>
                         <td data-label="Photos">{gallery.photosCount}</td>
                         <td data-label="Status">
@@ -394,10 +395,10 @@ export default function AdminDashboard() {
                       <td data-label="Gallery">
                         <div>{gallery.name}</div>
                         <div className={styles.mobileOnly} style={{ fontSize: '0.875rem', color: '#6b7280' }}>
-                          {gallery.weddingDate || new Date(gallery.created).toLocaleDateString()}
+                          {gallery.weddingDate ? formatLocaleDateString(gallery.weddingDate) : new Date(gallery.created).toLocaleDateString()}
                         </div>
                       </td>
-                      <td data-label="Wedding Date">{gallery.weddingDate || new Date(gallery.created).toLocaleDateString()}</td>
+                      <td data-label="Wedding Date">{gallery.weddingDate ? formatLocaleDateString(gallery.weddingDate) : new Date(gallery.created).toLocaleDateString()}</td>
                       <td data-label="Contributors">{gallery.contributorsCount}</td>
                       <td data-label="Photos">{gallery.photosCount}</td>
                       <td data-label="Actions">

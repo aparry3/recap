@@ -6,6 +6,7 @@ import styles from './Galleries.module.scss';
 import { useRouter } from 'next/navigation';
 import { Gallery } from '@/lib/types/Gallery';
 import { Person } from '@/lib/types/Person';
+import { formatDateString } from '@/helpers/dates';
 import Link from 'next/link';
 import Button from '@/components/Button';
 import useLocalStorage, { deleteCookie } from '@/helpers/hooks/localStorage';
@@ -58,7 +59,7 @@ const Welcome: FC<{galleries: Gallery[], person?: Person}> = ({galleries, person
                             <Text>{gallery.name}</Text>
                         </Row>
                         <Row className={styles.galleryDate}>
-                            <Text>{new Date(gallery.date ||gallery.created).toDateString()}</Text>
+                            <Text>{formatDateString(gallery.date || gallery.created)}</Text>
                         </Row>
                     </Column>
                 </Row>
