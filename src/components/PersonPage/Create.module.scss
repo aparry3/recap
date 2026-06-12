@@ -74,6 +74,16 @@
 .header {
     padding: 1rem!important;
 }
+.galleryName {
+    text-align: center;
+    max-width: 100%;
+    overflow-wrap: break-word;
+    font-size: clamp(1.6rem, 5vw, 2.5rem);
+}
+.subPrompt {
+    padding-top: 0.5rem;
+    opacity: 0.8;
+}
 .headerBar {
     padding: 1rem!important;
     width: 100%;

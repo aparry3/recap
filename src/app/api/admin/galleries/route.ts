@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { requireAdmin } from '@/lib/admin/middleware';
 import { selectGalleriesForAdmin, insertGallery } from '@/lib/db/galleryService';
+import { createDefaultAlbums } from '@/lib/db/albumService';
 import { selectPersonByEmail, insertPerson, insertGalleryPerson } from '@/lib/db/personService';
 import { generateRandomString } from '@/helpers/utils';
 import { sendGridClient } from '@/lib/email';
@@ -76,6 +77,7 @@ export async function POST(request: NextRequest) {
     const gallery = await insertGallery(newGalleryData);
 
     console.log('gallery', gallery)
+    await createDefaultAlbums(gallery.id, person.id);
     // Handle wedding website scraping if URLs provided
     let images: string[] = [];
     let events: any[] = [];

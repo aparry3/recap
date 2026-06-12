@@ -11,6 +11,19 @@ export const insertAlbum = async (galleryId: string, newAlbum: NewAlbumData): Pr
   return album;
 }
 
+export const DEFAULT_ALBUM_NAMES = ['Getting Ready', 'Ceremony', 'Reception', 'Through the Years'];
+
+export const createDefaultAlbums = async (galleryId: string, personId: string): Promise<Album[]> => {
+  try {
+    return await Promise.all(
+      DEFAULT_ALBUM_NAMES.map(name => insertAlbum(galleryId, {name, personId} as NewAlbumData))
+    );
+  } catch (error) {
+    console.error(`Failed to create default albums for gallery ${galleryId}:`, error);
+    return [];
+  }
+}
+
 export const insertAlbumMedia = async (albumId: string, mediaIds: string[]): Promise<Media[]> => {
   const albumMedia = await db.insertInto('albumMedia')
   .values(mediaIds.map(id => ({albumId, mediaId: id})))

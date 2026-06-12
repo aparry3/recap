@@ -9,7 +9,7 @@ import { Person, NewPersonData } from '@/lib/types/Person';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { checkSquareIcon, squareIcon } from '@/lib/icons';
 
-const PersonPage: FC<{person?: Person | NewPersonData, onSubmit: (name: string, email?: string, phone?: string, receiveMessages?: boolean) => void}> = ({person, onSubmit}) => {
+const PersonPage: FC<{person?: Person | NewPersonData, galleryName?: string, onSubmit: (name: string, email?: string, phone?: string, receiveMessages?: boolean) => void}> = ({person, galleryName, onSubmit}) => {
   const [name, setName] = useState(person?.name || '');
   const [phone, setPhone] = useState(person?.phone || '');
   const [email, setEmail] = useState(person?.email || '');
@@ -91,8 +91,18 @@ const PersonPage: FC<{person?: Person | NewPersonData, onSubmit: (name: string, 
           <Image src='/branding/wordmark.png' alt='wordmark' layout='intrinsic' height={100} width={100}/>
         </Row>
         <Column as='header' className={styles.header}>
-          <Text size={1.4}>Tell us</Text>
-          <Text size={2.5} weight={500}>Your Name</Text>
+          {galleryName ? (
+            <>
+              <Text size={1.4}>Welcome to</Text>
+              <Text weight={500} className={styles.galleryName}>{galleryName}</Text>
+              <Text size={1.2} className={styles.subPrompt}>Tell us your name to get started</Text>
+            </>
+          ) : (
+            <>
+              <Text size={1.4}>Tell us</Text>
+              <Text size={2.5} weight={500}>Your Name</Text>
+            </>
+          )}
         </Column>
         <Container className={styles.buttonContainer} padding={[2, 0]}>
           <Button className={styles.button} onClick={handleButtonPress} type='submit' disabled={!name || !email}>
