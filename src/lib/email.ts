@@ -4,13 +4,21 @@ import { getOrderNotificationTemplate } from './email/templates/order_notificati
 import { getAdminInvitationEmailTemplate } from './email/templates/admin-invitation';
 import { getUserVerificationEmailTemplate } from './email/templates/user-verification';
 
-const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY || ''
+function configureSendGrid(requireOrderNotificationEmail = false) {
+  const apiKey = process.env.SENDGRID_API_KEY;
+  const senderEmail = process.env.SENDGRID_EMAIL;
+  const orderNotificationEmail = process.env.ORDER_NOTIFICATION_EMAIL;
 
-const SENDGRID_EMAIL = process.env.SENDGRID_EMAIL || ''
-const ORDER_NOTIFICATION_EMAIL = process.env.ORDER_NOTIFICATION_EMAIL || ''
+  if (!apiKey || !senderEmail || (requireOrderNotificationEmail && !orderNotificationEmail)) {
+    throw new Error('Required SendGrid environment variables are not set');
+  }
 
-if (!SENDGRID_API_KEY || !SENDGRID_EMAIL || !ORDER_NOTIFICATION_EMAIL) {
-    throw new Error('Required environment variables are not set');
+  sgMail.setApiKey(apiKey);
+
+  return {
+    senderEmail,
+    orderNotificationEmail,
+  };
 }
 
 export interface TemplateData {
@@ -40,16 +48,13 @@ export interface AdminInvitationData {
 }
 
 export class SendGridClient {
-  constructor(apiKey: string) {
-    sgMail.setApiKey(apiKey);
-  }
-
   async sendVerificationEmail(email: string, templateData: TemplateData): Promise<boolean> {
     try {
+      const { senderEmail } = configureSendGrid();
       const response = await sgMail.send({
         to: email,
         from: {
-          email: SENDGRID_EMAIL,
+          email: senderEmail,
           name: 'Recap'
         },
         subject: `Verify your email for ${templateData.galleryName}`,
@@ -71,10 +76,11 @@ export class SendGridClient {
 
   async sendCreationEmail(email: string, name: string, galleryUrl: string, password: string): Promise<boolean> {
     try {
+      const { senderEmail } = configureSendGrid();
       const response = await sgMail.send({
         to: email,
         from: {
-          email: SENDGRID_EMAIL,
+          email: senderEmail,
           name: 'Recap'
         },
         subject: 'Your Recap Gallery is Ready! 🎉',
@@ -96,10 +102,11 @@ export class SendGridClient {
 
   async sendOrderNotification(data: OrderNotificationData): Promise<boolean> {
     try {
+      const { senderEmail, orderNotificationEmail } = configureSendGrid(true);
       const response = await sgMail.send({
-        to: ORDER_NOTIFICATION_EMAIL,
+        to: orderNotificationEmail!,
         from: {
-          email: SENDGRID_EMAIL,
+          email: senderEmail,
           name: 'Recap'
         },
         subject: `New Gallery Order - ${data.galleryName}`,
@@ -117,10 +124,11 @@ export class SendGridClient {
 
   async sendAdminInvitationEmail(data: AdminInvitationData): Promise<boolean> {
     try {
+      const { senderEmail } = configureSendGrid();
       const response = await sgMail.send({
         to: data.email,
         from: {
-          email: SENDGRID_EMAIL,
+          email: senderEmail,
           name: 'Recap'
         },
         subject: "You've been added as an admin to Recap!",
@@ -140,4 +148,4 @@ export class SendGridClient {
   }
 }
 
-export const sendGridClient = new SendGridClient(SENDGRID_API_KEY);
+export const sendGridClient = new SendGridClient();

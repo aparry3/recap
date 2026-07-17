@@ -1,12 +1,15 @@
 import { NextResponse } from 'next/server';
 import Stripe from 'stripe';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2023-10-16',
-});
-
 export async function POST() {
   try {
+    const apiKey = process.env.STRIPE_SECRET_KEY;
+    if (!apiKey) throw new Error('STRIPE_SECRET_KEY is not set');
+
+    const stripe = new Stripe(apiKey, {
+      apiVersion: '2023-10-16',
+    });
+
     // Create a PaymentIntent with the order amount and currency
     const paymentIntent = await stripe.paymentIntents.create({
       amount: 5900, // $59.00 in cents
@@ -26,4 +29,4 @@ export async function POST() {
       { status: 500 }
     );
   }
-} 
+}
