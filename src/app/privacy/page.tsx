@@ -98,7 +98,7 @@ const PrivacyPage = () => {
                 <Column className={styles.section}>
                     <Text as="h2" size={1.8} weight={600}>8. Changes to This Policy</Text>
                     <Text as="p">
-                        We may update our Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy on this page and updating the "Last Updated" date.
+                        We may update our Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy on this page and updating the “Last Updated” date.
                     </Text>
                 </Column>
 
@@ -113,4 +113,4 @@ const PrivacyPage = () => {
     );
 };
 
-export default PrivacyPage; 
+export default PrivacyPage;

@@ -3,8 +3,9 @@
 import { cookies } from "next/headers";
 
 
-export const setCookie = (key: string, value: string) => {
-    cookies().set(key, value, {
+export const setCookie = async (key: string, value: string) => {
+    const cookieStore = await cookies()
+    cookieStore.set(key, value, {
         path: '/',
         httpOnly: true,
       });

@@ -1,0 +1,50 @@
+diff --git a/dist/index.esm.js b/dist/index.esm.js
+index 705e3212136107bf29927836bc5e5ba25dfe2ccb..2dfd2e6e8ba8295b2e3acef2fe9e3f8ff60a0b41 100644
+--- a/dist/index.esm.js
++++ b/dist/index.esm.js
+@@ -1,4 +1,5 @@
+ import require$$0 from 'react';
++import * as jsxRuntimeExternal from 'react/jsx-runtime';
+ 
+ /******************************************************************************
+ Copyright (c) Microsoft Corporation.
+@@ -1397,14 +1398,9 @@ function requireReactJsxRuntime_development () {
+ 	return reactJsxRuntime_development;
+ }
+ 
+-(function (module) {
+-
+-	if (process.env.NODE_ENV === 'production') {
+-	  module.exports = requireReactJsxRuntime_production_min();
+-	} else {
+-	  module.exports = requireReactJsxRuntime_development();
+-	}
+-} (jsxRuntime));
++// Use the consuming application's JSX runtime so React Server Components get
++// the correct server-specific implementation from the framework.
++jsxRuntime.exports = jsxRuntimeExternal;
+ 
+ /**
+  * Base flexbox styles applied to all container components
+diff --git a/dist/index.js b/dist/index.js
+index 6254c840573b15fa02d8d845b6f72640249901a4..54985163806713e287378b3d2609d8dce632833f 100644
+--- a/dist/index.js
++++ b/dist/index.js
+@@ -1405,14 +1405,9 @@ function requireReactJsxRuntime_development () {
+ 	return reactJsxRuntime_development;
+ }
+ 
+-(function (module) {
+-
+-	if (process.env.NODE_ENV === 'production') {
+-	  module.exports = requireReactJsxRuntime_production_min();
+-	} else {
+-	  module.exports = requireReactJsxRuntime_development();
+-	}
+-} (jsxRuntime));
++// Use the consuming application's JSX runtime so React Server Components get
++// the correct server-specific implementation from the framework.
++jsxRuntime.exports = require('react/jsx-runtime');
+ 
+ /**
+  * Base flexbox styles applied to all container components

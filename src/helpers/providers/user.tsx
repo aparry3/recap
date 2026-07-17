@@ -93,7 +93,7 @@ export const UserProvider: React.FC<{
     <UserContext.Provider value={{ personId, person, loading }}>
       {(!loading && person) ? children :
       (!loading && !person) ? (
-        <PersonPage person={person} onSubmit={submitPerson}/>
+        <PersonPage person={person} galleryName={gallery.name} onSubmit={submitPerson}/>
       ) : (
         <Container className={styles.loading}>
           <Text size={2}>Loading...</Text>

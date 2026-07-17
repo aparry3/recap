@@ -15,6 +15,7 @@ import { AlbumsProvider } from "@/helpers/providers/albums";
 import { NavigationProvider } from "@/helpers/providers/navigation";
 import { AlbumMediaData } from "@/lib/types/Album";
 import TutorialOverlay from "./components/TutorialOverlay";
+import UploadPrompt from "@/components/UploadPrompt";
 
 export enum AppPage {
     HOME = 'HOME',
@@ -49,6 +50,7 @@ const App: FC<{gallery: Gallery, password?: string, album?: AlbumMediaData}> =  
                                 <MobileMenu onInfoClick={() => setShowInfo(true)}/>
                                 <Content onQrClick={() => setShowQrCode(true)} onInfoClick={() => setShowInfo(true)} />
                                 <TutorialOverlay open={showInfo} onClose={() => setShowInfo(false)} />
+                                <UploadPrompt />
                                 {/* {showUploadConfirmation && <Upload /> } */}
                             </>
                             ): (

@@ -9,9 +9,9 @@ import { NextResponse } from 'next/server';
 import { selectGallery } from '@/lib/db/galleryService';
 
 
-export const POST = async (req: Request, ctx: { params: { galleryId: string } }) => {
+export const POST = async (req: Request, ctx: { params: Promise<{ galleryId: string }> }) => {
     const newMedia: NewMediaData & {albumId: string} = await req.json()
-    const { galleryId } = ctx.params
+    const { galleryId } = await ctx.params
 
     // Guard: block uploads to deleted/non-existent galleries
     try {
@@ -40,8 +40,8 @@ export const POST = async (req: Request, ctx: { params: { galleryId: string } })
     return NextResponse.json({...media, url: `${CLOUDFRONT_URL}/${media.url}`, preview: `${CLOUDFRONT_URL}/${media.preview}`, presignedUrls: {large: presignedUrl, small: webpPresignedUrl, uploadId, key: media.url}}, {status: 200})
 };
 
-export const GET = async (_: Request, ctx: { params: { galleryId: string } }) => {
-    const { galleryId } = ctx.params
+export const GET = async (_: Request, ctx: { params: Promise<{ galleryId: string }> }) => {
+    const { galleryId } = await ctx.params
 
     // Guard: block reads for deleted/non-existent galleries
     try {

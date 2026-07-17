@@ -12,7 +12,8 @@ export const POST = async (req: Request) => {
     try {
         const person = await insertPerson(newPerson)
         if (!admin) {
-            cookies().set('personId', person.id, {
+            const cookieStore = await cookies()
+            cookieStore.set('personId', person.id, {
                 secure: process.env.NODE_ENV === 'production', // HTTPS-only in production
                 sameSite: 'lax', // Helps with CSRF protection
                 maxAge: 60 * 60 * 24 * 365, // 1 year
@@ -39,4 +40,3 @@ export const GET = async (req: NextRequest) => {
         return NextResponse.json({error: 'Person not found'}, {status: 404})
     }
 };
-

@@ -1,12 +1,5 @@
-import  { GenerativeModel, GoogleGenerativeAI, SchemaType } from '@google/generative-ai';
+import { GenerativeModel, GoogleGenerativeAI } from '@google/generative-ai';
 import { WeddingEventDetails } from './types/WeddingEvent';
-
-
-const GEMINI_API_KEY = process.env.GEMINI_API_KEY || ''
-
-if (!GEMINI_API_KEY) {
-    throw new Error('GEMINI_API_KEY is not set');
-}
 
 
 const GENERATION_CONFIG = {
@@ -20,13 +13,21 @@ const GENERATION_CONFIG = {
   const SYSTEM_INSTRUCTION = "You are an expert event extractor. Your task is to read the provided text and identify all events mentioned within. For each event, extract the following information, if present in the text.\n\n**Required Fields:**\n\n*   `name`: The name of the event (string).\n*   `location`: The location or address of the event (string).\n\n**Optional Fields:**\n\n*   `start:` The datetime the event occurred or will occur. Use ISO 8601 format. If no time is given, use the format 'YYYY-MM-DD' \n*   `end:` The datetime the event occurred or will end. Use ISO 8601 format. If no time is given, use the format 'YYYY-MM-DD' \n*   `attire`: The suggested or required attire for the event (string).\n\nOutput the extracted events in a JSON array format. Each object in the array represents a single event and should have the following keys: `\"start\"`, `\"end\"`, `\"location\"`, `\"name\"`, and `\"attire\"`. If a piece of information is not explicitly mentioned in the text, use `null` as the value."
 
 class GeminiClient {
-    model: GenerativeModel
-    constructor() {
-        const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
+    private model?: GenerativeModel
+
+    private getModel(): GenerativeModel {
+        if (this.model) return this.model;
+
+        const apiKey = process.env.GEMINI_API_KEY;
+        if (!apiKey) throw new Error('GEMINI_API_KEY is not set');
+
+        const genAI = new GoogleGenerativeAI(apiKey);
         this.model = genAI.getGenerativeModel({
             model: "gemini-2.0-flash",
             systemInstruction: SYSTEM_INSTRUCTION
-          });
+        });
+
+        return this.model;
     }
 
     async extractEvents(text: string): Promise<WeddingEventDetails[]> {
@@ -40,7 +41,7 @@ class GeminiClient {
             {text: "output: "},
           ];
               
-          const result = await this.model.generateContent({
+          const result = await this.getModel().generateContent({
             contents: [{ role: "user", parts }],
             generationConfig: GENERATION_CONFIG,
           });

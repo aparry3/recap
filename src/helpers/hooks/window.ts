@@ -7,9 +7,8 @@ interface WindowSize {
     height?: number;
     isMobile: boolean;
   }
-  
+
 export const useWindowSize = (): WindowSize => {
-    if (typeof window === 'undefined') return {isMobile: false}
     // Initialize state with undefined width/height so server and client renders match
     const [windowSize, setWindowSize] = useState<WindowSize>({
       width: undefined,
@@ -40,14 +39,13 @@ export const useWindowSize = (): WindowSize => {
   
         // Call handler right away so state gets updated with initial window size
         handleResize();
-  
+
         // Remove event listener on cleanup
         return () => window.removeEventListener('resize', handleResize);
       }
-      }, [window]); // Empty array ensures that effect is only run on mount and unmount
-  
+      }, []); // Empty array ensures that effect is only run on mount and unmount
+
     return windowSize;
   }
-  
+
   export default useWindowSize;
-  

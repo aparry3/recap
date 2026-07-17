@@ -3,9 +3,9 @@ import { insertGalleryPerson, selectPeopleMedia } from '@/lib/db/personService';
 import { NextResponse } from 'next/server';
 import { selectGallery } from '@/lib/db/galleryService';
 
-export const POST = async (req: Request, ctx: { params: { galleryId: string } }) => {
+export const POST = async (req: Request, ctx: { params: Promise<{ galleryId: string }> }) => {
     const {personId, receiveMessages}  = await req.json()
-    const { galleryId } = ctx.params
+    const { galleryId } = await ctx.params
 
     // Guard
     try {
@@ -23,8 +23,8 @@ export const POST = async (req: Request, ctx: { params: { galleryId: string } })
 };
 
 
-export const GET = async (_: Request, ctx: { params: { galleryId: string } }) => {
-    const { galleryId } = ctx.params
+export const GET = async (_: Request, ctx: { params: Promise<{ galleryId: string }> }) => {
+    const { galleryId } = await ctx.params
 
     // Guard
     try {
@@ -40,4 +40,3 @@ export const GET = async (_: Request, ctx: { params: { galleryId: string } }) =>
         return NextResponse.json({error: error.message}, {status: 400})
     }
 };
-

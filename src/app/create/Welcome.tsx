@@ -74,7 +74,7 @@ const Welcome: FC<{gallery: Gallery | NewGalleryData, isAdmin?: boolean}> = ({ga
             </Container>
           </Container>
           <Container className={styles.section}>
-            <Text size={1}>Don't worry, you can always access your QR and Link from your dashboard by pressing:</Text>
+            <Text size={1}>Don’t worry, you can always access your QR and Link from your dashboard by pressing:</Text>
           </Container>
           <Container className={styles.section}>
             <FontAwesomeIcon icon={qrcodeIcon} className={styles.qrCode}/>

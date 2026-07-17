@@ -3,9 +3,9 @@ import { updateGalleryPerson } from '@/lib/db/personService';
 import { NextResponse } from 'next/server';
 import { selectGallery } from '@/lib/db/galleryService';
 
-export const PUT = async (req: Request, ctx: { params: { galleryId: string, personId: string } }) => {
+export const PUT = async (req: Request, ctx: { params: Promise<{ galleryId: string, personId: string }> }) => {
     const {mediaId}  = await req.json()
-    const { galleryId, personId } = ctx.params
+    const { galleryId, personId } = await ctx.params
 
     // Guard
     try {

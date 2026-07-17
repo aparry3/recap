@@ -1,4 +1,5 @@
 // src/app/api/galleries/route.ts
+import { createDefaultAlbums } from '@/lib/db/albumService';
 import { insertGallery } from '@/lib/db/galleryService';
 import { insertGalleryPerson, insertVerification, selectPerson } from '@/lib/db/personService';
 import { sendGridClient } from '@/lib/email';
@@ -28,6 +29,7 @@ export const POST = async (req: Request) => {
 
     const gallery = await insertGallery(newGallery)
     console.log('gallery', gallery)
+    await createDefaultAlbums(gallery.id, gallery.personId)
     let images: string[] = []
     let events: WeddingEvent[] = []
     if (gallery.theknot || gallery.zola) {
