@@ -17,7 +17,8 @@ const Header: FC = async () => {
     let hasGalleries = false;
     let shouldRedirectToAdmin = false;
 
-    const personId = cookies().get('personId')?.value;
+    const cookieStore = await cookies();
+    const personId = cookieStore.get('personId')?.value;
     if (personId) {
         try {
             const personWithStatus = await selectPersonWithGalleryStatus(personId);
@@ -186,7 +187,7 @@ const Examples = () => {
                     <Text className={styles.headingText} as='h1'>Collect Every Photo From Every Guest — Without the Chase</Text>
                 </Container>
                 <Container className={styles.subheading} padding={[0, 1]}>
-                    <Text className={styles.subheadingText} as='h2'>No more "Please send me those photos!" texts. With our QR code on your wedding stationery, guests can instantly upload photos to your gallery.
+                    <Text className={styles.subheadingText} as='h2'>No more “Please send me those photos!” texts. With our QR code on your wedding stationery, guests can instantly upload photos to your gallery.
                     </Text>
                 </Container>
             </Column>

@@ -1,15 +1,16 @@
-import React, { FC } from "react"
+import React from "react"
 import { redirect } from "next/navigation";
 import { selectPerson, updateVerification } from "@/lib/db/personService";
 import Confirmation from "@/components/PersonPage/Confirmation";
 import { selectGallery } from "@/lib/db/galleryService";
 
 
-const VerificationPage: FC<{params: {verificationId: string}}> = async ({params}) => {
+const VerificationPage = async ({params}: {params: Promise<{verificationId: string}>}) => {
     let person
     let gallery
     try {
-        const verification = await updateVerification(params.verificationId, true)
+        const {verificationId} = await params
+        const verification = await updateVerification(verificationId, true)
         person = await selectPerson(verification.personId)
         if (verification.galleryId) {
             gallery = await selectGallery(verification.galleryId)

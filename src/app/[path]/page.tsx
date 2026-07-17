@@ -1,4 +1,4 @@
-import React, { FC } from "react"
+import React from "react"
 import App from "./App";
 import { redirect } from "next/navigation";
 import { selectGalleryByPath } from "@/lib/db/galleryService";
@@ -9,13 +9,14 @@ import { selectAlbum } from "@/lib/db/albumService";
 import { Metadata } from "next";
 
 interface PageProps {
-    params: {path: string};
-    searchParams: {password?: string, album?: string};
+    params: Promise<{path: string}>;
+    searchParams: Promise<{password?: string, album?: string}>;
 }
 export async function generateMetadata(
     { params }: PageProps,
   ): Promise<Metadata> {
-    const path = decodeURIComponent(params.path)
+    const {path: encodedPath} = await params
+    const path = decodeURIComponent(encodedPath)
     let gallery: Gallery
     try {
         gallery = await selectGalleryByPath(path)
@@ -53,18 +54,20 @@ export async function generateMetadata(
     }
   }
   
-const GalleryPage: FC<PageProps> = async ({params, searchParams}) => {
+const GalleryPage = async ({params, searchParams}: PageProps) => {
     // const ipAddress = getIpAddress(headerList)
     let gallery: Gallery
     let album: AlbumMediaData | undefined
-    let password = searchParams.password
-    const albumId = searchParams.album
-    const path = decodeURIComponent(params.path)
+    const [{path: encodedPath}, query] = await Promise.all([params, searchParams])
+    let password = query.password
+    const albumId = query.album
+    const path = decodeURIComponent(encodedPath)
 
     try {
         gallery = await selectGalleryByPath(path)
         if (!password) {
-            password = cookies().get(gallery.id)?.value
+            const cookieStore = await cookies()
+            password = cookieStore.get(gallery.id)?.value
         } 
         if (albumId) {
             album = await selectAlbum(albumId)

@@ -3,10 +3,10 @@ import { selectVerification, updateVerification, selectPerson } from '@/lib/db/p
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { verificationId: string } }
+  { params }: { params: Promise<{ verificationId: string }> }
 ) {
   try {
-    const { verificationId } = params;
+    const { verificationId } = await params;
     
     // Fetch the verification record
     let verification;

@@ -3,8 +3,8 @@ import { selectVerification } from '@/lib/db/personService';
 import { NextResponse } from 'next/server';
 
 
-export const GET = async (_req: Request, ctx: { params: { verificationId: string } }) => {
-    const { verificationId } = ctx.params
+export const GET = async (_req: Request, ctx: { params: Promise<{ verificationId: string }> }) => {
+    const { verificationId } = await ctx.params
     
     try {
         const verification = await selectVerification(verificationId)
@@ -13,4 +13,3 @@ export const GET = async (_req: Request, ctx: { params: { verificationId: string
         return NextResponse.json({error: 'Verification not found'}, {status: 404})
     }
 };
-

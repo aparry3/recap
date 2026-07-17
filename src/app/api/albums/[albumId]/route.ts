@@ -3,9 +3,9 @@ import { deleteAlbumMedia } from "@/lib/db/albumService";
 import { AlbumUpdate } from "@/lib/types/Album";
 import { NextResponse } from "next/server";
 
-export const PUT = async (req: Request, ctx: { params: { albumId: string } }) => {
+export const PUT = async (req: Request, ctx: { params: Promise<{ albumId: string }> }) => {
     const albumUpdate: AlbumUpdate = await req.json()
-    const { albumId } = ctx.params
+    const { albumId } = await ctx.params
 
     try {
         const album = await updateAlbum(albumId, albumUpdate)
@@ -18,8 +18,8 @@ export const PUT = async (req: Request, ctx: { params: { albumId: string } }) =>
     }
 };
 
-export const DELETE = async (req: Request, ctx: { params: { albumId: string } }) => {
-    const { albumId } = ctx.params
+export const DELETE = async (req: Request, ctx: { params: Promise<{ albumId: string }> }) => {
+    const { albumId } = await ctx.params
 
     try {
         await deleteAlbumMedia(albumId)
@@ -31,5 +31,4 @@ export const DELETE = async (req: Request, ctx: { params: { albumId: string } })
 
     }
 };
-
 

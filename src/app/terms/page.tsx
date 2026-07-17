@@ -24,7 +24,7 @@ const TermsPage = () => {
                 <Column className={styles.section}>
                     <Text as="h2" size={1.8} weight={600}>1. Acceptance of Terms</Text>
                     <Text as="p">
-                        By accessing and using Recap ("the Service"), you accept and agree to be bound by the terms and provision of this agreement. If you do not agree to abide by the above, please do not use this service.
+                        By accessing and using Recap (“the Service”), you accept and agree to be bound by the terms and provision of this agreement. If you do not agree to abide by the above, please do not use this service.
                     </Text>
                 </Column>
 
@@ -87,4 +87,4 @@ const TermsPage = () => {
     );
 };
 
-export default TermsPage; 
+export default TermsPage;

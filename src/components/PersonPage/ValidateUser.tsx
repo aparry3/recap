@@ -53,12 +53,12 @@ const ValidateUser: FC<{verificationId: string, person: {personId: string, name:
         <Column className={styles.content}>
           <Container className={styles.validationTextContainer}>
             <Text className={styles.validationText}>
-              Check your inbox! We've sent a verification email to <Text weight={700}>{person.email}</Text>. Follow the link to sync the gallery.
+              Check your inbox! We’ve sent a verification email to <Text weight={700}>{person.email}</Text>. Follow the link to sync the gallery.
             </Text>
           </Container>
           <Container className={styles.validationTextContainer}>
             <Text className={styles.validationText}>
-              Didn't get an email?
+              Didn’t get an email?
             </Text>
             <Text className={`${styles.validationText} ${styles.validationLink}`}>
               Click here to resend.

@@ -255,4 +255,6 @@ const LightBox: FC<LightBoxProps> = memo(({ mediaId, personId, image, index, tot
     ) : <></>
 })
 
+LightBox.displayName = 'LightBox'
+
 export default LightBox

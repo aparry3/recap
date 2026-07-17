@@ -6,9 +6,9 @@ import { handleWeddingWebsites } from '@/lib/web';
 import { NextResponse } from 'next/server';
 
 
-export const PUT = async (req: Request, ctx: { params: { galleryId: string } }) => {
+export const PUT = async (req: Request, ctx: { params: Promise<{ galleryId: string }> }) => {
     const galleryUpdate: GalleryUpdate = await req.json()
-    const { galleryId } = ctx.params
+    const { galleryId } = await ctx.params
 
     let images: string[] = []
     let events: WeddingEvent[] = []
@@ -27,8 +27,8 @@ export const PUT = async (req: Request, ctx: { params: { galleryId: string } }) 
     }
 };
 
-export const GET = async (_req: Request, ctx: { params: { galleryId: string } }) => {
-    const { galleryId } = ctx.params
+export const GET = async (_req: Request, ctx: { params: Promise<{ galleryId: string }> }) => {
+    const { galleryId } = await ctx.params
     try {
         const gallery = await selectGallery(galleryId)
         return NextResponse.json({ gallery }, { status: 200 })
@@ -36,4 +36,3 @@ export const GET = async (_req: Request, ctx: { params: { galleryId: string } })
         return NextResponse.json({ error: 'Gallery not found' }, { status: 404 })
     }
 };
-

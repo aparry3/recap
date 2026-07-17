@@ -1,0 +1,19 @@
+allowBuilds:
+  '@parcel/watcher': true
+  bufferutil: false
+  sharp: true
+  unrs-resolver: true
+overrides:
+  axios: 1.16.0
+  brace-expansion@1: 1.1.13
+  brace-expansion@5: 5.0.6
+  form-data: 4.0.6
+  js-yaml@4: 4.3.0
+  picomatch@2: 2.3.2
+  picomatch@4: 4.0.4
+  postcss: 8.5.10
+  qs: 6.15.2
+  undici: 7.28.0
+  ws@7: 7.5.11
+patchedDependencies:
+  react-web-layout-components@1.0.7: patches/react-web-layout-components@1.0.7.patch

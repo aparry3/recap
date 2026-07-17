@@ -2,8 +2,8 @@
 import { selectPersonGalleries } from '@/lib/db/personService';
 import { NextResponse } from 'next/server';
 
-export const GET = async (_req: Request, ctx: { params: { personId: string } }) => {
-    const { personId } = ctx.params
+export const GET = async (_req: Request, ctx: { params: Promise<{ personId: string }> }) => {
+    const { personId } = await ctx.params
 
     try {
         const galleries = await selectPersonGalleries(personId)
@@ -12,4 +12,3 @@ export const GET = async (_req: Request, ctx: { params: { personId: string } }) 
         return NextResponse.json({error: 'Person not found'}, {status: 404})
     }
 };
-

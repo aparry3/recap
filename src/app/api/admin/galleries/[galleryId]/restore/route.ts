@@ -2,10 +2,10 @@ import { NextRequest, NextResponse } from 'next/server';
 import { requireAdmin } from '@/lib/admin/middleware';
 import { restoreGallery } from '@/lib/db/galleryService';
 
-export async function PUT(_request: NextRequest, context: { params: { galleryId: string } }) {
+export async function PUT(_request: NextRequest, context: { params: Promise<{ galleryId: string }> }) {
   try {
     await requireAdmin();
-    const { galleryId } = context.params;
+    const { galleryId } = await context.params;
 
     const success = await restoreGallery(galleryId);
     if (!success) {

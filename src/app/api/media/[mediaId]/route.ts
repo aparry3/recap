@@ -4,8 +4,8 @@ import { deleteAlbumMedia, deleteGalleryMedia, deleteMedia, selectMedia, updateM
 import { MediaUpdate } from '@/lib/types/Media';
 import { NextResponse } from 'next/server';
 
-export const DELETE = async (_: Request, ctx: { params: { mediaId: string } }) => {
-    const { mediaId } = ctx.params
+export const DELETE = async (_: Request, ctx: { params: Promise<{ mediaId: string }> }) => {
+    const { mediaId } = await ctx.params
     try {
         const media = await selectMedia(mediaId)
         await Promise.all([deleteObject(media.url), deleteObject(media.preview)])
@@ -19,8 +19,8 @@ export const DELETE = async (_: Request, ctx: { params: { mediaId: string } }) =
     }
 };
 
-export const GET = async (_: Request, ctx: { params: { mediaId: string } }) => {
-    const { mediaId } = ctx.params
+export const GET = async (_: Request, ctx: { params: Promise<{ mediaId: string }> }) => {
+    const { mediaId } = await ctx.params
     try {
         const media = await selectMedia(mediaId)
 
@@ -35,13 +35,12 @@ export const GET = async (_: Request, ctx: { params: { mediaId: string } }) => {
     }
 };
 
-export const PUT = async (req: Request, ctx: { params: { mediaId: string } }) => {
+export const PUT = async (req: Request, ctx: { params: Promise<{ mediaId: string }> }) => {
     const mediaUpdate: MediaUpdate = await req.json()
-    const { mediaId } = ctx.params
+    const { mediaId } = await ctx.params
 
     const media = await updateMedia(mediaId, mediaUpdate)
 
     return NextResponse.json({...media, url: `${CLOUDFRONT_URL}/${media.url}`, preview: `${CLOUDFRONT_URL}/${media.preview}`}, {status: 209})
 };
-
 

@@ -1,9 +1,9 @@
 import { insertAlbumMedia, removeAlbumMedia } from "@/lib/db/albumService";
 import { NextRequest, NextResponse } from "next/server";
 
-export const POST = async (req: Request, ctx: { params: { albumId: string } }) => {
+export const POST = async (req: Request, ctx: { params: Promise<{ albumId: string }> }) => {
     const {mediaIds}: {mediaIds: string[]} = await req.json()
-    const { albumId } = ctx.params
+    const { albumId } = await ctx.params
 
     try {
         const media = await insertAlbumMedia(albumId, mediaIds)
@@ -16,11 +16,11 @@ export const POST = async (req: Request, ctx: { params: { albumId: string } }) =
     }
 };
 
-export const DELETE = async (req: NextRequest, ctx: { params: { albumId: string } }) => {
+export const DELETE = async (req: NextRequest, ctx: { params: Promise<{ albumId: string }> }) => {
     const searchParams = req.nextUrl.searchParams
     const mediaIds = searchParams.getAll('mediaIds')
     if (!mediaIds || mediaIds.length === 0) return NextResponse.json({error: 'No mediaIds provided'}, {status: 400})
-    const { albumId } = ctx.params
+    const { albumId } = await ctx.params
 
     try {
         const media = await removeAlbumMedia(albumId, mediaIds)
@@ -32,5 +32,4 @@ export const DELETE = async (req: NextRequest, ctx: { params: { albumId: string 
 
     }
 };
-
 

@@ -4,11 +4,11 @@ import { updatePerson } from '@/lib/db/personService';
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { personId: string } }
+  { params }: { params: Promise<{ personId: string }> }
 ) {
   try {
     const admin = await requireAdmin();
-    const { personId } = params;
+    const { personId } = await params;
 
     if (admin.id === personId) {
       return NextResponse.json(

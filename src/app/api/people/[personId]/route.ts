@@ -4,9 +4,9 @@ import { PersonUpdate } from '@/lib/types/Person';
 import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
 
-export const PUT = async (req: Request, ctx: { params: { personId: string } }) => {
+export const PUT = async (req: Request, ctx: { params: Promise<{ personId: string }> }) => {
     const personUpdate: PersonUpdate = await req.json()
-    const { personId } = ctx.params
+    const { personId } = await ctx.params
     try {
         const person = await updatePerson(personId, personUpdate)
         return NextResponse.json({person}, {status: 200})
@@ -15,9 +15,10 @@ export const PUT = async (req: Request, ctx: { params: { personId: string } }) =
     }
 };
 
-export const GET = async (_req: Request, ctx: { params: { personId: string } }) => {
-    const { personId } = ctx.params
-    cookies().set('personId', personId, {
+export const GET = async (_req: Request, ctx: { params: Promise<{ personId: string }> }) => {
+    const { personId } = await ctx.params
+    const cookieStore = await cookies()
+    cookieStore.set('personId', personId, {
         httpOnly: false, // Prevents client-side JS access
         secure: process.env.NODE_ENV === 'production', // HTTPS-only in production
         sameSite: 'lax', // Helps with CSRF protection
@@ -32,4 +33,3 @@ export const GET = async (_req: Request, ctx: { params: { personId: string } }) 
         return NextResponse.json({error: 'Person not found'}, {status: 404})
     }
 };
-

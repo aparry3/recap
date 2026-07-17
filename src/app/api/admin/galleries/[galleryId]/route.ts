@@ -2,10 +2,10 @@ import { NextRequest, NextResponse } from 'next/server';
 import { requireAdmin } from '@/lib/admin/middleware';
 import { softDeleteGallery } from '@/lib/db/galleryService';
 
-export async function DELETE(_request: NextRequest, context: { params: { galleryId: string } }) {
+export async function DELETE(_request: NextRequest, context: { params: Promise<{ galleryId: string }> }) {
   try {
     await requireAdmin();
-    const { galleryId } = context.params;
+    const { galleryId } = await context.params;
 
     const success = await softDeleteGallery(galleryId);
     if (!success) {

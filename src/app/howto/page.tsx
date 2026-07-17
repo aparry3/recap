@@ -67,9 +67,9 @@ const HowToPage = () => {
         [
           <Text key="step1" className={styles.stepItem}>Go to ourweddingrecap.com or click <Text weight={600}className={styles.highlight}>Start Now</Text> above</Text>,
           <Text key="step2" className={styles.stepItem}>Enter your name, email, and wedding gallery name</Text>,
-          <Text key="step3" className={styles.stepItem}>(Optional) Add your wedding website—we'll sync your photos and events automatically!</Text>,
+          <Text key="step3" className={styles.stepItem}>(Optional) Add your wedding website—we’ll sync your photos and events automatically!</Text>,
         ],
-        <Text key="thanks" weight={600}className={styles.stepHeader}>That's it! You'll get an email with your gallery link.</Text>,
+        <Text key="thanks" weight={600}className={styles.stepHeader}>That’s it! You’ll get an email with your gallery link.</Text>,
         <Text key="protip" className={styles.protip}>🎯 Pro Tip: Already made a gallery? Just enter your email on the login page to get a magic link—no password needed!</Text>
       ],
       desktopImage: "",
@@ -115,11 +115,11 @@ const HowToPage = () => {
       icon: weddingIcon,
       title: "Guests Get Helpful Reminders",
       description: [
-        <Text key="header" weight={600} className={styles.stepHeader}>If guests enter their phone number or email, they'll receive:</Text>,
+        <Text key="header" weight={600} className={styles.stepHeader}>If guests enter their phone number or email, they’ll receive:</Text>,
         [
           <Text key="reminder1" className={styles.emojiItem}>📅 Day-of reminders (Where to go, what time, what to wear)</Text>,
-          <Text key="reminder2" className={styles.emojiItem}>📸 Pre-wedding prompts (e.g., "100 days until 'I do!' Upload your favorite photos of us!")</Text>,
-          <Text key="reminder3" className={styles.emojiItem}>🎉 Post-wedding nudge ("Thanks for celebrating with us! Upload your wedding pics here!")</Text>
+          <Text key="reminder2" className={styles.emojiItem}>📸 Pre-wedding prompts (e.g., “100 days until ‘I do!’ Upload your favorite photos of us!”)</Text>,
+          <Text key="reminder3" className={styles.emojiItem}>🎉 Post-wedding nudge (“Thanks for celebrating with us! Upload your wedding pics here!”)</Text>
         ]
       ],
       desktopImage: "",
@@ -137,7 +137,7 @@ const HowToPage = () => {
           <Text key="feature4" className={styles.checkItem}>(Coming soon!) Tag guests in photos</Text>
         ],
         <Text key="helpHeader" weight={600} className={styles.stepHeader}>💬 Need Help?</Text>,
-        <Text key="help" className={styles.paragraph}>Email us at aaron@ourweddingrecap.com—we'll reply within 12 hours!</Text>
+        <Text key="help" className={styles.paragraph}>Email us at aaron@ourweddingrecap.com—we’ll reply within 12 hours!</Text>
       ],
       desktopImage: "",
       mobileImage: ""
@@ -163,7 +163,7 @@ const HowToPage = () => {
             How to Use Recap for Your Wedding
           </Text>
           <Text size={1.25} className={styles.subtitle}>
-            The easiest way to collect and share your guests' photos—before, during, and after your wedding! 🎉
+            The easiest way to collect and share your guests’ photos—before, during, and after your wedding! 🎉
           </Text>
         </Column>
 
@@ -184,4 +184,4 @@ const HowToPage = () => {
   );
 };
 
-export default HowToPage; 
+export default HowToPage;
