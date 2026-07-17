@@ -8,6 +8,7 @@ import { FC, useMemo } from "react";
 import useGallery from "@/helpers/providers/gallery";
 import { useUser } from "@/helpers/providers/user";
 import useAlbums from "@/helpers/providers/albums";
+import { formatDateString } from "@/helpers/dates";
 
 
 const Heading: FC<{onQrClick?: () => void, onInfoClick?: () => void, showGalleryName?: boolean}> = ({onQrClick, onInfoClick, showGalleryName}) => {
@@ -16,6 +17,7 @@ const Heading: FC<{onQrClick?: () => void, onInfoClick?: () => void, showGallery
     const {upload, gallery, people, person, album} = useGallery()
     const name = useMemo(() => showGalleryName ? gallery.name : person ? person.name : album ? album.name : gallery.name, [person, gallery, album, showGalleryName])
     const count = useMemo(() => showGalleryName ? undefined : person ? person.count : album ? album.count : undefined, [person, album, showGalleryName])
+    const weddingDate = useMemo(() => gallery.date ? formatDateString(gallery.date) : undefined, [gallery.date])
     
     const showEdit = useMemo(() => !showGalleryName && album && user && album.personId === user.id, [user, album, showGalleryName])
 
@@ -35,10 +37,14 @@ const Heading: FC<{onQrClick?: () => void, onInfoClick?: () => void, showGallery
             <Row className={styles.subtitleContainer} padding={[0, 0.5]}>
                 { count === undefined ? (
                 <>
+                    {weddingDate && (
+                    <>
                     <Container className={styles.subtitle} padding={[0, 1, 0, 0]}>
-                        <Text className={styles.subtitleText} size={1.2}>{new Date().toDateString()}</Text>
+                        <Text className={styles.subtitleText} size={1.2}>{weddingDate}</Text>
                     </Container>
                     <Container className={styles.dashVertical}/>
+                    </>
+                    )}
                     <Container className={styles.subtitle} padding={[0, 0, 0, 1]}>
                         <Text className={styles.subtitleText} size={1.2}>{people?.length || 0} Contributors</Text>
                     </Container>
