@@ -1,5 +1,7 @@
 import twilio, { Twilio } from 'twilio'
 
+const MAX_TWILIO_MEDIA_BYTES = 30 * 1024 * 1024
+
 let client: Twilio | null = null
 
 function getClient(): Twilio {
@@ -29,4 +31,35 @@ export function validateTwilioWebhook(signature: string | null, url: string, par
   const authToken = process.env.TWILIO_AUTH_TOKEN
   if (!authToken || !signature) return false
   return twilio.validateRequest(authToken, signature, url, params)
+}
+
+export async function downloadTwilioMedia(mediaUrl: string): Promise<{ data: Uint8Array; contentType: string }> {
+  const url = new URL(mediaUrl)
+  if (
+    url.protocol !== 'https:'
+    || url.hostname !== 'api.twilio.com'
+    || !/^\/2010-04-01\/Accounts\/[^/]+\/Messages\/[^/]+\/Media\/[^/]+$/.test(url.pathname)
+  ) {
+    throw new Error('Twilio supplied an unexpected media URL')
+  }
+  const accountSid = process.env.TWILIO_ACCOUNT_SID
+  const authToken = process.env.TWILIO_AUTH_TOKEN
+  const apiKey = process.env.TWILIO_API_KEY
+  const apiSecret = process.env.TWILIO_API_SECRET
+  const username = apiKey && apiSecret ? apiKey : accountSid
+  const password = apiKey && apiSecret ? apiSecret : authToken
+  if (!username || !password) throw new Error('Twilio media credentials are not configured')
+
+  const response = await fetch(url, {
+    headers: { Authorization: `Basic ${Buffer.from(`${username}:${password}`).toString('base64')}` },
+  })
+  if (!response.ok) throw new Error(`Twilio media download failed with status ${response.status}`)
+  const declaredLength = Number(response.headers.get('content-length') || 0)
+  if (declaredLength > MAX_TWILIO_MEDIA_BYTES) throw new Error('Twilio media exceeds the 30 MB limit')
+  const data = new Uint8Array(await response.arrayBuffer())
+  if (data.byteLength > MAX_TWILIO_MEDIA_BYTES) throw new Error('Twilio media exceeds the 30 MB limit')
+  return {
+    data,
+    contentType: response.headers.get('content-type')?.split(';')[0]?.trim().toLowerCase() || '',
+  }
 }

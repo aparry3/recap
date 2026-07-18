@@ -36,11 +36,14 @@ export const GET = async (_: Request, ctx: { params: Promise<{ mediaId: string }
 };
 
 export const PUT = async (req: Request, ctx: { params: Promise<{ mediaId: string }> }) => {
-    const mediaUpdate: MediaUpdate = await req.json()
+    const body = await req.json() as {uploaded?: unknown}
+    if (body.uploaded !== true) {
+        return NextResponse.json({error: 'uploaded must be true'}, {status: 400})
+    }
+    const mediaUpdate: MediaUpdate = {uploaded: true}
     const { mediaId } = await ctx.params
 
     const media = await updateMedia(mediaId, mediaUpdate)
 
     return NextResponse.json({...media, url: `${CLOUDFRONT_URL}/${media.url}`, preview: `${CLOUDFRONT_URL}/${media.preview}`}, {status: 209})
 };
-

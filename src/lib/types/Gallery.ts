@@ -1,4 +1,4 @@
-import { Insertable, Selectable, Updateable } from "kysely"
+import { Generated, Insertable, Selectable, Updateable } from "kysely"
 import { WeddingEvent } from "./WeddingEvent"
 
 export interface GalleryTable {
@@ -26,6 +26,7 @@ export interface GalleryPersonTable {
     personId: string
     coverPhotoId?: string
     receiveMessages?: boolean
+    joinedAt: Generated<Date>
 }
 
 export type GalleryWithImagesAndEvents =Gallery & {images: string[], events?: WeddingEvent[]}

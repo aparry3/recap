@@ -50,6 +50,57 @@ export const selectPersonByEmail = async (email: string): Promise<Person> => {
   return person;
 }
 
+export interface InboundGalleryDestination {
+  person: Pick<Person, 'id' | 'name' | 'email' | 'phone'>
+  gallery: Pick<Gallery, 'id' | 'name' | 'path'>
+}
+
+/** Selects the gallery this contact joined most recently, across duplicate person records. */
+export const selectLatestGalleryForDestination = async (
+  channel: 'email' | 'sms',
+  destination: string,
+): Promise<InboundGalleryDestination | null> => {
+  const normalized = channel === 'email' ? normalizeEmail(destination) : normalizeUsPhone(destination)
+  if (!normalized) return null
+
+  const destinationMatch = channel === 'email'
+    ? sql<boolean>`lower(trim(${sql.ref('person.email')})) = ${normalized}`
+    : sql<boolean>`right(regexp_replace(${sql.ref('person.phone')}, '[^0-9]', '', 'g'), 10) = ${normalized.slice(-10)}`
+  const row = await db.selectFrom('person')
+    .innerJoin('galleryPerson', 'galleryPerson.personId', 'person.id')
+    .innerJoin('gallery', 'gallery.id', 'galleryPerson.galleryId')
+    .where(destinationMatch)
+    .where('gallery.deletedAt', 'is', null)
+    .select([
+      'person.id as personId',
+      'person.name as personName',
+      'person.email as personEmail',
+      'person.phone as personPhone',
+      'gallery.id as galleryId',
+      'gallery.name as galleryName',
+      'gallery.path as galleryPath',
+    ])
+    .orderBy('galleryPerson.joinedAt', 'desc')
+    .orderBy('gallery.created', 'desc')
+    .orderBy('person.created', 'desc')
+    .executeTakeFirst()
+  if (!row) return null
+
+  return {
+    person: {
+      id: row.personId,
+      name: row.personName,
+      email: row.personEmail ?? undefined,
+      phone: row.personPhone ?? undefined,
+    },
+    gallery: {
+      id: row.galleryId,
+      name: row.galleryName,
+      path: row.galleryPath,
+    },
+  }
+}
+
 
 export const selectPeopleMedia = async (galleryId: string): Promise<GalleryPersonData[]> => {
     const people = await db.selectFrom('person')

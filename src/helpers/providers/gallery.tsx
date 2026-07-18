@@ -493,6 +493,11 @@ const GalleryProvider: React.FC<{ children: React.ReactNode, gallery: Gallery}> 
     ])
     const fileIds = new Set(files.map(f => f.id))
     const deleteImagePromises = unfinishedImages.map(async image => {
+      // Provider webhooks own retry/recovery for inbound media. These records do
+      // not have a browser IndexedDB entry and must not be mistaken for orphans.
+      if (image.source) {
+        return
+      }
       if (fileIds.has(image.id)) {
         return
       }

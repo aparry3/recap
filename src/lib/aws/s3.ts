@@ -67,6 +67,16 @@ export const deleteObject = async (key: string) => {
     });
     return await s3Client.send(command);
 };
+
+export const uploadObject = async (key: string, body: Uint8Array, contentType: string) => {
+    const command = new PutObjectCommand({
+        Bucket: process.env.AWS_S3_BUCKET,
+        Key: key,
+        Body: body,
+        ContentType: contentType,
+    });
+    return s3Client.send(command);
+};
   
 
 
