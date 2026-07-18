@@ -4,12 +4,31 @@ import { GalleryUpdate } from '@/lib/types/Gallery';
 import { WeddingEvent } from '@/lib/types/WeddingEvent';
 import { handleWeddingWebsites } from '@/lib/web';
 import { NextResponse } from 'next/server';
+import { AuthorizationError, requireGalleryManager } from '@/lib/auth/gallery';
+import { IANAZone } from 'luxon';
 
 
 export const PUT = async (req: Request, ctx: { params: Promise<{ galleryId: string }> }) => {
-    const galleryUpdate: GalleryUpdate = await req.json()
+    const requestedUpdate: GalleryUpdate = await req.json()
     const { galleryId } = await ctx.params
 
+    try {
+        await requireGalleryManager(galleryId)
+    } catch (error) {
+        const status = error instanceof AuthorizationError ? error.status : 401
+        return NextResponse.json({error: error instanceof Error ? error.message : 'Unauthorized'}, {status})
+    }
+
+    if (requestedUpdate.timezone && !IANAZone.isValidZone(requestedUpdate.timezone)) {
+        return NextResponse.json({error: 'Enter a valid IANA timezone such as America/New_York'}, {status: 400})
+    }
+    const galleryUpdate: GalleryUpdate = {
+        ...(requestedUpdate.name !== undefined ? {name: requestedUpdate.name} : {}),
+        ...(requestedUpdate.path !== undefined ? {path: requestedUpdate.path} : {}),
+        ...(requestedUpdate.theknot !== undefined ? {theknot: requestedUpdate.theknot} : {}),
+        ...(requestedUpdate.zola !== undefined ? {zola: requestedUpdate.zola} : {}),
+        ...(requestedUpdate.timezone !== undefined ? {timezone: requestedUpdate.timezone} : {}),
+    }
     let images: string[] = []
     let events: WeddingEvent[] = []
     let gallery = await selectGallery(galleryId)

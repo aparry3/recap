@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { selectVerification, updateVerification, selectPerson } from '@/lib/db/personService';
+import { setAuthSessionCookie } from '@/lib/auth/session';
 
 export async function GET(
   request: NextRequest,
@@ -38,6 +39,7 @@ export async function GET(
     
     // Mark verification as used
     await updateVerification(verificationId, true);
+    await setAuthSessionCookie(person.id);
     
     // Return success with personId for frontend to set cookie
     return NextResponse.json({

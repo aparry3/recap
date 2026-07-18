@@ -28,7 +28,7 @@ export const UserProvider: React.FC<{
     const [person, setPerson] = useState<Person | undefined>(undefined);
     const [loading, setLoading] = useState<boolean>(personLoading);
     const [showValidate, setShowValidate] = useState<boolean>(false)
-    const [tempPerson, setTempPerson] = useState<{personId: string, email?: string, phone?: string, name: string, receiveMessages?: boolean} | undefined>(undefined)
+    const [tempPerson, setTempPerson] = useState<{personId: string, email?: string, phone?: string, name: string, emailOptIn?: boolean, smsOptIn?: boolean} | undefined>(undefined)
     const [verificationId, setVerificationId] = useState<string>('')
 
     const initPerson = async (_personId: string) => {
@@ -45,28 +45,28 @@ export const UserProvider: React.FC<{
       }
     }, [personId, personLoading]);
 
-    const _createPerson = useCallback(async (name: string, email?: string, phone?: string, receiveMessages?: boolean) => {
+    const _createPerson = useCallback(async (name: string, email?: string, phone?: string, emailOptIn?: boolean, smsOptIn?: boolean) => {
       setLoading(true)  
-      const newPerson = await createPerson({name, email, phone, isAdmin: false}, gallery.id, receiveMessages)
+      const newPerson = await createPerson({name, email, phone, isAdmin: false}, gallery.id, emailOptIn, smsOptIn)
       setPerson(newPerson)
       setPersonId(newPerson.id)
       setLoading(false)
     }, [gallery.id])
 
-    const submitPerson = useCallback(async (name: string, email?: string, phone?: string, receiveMessages?: boolean) => {
+    const submitPerson = useCallback(async (name: string, email?: string, phone?: string, emailOptIn?: boolean, smsOptIn?: boolean) => {
         setLoading(true)
         if (email) {
           const _person = await fetchPersonByEmail(email)
           if (_person) {
             const verification = await createVerification(_person.id, gallery.name, email, name)
             setVerificationId(verification.id)
-            setTempPerson({personId: _person.id, email, name, phone, receiveMessages})
+            setTempPerson({personId: _person.id, email, name, phone, emailOptIn, smsOptIn})
             setLoading(false)
             setShowValidate(true)
             return
           }
         }
-        await _createPerson(name, email, phone, receiveMessages)
+        await _createPerson(name, email, phone, emailOptIn, smsOptIn)
     }, [gallery.name])
 
     const cancelValidate = () => {
@@ -76,7 +76,7 @@ export const UserProvider: React.FC<{
 
     const skipValidate = useCallback(async () => {
       if (tempPerson) {
-        await _createPerson(tempPerson.name, tempPerson.email)
+        await _createPerson(tempPerson.name, tempPerson.email, tempPerson.phone, tempPerson.emailOptIn, tempPerson.smsOptIn)
       }
       setShowValidate(false)  
     }, [tempPerson, _createPerson])
@@ -84,7 +84,7 @@ export const UserProvider: React.FC<{
     const confirmValidate = async (person: Person) => {
       setPerson(person)
       setPersonId(person.id)
-      await createGalleryPerson(gallery.id, person.id, tempPerson?.receiveMessages)
+      await createGalleryPerson(gallery.id, person.id, tempPerson?.emailOptIn, tempPerson?.smsOptIn)
       setTempPerson(undefined)
       setVerificationId('')
       setShowValidate(false)

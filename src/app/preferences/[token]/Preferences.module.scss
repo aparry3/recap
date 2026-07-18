@@ -1,0 +1,44 @@
+.page {
+  min-height: 100vh;
+  padding: 2rem !important;
+  background: var(--background-medium);
+}
+
+.card {
+  width: min(620px, 100%);
+  margin: auto;
+  padding: 2rem !important;
+  gap: 1rem;
+  border-radius: 1rem;
+  background: var(--background-light);
+  box-shadow: 0 0.75rem 2rem rgba(0, 0, 0, 0.08);
+}
+
+.eyebrow {
+  color: var(--primary);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.options {
+  align-items: flex-start !important;
+  gap: 1rem;
+  width: 100%;
+  padding-top: 1rem !important;
+}
+
+.option {
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  font-size: 1.1rem;
+
+  input {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+}
+
+.message {
+  color: var(--primary);
+}

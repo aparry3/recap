@@ -8,19 +8,22 @@ import Button from '@/components/Button';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { leftIcon } from '@/lib/icons';
 import { Gallery } from '@/lib/types/Gallery';
+import ReminderManager from '@/components/ReminderManager';
 
 
-const EditGallery: FC<{gallery: Gallery, close: () => void, onSubmit: (galleryName: string, theKnot?: string, zola?: string) => void}> = ({gallery, close, onSubmit}) => {
+const EditGallery: FC<{gallery: Gallery, close: () => void, onSubmit: (galleryName: string, theKnot?: string, zola?: string, timezone?: string) => void}> = ({gallery, close, onSubmit}) => {
   const [galleryName, setGalleryName] = useState(gallery ? gallery.name : '');
 
   const [theKnot, setTheKnot] = useState(gallery ? (gallery.theknot || '') : '');
   const [zola, setZola] = useState(gallery ? (gallery.zola || '') : '');
+  const [timezone, setTimezone] = useState(gallery.timezone || 'America/New_York');
 
   useEffect(() => {
     if (gallery) {
        setGalleryName(gallery.name)
        setTheKnot(gallery.theknot || '')
        setZola(gallery.zola || '')
+       setTimezone(gallery.timezone || 'America/New_York')
     } 
    }, [gallery])
  
@@ -37,13 +40,13 @@ const EditGallery: FC<{gallery: Gallery, close: () => void, onSubmit: (galleryNa
 
   const handleButtonPress = () => {
     // Perform any necessary actions with the form data
-    onSubmit(galleryName, theKnot, zola);
+    onSubmit(galleryName, theKnot, zola, timezone);
   };
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     // Perform any necessary actions with the form data
-    if (!!galleryName) onSubmit(galleryName, theKnot, zola);
+    if (!!galleryName) onSubmit(galleryName, theKnot, zola, timezone);
 };
 
   const url = useMemo(() => `https://ourweddingrecap.com/${galleryName.toLowerCase().replaceAll(' ', '-')}`, [galleryName]);
@@ -112,6 +115,14 @@ const EditGallery: FC<{gallery: Gallery, close: () => void, onSubmit: (galleryNa
               value={zola}
               onChange={handleZolaChange}
             />
+            <Input
+              label="Wedding Timezone"
+              type="text"
+              name="timezone"
+              autoComplete='off'
+              value={timezone}
+              onChange={(value) => setTimezone(value || 'America/New_York')}
+            />
           </Column>
           <Container className={styles.buttonContainer}>
             <Button className={styles.button} onClick={handleButtonPress} type='submit' disabled={!galleryName}>
@@ -119,6 +130,7 @@ const EditGallery: FC<{gallery: Gallery, close: () => void, onSubmit: (galleryNa
             </Button>
           </Container>
         </Form>
+        <ReminderManager gallery={{...gallery, timezone}} />
       </Container>
     </Container>
   );

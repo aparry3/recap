@@ -63,21 +63,28 @@ const TermsPage = () => {
                 </Column>
 
                 <Column className={styles.section}>
-                    <Text as="h2" size={1.8} weight={600}>6. Limitation of Liability</Text>
+                    <Text as="h2" size={1.8} weight={600}>6. Optional Email and SMS Updates</Text>
+                    <Text as="p">
+                        Guests may separately opt in to email and SMS wedding updates. SMS consent is optional and is not a condition of purchasing or using Recap. A gallery may send no more than 10 automated texts to an opted-in guest, including the confirmation message. Message and data rates may apply. Message frequency varies. Reply STOP to stop and HELP for help, or use the linked communication-preferences page.
+                    </Text>
+                </Column>
+
+                <Column className={styles.section}>
+                    <Text as="h2" size={1.8} weight={600}>7. Limitation of Liability</Text>
                     <Text as="p">
                         Recap shall not be liable for any indirect, incidental, special, consequential, or punitive damages resulting from your use of or inability to use the Service.
                     </Text>
                 </Column>
 
                 <Column className={styles.section}>
-                    <Text as="h2" size={1.8} weight={600}>7. Changes to Terms</Text>
+                    <Text as="h2" size={1.8} weight={600}>8. Changes to Terms</Text>
                     <Text as="p">
                         Recap reserves the right to modify these terms at any time. Users will be notified of any changes, and continued use of the Service constitutes acceptance of the modified terms.
                     </Text>
                 </Column>
 
                 <Column className={styles.section}>
-                    <Text as="h2" size={1.8} weight={600}>8. Contact Information</Text>
+                    <Text as="h2" size={1.8} weight={600}>9. Contact Information</Text>
                     <Text as="p">
                         For any questions regarding these Terms and Conditions, please contact us at aaron@ourweddingrecap.com
                     </Text>

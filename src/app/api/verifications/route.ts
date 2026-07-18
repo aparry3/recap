@@ -13,7 +13,7 @@ export const POST = async (req: Request) => {
         sendGridClient.sendVerificationEmail(email, {
             galleryName: galleryName,
             name,
-            buttonUrl: `${process.env.BASE_URL}/verification/${verification.id}`
+            buttonUrl: `${process.env.BASE_URL}/api/auth/verify/${verification.id}`
         })
         return NextResponse.json({verification}, {status: 200})
     } catch (error: any) {

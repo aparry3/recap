@@ -6,6 +6,11 @@ const withBundleAnalyzer = require('@next/bundle-analyzer')({
 
 const nextConfig = {
     reactStrictMode: false,
+    outputFileTracingRoot: __dirname,
+    serverExternalPackages: ['@agntz/sdk', 'pdf-parse', 'sharp'],
+    outputFileTracingIncludes: {
+        '/*': ['./agents/**/*.yaml'],
+    },
     images: {
         domains: ['d3aucbxkwf7gxk.cloudfront.net', 'd2zcso3rdm6ldw.cloudfront.net'],
     },

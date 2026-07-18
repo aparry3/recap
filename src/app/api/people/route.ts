@@ -3,6 +3,7 @@ import { insertPerson, selectPersonByEmail } from '@/lib/db/personService';
 import { NewPersonData } from '@/lib/types/Person';
 import { cookies } from 'next/headers';
 import { NextRequest, NextResponse } from 'next/server';
+import { setAuthSessionCookie } from '@/lib/auth/session';
 
 
 export const POST = async (req: Request) => {
@@ -12,6 +13,7 @@ export const POST = async (req: Request) => {
     try {
         const person = await insertPerson(newPerson)
         if (!admin) {
+            await setAuthSessionCookie(person.id)
             const cookieStore = await cookies()
             cookieStore.set('personId', person.id, {
                 secure: process.env.NODE_ENV === 'production', // HTTPS-only in production

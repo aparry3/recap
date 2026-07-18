@@ -9,15 +9,18 @@ import { Person } from '@/lib/types/Person';
 import { fetchVerification, updatePerson } from '@/helpers/api/personClient';
 
 
-const ValidateUser: FC<{verificationId: string, person: {personId: string, name: string, email?: string}, confirm: (person: Person) => void, onBack: () => void, skip: () => void}> = ({person, verificationId, confirm, onBack, skip}) => {
+const ValidateUser: FC<{verificationId: string, person: {personId: string, name: string, email?: string, phone?: string}, confirm: (person: Person) => void, onBack: () => void, skip: () => void}> = ({person, verificationId, confirm, onBack, skip}) => {
 
   useEffect(() => {
     const checkVerification = async () => {
       try {
         const verification = await fetchVerification(verificationId);
         if (verification?.verified) {
-          const {personId, ...p} = person
-          const _person = await updatePerson(verification.personId, p);
+          const _person = await updatePerson(verification.personId, {
+            name: person.name,
+            email: person.email,
+            phone: person.phone,
+          });
           confirm(_person); // Call confirm with the verified person data
           
         }

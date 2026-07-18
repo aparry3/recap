@@ -7,6 +7,8 @@ import { AlbumTable } from "../types/Album"
 import { AlbumMediaTable, MediaTable } from "../types/Media"
 import { WeddingEventTable } from "../types/WeddingEvent"
 import { LikeTable } from "../types/Like"
+import { CommunicationConsentEventTable, CommunicationConsentTable, CommunicationSuppressionTable } from "../types/Communication"
+import { ReminderDeliveryTable, ReminderTable } from "../types/Reminder"
 
 export interface Database {
     gallery: GalleryTable,
@@ -20,6 +22,11 @@ export interface Database {
     verification: VerificationTable
     weddingEvent: WeddingEventTable
     likes: LikeTable
+    communicationConsent: CommunicationConsentTable
+    communicationConsentEvent: CommunicationConsentEventTable
+    communicationSuppression: CommunicationSuppressionTable
+    reminder: ReminderTable
+    reminderDelivery: ReminderDeliveryTable
 }
 
 const dialect = new PostgresDialect({
@@ -31,7 +38,6 @@ const dialect = new PostgresDialect({
     ssl: {}
   }),
 })
-  
   // Database interface is passed to Kysely's constructor, and from now on, Kysely 
   // knows your database structure.
   // Dialect is passed to Kysely's constructor, and from now on, Kysely knows how 
@@ -42,6 +48,3 @@ const dialect = new PostgresDialect({
       new CamelCasePlugin()
     ]
   })
-  
-  
-  

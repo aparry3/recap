@@ -3,16 +3,27 @@ import { Gallery, GalleryPerson } from "../types/Gallery";
 import { Person, NewPerson, PersonUpdate, NewPersonData, GalleryPersonData, Verification, NewVerification, VerificationUpdate } from "../types/Person";
 import {v4 as uuidv4} from 'uuid';
 import { selectGalleryPersonMedia } from "./mediaService";
+import { normalizeEmail, normalizeUsPhone } from './communicationService';
 
 const CLOUDFRONT_URL = process.env.AWS_CLOUDFRONT_URL || ''
 export const insertPerson = async (newPersonData: NewPersonData): Promise<Person> => {
-    const newPerson = {...newPersonData, id: uuidv4()} as NewPerson
+    const newPerson = {
+      ...newPersonData,
+      email: normalizeEmail(newPersonData.email) ?? undefined,
+      phone: normalizeUsPhone(newPersonData.phone) ?? undefined,
+      id: uuidv4(),
+    } as NewPerson
     const person = await db.insertInto('person').values(newPerson).returningAll().executeTakeFirstOrThrow();
     return person;
 }
 
 export const updatePerson = async (personId: string, personUpdate: PersonUpdate): Promise<Person> => {
-  const person = await db.updateTable('person').set(personUpdate).where('id', '=', personId).returningAll().executeTakeFirstOrThrow();
+  const normalizedUpdate: PersonUpdate = {
+    ...personUpdate,
+    ...(personUpdate.email !== undefined ? {email: normalizeEmail(personUpdate.email) ?? undefined} : {}),
+    ...(personUpdate.phone !== undefined ? {phone: normalizeUsPhone(personUpdate.phone) ?? undefined} : {}),
+  }
+  const person = await db.updateTable('person').set(normalizedUpdate).where('id', '=', personId).returningAll().executeTakeFirstOrThrow();
   return person;
 }
 
@@ -22,7 +33,9 @@ export const selectPerson = async (personId: string): Promise<Person> => {
 }
 
 export const selectPersonByEmail = async (email: string): Promise<Person> => {
-  const person = await db.selectFrom('person').where('email', '=', email).selectAll().executeTakeFirstOrThrow();
+  const normalizedEmail = normalizeEmail(email)
+  if (!normalizedEmail) throw new Error('Email is required')
+  const person = await db.selectFrom('person').where('email', '=', normalizedEmail).selectAll().executeTakeFirstOrThrow();
   return person;
 }
 
@@ -53,7 +66,14 @@ export const selectPeopleMedia = async (galleryId: string): Promise<GalleryPerso
 }
 
 export const insertGalleryPerson = async (galleryId: string, personId: string, receiveMessages?: boolean): Promise<GalleryPerson> => {
-  const galleryPerson = await db.insertInto('galleryPerson').values({galleryId, personId, receiveMessages}).returningAll().executeTakeFirstOrThrow();
+  const inserted = await db.insertInto('galleryPerson').values({galleryId, personId, receiveMessages})
+    .onConflict((oc) => oc.columns(['galleryId', 'personId']).doNothing())
+    .returningAll().executeTakeFirst();
+  const galleryPerson = inserted ?? await db.selectFrom('galleryPerson')
+    .where('galleryId', '=', galleryId)
+    .where('personId', '=', personId)
+    .selectAll()
+    .executeTakeFirstOrThrow();
   return galleryPerson;
 }
 
@@ -137,4 +157,3 @@ export const selectPersonWithGalleryStatus = async (personId: string): Promise<P
     throw error;
   }
 }
-

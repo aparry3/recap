@@ -3,11 +3,15 @@ import { selectPerson, updatePerson } from '@/lib/db/personService';
 import { PersonUpdate } from '@/lib/types/Person';
 import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
+import { getAuthenticatedPersonId } from '@/lib/auth/session';
 
 export const PUT = async (req: Request, ctx: { params: Promise<{ personId: string }> }) => {
     const personUpdate: PersonUpdate = await req.json()
     const { personId } = await ctx.params
     try {
+        if (await getAuthenticatedPersonId() !== personId) {
+            return NextResponse.json({error: 'A verified session is required'}, {status: 401})
+        }
         const person = await updatePerson(personId, personUpdate)
         return NextResponse.json({person}, {status: 200})
     } catch (error) {

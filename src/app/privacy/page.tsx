@@ -34,7 +34,7 @@ const PrivacyPage = () => {
                         We collect information that you provide directly to us, including:
                     </Text>
                     <ul>
-                        <li>Account information (name, email address)</li>
+                        <li>Account information (name, email address, and optional phone number)</li>
                         <li>Wedding gallery information</li>
                         <li>Photos and media content</li>
                         <li>Communication preferences</li>
@@ -68,14 +68,24 @@ const PrivacyPage = () => {
                 </Column>
 
                 <Column className={styles.section}>
-                    <Text as="h2" size={1.8} weight={600}>5. Data Security</Text>
+                    <Text as="h2" size={1.8} weight={600}>5. Email and Text Message Updates</Text>
+                    <Text as="p">
+                        Email and text wedding updates are optional. We record your channel-specific consent and use your contact information to deliver gallery reminders, service confirmations, and preference links. You can change gallery email or text preferences at any time, unsubscribe from email, or reply STOP to a text message. Reply HELP for text-message assistance.
+                    </Text>
+                    <Text as="p">
+                        We do not sell mobile information or share it with third parties for their own marketing. We may provide contact and delivery information to communications vendors such as Twilio and SendGrid only as needed to operate the service, comply with law, prevent abuse, and honor delivery or opt-out requests.
+                    </Text>
+                </Column>
+
+                <Column className={styles.section}>
+                    <Text as="h2" size={1.8} weight={600}>6. Data Security</Text>
                     <Text as="p">
                         We implement appropriate technical and organizational measures to protect your personal information against unauthorized access, alteration, disclosure, or destruction.
                     </Text>
                 </Column>
 
                 <Column className={styles.section}>
-                    <Text as="h2" size={1.8} weight={600}>6. Your Rights</Text>
+                    <Text as="h2" size={1.8} weight={600}>7. Your Rights</Text>
                     <Text as="p">
                         You have the right to:
                     </Text>
@@ -89,21 +99,21 @@ const PrivacyPage = () => {
                 </Column>
 
                 <Column className={styles.section}>
-                    <Text as="h2" size={1.8} weight={600}>7. Cookies and Tracking</Text>
+                    <Text as="h2" size={1.8} weight={600}>8. Cookies and Tracking</Text>
                     <Text as="p">
                         We use cookies and similar tracking technologies to track activity on our Service and hold certain information. You can instruct your browser to refuse all cookies or to indicate when a cookie is being sent.
                     </Text>
                 </Column>
 
                 <Column className={styles.section}>
-                    <Text as="h2" size={1.8} weight={600}>8. Changes to This Policy</Text>
+                    <Text as="h2" size={1.8} weight={600}>9. Changes to This Policy</Text>
                     <Text as="p">
                         We may update our Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy on this page and updating the “Last Updated” date.
                     </Text>
                 </Column>
 
                 <Column className={styles.section}>
-                    <Text as="h2" size={1.8} weight={600}>9. Contact Us</Text>
+                    <Text as="h2" size={1.8} weight={600}>10. Contact Us</Text>
                     <Text as="p">
                         If you have any questions about this Privacy Policy, please contact us at aaron@ourweddingrecap.com
                     </Text>

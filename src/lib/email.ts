@@ -3,6 +3,7 @@ import { getWelcomeEmailTemplate } from './email/templates/welcome';
 import { getOrderNotificationTemplate } from './email/templates/order_notification';
 import { getAdminInvitationEmailTemplate } from './email/templates/admin-invitation';
 import { getUserVerificationEmailTemplate } from './email/templates/user-verification';
+import { getReminderEmailTemplate } from './email/templates/reminder';
 
 function configureSendGrid(requireOrderNotificationEmail = false) {
   const apiKey = process.env.SENDGRID_API_KEY;
@@ -47,7 +48,50 @@ export interface AdminInvitationData {
     verificationUrl: string;
 }
 
+export interface ReminderEmailData {
+  email: string;
+  name: string;
+  galleryName: string;
+  galleryUrl: string;
+  preferenceUrl: string;
+  subject: string;
+  body: string;
+  deliveryId: string;
+}
+
 export class SendGridClient {
+  async sendReminderEmail(data: ReminderEmailData): Promise<string> {
+    const { senderEmail } = configureSendGrid();
+    const unsubscribeGroupId = process.env.SENDGRID_REMINDER_UNSUBSCRIBE_GROUP_ID
+    if (!process.env.BUSINESS_POSTAL_ADDRESS) throw new Error('BUSINESS_POSTAL_ADDRESS is required for reminder email')
+    if (!unsubscribeGroupId) throw new Error('SENDGRID_REMINDER_UNSUBSCRIBE_GROUP_ID is required for reminder email')
+    const [response] = await sgMail.send({
+      to: data.email,
+      from: { email: senderEmail, name: 'Recap' },
+      subject: data.subject,
+      text: `${data.body}\n\nView and upload photos: ${data.galleryUrl}\nManage preferences: ${data.preferenceUrl}`,
+      html: getReminderEmailTemplate({
+        galleryName: data.galleryName,
+        recipientName: data.name,
+        body: data.body,
+        galleryUrl: data.galleryUrl,
+        preferenceUrl: data.preferenceUrl,
+      }),
+      customArgs: { delivery_id: data.deliveryId },
+      asm: { groupId: Number(unsubscribeGroupId) },
+    });
+    const messageId = response.headers['x-message-id'];
+    return Array.isArray(messageId) ? messageId[0] : String(messageId || data.deliveryId);
+  }
+
+  async sendReminderConfirmation(data: Omit<ReminderEmailData, 'subject' | 'body'>): Promise<string> {
+    return this.sendReminderEmail({
+      ...data,
+      subject: `You're subscribed to ${data.galleryName} updates`,
+      body: `You're all set to receive wedding reminders and gallery updates by email.`,
+    });
+  }
+
   async sendVerificationEmail(email: string, templateData: TemplateData): Promise<boolean> {
     try {
       const { senderEmail } = configureSendGrid();
