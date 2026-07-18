@@ -130,7 +130,7 @@ const EditGallery: FC<{gallery: Gallery, close: () => void, onSubmit: (galleryNa
             </Button>
           </Container>
         </Form>
-        <ReminderManager gallery={{...gallery, timezone}} />
+        <ReminderManager gallery={gallery} />
       </Container>
     </Container>
   );

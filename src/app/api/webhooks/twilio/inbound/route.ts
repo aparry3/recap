@@ -13,7 +13,7 @@ export async function POST(request: NextRequest) {
   const formData = await request.formData()
   const params: Record<string, string> = {}
   formData.forEach((value, key) => { params[key] = value.toString() })
-  const validationUrl = `${process.env.BASE_URL || request.nextUrl.origin}${request.nextUrl.pathname}`
+  const validationUrl = new URL(`${request.nextUrl.pathname}${request.nextUrl.search}`, process.env.BASE_URL || request.nextUrl.origin).toString()
   if (!validateTwilioWebhook(request.headers.get('x-twilio-signature'), validationUrl, params)) {
     return NextResponse.json({ error: 'Invalid signature' }, { status: 401 })
   }

@@ -6,8 +6,6 @@ import Input from '@/components/Input';
 import styles from './Create.module.scss';
 import Button from '@/components/Button';
 import { Person, NewPersonData } from '@/lib/types/Person';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { checkSquareIcon, squareIcon } from '@/lib/icons';
 
 const PersonPage: FC<{person?: Person | NewPersonData, galleryName?: string, onSubmit: (name: string, email?: string, phone?: string, emailOptIn?: boolean, smsOptIn?: boolean) => void}> = ({person, galleryName, onSubmit}) => {
   const [name, setName] = useState(person?.name || '');
@@ -154,34 +152,30 @@ const PersonPage: FC<{person?: Person | NewPersonData, galleryName?: string, onS
               )}
           </Column>
           <Row className={`${styles.inputContainer} ${styles.checkboxRow}`}>
-            <Container 
-              onClick={() => email && setEmailOptIn(!emailOptIn)}
-              className={`${styles.checkboxContainer} ${!email ? styles.disabled : ''}`}
-            >
-              <FontAwesomeIcon
-                icon={emailOptIn ? checkSquareIcon : squareIcon}
-                className={styles.checkboxIcon}
-                size="lg"
-              />
-            </Container>
+            <input
+              id="email-reminder-consent"
+              type="checkbox"
+              checked={emailOptIn}
+              disabled={!email}
+              onChange={(event) => setEmailOptIn(event.target.checked)}
+              className={styles.checkboxInput}
+            />
             <Column className={styles.consentCopy}>
-              <Text weight={600}>Email me wedding updates</Text>
+              <label htmlFor="email-reminder-consent"><Text weight={600}>Email me wedding updates</Text></label>
               <Text size={0.9}>Receive reminders and gallery updates by email. Unsubscribe at any time.</Text>
             </Column>
           </Row>
           <Row className={`${styles.inputContainer} ${styles.checkboxRow}`}>
-            <Container
-              onClick={() => phone && !phoneError && setSmsOptIn(!smsOptIn)}
-              className={`${styles.checkboxContainer} ${!phone || phoneError ? styles.disabled : ''}`}
-            >
-              <FontAwesomeIcon
-                icon={smsOptIn ? checkSquareIcon : squareIcon}
-                className={styles.checkboxIcon}
-                size="lg"
-              />
-            </Container>
+            <input
+              id="sms-reminder-consent"
+              type="checkbox"
+              checked={smsOptIn}
+              disabled={!phone || phoneError}
+              onChange={(event) => setSmsOptIn(event.target.checked)}
+              className={styles.checkboxInput}
+            />
             <Column className={styles.consentCopy}>
-              <Text weight={600}>Text me wedding updates</Text>
+              <label htmlFor="sms-reminder-consent"><Text weight={600}>Text me wedding updates</Text></label>
               <Text size={0.85}>
                 By checking this box, you agree to receive up to 10 automated texts about this gallery. Message and data rates may apply. Reply STOP to stop or HELP for help. Consent is optional and is not a condition of purchase. See our <a href="/terms" target="_blank">Terms</a> and <a href="/privacy" target="_blank">Privacy Policy</a>.
               </Text>

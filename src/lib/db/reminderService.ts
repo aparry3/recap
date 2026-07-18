@@ -1,6 +1,5 @@
 import { v4 as uuidv4 } from 'uuid'
 import { db } from '.'
-import { CommunicationChannel } from '../types/Communication'
 import { NewReminderDelivery, Reminder, ReminderDelivery, ReminderDraftInput, ReminderUpdate } from '../types/Reminder'
 
 export async function insertReminder(galleryId: string, createdBy: string, input: ReminderDraftInput): Promise<Reminder> {
@@ -103,6 +102,11 @@ export async function deleteReminder(reminderId: string): Promise<void> {
 export async function claimDueReminders(limit = 10): Promise<Reminder[]> {
   return db.transaction().execute(async (trx) => {
     const staleClaim = new Date(Date.now() - 10 * 60 * 1000)
+    await trx.updateTable('reminderDelivery')
+      .set({ status: 'unknown', updatedAt: new Date() })
+      .where('status', '=', 'submitting')
+      .where('updatedAt', '<', staleClaim)
+      .execute()
     await trx.updateTable('reminder')
       .set({ status: 'scheduled', updatedAt: new Date() })
       .where('status', '=', 'sending')
@@ -146,7 +150,30 @@ export async function insertDelivery(input: Omit<NewReminderDelivery, 'id' | 'cr
   }).onConflict((oc) => oc.column('idempotencyKey').doNothing())
     .returningAll()
     .executeTakeFirst()
-  return delivery ?? null
+  if (delivery) return delivery
+  const existing = await db.selectFrom('reminderDelivery')
+    .where('idempotencyKey', '=', input.idempotencyKey)
+    .selectAll()
+    .executeTakeFirst()
+  return existing?.status === 'pending' && existing.attemptCount === 0 ? existing : null
+}
+
+export async function claimDeliveryForSubmission(deliveryId: string): Promise<boolean> {
+  const delivery = await db.selectFrom('reminderDelivery')
+    .where('id', '=', deliveryId)
+    .select('attemptCount')
+    .executeTakeFirst()
+  if (!delivery) return false
+  const claimed = await db.updateTable('reminderDelivery').set({
+    status: 'submitting',
+    attemptCount: delivery.attemptCount + 1,
+    updatedAt: new Date(),
+  }).where('id', '=', deliveryId)
+    .where('status', '=', 'pending')
+    .where('attemptCount', '=', delivery.attemptCount)
+    .returning('id')
+    .executeTakeFirst()
+  return Boolean(claimed)
 }
 
 export async function updateDelivery(deliveryId: string, patch: {
@@ -155,41 +182,61 @@ export async function updateDelivery(deliveryId: string, patch: {
   lastError?: string | null
   submittedAt?: Date | null
   deliveredAt?: Date | null
-  incrementAttempts?: boolean
 }): Promise<void> {
-  const delivery = await db.selectFrom('reminderDelivery').where('id', '=', deliveryId).select('attemptCount').executeTakeFirstOrThrow()
+  const delivery = await db.selectFrom('reminderDelivery').where('id', '=', deliveryId).select('status').executeTakeFirstOrThrow()
+  const status = shouldApplyProviderStatus(delivery.status, patch.status) ? patch.status : delivery.status
   await db.updateTable('reminderDelivery').set({
-    status: patch.status,
+    status,
     providerMessageId: patch.providerMessageId,
-    lastError: patch.lastError,
+    lastError: status === patch.status ? patch.lastError : undefined,
     submittedAt: patch.submittedAt,
     deliveredAt: patch.deliveredAt,
-    attemptCount: delivery.attemptCount + (patch.incrementAttempts ? 1 : 0),
     updatedAt: new Date(),
   }).where('id', '=', deliveryId).execute()
 }
 
-export async function updateDeliveryByProviderId(providerMessageId: string, status: ReminderDelivery['status']): Promise<void> {
+const DELIVERY_STATUS_ORDER: Record<ReminderDelivery['status'], number> = {
+  pending: 0,
+  submitting: 1,
+  submitted: 2,
+  unknown: 3,
+  delivered: 4,
+  failed: 4,
+  suppressed: 4,
+}
+
+export function shouldApplyProviderStatus(
+  current: ReminderDelivery['status'],
+  next: ReminderDelivery['status'],
+): boolean {
+  if (current === next) return false
+  if (['delivered', 'failed', 'suppressed'].includes(current)) return false
+  return DELIVERY_STATUS_ORDER[next] >= DELIVERY_STATUS_ORDER[current]
+}
+
+export async function recordProviderDeliveryStatus(input: {
+  deliveryId?: string
+  providerMessageId?: string
+  status: ReminderDelivery['status']
+}): Promise<void> {
+  if (!input.deliveryId && !input.providerMessageId) return
+  let delivery = input.deliveryId
+    ? await db.selectFrom('reminderDelivery').where('id', '=', input.deliveryId).select(['id', 'status']).executeTakeFirst()
+    : undefined
+  if (!delivery && input.providerMessageId) {
+    delivery = await db.selectFrom('reminderDelivery')
+      .where('providerMessageId', '=', input.providerMessageId)
+      .select(['id', 'status'])
+      .executeTakeFirst()
+  }
+  if (!delivery || !shouldApplyProviderStatus(delivery.status, input.status)) return
   await db.updateTable('reminderDelivery').set({
-    status,
-    deliveredAt: status === 'delivered' ? new Date() : undefined,
+    status: input.status,
+    deliveredAt: input.status === 'delivered' ? new Date() : undefined,
     updatedAt: new Date(),
-  }).where('providerMessageId', '=', providerMessageId).execute()
+  }).where('id', '=', delivery.id).where('status', '=', delivery.status).execute()
 }
 
 export async function selectReminderDeliveries(reminderId: string): Promise<ReminderDelivery[]> {
   return db.selectFrom('reminderDelivery').where('reminderId', '=', reminderId).selectAll().execute()
-}
-
-export async function countEligibleAudience(galleryId: string, channel: CommunicationChannel): Promise<number> {
-  const row = await db.selectFrom('galleryPerson')
-    .innerJoin('communicationConsent', (join) => join
-      .onRef('communicationConsent.galleryId', '=', 'galleryPerson.galleryId')
-      .onRef('communicationConsent.personId', '=', 'galleryPerson.personId')
-      .on('communicationConsent.channel', '=', channel)
-      .on('communicationConsent.status', '=', 'opted_in'))
-    .where('galleryPerson.galleryId', '=', galleryId)
-    .select((eb) => eb.fn.countAll<number>().as('count'))
-    .executeTakeFirst()
-  return Number(row?.count ?? 0)
 }

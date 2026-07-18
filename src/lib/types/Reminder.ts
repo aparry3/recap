@@ -3,7 +3,7 @@ import { CommunicationChannel } from './Communication'
 
 export type ReminderStatus = 'draft' | 'scheduled' | 'sending' | 'sent' | 'canceled'
 export type ReminderSource = 'manual' | 'prompt' | 'invitation' | 'theknot' | 'zola'
-export type DeliveryStatus = 'pending' | 'submitted' | 'delivered' | 'failed' | 'suppressed' | 'unknown'
+export type DeliveryStatus = 'pending' | 'submitting' | 'submitted' | 'delivered' | 'failed' | 'suppressed' | 'unknown'
 export type DeliveryPurpose = 'consent_confirmation' | 'reminder'
 
 export interface ReminderSourceDetails {

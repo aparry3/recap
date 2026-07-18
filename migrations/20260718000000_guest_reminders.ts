@@ -7,6 +7,11 @@ export async function up(db: Kysely<any>): Promise<void> {
     .execute()
 
   await db.schema
+    .alterTable('verification')
+    .addColumn('expires_at', 'timestamptz', (col) => col.notNull().defaultTo(sql`now() + interval '24 hours'`))
+    .execute()
+
+  await db.schema
     .createTable('communication_consent')
     .addColumn('id', 'varchar', (col) => col.primaryKey())
     .addColumn('gallery_id', 'varchar', (col) => col.references('gallery.id').onDelete('cascade').notNull())
@@ -110,5 +115,6 @@ export async function down(db: Kysely<any>): Promise<void> {
   await db.schema.dropTable('communication_consent_event').execute()
   await db.schema.dropTable('communication_suppression').execute()
   await db.schema.dropTable('communication_consent').execute()
+  await db.schema.alterTable('verification').dropColumn('expires_at').execute()
   await db.schema.alterTable('gallery').dropColumn('timezone').execute()
 }

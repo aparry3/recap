@@ -109,7 +109,7 @@ export async function POST(request: NextRequest) {
       await sendGridClient.sendVerificationEmail(person.email!, {
         galleryName: gallery.name,
         name: person.name,
-        buttonUrl: `${process.env.BASE_URL}/api/auth/verify/${verification.id}`,
+        buttonUrl: `${process.env.BASE_URL}/verification/${verification.id}`,
       })
       emailStatus = 'sent';
     } catch (emailError) {

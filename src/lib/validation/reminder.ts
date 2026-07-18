@@ -10,11 +10,11 @@ export const reminderDraftSchema = z.object({
   smsBody: z.string().trim().max(1400).nullable().optional(),
   source: z.enum(['manual', 'prompt', 'invitation', 'theknot', 'zola']).optional(),
   sourceDetails: z.object({
-    evidence: z.array(z.string()).optional(),
-    warnings: z.array(z.string()).optional(),
-    prompt: z.string().optional(),
+    evidence: z.array(z.string().max(500)).max(20).optional(),
+    warnings: z.array(z.string().max(500)).max(20).optional(),
+    prompt: z.string().max(5000).optional(),
     websiteUrl: z.string().url().optional(),
-    fileName: z.string().optional(),
+    fileName: z.string().max(255).optional(),
   }).nullable().optional(),
 }).superRefine((value, context) => {
   if (!value.sendEmail && !value.sendSms) {

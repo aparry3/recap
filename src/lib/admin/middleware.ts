@@ -1,18 +1,14 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
+import { NextResponse } from 'next/server';
 import { selectPerson } from '../db/personService';
+import { getAuthenticatedPersonId } from '../auth/session';
 
-export async function checkAdminAuth(request: NextRequest): Promise<{ isAdmin: boolean; personId?: string; error?: string }> {
+export async function checkAdminAuth(): Promise<{ isAdmin: boolean; personId?: string; error?: string }> {
     try {
-        // Get person ID from cookie
-        const cookieStore = await cookies();
-        const personIdCookie = cookieStore.get('personId');
-        
-        if (!personIdCookie?.value) {
+        // Admin APIs require the signed HTTP-only session, not the legacy personId cookie.
+        const personId = await getAuthenticatedPersonId();
+        if (!personId) {
             return { isAdmin: false, error: 'No authentication found' };
         }
-        
-        const personId = personIdCookie.value;
         
         // Get person data and check admin status
         const person = await selectPerson(personId);
@@ -33,8 +29,7 @@ export async function checkAdminAuth(request: NextRequest): Promise<{ isAdmin: b
 }
 
 export async function requireAdmin() {
-    const cookieStore = cookies();
-    const personId = (await cookieStore).get('personId')?.value;
+    const personId = await getAuthenticatedPersonId();
     
     if (!personId) {
         throw new Error('Unauthorized: No user session');
@@ -57,8 +52,8 @@ export async function isUserAdmin(personId: string | null | undefined): Promise<
 }
 
 export function createAdminMiddleware() {
-    return async function adminMiddleware(request: NextRequest) {
-        const { isAdmin, error } = await checkAdminAuth(request);
+    return async function adminMiddleware() {
+        const { isAdmin, error } = await checkAdminAuth();
         
         if (!isAdmin) {
             return NextResponse.json(

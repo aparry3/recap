@@ -1,5 +1,6 @@
 import { AuthorizationError, requireGalleryManager } from '@/lib/auth/gallery'
-import { countEligibleAudience, insertReminder, selectGalleryReminders, selectReminderDeliveries } from '@/lib/db/reminderService'
+import { countEligibleReminderRecipients } from '@/lib/db/communicationService'
+import { insertReminder, selectGalleryReminders, selectReminderDeliveries } from '@/lib/db/reminderService'
 import { reminderDraftSchema } from '@/lib/validation/reminder'
 import { NextResponse } from 'next/server'
 
@@ -14,8 +15,8 @@ export async function GET(_: Request, { params }: { params: Promise<{ galleryId:
     await requireGalleryManager(galleryId)
     const reminders = await selectGalleryReminders(galleryId)
     const [emailAudience, smsAudience, deliveries] = await Promise.all([
-      countEligibleAudience(galleryId, 'email'),
-      countEligibleAudience(galleryId, 'sms'),
+      countEligibleReminderRecipients(galleryId, 'email'),
+      countEligibleReminderRecipients(galleryId, 'sms'),
       Promise.all(reminders.map((reminder) => selectReminderDeliveries(reminder.id))),
     ])
     return NextResponse.json({

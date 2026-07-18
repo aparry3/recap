@@ -173,11 +173,13 @@
     }
 }
 
-.checkboxContainer {
+.checkboxInput {
+    width: 1.35rem;
+    height: 1.35rem;
+    accent-color: var(--primary);
     cursor: pointer;
-    color: var(--primary) !important;
-    
-    &.disabled {
+
+    &:disabled {
         cursor: not-allowed;
         opacity: 0.5;
     }

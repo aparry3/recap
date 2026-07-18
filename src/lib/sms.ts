@@ -13,11 +13,14 @@ function getClient(): Twilio {
 }
 
 export async function sendSms(input: { to: string; body: string; deliveryId: string }): Promise<string> {
+  if (!process.env.BASE_URL) throw new Error('BASE_URL is required for Twilio status callbacks')
+  const statusCallback = new URL('/api/webhooks/twilio/status', process.env.BASE_URL)
+  statusCallback.searchParams.set('deliveryId', input.deliveryId)
   const message = await getClient().messages.create({
     to: input.to,
     messagingServiceSid: process.env.TWILIO_MESSAGING_SERVICE_SID,
     body: input.body,
-    statusCallback: `${process.env.BASE_URL}/api/webhooks/twilio/status`,
+    statusCallback: statusCallback.toString(),
   })
   return message.sid
 }

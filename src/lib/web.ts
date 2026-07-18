@@ -21,6 +21,10 @@ export const getUrlHtml = async (url: string) => {
 
 export const getUrlBody = async (url: string): Promise<string> => {
     const html = await getUrlHtml(url)
+    return getHtmlBodyText(html)
+}
+
+export const getHtmlBodyText = (html: string): string => {
     try {
         const $ = cheerio.load(html);
   
@@ -33,7 +37,7 @@ export const getUrlBody = async (url: string): Promise<string> => {
         console.error(err.message)
         return ""
       }
-    }
+}
 
     export const getUrlImages = async (url: string): Promise<string[]> => {
       const html = await getUrlHtml(url);

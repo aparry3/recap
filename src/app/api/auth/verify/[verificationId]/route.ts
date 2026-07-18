@@ -1,13 +1,17 @@
 import { setAuthSessionCookie } from '@/lib/auth/session'
 import { selectGallery } from '@/lib/db/galleryService'
-import { selectVerification, updateVerification } from '@/lib/db/personService'
+import { consumeVerification } from '@/lib/db/personService'
 import { NextRequest, NextResponse } from 'next/server'
 
 export async function GET(request: NextRequest, { params }: { params: Promise<{ verificationId: string }> }) {
+  const { verificationId } = await params
+  return NextResponse.redirect(new URL(`/verification/${verificationId}`, request.url))
+}
+
+export async function POST(request: NextRequest, { params }: { params: Promise<{ verificationId: string }> }) {
   try {
     const { verificationId } = await params
-    const verification = await selectVerification(verificationId)
-    if (!verification.verified) await updateVerification(verificationId, true)
+    const verification = await consumeVerification(verificationId)
     await setAuthSessionCookie(verification.personId)
 
     if (verification.galleryId) {

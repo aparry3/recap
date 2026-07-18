@@ -63,13 +63,16 @@ export class SendGridClient {
   async sendReminderEmail(data: ReminderEmailData): Promise<string> {
     const { senderEmail } = configureSendGrid();
     const unsubscribeGroupId = process.env.SENDGRID_REMINDER_UNSUBSCRIBE_GROUP_ID
-    if (!process.env.BUSINESS_POSTAL_ADDRESS) throw new Error('BUSINESS_POSTAL_ADDRESS is required for reminder email')
+    const postalAddress = process.env.BUSINESS_POSTAL_ADDRESS
+    if (!postalAddress) throw new Error('BUSINESS_POSTAL_ADDRESS is required for reminder email')
     if (!unsubscribeGroupId) throw new Error('SENDGRID_REMINDER_UNSUBSCRIBE_GROUP_ID is required for reminder email')
+    const groupId = Number(unsubscribeGroupId)
+    if (!Number.isInteger(groupId) || groupId <= 0) throw new Error('SENDGRID_REMINDER_UNSUBSCRIBE_GROUP_ID must be a positive integer')
     const [response] = await sgMail.send({
       to: data.email,
       from: { email: senderEmail, name: 'Recap' },
       subject: data.subject,
-      text: `${data.body}\n\nView and upload photos: ${data.galleryUrl}\nManage preferences: ${data.preferenceUrl}`,
+      text: `${data.body}\n\nView and upload photos: ${data.galleryUrl}\nManage preferences or unsubscribe: ${data.preferenceUrl}\n\n${postalAddress}`,
       html: getReminderEmailTemplate({
         galleryName: data.galleryName,
         recipientName: data.name,
@@ -78,7 +81,7 @@ export class SendGridClient {
         preferenceUrl: data.preferenceUrl,
       }),
       customArgs: { delivery_id: data.deliveryId },
-      asm: { groupId: Number(unsubscribeGroupId) },
+      asm: { groupId },
     });
     const messageId = response.headers['x-message-id'];
     return Array.isArray(messageId) ? messageId[0] : String(messageId || data.deliveryId);

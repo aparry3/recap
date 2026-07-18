@@ -1,6 +1,6 @@
 import { EventWebhook } from '@sendgrid/eventwebhook'
 import { optOutDestinationGlobally } from '@/lib/db/communicationService'
-import { updateDelivery, updateDeliveryByProviderId } from '@/lib/db/reminderService'
+import { recordProviderDeliveryStatus } from '@/lib/db/reminderService'
 import { DeliveryStatus } from '@/lib/types/Reminder'
 import { NextRequest, NextResponse } from 'next/server'
 
@@ -39,10 +39,12 @@ export async function POST(request: NextRequest) {
       group_unsubscribe: 'suppressed',
     }
     const status = mapping[event.event]
-    if (status && event.delivery_id) {
-      await updateDelivery(event.delivery_id, { status, deliveredAt: status === 'delivered' ? new Date() : undefined })
-    } else if (status && event.sg_message_id) {
-      await updateDeliveryByProviderId(event.sg_message_id, status)
+    if (status) {
+      await recordProviderDeliveryStatus({
+        deliveryId: event.delivery_id,
+        providerMessageId: event.sg_message_id,
+        status,
+      })
     }
     if (event.email && ['bounce', 'dropped', 'spamreport', 'unsubscribe', 'group_unsubscribe'].includes(event.event)) {
       await optOutDestinationGlobally('email', event.email, `sendgrid_${event.event}`)

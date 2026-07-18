@@ -34,7 +34,7 @@ export const updatePerson = async (personId: string, personUpdate: PersonUpdate)
 
 export const fetchPersonByEmail = async (email: string): Promise<Person | undefined> => {
     try {
-        const data = await fetch(`/api/people?email=${email}`).then(res => res.json())
+        const data = await fetch(`/api/people?email=${encodeURIComponent(email)}`).then(res => res.json())
         return data.person
     } catch (error) {
         console.log(error)

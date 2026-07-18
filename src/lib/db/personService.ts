@@ -1,9 +1,10 @@
 import { db } from ".";
 import { Gallery, GalleryPerson } from "../types/Gallery";
-import { Person, NewPerson, PersonUpdate, NewPersonData, GalleryPersonData, Verification, NewVerification, VerificationUpdate } from "../types/Person";
+import { Person, NewPerson, PersonUpdate, NewPersonData, GalleryPersonData, Verification, NewVerification } from "../types/Person";
 import {v4 as uuidv4} from 'uuid';
+import { sql } from 'kysely';
 import { selectGalleryPersonMedia } from "./mediaService";
-import { normalizeEmail, normalizeUsPhone } from './communicationService';
+import { normalizeEmail, normalizeUsPhone, optOutPersonChannelConsents } from './communicationService';
 
 const CLOUDFRONT_URL = process.env.AWS_CLOUDFRONT_URL || ''
 export const insertPerson = async (newPersonData: NewPersonData): Promise<Person> => {
@@ -18,6 +19,13 @@ export const insertPerson = async (newPersonData: NewPersonData): Promise<Person
 }
 
 export const updatePerson = async (personId: string, personUpdate: PersonUpdate): Promise<Person> => {
+  const currentPerson = await selectPerson(personId)
+  if (personUpdate.email !== undefined && normalizeEmail(personUpdate.email) !== normalizeEmail(currentPerson.email)) {
+    await optOutPersonChannelConsents(personId, 'email', 'contact_changed')
+  }
+  if (personUpdate.phone !== undefined && normalizeUsPhone(personUpdate.phone) !== normalizeUsPhone(currentPerson.phone)) {
+    await optOutPersonChannelConsents(personId, 'sms', 'contact_changed')
+  }
   const normalizedUpdate: PersonUpdate = {
     ...personUpdate,
     ...(personUpdate.email !== undefined ? {email: normalizeEmail(personUpdate.email) ?? undefined} : {}),
@@ -35,7 +43,10 @@ export const selectPerson = async (personId: string): Promise<Person> => {
 export const selectPersonByEmail = async (email: string): Promise<Person> => {
   const normalizedEmail = normalizeEmail(email)
   if (!normalizedEmail) throw new Error('Email is required')
-  const person = await db.selectFrom('person').where('email', '=', normalizedEmail).selectAll().executeTakeFirstOrThrow();
+  const person = await db.selectFrom('person')
+    .where(sql<boolean>`lower(trim(${sql.ref('person.email')})) = ${normalizedEmail}`)
+    .selectAll()
+    .executeTakeFirstOrThrow();
   return person;
 }
 
@@ -93,7 +104,12 @@ export const selectPersonGalleries = async (personId: string): Promise<Gallery[]
 }
 
 export const insertVerification = async (personId: string, galleryId?: string): Promise<Verification> => {
-  const newVerification = {personId, id: uuidv4(), verified: false} as NewVerification
+  const newVerification = {
+    personId,
+    id: uuidv4(),
+    verified: false,
+    expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
+  } as NewVerification
   if (galleryId) {
     newVerification.galleryId = galleryId
   }
@@ -101,12 +117,17 @@ export const insertVerification = async (personId: string, galleryId?: string): 
   return verification;
 }
 
-export const updateVerification = async (verificationId: string, verified: boolean): Promise<Verification> => {
-  const newVerification = {verified} as VerificationUpdate
-  const verification = await db.updateTable('verification').set(newVerification).where('id', '=', verificationId).returningAll().executeTakeFirstOrThrow();
-  return verification;
+export const consumeVerification = async (verificationId: string): Promise<Verification> => {
+  const verification = await db.updateTable('verification')
+    .set({verified: true})
+    .where('id', '=', verificationId)
+    .where('verified', '=', false)
+    .where('expiresAt', '>', new Date())
+    .returningAll()
+    .executeTakeFirst()
+  if (!verification) throw new Error('This verification link is invalid, expired, or has already been used')
+  return verification
 }
-
 
 export const selectVerification = async (verificationId: string): Promise<Verification> => {
   const verification = await db.selectFrom('verification').where('id', '=', verificationId).selectAll().executeTakeFirstOrThrow();

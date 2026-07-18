@@ -13,6 +13,8 @@ import {
 } from '@/helpers/api/reminderClient'
 import { Gallery } from '@/lib/types/Gallery'
 import { GeneratedReminderDraft, ReminderDraftInput } from '@/lib/types/Reminder'
+import { resolveGalleryLocalDateTime } from '@/lib/reminders/time'
+import { buildReminderSmsBody, estimateSmsSegments } from '@/lib/reminders/message'
 import { DateTime } from 'luxon'
 import { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react'
 import { Column, Container, Row, Text } from 'react-web-layout-components'
@@ -68,12 +70,18 @@ export default function ReminderManager({ gallery }: { gallery: Gallery }) {
 
   useEffect(() => { void load() }, [load])
 
+  const sendAtResolution = useMemo(() => sendAtLocal
+    ? resolveGalleryLocalDateTime(sendAtLocal, gallery.timezone)
+    : { utc: null, local: null }, [gallery.timezone, sendAtLocal])
+  const smsPreview = useMemo(() => buildReminderSmsBody(
+    draft.smsBody || '',
+    `${(process.env.NEXT_PUBLIC_BASE_URL || 'https://ourweddingrecap.com').replace(/\/$/, '')}/${gallery.path}`,
+  ), [draft.smsBody, gallery.path])
+
   const payload = useMemo((): ReminderDraftInput => ({
     ...draft,
-    sendAt: sendAtLocal
-      ? DateTime.fromISO(sendAtLocal, { zone: gallery.timezone }).toUTC().toISO()
-      : null,
-  }), [draft, gallery.timezone, sendAtLocal])
+    sendAt: sendAtResolution.utc,
+  }), [draft, sendAtResolution.utc])
 
   const reset = () => {
     setDraft(emptyDraft())
@@ -82,6 +90,10 @@ export default function ReminderManager({ gallery }: { gallery: Gallery }) {
   }
 
   const save = async () => {
+    if (sendAtLocal && sendAtResolution.error) {
+      setError(sendAtResolution.error)
+      return
+    }
     setSaving(true)
     setError('')
     try {
@@ -218,8 +230,16 @@ export default function ReminderManager({ gallery }: { gallery: Gallery }) {
             {generated.map((item, index) => (
               <Column key={`${item.title}-${index}`} className={styles.generated}>
                 <Text weight={600}>{item.title}</Text>
-                <Text>{item.sendAtLocal ? DateTime.fromISO(item.sendAtLocal).toLocaleString(DateTime.DATETIME_MED) : 'Send time needs review'}</Text>
+                <Text>{item.sendAtLocal ? `${DateTime.fromISO(item.sendAtLocal, { setZone: true }).toLocaleString(DateTime.DATETIME_MED)} (${gallery.timezone})` : 'Send time needs review'}</Text>
+                {item.emailSubject && <Text size={0.95}>Email subject: {item.emailSubject}</Text>}
+                {item.emailBody && <Text size={0.95} className={styles.preformatted}>Email: {item.emailBody}</Text>}
                 {item.smsBody && <Text size={0.95}>SMS: {item.smsBody}</Text>}
+                {item.evidence.length > 0 && (
+                  <Column>
+                    <Text size={0.9} weight={600}>Grounded in:</Text>
+                    {item.evidence.map((evidence, evidenceIndex) => <Text key={`${evidence}-${evidenceIndex}`} size={0.85}>• {evidence}</Text>)}
+                  </Column>
+                )}
                 {item.warnings.map((warning) => <Text key={warning} className={styles.warning}>{warning}</Text>)}
                 <Button onClick={() => selectGeneratedDraft(item)}>Edit this draft</Button>
               </Column>
@@ -231,6 +251,7 @@ export default function ReminderManager({ gallery }: { gallery: Gallery }) {
         <label className={styles.nativeField}>Send date and time ({gallery.timezone})
           <input type="datetime-local" value={sendAtLocal} onChange={(event) => setSendAtLocal(event.target.value)} />
         </label>
+        {sendAtLocal && sendAtResolution.error && <Text className={styles.error}>{sendAtResolution.error}</Text>}
         <Row className={styles.channels}>
           <label><input type="checkbox" checked={draft.sendEmail} onChange={(event) => setDraft({ ...draft, sendEmail: event.target.checked })} /> Email ({audience.email} opted in)</label>
           <label><input type="checkbox" checked={draft.sendSms} onChange={(event) => setDraft({ ...draft, sendSms: event.target.checked })} /> SMS ({audience.sms} opted in)</label>
@@ -245,7 +266,7 @@ export default function ReminderManager({ gallery }: { gallery: Gallery }) {
         {draft.sendSms && (
           <Column className={styles.channelFields}>
             <label>SMS message<textarea value={draft.smsBody || ''} onChange={(event) => setDraft({ ...draft, smsBody: event.target.value })} /></label>
-            <Text size={0.9}>{draft.smsBody?.length || 0} characters · about {Math.max(1, Math.ceil((draft.smsBody?.length || 0) / 160))} segment(s). Recap adds the gallery link and STOP/HELP text.</Text>
+            <Text size={0.9}>{smsPreview.length} final characters · about {estimateSmsSegments(smsPreview)} segment(s), including the gallery link and STOP/HELP text.</Text>
           </Column>
         )}
         {(draft.emailBody || draft.smsBody) && (
@@ -261,7 +282,7 @@ export default function ReminderManager({ gallery }: { gallery: Gallery }) {
             )}
             {draft.sendSms && draft.smsBody && (
               <Container className={`${styles.smsPreview} ${styles.preformatted}`}>
-                {draft.smsBody}{'\n\n'}View &amp; upload: [gallery link]{'\n'}Reply STOP to stop, HELP for help.
+                {smsPreview}
               </Container>
             )}
           </Column>

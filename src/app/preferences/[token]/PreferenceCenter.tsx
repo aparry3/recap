@@ -9,6 +9,7 @@ interface PreferenceData {
   gallery: { name: string }
   person: { name: string; email?: string; phone?: string }
   preferences: { email: boolean; sms: boolean }
+  suppressions: { email: boolean; sms: boolean }
 }
 
 export default function PreferenceCenter({ token }: { token: string }) {
@@ -56,13 +57,15 @@ export default function PreferenceCenter({ token }: { token: string }) {
         {data && (
           <Column className={styles.options}>
             <Row className={styles.option}>
-              <input id="email-reminders" type="checkbox" checked={email} disabled={!data.person.email} onChange={(event) => setEmail(event.target.checked)} />
+              <input id="email-reminders" type="checkbox" checked={email} disabled={!data.person.email || data.suppressions.email} onChange={(event) => setEmail(event.target.checked)} />
               <label htmlFor="email-reminders">Email reminders {data.person.email ? `to ${data.person.email}` : '(no email available)'}</label>
             </Row>
+            {data.suppressions.email && <Text size={0.9}>This email address is unsubscribed or suppressed and cannot be re-enabled here.</Text>}
             <Row className={styles.option}>
-              <input id="sms-reminders" type="checkbox" checked={sms} disabled={!data.person.phone} onChange={(event) => setSms(event.target.checked)} />
+              <input id="sms-reminders" type="checkbox" checked={sms} disabled={!data.person.phone || data.suppressions.sms} onChange={(event) => setSms(event.target.checked)} />
               <label htmlFor="sms-reminders">SMS reminders {data.person.phone ? `to ${data.person.phone}` : '(no phone available)'}</label>
             </Row>
+            {data.suppressions.sms && <Text size={0.9}>Reply START from this phone, then reload this page to make SMS available again.</Text>}
             <Text size={0.9}>SMS updates are limited to 10 messages for this gallery. Message and data rates may apply. Reply STOP to stop or HELP for help.</Text>
             <Button onClick={save} disabled={saving}>{saving ? 'Saving…' : 'Save preferences'}</Button>
           </Column>

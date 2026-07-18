@@ -4,11 +4,14 @@ import {
   countGallerySmsMessages,
   isRecipientEligible,
   isDestinationSuppressed,
+  normalizeEmail,
+  normalizeUsPhone,
   selectGalleryConsents,
   selectEligibleRecipients,
-  SMS_MESSAGE_LIMIT,
+  smsReservationExceedsLimit,
 } from '@/lib/db/communicationService'
 import {
+  claimDeliveryForSubmission,
   finishReminder,
   insertDelivery,
   updateDelivery,
@@ -20,6 +23,7 @@ import { Reminder } from '@/lib/types/Reminder'
 import { sendGridClient } from '@/lib/email'
 import { preferenceUrl } from '@/lib/preferences'
 import { sendSms } from '@/lib/sms'
+import { buildReminderSmsBody } from '@/lib/reminders/message'
 
 export function messagingEnabled(): boolean {
   return process.env.MESSAGING_ENABLED === 'true'
@@ -27,7 +31,7 @@ export function messagingEnabled(): boolean {
 
 function galleryUrl(gallery: Gallery): string {
   const baseUrl = process.env.BASE_URL || 'http://localhost:3000'
-  return `${baseUrl}/${gallery.path}`
+  return new URL(`/${gallery.path}`, baseUrl).toString()
 }
 
 async function submitEmail(input: {
@@ -38,9 +42,11 @@ async function submitEmail(input: {
   deliveryId: string
   confirmation?: boolean
 }): Promise<void> {
-  if (!input.person.email) throw new Error('Guest has no email address')
+  if (!messagingEnabled()) throw new Error('Messaging is disabled')
+  const email = normalizeEmail(input.person.email)
+  if (!email) throw new Error('Guest has no email address')
   const data = {
-    email: input.person.email,
+    email,
     name: input.person.name,
     galleryName: input.gallery.name,
     galleryUrl: galleryUrl(input.gallery),
@@ -50,7 +56,7 @@ async function submitEmail(input: {
   const providerMessageId = input.confirmation
     ? await sendGridClient.sendReminderConfirmation(data)
     : await sendGridClient.sendReminderEmail({ ...data, subject: input.subject, body: input.body })
-  await updateDelivery(input.deliveryId, { status: 'submitted', providerMessageId, submittedAt: new Date(), incrementAttempts: true })
+  await updateDelivery(input.deliveryId, { status: 'submitted', providerMessageId, submittedAt: new Date() })
 }
 
 async function submitSms(input: {
@@ -59,14 +65,16 @@ async function submitSms(input: {
   body: string
   deliveryId: string
 }): Promise<void> {
-  if (!input.person.phone) throw new Error('Guest has no phone number')
+  if (!messagingEnabled()) throw new Error('Messaging is disabled')
+  const phone = normalizeUsPhone(input.person.phone)
+  if (!phone) throw new Error('Guest has no valid US phone number')
   const galleryLink = galleryUrl(input.gallery)
   const providerMessageId = await sendSms({
-    to: input.person.phone,
+    to: phone,
     deliveryId: input.deliveryId,
-    body: `${input.body}\n\nView & upload: ${galleryLink}\nReply STOP to stop, HELP for help.`,
+    body: buildReminderSmsBody(input.body, galleryLink),
   })
-  await updateDelivery(input.deliveryId, { status: 'submitted', providerMessageId, submittedAt: new Date(), incrementAttempts: true })
+  await updateDelivery(input.deliveryId, { status: 'submitted', providerMessageId, submittedAt: new Date() })
 }
 
 export async function sendConsentConfirmations(
@@ -76,6 +84,7 @@ export async function sendConsentConfirmations(
 ): Promise<void> {
   if (!messagingEnabled()) return
   for (const consent of consents.filter((item) => item.status === 'opted_in')) {
+    if (!await isRecipientEligible(gallery.id, person.id, consent.channel)) continue
     const delivery = await insertDelivery({
       reminderId: null,
       galleryId: gallery.id,
@@ -84,7 +93,7 @@ export async function sendConsentConfirmations(
       purpose: 'consent_confirmation',
       status: 'pending',
       providerMessageId: null,
-      idempotencyKey: `consent:${gallery.id}:${person.id}:${consent.channel}:${consent.disclosureVersion}`,
+      idempotencyKey: `consent:${consent.id}:${consent.updatedAt.getTime()}`,
       attemptCount: 0,
       lastError: null,
       submittedAt: null,
@@ -93,21 +102,25 @@ export async function sendConsentConfirmations(
     if (!delivery) continue
     try {
       if (consent.channel === 'email') {
-        if (!person.email || await isDestinationSuppressed('email', person.email)) {
+        const email = normalizeEmail(person.email)
+        if (!email || await isDestinationSuppressed('email', email)) {
           await updateDelivery(delivery.id, { status: 'suppressed', lastError: 'Email is unavailable or suppressed' })
           continue
         }
+        if (!await claimDeliveryForSubmission(delivery.id)) continue
         await submitEmail({ gallery, person, subject: '', body: '', deliveryId: delivery.id, confirmation: true })
       } else {
-        if (!person.phone || await isDestinationSuppressed('sms', person.phone)) {
+        const phone = normalizeUsPhone(person.phone)
+        if (!phone || await isDestinationSuppressed('sms', phone)) {
           await updateDelivery(delivery.id, { status: 'suppressed', lastError: 'Phone is unavailable or suppressed' })
           continue
         }
         const used = await countGallerySmsMessages(gallery.id, person.id)
-        if (used > SMS_MESSAGE_LIMIT) {
+        if (smsReservationExceedsLimit(used)) {
           await updateDelivery(delivery.id, { status: 'suppressed', lastError: 'SMS message limit reached' })
           continue
         }
+        if (!await claimDeliveryForSubmission(delivery.id)) continue
         await submitSms({
           gallery,
           person,
@@ -116,7 +129,7 @@ export async function sendConsentConfirmations(
         })
       }
     } catch (error) {
-      await updateDelivery(delivery.id, { status: 'failed', lastError: error instanceof Error ? error.message : 'Confirmation failed', incrementAttempts: true })
+      await updateDelivery(delivery.id, { status: 'unknown', lastError: error instanceof Error ? error.message : 'Confirmation submission is uncertain' })
     }
   }
 }
@@ -161,13 +174,14 @@ async function dispatchChannel(reminder: Reminder, channel: 'email' | 'sms'): Pr
     }
     if (channel === 'sms') {
       const used = await countGallerySmsMessages(reminder.galleryId, recipient.personId)
-      if (used > SMS_MESSAGE_LIMIT) {
+      if (smsReservationExceedsLimit(used)) {
         await updateDelivery(delivery.id, { status: 'suppressed', lastError: 'SMS message limit reached' })
         return
       }
     }
 
     try {
+      if (!await claimDeliveryForSubmission(delivery.id)) return
       if (channel === 'email') {
         await submitEmail({
           gallery,
@@ -186,9 +200,8 @@ async function dispatchChannel(reminder: Reminder, channel: 'email' | 'sms'): Pr
       }
     } catch (error) {
       await updateDelivery(delivery.id, {
-        status: 'failed',
-        lastError: error instanceof Error ? error.message : 'Provider submission failed',
-        incrementAttempts: true,
+        status: 'unknown',
+        lastError: error instanceof Error ? error.message : 'Provider submission is uncertain',
       })
     }
   })
@@ -199,6 +212,7 @@ async function dispatchChannel(reminder: Reminder, channel: 'email' | 'sms'): Pr
 }
 
 export async function dispatchReminder(reminder: Reminder): Promise<void> {
+  if (!messagingEnabled()) return
   try {
     if (reminder.sendEmail) await dispatchChannel(reminder, 'email')
     if (reminder.sendSms) await dispatchChannel(reminder, 'sms')

@@ -74,3 +74,16 @@ Each reminder has one absolute send timestamp. There is no calendar model, event
 - The Knot and Zola are the only website imports.
 - Every reminder targets all currently eligible gallery guests; segmentation and recurring reminders are deferred.
 - Recommendations may be written directly into reminder copy or the AI prompt and have no separate data model.
+
+## Implementation and rollout status
+
+Implemented in PR #89. The application defaults to `MESSAGING_ENABLED=false`; do not enable production delivery until each rollout item is complete.
+
+- [ ] Run `migrations/20260718000000_guest_reminders.ts` against the target database.
+- [ ] Configure the OpenAI, Twilio, SendGrid, signing, cron, base URL, and postal-address variables in `.env.example`.
+- [ ] Configure the Twilio Messaging Service inbound webhook at `/api/webhooks/twilio/inbound`.
+- [ ] Configure signed SendGrid event delivery to `/api/webhooks/sendgrid` for processed, delivered, deferred, bounce, dropped, spam-report, unsubscribe, and group-unsubscribe events.
+- [ ] Confirm Vercel sends `CRON_SECRET` to the every-minute `/api/cron/reminders` job.
+- [ ] Have counsel review the consent disclosure, Terms, Privacy Policy, email footer, and SMS copy.
+- [ ] Exercise prompt, invitation, and supported website generation with production-like credentials and test provider accounts.
+- [ ] Enable `MESSAGING_ENABLED=true` only after the preceding checks pass.

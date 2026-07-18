@@ -6,11 +6,13 @@ import pdf from 'pdf-parse'
 import path from 'path'
 import sharp from 'sharp'
 import { z } from 'zod'
-import { getUrlBody } from '@/lib/web'
+import { getHtmlBodyText } from '@/lib/web'
 import { Gallery } from '@/lib/types/Gallery'
 import { GeneratedReminderDraft, ReminderSource } from '@/lib/types/Reminder'
+import { resolveGalleryLocalDateTime } from '@/lib/reminders/time'
 
 const MAX_INVITATION_BYTES = 4 * 1024 * 1024
+const MAX_WEBSITE_BYTES = 5 * 1024 * 1024
 const SUPPORTED_WEBSITE_HOSTS = ['theknot.com', 'www.theknot.com', 'zola.com', 'www.zola.com']
 
 const agentOutputSchema = z.object({
@@ -43,6 +45,35 @@ function websiteSource(urlString: string): ReminderSource {
   return hostname.includes('theknot') ? 'theknot' : 'zola'
 }
 
+async function supportedWebsiteBody(urlString: string): Promise<string> {
+  let currentUrl = new URL(urlString)
+  websiteSource(currentUrl.toString())
+
+  for (let redirectCount = 0; redirectCount <= 3; redirectCount += 1) {
+    const response = await fetch(currentUrl, {
+      redirect: 'manual',
+      signal: AbortSignal.timeout(15_000),
+      headers: { 'User-Agent': 'Recap Reminder Drafting/1.0' },
+    })
+    if (response.status >= 300 && response.status < 400) {
+      const location = response.headers.get('location')
+      if (!location || redirectCount === 3) throw new Error('The wedding website redirected too many times')
+      currentUrl = new URL(location, currentUrl)
+      websiteSource(currentUrl.toString())
+      continue
+    }
+    if (!response.ok) throw new Error(`The wedding website returned HTTP ${response.status}`)
+    const contentType = response.headers.get('content-type') || ''
+    if (!contentType.includes('text/html')) throw new Error('The wedding website did not return an HTML page')
+    const declaredLength = Number(response.headers.get('content-length') || 0)
+    if (declaredLength > MAX_WEBSITE_BYTES) throw new Error('The wedding website page is too large to process')
+    const buffer = Buffer.from(await response.arrayBuffer())
+    if (buffer.length > MAX_WEBSITE_BYTES) throw new Error('The wedding website page is too large to process')
+    return getHtmlBodyText(buffer.toString('utf8'))
+  }
+  throw new Error('The wedding website could not be loaded')
+}
+
 async function invitationBlocks(file: File): Promise<ContentBlock[]> {
   if (file.size > MAX_INVITATION_BYTES) throw new Error('Invitation files must be 4 MB or smaller')
   const buffer = Buffer.from(await file.arrayBuffer())
@@ -69,18 +100,6 @@ async function invitationBlocks(file: File): Promise<ContentBlock[]> {
     base64: buffer.toString('base64'),
     mediaType: normalizedMime as 'image/jpeg' | 'image/png' | 'image/webp',
   }]
-}
-
-function resolveSendAt(sendAtLocal: string, timezone: string): { utc: string | null; local: string | null; warning?: string } {
-  if (!sendAtLocal.trim()) return { utc: null, local: null, warning: 'A send date and time must be selected manually.' }
-  let value = DateTime.fromISO(sendAtLocal, { setZone: true })
-  if (!value.isValid) value = DateTime.fromISO(sendAtLocal, { zone: timezone })
-  if (!value.isValid) return { utc: null, local: null, warning: 'The generated send timestamp was invalid.' }
-  const inGalleryZone = value.setZone(timezone)
-  return {
-    utc: inGalleryZone.toUTC().toISO(),
-    local: inGalleryZone.toISO({ suppressMilliseconds: true }),
-  }
 }
 
 export async function generateReminderDrafts(input: {
@@ -114,7 +133,7 @@ export async function generateReminderDrafts(input: {
 
   if (input.websiteUrl) {
     source = websiteSource(input.websiteUrl)
-    const body = await getUrlBody(input.websiteUrl)
+    const body = await supportedWebsiteBody(input.websiteUrl)
     if (!body) throw new Error('No readable wedding website content was found')
     content.push({ type: 'text', text: `Wedding website text:\n${body.slice(0, 50000)}` })
   }
@@ -132,9 +151,9 @@ export async function generateReminderDrafts(input: {
   const parsed = agentOutputSchema.parse(result.output)
 
   const drafts = parsed.reminders.map((reminder): GeneratedReminderDraft => {
-    const resolved = resolveSendAt(reminder.send_at_local, input.gallery.timezone)
+    const resolved = resolveGalleryLocalDateTime(reminder.send_at_local, input.gallery.timezone)
     const warnings = [...reminder.warnings]
-    if (resolved.warning) warnings.push(resolved.warning)
+    if (resolved.error) warnings.push(resolved.error)
     if (resolved.utc && DateTime.fromISO(resolved.utc) <= DateTime.utc()) {
       warnings.push('The proposed time is in the past. Select a new send time before scheduling.')
       resolved.utc = null

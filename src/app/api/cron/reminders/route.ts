@@ -14,6 +14,8 @@ export async function GET(request: NextRequest) {
   }
 
   const reminders = await claimDueReminders(10)
-  await Promise.all(reminders.map(dispatchReminder))
+  for (let index = 0; index < reminders.length; index += 2) {
+    await Promise.all(reminders.slice(index, index + 2).map(dispatchReminder))
+  }
   return NextResponse.json({ dispatched: reminders.length, reminderIds: reminders.map((reminder) => reminder.id) })
 }
