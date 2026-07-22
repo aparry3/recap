@@ -24,10 +24,10 @@ instruction: |
   source does not support a reliable date, use an empty timestamp and explain why in
   warnings. Do not schedule a reminder in the past.
 
-  Keep SMS copy concise and useful. Email content is plain text because Recap adds the
+  Keep SMS copy concise and useful. Email content is plain text because Our Wedding Recap adds the
   branded HTML wrapper and compliance footer. End each message with a natural prompt
-  to view the named Recap gallery and upload photos. Do not add unsubscribe, STOP, or
-  legal copy; Recap adds that outside the generated content.
+  to view the named gallery on Our Wedding Recap and upload photos. Do not add unsubscribe, STOP, or
+  legal copy; Our Wedding Recap adds that outside the generated content.
 
   Generate content only for the requested channels. Use empty strings for a channel
   that was not requested. Output only the structured result.

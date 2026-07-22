@@ -23,23 +23,23 @@ export async function generateMetadata(
 
     } catch (error) {
         return {
-            title: `Recap`,
+            title: `Our Wedding Recap`,
             description: `Redirecting....`,
           }
     }
       
     return {
-        title: `Recap - ${gallery.name}`,
-        description: `Share your photos and videos with ${gallery.name}. Recap is the best way to share your photos and videos for everyone at your wedding.`,
+        title: `Our Wedding Recap - ${gallery.name}`,
+        description: `Share your photos and videos with ${gallery.name}. Our Wedding Recap makes it easy for everyone at your wedding to share photos and videos.`,
         openGraph: {
-            title: `Recap - ${gallery.name}`,
-            description: `Share your photos and videos with ${gallery.name}. Recap is the best way to share your photos and videos for everyone at your wedding.`,
+            title: `Our Wedding Recap - ${gallery.name}`,
+            description: `Share your photos and videos with ${gallery.name}. Our Wedding Recap makes it easy for everyone at your wedding to share photos and videos.`,
             images: [
                 {
                     url: '/branding/screenshots.png',
                     width: 1369,
                     height: 718,
-                    alt: 'Recap Wedding Photo Gallery',
+                    alt: 'Our Wedding Recap Wedding Photo Gallery',
                 },
             ],
             locale: 'en_US',
@@ -47,8 +47,8 @@ export async function generateMetadata(
         },
         twitter: {
             card: 'summary_large_image',
-            title: `Recap - ${gallery.name}`,
-            description: `Share your photos and videos with ${gallery.name}. Recap is the best way to share your photos and videos for everyone at your wedding.`,
+            title: `Our Wedding Recap - ${gallery.name}`,
+            description: `Share your photos and videos with ${gallery.name}. Our Wedding Recap makes it easy for everyone at your wedding to share photos and videos.`,
             images: ['/branding/wordmark.png'],
         },
     }

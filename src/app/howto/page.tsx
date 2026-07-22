@@ -79,7 +79,7 @@ const HowToPage = () => {
       icon: qrcodeIcon,
       title: "Download & Share Your QR Code",
       description: [
-        <Text key="intro" className={styles.paragraph}>Every Recap gallery comes with a unique QR code—so guests can start uploading photos immediately.</Text>,
+        <Text key="intro" className={styles.paragraph}>Every gallery on Our Wedding Recap comes with a unique QR code—so guests can start uploading photos immediately.</Text>,
         <Text key="header" weight={600} className={styles.stepHeader}>📍 Find your QR code:</Text>,
         [
           <Text key="step1" className={styles.stepItem}>Tap the QR icon at the top of your gallery</Text>,
@@ -149,7 +149,7 @@ const HowToPage = () => {
       <Container className={styles.header} justify="space-between">
         <Container className={styles.wordmarkContainer}>
           <Link href="/">
-            <Image src="/branding/wordmark.png" alt="Recap" width={100} height={40} />
+            <Image src="/branding/wordmark.png" alt="Our Wedding Recap" width={100} height={40} />
           </Link>
         </Container>
         <Link href="/create" className={styles.startButton}>
@@ -160,7 +160,7 @@ const HowToPage = () => {
       <Column className={styles.mainContent}>
         <Column className={styles.titleContainer}>
           <Text as="h1" weight={700} size={2.5} className={styles.title}>
-            How to Use Recap for Your Wedding
+            How to Use Our Wedding Recap for Your Wedding
           </Text>
           <Text size={1.25} className={styles.subtitle}>
             The easiest way to collect and share your guests’ photos—before, during, and after your wedding! 🎉

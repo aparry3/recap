@@ -37,7 +37,7 @@ export const getUserVerificationEmailTemplate = ({
                     <!-- Header Section -->
                     <tr>
                         <td align="center" style="background-color: #EFD5D0; padding: 30px 20px;">
-                            <img src="https://d2zcso3rdm6ldw.cloudfront.net/branding/wordmarkInverse.png" alt="Recap Logo" style="width: 200px; height: auto; margin-bottom: 20px;">
+                            <img src="https://d2zcso3rdm6ldw.cloudfront.net/branding/wordmarkInverse.png" alt="Our Wedding Recap Logo" style="width: 200px; height: auto; margin-bottom: 20px;">
                             <h1 style="color: #926C60; font-size: 28px; font-weight: 600; margin: 0; text-align: center;">Verify your email for ${safeGalleryName}</h1>
                         </td>
                     </tr>
@@ -79,14 +79,14 @@ export const getUserVerificationEmailTemplate = ({
                             
                             <p style="margin: 0 0 15px; font-size: 16px;">See you in the gallery!</p>
                             
-                            <p style="margin: 0; color: #926C60; font-size: 16px;">– The Recap Team</p>
+                            <p style="margin: 0; color: #926C60; font-size: 16px;">– Our Wedding Recap Team</p>
                         </td>
                     </tr>
 
                     <!-- Footer Section -->
                     <tr>
                         <td align="center" style="background-color: #EFD5D0; padding: 20px;">
-                            <p style="color: #926C60; font-size: 14px; margin: 0;">© ${new Date().getFullYear()} Recap. All rights reserved.</p>
+                            <p style="color: #926C60; font-size: 14px; margin: 0;">© ${new Date().getFullYear()} Our Wedding Recap. All rights reserved.<br>Owned and operated by Parry Technology and Media, LLC.</p>
                         </td>
                     </tr>
                 </table>

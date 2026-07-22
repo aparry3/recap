@@ -17,22 +17,22 @@ const cormorant = Cormorant({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || 'https://recap.photos'),
-  title: 'Recap - The Ultimate Wedding Photo Sharing Platform',
-  description: 'Recap helps couples collect, organize and share wedding photos from all their guests in one beautiful gallery - no app required. Create your free wedding photo gallery today.',
+  metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || 'https://www.ourweddingrecap.com'),
+  title: 'Our Wedding Recap - The Ultimate Wedding Photo Sharing Platform',
+  description: 'Our Wedding Recap helps couples collect, organize and share wedding photos from all their guests in one beautiful gallery - no app required. Create your free wedding photo gallery today.',
   keywords: 'wedding photo sharing, wedding photo gallery, guest photos, QR code photo sharing, wedding memories, collaborative photo album',
   other: {
     'p:domain_verify': 'fd45aad757d7a7e5692928b4c3260b94'
   },
   openGraph: {
-    title: 'Recap - The Ultimate Wedding Photo Sharing Platform',
+    title: 'Our Wedding Recap - The Ultimate Wedding Photo Sharing Platform',
     description: 'Collect & share all your wedding photos in one beautiful gallery - no app required.',
     images: [
       {
         url: '/product/screenshots.png',
         width: 1369,
         height: 718,
-        alt: 'Recap Wedding Photo Gallery',
+        alt: 'Our Wedding Recap Wedding Photo Gallery',
       },
     ],
     locale: 'en_US',
@@ -40,7 +40,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Recap - The Ultimate Wedding Photo Sharing Platform',
+    title: 'Our Wedding Recap - The Ultimate Wedding Photo Sharing Platform',
     description: 'Collect & share all your wedding photos in one beautiful gallery - no app required.',
     images: ['/product/screenshots.png'],
   },
@@ -74,7 +74,7 @@ export default function RootLayout({
             __html: JSON.stringify({
               "@context": "https://schema.org",
               "@type": "WebApplication",
-              "name": "Recap - Wedding Photo Sharing Platform",
+              "name": "Our Wedding Recap - Wedding Photo Sharing Platform",
               "applicationCategory": "Photography",
               "operatingSystem": "All",
               "offers": {
@@ -82,7 +82,7 @@ export default function RootLayout({
                 "price": "0",
                 "priceCurrency": "USD"
               },
-              "description": "Recap helps couples collect, organize and share wedding photos from all their guests in one beautiful gallery - no app required.",
+              "description": "Our Wedding Recap helps couples collect, organize and share wedding photos from all their guests in one beautiful gallery - no app required.",
               "aggregateRating": {
                 "@type": "AggregateRating",
                 "ratingValue": "4.9",

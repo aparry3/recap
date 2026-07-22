@@ -22,13 +22,13 @@ const Footer: FC = () => {
             </Container>
             <Column className={styles.branding}>
                 <Row className={styles.brandingRow}>
-                    <Image src='/branding/wordmarkInverse.png' alt='Recap wedding photo sharing platform' layout='intrinsic' height={100} width={100}/>
+                    <Image src='/branding/wordmarkInverse.png' alt='Our Wedding Recap wedding photo sharing platform' layout='intrinsic' height={100} width={100}/>
                 </Row>
                 <Row className={styles.brandingRow}>
                     <Text>The ultimate wedding photo sharing platform that collects every moment from every guest in one beautiful gallery. No app required, unlimited uploads, and easy organization of all your cherished memories.</Text>
                 </Row>    
                 <Row className={styles.brandingRow}>
-                    <Text style={{ opacity: 0.7 }}>Our Wedding Recap is a brand of Parry Technology and Media, LLC. Recap is an Our Wedding Recap service.</Text>
+                    <Text style={{ opacity: 0.7 }}>Our Wedding Recap is owned and operated by Parry Technology and Media, LLC.</Text>
                 </Row>
                 <Row className={styles.brandingRow}>
                     <Link href="/terms" className={styles.link}>

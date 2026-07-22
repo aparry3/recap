@@ -51,7 +51,7 @@ export default function PreferenceCenter({ token }: { token: string }) {
   return (
     <Container as="main" className={styles.page}>
       <Column className={styles.card}>
-        <Text size={1.1} className={styles.eyebrow}>Recap</Text>
+        <Text size={1.1} className={styles.eyebrow}>Our Wedding Recap</Text>
         <Text size={2.2} weight={600}>Communication preferences</Text>
         {data && <Text size={1.2}>{data.person.name}, choose how you hear about {data.gallery.name}.</Text>}
         {data && (

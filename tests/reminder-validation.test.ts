@@ -70,15 +70,15 @@ describe('branded reminder email', () => {
 describe('final SMS copy', () => {
   it('adds the gallery CTA and required STOP/HELP language before estimating segments', () => {
     const message = buildReminderSmsBody('Ceremony at 3:00.', 'https://example.com/wedding')
-    expect(message).toMatch(/^Recap by Our Wedding Recap:/)
+    expect(message).toMatch(/^Our Wedding Recap:/)
     expect(message).toContain('View & upload: https://example.com/wedding')
     expect(message).toContain('Reply STOP to stop, HELP for help.')
     expect(estimateSmsSegments(message)).toBeGreaterThanOrEqual(1)
   })
 
   it('does not add the brand twice when approved copy already includes it', () => {
-    const message = buildReminderSmsBody('Recap by Our Wedding Recap: Ceremony at 3:00.', 'https://example.com/wedding')
-    expect(message.match(/Recap by Our Wedding Recap:/g)).toHaveLength(1)
+    const message = buildReminderSmsBody('Our Wedding Recap: Ceremony at 3:00.', 'https://example.com/wedding')
+    expect(message.match(/Our Wedding Recap:/g)).toHaveLength(1)
   })
 })
 

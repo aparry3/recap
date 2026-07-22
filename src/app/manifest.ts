@@ -3,8 +3,8 @@ import type { MetadataRoute } from 'next'
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: 'Recap - Wedding Photo Sharing',
-    short_name: 'Recap',
+    name: 'Our Wedding Recap - Wedding Photo Sharing',
+    short_name: 'Our Wedding Recap',
     description: 'Collect & share all your wedding photos in one beautiful gallery - no app required. The simplest way to gather every photo from every guest.',
     start_url: '/',
     display: 'standalone',
@@ -24,4 +24,3 @@ export default function manifest(): MetadataRoute.Manifest {
     ],
   }
 }
-  

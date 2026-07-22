@@ -53,7 +53,7 @@ async function supportedWebsiteBody(urlString: string): Promise<string> {
     const response = await fetch(currentUrl, {
       redirect: 'manual',
       signal: AbortSignal.timeout(15_000),
-      headers: { 'User-Agent': 'Recap Reminder Drafting/1.0' },
+      headers: { 'User-Agent': 'OurWeddingRecap-Reminder-Drafting/1.0' },
     })
     if (response.status >= 300 && response.status < 400) {
       const location = response.headers.get('location')

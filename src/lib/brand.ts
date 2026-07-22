@@ -1,4 +1,4 @@
-export const COMMUNICATION_BRAND_NAME = 'Recap by Our Wedding Recap'
+export const COMMUNICATION_BRAND_NAME = 'Our Wedding Recap'
 
 export function brandCommunication(message: string): string {
   const trimmed = message.trim()

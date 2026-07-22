@@ -187,7 +187,7 @@ const CreatePage: FC<{person?: Person | NewPersonData, login: () => void, isAdmi
         </Form>
       </Container>
       <Container className={styles.copyright}>
-        <Text style={{ opacity: 0.7 }}>Our Wedding Recap is a brand of Parry Technology and Media, LLC. Recap is an Our Wedding Recap service.</Text>
+        <Text style={{ opacity: 0.7 }}>Our Wedding Recap is owned and operated by Parry Technology and Media, LLC.</Text>
       </Container>
     </Container>
   );

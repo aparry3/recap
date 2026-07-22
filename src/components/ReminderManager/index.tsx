@@ -260,7 +260,7 @@ export default function ReminderManager({ gallery }: { gallery: Gallery }) {
           <Column className={styles.channelFields}>
             <Input label="Email subject" value={draft.emailSubject || ''} onChange={(value) => setDraft({ ...draft, emailSubject: value || '' })} />
             <label>Email message<textarea value={draft.emailBody || ''} onChange={(event) => setDraft({ ...draft, emailBody: event.target.value })} /></label>
-            <Text size={0.9}>Recap adds the branded layout, gallery button, address, and unsubscribe link.</Text>
+            <Text size={0.9}>Our Wedding Recap adds the branded layout, gallery button, address, and unsubscribe link.</Text>
           </Column>
         )}
         {draft.sendSms && (
@@ -274,7 +274,7 @@ export default function ReminderManager({ gallery }: { gallery: Gallery }) {
             <Text weight={600}>Preview</Text>
             {draft.sendEmail && draft.emailBody && (
               <Column className={styles.emailPreview}>
-                <Text size={0.85}>RECAP · {gallery.name}</Text>
+                <Text size={0.85}>OUR WEDDING RECAP · {gallery.name}</Text>
                 <Text weight={600}>{draft.emailSubject || 'Email subject'}</Text>
                 <Text className={styles.preformatted}>{draft.emailBody}</Text>
                 <Container className={styles.previewCta}>View &amp; upload photos</Container>

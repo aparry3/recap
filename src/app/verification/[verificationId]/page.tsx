@@ -6,9 +6,9 @@ const VerificationPage = async ({params}: {params: Promise<{verificationId: stri
     return (
         <Container as="main" className={styles.page}>
             <Column className={styles.card}>
-                <Text size={1.1} className={styles.eyebrow}>Recap</Text>
+                <Text size={1.1} className={styles.eyebrow}>Our Wedding Recap</Text>
                 <Text size={2.2} weight={600}>Verify your email</Text>
-                <Text size={1.1}>Confirm to securely continue to your Recap galleries.</Text>
+                <Text size={1.1}>Confirm to securely continue to your galleries on Our Wedding Recap.</Text>
                 <form action={`/api/auth/verify/${verificationId}`} method="post">
                     <button type="submit" className={styles.button}>Verify email</button>
                 </form>

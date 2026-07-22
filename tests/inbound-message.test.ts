@@ -21,14 +21,14 @@ describe('inbound message replies', () => {
   it('advertises reply-to-upload in outgoing SMS messages', () => {
     const message = buildReminderSmsBody('The ceremony starts at five.', 'https://example.com/gallery')
     expect(message).toContain('reply here with photos/videos')
-    expect(message).toMatch(/^Recap by Our Wedding Recap:/)
+    expect(message).toMatch(/^Our Wedding Recap:/)
   })
 
   it('confirms media uploads and points to the matched gallery', () => {
     const reply = buildInboundReply({ provider: 'twilio', destination, attachmentCount: 2, uploadedCount: 2 })
     expect(reply).toContain('Added 2 photos/videos to Alex & Sam')
     expect(reply).toContain('/alex-and-sam')
-    expect(reply).toMatch(/^Recap by Our Wedding Recap:/)
+    expect(reply).toMatch(/^Our Wedding Recap:/)
   })
 
   it('explains how to upload when a message has no media', () => {

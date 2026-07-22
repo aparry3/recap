@@ -104,7 +104,7 @@ export class SendGridClient {
     const [response] = await sgMail.send({
       to: data.email,
       from: { email: senderEmail, name: senderName },
-      replyTo: { email: inboundEmail, name: 'Recap uploads' },
+      replyTo: { email: inboundEmail, name: 'Our Wedding Recap uploads' },
       subject: data.subject,
       text: `${data.body}\n\nView and upload photos: ${data.galleryUrl}\nOr reply to this email with one photo under 2 MB. Use the gallery link for videos, larger photos, or multiple files.\nManage preferences or unsubscribe: ${data.preferenceUrl}\n\n${postalAddress}`,
       html: getReminderEmailTemplate({
@@ -127,7 +127,7 @@ export class SendGridClient {
     const [response] = await sgMail.send({
       to: data.email,
       from: { email: senderEmail, name: senderName },
-      replyTo: { email: inboundEmail, name: 'Recap uploads' },
+      replyTo: { email: inboundEmail, name: 'Our Wedding Recap uploads' },
       subject: data.subject,
       text: data.body,
       html: `<div style="font-family:Georgia,'Times New Roman',serif;color:#2f2a25;font-size:18px;line-height:1.6;max-width:620px;margin:0 auto;padding:28px;"><p>${escapeHtml(data.body).replaceAll('\n', '<br>')}</p></div>`,
@@ -185,7 +185,7 @@ export class SendGridClient {
           name: senderName
         },
         ...supportReplyTo(replyToEmail),
-        subject: 'Your Recap Gallery is Ready! 🎉',
+        subject: 'Your Wedding Gallery Is Ready! 🎉 | Our Wedding Recap',
         html: getWelcomeEmailTemplate({
           name,
           galleryUrl,
@@ -235,7 +235,7 @@ export class SendGridClient {
           name: senderName
         },
         ...supportReplyTo(replyToEmail),
-        subject: "You've been added as an admin to Recap!",
+        subject: "You've been added as an admin to Our Wedding Recap!",
         html: getAdminInvitationEmailTemplate({
           name: data.name,
           verificationUrl: data.verificationUrl

@@ -16,7 +16,7 @@ const AdminVerification: React.FC<AdminVerificationProps> = ({ status, errorMess
     <Column as='main' className={styles.verificationPage} justify='center'>
       <Column className={styles.contentContainer}>
         <Row as='header' padding={1} justify='center'>
-          <Image src='/branding/wordmark.png' alt='Recap' height={50} width={150} style={{objectFit: 'contain'}}/>
+          <Image src='/branding/wordmark.png' alt='Our Wedding Recap' height={50} width={150} style={{objectFit: 'contain'}}/>
         </Row>
         
         <Container className={styles.verificationContent}>

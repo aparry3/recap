@@ -61,7 +61,7 @@ const TutorialOverlay: FC<TutorialOverlayProps> = ({ open, onClose }) => {
     },
     {
       title: 'Organizing Media',
-      description: 'Recap helps you organize all of your guests photos and videos. View photos by guest, sort by likes, and create unlimited albums.',
+      description: 'Our Wedding Recap helps you organize all of your guests photos and videos. View photos by guest, sort by likes, and create unlimited albums.',
       icon: albumIcon,
       subSections: [
         {
@@ -183,4 +183,4 @@ const TutorialOverlay: FC<TutorialOverlayProps> = ({ open, onClose }) => {
   );
 };
 
-export default TutorialOverlay; 
+export default TutorialOverlay;

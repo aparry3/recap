@@ -14,7 +14,7 @@ export const getWelcomeEmailTemplate = ({
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Your Recap Gallery is Ready!</title>
+    <title>Your Wedding Gallery Is Ready | Our Wedding Recap</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet">
@@ -27,8 +27,8 @@ export const getWelcomeEmailTemplate = ({
                     <!-- Header Section -->
                     <tr>
                         <td align="center" style="background-color: #EFD5D0; padding: 30px 20px;">
-                            <img src="https://d2zcso3rdm6ldw.cloudfront.net/branding/wordmarkInverse.png" alt="Recap Logo" style="width: 200px; height: auto; margin-bottom: 20px;">
-                            <h1 style="color: #926C60; font-size: 28px; font-weight: 600; margin: 0; text-align: center;">Your Recap Gallery is Ready! 🎉</h1>
+                            <img src="https://d2zcso3rdm6ldw.cloudfront.net/branding/wordmarkInverse.png" alt="Our Wedding Recap Logo" style="width: 200px; height: auto; margin-bottom: 20px;">
+                            <h1 style="color: #926C60; font-size: 28px; font-weight: 600; margin: 0; text-align: center;">Your Wedding Gallery Is Ready! 🎉</h1>
                         </td>
                     </tr>
 
@@ -37,7 +37,7 @@ export const getWelcomeEmailTemplate = ({
                         <td style="padding: 30px 20px;">
                             <p style="margin: 0 0 20px;">Hi ${name},</p>
                             
-                            <p style="margin: 0 0 25px;">Your Recap wedding gallery is set up and ready to go! 🎊 Now it's time to start collecting all those amazing memories from your guests.</p>
+                            <p style="margin: 0 0 25px;">Your gallery on Our Wedding Recap is set up and ready to go! 🎊 Now it's time to start collecting all those amazing memories from your guests.</p>
                             
                             <p style="margin: 0 0 20px; font-weight: 600; color: #926C60; font-size: 20px;">Here's what to do next:</p>
                             
@@ -78,14 +78,14 @@ export const getWelcomeEmailTemplate = ({
                             
                             <p style="margin: 0 0 15px;">Happy planning! 🥂</p>
                             
-                            <p style="margin: 0; color: #926C60;">– The Recap Team</p>
+                            <p style="margin: 0; color: #926C60;">– Our Wedding Recap Team</p>
                         </td>
                     </tr>
 
                     <!-- Footer Section -->
                     <tr>
                         <td align="center" style="background-color: #EFD5D0; padding: 20px;">
-                            <p style="color: #926C60; font-size: 14px; margin: 0;">© ${new Date().getFullYear()} Recap. All rights reserved.</p>
+                            <p style="color: #926C60; font-size: 14px; margin: 0;">© ${new Date().getFullYear()} Our Wedding Recap. All rights reserved.<br>Owned and operated by Parry Technology and Media, LLC.</p>
                         </td>
                     </tr>
                 </table>
@@ -94,4 +94,4 @@ export const getWelcomeEmailTemplate = ({
     </table>
 </body>
 </html>`
-}; 
+};

@@ -93,7 +93,7 @@ const Hero = () => {
                 </Container>
             </Column>
             <Container id="product" style={{ width: '100%'}} padding={1}>
-                <Image src='/product/screenshots.png' alt='Recap wedding photo gallery app screenshots' height={737} width={1519} style={{width: '100%', height: 'auto'}}/>
+                <Image src='/product/screenshots.png' alt='Our Wedding Recap wedding photo gallery app screenshots' height={737} width={1519} style={{width: '100%', height: 'auto'}}/>
             </Container>
         </Column>
     )
@@ -262,7 +262,7 @@ const PricingComparison = () => {
         { item: 'Photographer', cost: 5000 },
         { item: 'Music & Entertainment', cost: 3500 },
         { item: 'Wedding Dress', cost: 2500 },
-        { item: 'Recap', cost: 59, isLink: true },
+        { item: 'Our Wedding Recap', cost: 59, isLink: true },
     ];
 
     return (
@@ -503,20 +503,20 @@ const Website = () => {
                 <Text className={styles.headingText} as='h1'>Seamlessly Connect to Your Existing Wedding Website</Text>
             </Container>
             <Container className={styles.subheading} padding={[0, 1]}>
-                <Text className={styles.subheadingText} as='h2'>Already have a wedding website with The Knot or Zola? Link your Recap gallery to provide guests with one central hub for all wedding information and photos.</Text>
+                <Text className={styles.subheadingText} as='h2'>Already have a wedding website with The Knot or Zola? Link your gallery from Our Wedding Recap to provide guests with one central hub for all wedding information and photos.</Text>
             </Container>
             <Container className={styles.weddingWebsiteImagesContainer}>
                 <Container className={styles.weddingWebsiteImageContainer} padding={1}>
                     <Link href="/create" className={styles.weddingWebsiteLink}>
                         <Container id="product" className={styles.weddingWebsiteImage} padding={1}>
-                            <Image src='/branding/TheKnot.png' alt='Recap integrates with The Knot wedding websites' className={styles.weddingWebsiteLogo} height={200} width={906}/>
+                            <Image src='/branding/TheKnot.png' alt='Our Wedding Recap integrates with The Knot wedding websites' className={styles.weddingWebsiteLogo} height={200} width={906}/>
                         </Container>
                     </Link>
                 </Container>
                 <Container className={styles.weddingWebsiteImageContainer} padding={1}>
                     <Link href="/create" className={styles.weddingWebsiteLink}>
                         <Container className={styles.weddingWebsiteImage} padding={1}>
-                            <Image src='/branding/Zola.png' alt='Recap integrates with Zola wedding websites' className={styles.weddingWebsiteLogo} height={200} width={1304}/>
+                            <Image src='/branding/Zola.png' alt='Our Wedding Recap integrates with Zola wedding websites' className={styles.weddingWebsiteLogo} height={200} width={1304}/>
                         </Container>
                     </Link>
                 </Container>
@@ -534,7 +534,7 @@ const Notifications = () => {
                 <Text className={styles.subheadingText} as='h2'>Opt-in notifications keep everyone engaged and excited when new photos are shared. Send gentle reminders to encourage sharing before, during, and after your special day.</Text>
             </Container>
             <Container className={styles.notificationMedia} padding>
-                <Image className={styles.notificationImage} src='/product/NotiGroup.png' alt='Recap wedding photo notification system on mobile devices' height={376} width={679}/>
+                <Image className={styles.notificationImage} src='/product/NotiGroup.png' alt='Our Wedding Recap wedding photo notification system on mobile devices' height={376} width={679}/>
             </Container>          
         </Column>
     )

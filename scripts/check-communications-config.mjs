@@ -103,8 +103,8 @@ requireValue('SENDGRID_REMINDER_UNSUBSCRIBE_GROUP_ID', { pattern: /^[1-9]\d*$/, 
 requireValue('SENDGRID_EVENT_WEBHOOK_VERIFICATION_KEY', { minLength: 64 })
 requireValue('SENDGRID_INBOUND_PARSE_VERIFICATION_KEY', { minLength: 64 })
 
-if (sendgridFromName && sendgridFromName !== 'Recap by Our Wedding Recap') {
-  fail('SENDGRID_FROM_NAME identity', 'must exactly match Recap by Our Wedding Recap')
+if (sendgridFromName && sendgridFromName !== 'Our Wedding Recap') {
+  fail('SENDGRID_FROM_NAME identity', 'must exactly match Our Wedding Recap')
 } else if (sendgridFromName) {
   pass('SENDGRID_FROM_NAME identity', 'matches the campaign sender identity')
 }
@@ -221,7 +221,7 @@ if (networkEnabled) {
   await Promise.all([
     checkPublicPage('/privacy', 'We do not share mobile information'),
     checkPublicPage('/terms', 'Optional Email and SMS Updates'),
-    checkPublicPage('/sms-consent', 'How wedding guests opt in to Recap texts'),
+    checkPublicPage('/sms-consent', 'How wedding guests opt in to Our Wedding Recap texts'),
     checkDns(),
   ])
 } else {

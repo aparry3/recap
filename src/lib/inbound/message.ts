@@ -45,7 +45,7 @@ export function buildInboundReply(input: {
   uploadedCount: number
 }): string {
   if (!input.destination) {
-    return brandCommunication('We could not match this contact to a Recap gallery. Join the gallery with this phone number or email first, then send your photos or videos again.')
+    return brandCommunication('We could not match this contact to a gallery on Our Wedding Recap. Join the gallery with this phone number or email first, then send your photos or videos again.')
   }
   const name = input.destination.gallery.name
   const url = galleryUrl(input.destination)
@@ -65,7 +65,7 @@ export function buildInboundReply(input: {
   const replyInstructions = input.provider === 'sendgrid'
     ? 'Reply with one photo under 2 MB, or use the gallery for videos, larger photos, or multiple files.'
     : 'Reply with photos or videos.'
-  return brandCommunication(`Thanks for messaging Recap. ${replyInstructions} Add them to ${name}: ${url}`)
+  return brandCommunication(`Thanks for messaging Our Wedding Recap. ${replyInstructions} Add them to ${name}: ${url}`)
 }
 
 export function extractEmailAddress(value?: string | null): string | null {
@@ -106,7 +106,7 @@ export function extractMessageId(headers?: string | null): string | null {
 
 export function safeReplySubject(subject?: string | null): string {
   const sanitized = subject?.replace(/[\r\n]+/g, ' ').trim().slice(0, 180)
-  return sanitized ? `Re: ${sanitized}` : 'Your Recap gallery upload'
+  return sanitized ? `Re: ${sanitized}` : 'Your gallery upload | Our Wedding Recap'
 }
 
 export function escapeXml(value: string): string {

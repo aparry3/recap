@@ -1,6 +1,6 @@
-# AGENTS.md — Recap Codebase Guide for AI Agents
+# AGENTS.md — Our Wedding Recap Codebase Guide for AI Agents
 
-This document provides everything an AI agent needs to understand and contribute to the Recap codebase.
+This document provides everything an AI agent needs to understand and contribute to the Our Wedding Recap codebase.
 
 ## Quick Start
 
@@ -11,7 +11,7 @@ pnpm install
 pnpm dev          # Starts at http://localhost:3000
 ```
 
-## What Is Recap?
+## What Is Our Wedding Recap?
 
 A **collaborative wedding photo gallery** web app. Couples create a password-protected gallery, share a QR code/link with guests, and guests upload photos/videos directly from their phones. No app download required.
 
