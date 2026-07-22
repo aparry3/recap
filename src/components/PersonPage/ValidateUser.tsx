@@ -1,31 +1,34 @@
 'use client';
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useEffect, useRef, useState } from 'react';
 import { Column, Container, Row, Text } from 'react-web-layout-components';
 import Image from 'next/image';
 import styles from './Create.module.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { xIcon } from '@/lib/icons';
-import { Person } from '@/lib/types/Person';
-import { fetchVerification, updatePerson } from '@/helpers/api/personClient';
+import { Verification } from '@/lib/types/Person';
+import { fetchVerification } from '@/helpers/api/personClient';
 
 
-const ValidateUser: FC<{verificationId: string, person: {personId: string, name: string, email?: string, phone?: string}, confirm: (person: Person) => void, onBack: () => void, resend?: () => Promise<void> | void, newUser?: boolean}> = ({person, verificationId, confirm, onBack, resend, newUser = false}) => {
+const ValidateUser: FC<{verificationId: string, person: {personId: string, name: string, email?: string, phone?: string}, confirm: (verification: Verification) => Promise<void> | void, onBack: () => void, resend?: () => Promise<void> | void, newUser?: boolean}> = ({person, verificationId, confirm, onBack, resend, newUser = false}) => {
   const [resendState, setResendState] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle')
+  const confirmRef = useRef(confirm)
+  const completedRef = useRef(false)
 
   useEffect(() => {
+    confirmRef.current = confirm
+  }, [confirm])
+
+  useEffect(() => {
+    completedRef.current = false
     const checkVerification = async () => {
       try {
         const verification = await fetchVerification(verificationId);
-        if (verification?.verified) {
-          const _person = await updatePerson(verification.personId, {
-            name: person.name,
-            email: person.email,
-            phone: person.phone,
-          });
-          confirm(_person); // Call confirm with the verified person data
-
+        if (verification?.verified && !completedRef.current) {
+          completedRef.current = true
+          await confirmRef.current(verification)
         }
       } catch (error) {
+        completedRef.current = false
         console.error("Error checking verification status:", error);
       }
     };
@@ -36,7 +39,7 @@ const ValidateUser: FC<{verificationId: string, person: {personId: string, name:
 
     return () => clearInterval(interval); // Cleanup on unmount
 
-  }, [verificationId, confirm]);
+  }, [verificationId]);
 
   const handleResend = async () => {
     if (!resend || resendState === 'sending' || resendState === 'sent') return

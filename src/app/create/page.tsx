@@ -2,9 +2,9 @@
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import Welcome from './Welcome';
 import Create from '../../components/PersonPage/Create';
-import { createGallery } from '@/helpers/api/galleryClient';
+import { createGallery, fetchGallery } from '@/helpers/api/galleryClient';
 import { Gallery, NewGalleryData } from '@/lib/types/Gallery';
-import { Person } from '@/lib/types/Person';
+import { Person, Verification } from '@/lib/types/Person';
 import { createPerson, createVerification, fetchAuthenticatedPerson, fetchPersonByEmail, updatePerson } from '@/helpers/api/personClient';
 import useLocalStorage from '@/helpers/hooks/localStorage';
 import { generateRandomString } from '@/helpers/utils';
@@ -139,7 +139,7 @@ const CreatePage: FC = () => {
       if (!target) {
         target = await createPerson({name: _name, email: _email, isAdmin: false})
       }
-      const verification = await createVerification(target.id, _galleryName, _email, _name, theKnot, zola)
+      const verification = await createVerification(target.id, _galleryName, _email, _name, {theKnot, zola})
       setExistingUser(isExisting)
       setTempPerson({personId: target.id, email: _email, name: _name})
       setTempGallery({name: _galleryName, zola, theKnot})
@@ -174,14 +174,37 @@ const CreatePage: FC = () => {
 
   const resendVerification = useCallback(async () => {
     if (!tempPerson?.email) return
-    const verification = await createVerification(tempPerson.personId, tempGallery?.name || '', tempPerson.email, tempPerson.name, tempGallery?.theKnot, tempGallery?.zola)
+    const verification = await createVerification(
+      tempPerson.personId,
+      tempGallery?.name || '',
+      tempPerson.email,
+      tempPerson.name,
+      tempGallery ? {theKnot: tempGallery.theKnot, zola: tempGallery.zola} : undefined,
+    )
     setVerificationId(verification.id)
   }, [tempPerson, tempGallery])
 
-  const confirmValidate = async (validatedPerson: Person) => {
-    setPerson(validatedPerson)
-    setPersonId(validatedPerson.id)
-    if (tempGallery) {
+  const confirmValidate = async (verification: Verification) => {
+    setPersonId(verification.personId)
+    if (verification.galleryId) {
+      const verifiedGallery = await fetchGallery(verification.galleryId)
+      setGallery(verifiedGallery)
+      setTempPerson(undefined)
+      setVerificationId(undefined)
+      setTempGallery(undefined)
+      setStage(1)
+      try {
+        setPerson(await fetchAuthenticatedPerson())
+      } catch (error) {
+        console.error('The gallery was verified in another browser session:', error)
+      }
+    } else if (tempGallery && tempPerson) {
+      // Compatibility for verification emails issued before gallery intents were added.
+      const validatedPerson = await updatePerson(verification.personId, {
+        name: tempPerson.name,
+        email: tempPerson.email,
+      })
+      setPerson(validatedPerson)
       const {name, theKnot, zola} = tempGallery
       setTempPerson(undefined)
       setVerificationId(undefined)

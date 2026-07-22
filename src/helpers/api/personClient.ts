@@ -29,10 +29,14 @@ export const createGalleryPerson = async (galleryId: string, personId: string, e
 
 
 export const updatePerson = async (personId: string, personUpdate: PersonUpdate): Promise<Person> => {
-    const data = await fetch(`/api/people/${personId}`, {
+    const response = await fetch(`/api/people/${personId}`, {
         method: 'PUT',
         body: JSON.stringify({...personUpdate})
-    }).then(res => res.json())
+    })
+    const data = await response.json()
+    if (!response.ok || !data.person) {
+        throw new Error(data.error || 'We could not update your profile')
+    }
     return data.person
 }
 
@@ -90,10 +94,24 @@ export const fetchVerification = async (verificationId: string): Promise<Verific
     }
 }
 
-export const createVerification = async (personId: string, galleryName: string, email: string, name: string, theKnot?: string, zola?: string): Promise<Verification> => {
+export const createVerification = async (
+    personId: string,
+    galleryName: string,
+    email: string,
+    name: string,
+    gallery?: {theKnot?: string, zola?: string},
+): Promise<Verification> => {
     const res = await fetch(`/api/verifications`, {
         method: 'POST',
-        body: JSON.stringify({personId, galleryName, email, name, theKnot, zola})
+        body: JSON.stringify({
+            personId,
+            galleryName,
+            email,
+            name,
+            createGallery: Boolean(gallery),
+            theKnot: gallery?.theKnot,
+            zola: gallery?.zola,
+        })
     })
     const data = await res.json()
     if (!res.ok || !data.verification) {

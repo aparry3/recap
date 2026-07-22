@@ -5,6 +5,8 @@ import {v4 as uuidv4} from 'uuid';
 import { sql } from 'kysely';
 import { selectGalleryPersonMedia } from "./mediaService";
 import { normalizeEmail, normalizeUsPhone, optOutPersonChannelConsents } from './communicationService';
+import { DEFAULT_ALBUM_NAMES } from './albumService';
+import { PendingGalleryCreation } from '../auth/galleryCreationToken';
 
 const CLOUDFRONT_URL = process.env.AWS_CLOUDFRONT_URL || ''
 export const insertPerson = async (newPersonData: NewPersonData): Promise<Person> => {
@@ -178,6 +180,63 @@ export const consumeVerification = async (verificationId: string): Promise<Verif
     .executeTakeFirst()
   if (!verification) throw new Error('This verification link is invalid, expired, or has already been used')
   return verification
+}
+
+export const consumeVerificationAndCreateGallery = async (
+  verificationId: string,
+  pendingGallery: PendingGalleryCreation,
+): Promise<{verification: Verification, gallery: Gallery, person: Person}> => {
+  return db.transaction().execute(async (trx) => {
+    const current = await trx.selectFrom('verification')
+      .where('id', '=', verificationId)
+      .selectAll()
+      .forUpdate()
+      .executeTakeFirst()
+    if (!current || current.verified || current.expiresAt <= new Date()) {
+      throw new Error('This verification link is invalid, expired, or has already been used')
+    }
+    if (current.personId !== pendingGallery.personId) {
+      throw new Error('The gallery request does not match this verification')
+    }
+
+    const person = await trx.updateTable('person')
+      .set({name: pendingGallery.personName})
+      .where('id', '=', current.personId)
+      .returningAll()
+      .executeTakeFirstOrThrow()
+    const gallery = await trx.insertInto('gallery').values({
+      id: uuidv4(),
+      name: pendingGallery.name,
+      path: pendingGallery.path,
+      password: pendingGallery.password,
+      personId: current.personId,
+      createdBy: current.personId,
+      created: new Date(),
+      timezone: 'America/New_York',
+      ...(pendingGallery.theknot ? {theknot: pendingGallery.theknot} : {}),
+      ...(pendingGallery.zola ? {zola: pendingGallery.zola} : {}),
+    }).returningAll().executeTakeFirstOrThrow()
+
+    const created = new Date()
+    await trx.insertInto('album').values(DEFAULT_ALBUM_NAMES.map((name) => ({
+      id: uuidv4(),
+      name,
+      galleryId: gallery.id,
+      personId: person.id,
+      created,
+    }))).execute()
+    await trx.insertInto('galleryPerson').values({
+      galleryId: gallery.id,
+      personId: person.id,
+    }).execute()
+    const verification = await trx.updateTable('verification')
+      .set({verified: true, galleryId: gallery.id})
+      .where('id', '=', verificationId)
+      .returningAll()
+      .executeTakeFirstOrThrow()
+
+    return {verification, gallery, person}
+  })
 }
 
 export const selectVerification = async (verificationId: string): Promise<Verification> => {

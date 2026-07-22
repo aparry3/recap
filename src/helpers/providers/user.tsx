@@ -1,8 +1,8 @@
 "use client"
-import { Person } from '@/lib/types/Person';
+import { Person, Verification } from '@/lib/types/Person';
 import React, { createContext, useState, useContext, useEffect, useCallback } from 'react';
 import useLocalStorage from '../hooks/localStorage';
-import { createGalleryPerson, createPerson, createVerification, fetchPerson, fetchPersonByEmail } from '../api/personClient';
+import { createGalleryPerson, createPerson, createVerification, fetchPerson, fetchPersonByEmail, updatePerson } from '../api/personClient';
 import PersonPage from '@/components/PersonPage';
 import { Container, Text } from 'react-web-layout-components';
 import styles from './Providers.module.scss'
@@ -85,7 +85,13 @@ export const UserProvider: React.FC<{
       setVerificationId(verification.id)
     }, [tempPerson, gallery.name])
 
-    const confirmValidate = async (person: Person) => {
+    const confirmValidate = async (verification: Verification) => {
+      if (!tempPerson) return
+      const person = await updatePerson(verification.personId, {
+        name: tempPerson.name,
+        email: tempPerson.email,
+        phone: tempPerson.phone,
+      })
       setPerson(person)
       setPersonId(person.id)
       await createGalleryPerson(gallery.id, person.id, tempPerson?.emailOptIn, tempPerson?.smsOptIn)
