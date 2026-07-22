@@ -1,4 +1,4 @@
-import { Selectable, Updateable, Insertable } from "kysely"
+import { Generated, Selectable, Updateable, Insertable } from "kysely"
 import { Media } from "./Media"
 
 export interface PersonTable {
@@ -8,6 +8,7 @@ export interface PersonTable {
     phone?: string
     created: Date
     isAdmin: boolean
+    isSuperAdmin: Generated<boolean>
 }
 
 export type Person = Selectable<PersonTable>

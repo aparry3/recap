@@ -234,6 +234,28 @@ export class EmailClient {
       return false;
     }
   }
+
+  async sendAdminSignInEmail(data: AdminInvitationData): Promise<boolean> {
+    try {
+      const { resend, from, replyToEmail } = configureEmail();
+      const { error } = await resend.emails.send({
+        to: data.email,
+        from,
+        ...supportReplyTo(replyToEmail),
+        subject: 'Sign in to the Our Wedding Recap admin dashboard',
+        html: getAdminInvitationEmailTemplate({
+          name: data.name,
+          verificationUrl: data.verificationUrl,
+          purpose: 'sign-in',
+        }),
+      });
+      if (error) throw new Error(error.message);
+      return true;
+    } catch (error) {
+      console.error('Error sending admin sign-in email:', error);
+      return false;
+    }
+  }
 }
 
 export const emailClient = new EmailClient();

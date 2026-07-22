@@ -2,7 +2,7 @@
 import React, { FC, useEffect, useState } from 'react';
 import { Gallery } from '@/lib/types/Gallery';
 import { Person } from '@/lib/types/Person';
-import { fetchPerson, fetchPersonGalleries } from '@/helpers/api/personClient';
+import { fetchAuthenticatedPerson, fetchPersonGalleries } from '@/helpers/api/personClient';
 import useLocalStorage from '@/helpers/hooks/localStorage';
 import Galleries from './Galleries';
 import { useRouter } from 'next/navigation';
@@ -13,12 +13,19 @@ const GalleriesPage: FC = () => {
     const router = useRouter()
     const [galleries, setGalleries] = useState<Gallery[]>([])
     const [person, setPerson] = useState<Person>()
-    const [personId, setPersonId, personLoading] = useLocalStorage<string>('personId', '');
+    const [_, setPersonId] = useLocalStorage<string>('personId', '');
     const [loading, setLoading] = useState<boolean>(true);
     
-    const init = async (personId: string) => {
+    const init = async () => {
         try {
-            const [_person, _galleries] = await Promise.all([fetchPerson(personId), fetchPersonGalleries(personId)])
+            const _person = await fetchAuthenticatedPerson()
+            if (!_person) {
+                setPersonId('')
+                router.push('/create')
+                return
+            }
+            setPersonId(_person.id)
+            const _galleries = await fetchPersonGalleries(_person.id)
             setPerson(_person)
             setGalleries(_galleries)
             setLoading(false)
@@ -28,14 +35,10 @@ const GalleriesPage: FC = () => {
         }
     }
     useEffect(() => {
-        if (!personLoading) {
-            if (personId) {
-                init(personId)
-            } else {
-                router.push('/create')
-            }    
-        }
-    }, [personId, personLoading])
+        init()
+        // Session state is authoritative on initial page load.
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [])
 
 
   return loading ? <Loading /> : <Galleries galleries={galleries} person={person}/>;

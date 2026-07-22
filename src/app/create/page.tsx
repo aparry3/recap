@@ -5,7 +5,7 @@ import Create from '../../components/PersonPage/Create';
 import { createGallery } from '@/helpers/api/galleryClient';
 import { Gallery, NewGalleryData } from '@/lib/types/Gallery';
 import { Person } from '@/lib/types/Person';
-import { createPerson, createVerification, fetchPerson, fetchPersonByEmail, updatePerson } from '@/helpers/api/personClient';
+import { createPerson, createVerification, fetchAuthenticatedPerson, fetchPersonByEmail, updatePerson } from '@/helpers/api/personClient';
 import useLocalStorage from '@/helpers/hooks/localStorage';
 import { generateRandomString } from '@/helpers/utils';
 import ValidateUser from '@/components/PersonPage/ValidateUser';
@@ -26,6 +26,7 @@ const CreatePage: FC = () => {
   const [login, setLogin] = useState(false)
   const [loginError, setLoginError] = useState('')
   const [submitError, setSubmitError] = useState('')
+  const [sessionLoading, setSessionLoading] = useState(true)
 
   // Check if user is admin based on database flag
   const isAdmin = useMemo(() => {
@@ -37,21 +38,28 @@ const CreatePage: FC = () => {
     window.scrollTo(0, 0);
   }, [stage]);
 
-  const populatePerson = async (personId: string) => {
-    try {
-      const _person = await fetchPerson(personId)
-      setPerson(_person)
-    } catch (error) {
-      console.log(error)
-      setPersonId('')
-    }
-  }
-
   useEffect(() => {
-    if (personId) {
-      populatePerson(personId)
+    const loadSession = async () => {
+      try {
+        const authenticatedPerson = await fetchAuthenticatedPerson()
+        setPerson(authenticatedPerson)
+        if (authenticatedPerson) {
+          setPersonId(authenticatedPerson.id)
+        } else if (personId) {
+          // A legacy browser identifier is not proof of a signed-in session.
+          setPersonId('')
+        }
+      } catch (error) {
+        console.error('Failed to check the current session:', error)
+        setPerson(undefined)
+      } finally {
+        setSessionLoading(false)
+      }
     }
-  }, [personId])
+    loadSession()
+    // Session state is authoritative on initial page load.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const submitGallery = async (_galleryName: string, _name: string, _email?: string, theKnot? :string, zola?: string, targetPerson?: Person) => {
     const url = `${_galleryName.toLowerCase().replaceAll(' ', '-')}`
@@ -131,7 +139,7 @@ const CreatePage: FC = () => {
       if (!target) {
         target = await createPerson({name: _name, email: _email, isAdmin: false})
       }
-      const verification = await createVerification(target.id, _galleryName, _email, _name)
+      const verification = await createVerification(target.id, _galleryName, _email, _name, theKnot, zola)
       setExistingUser(isExisting)
       setTempPerson({personId: target.id, email: _email, name: _name})
       setTempGallery({name: _galleryName, zola, theKnot})
@@ -166,7 +174,7 @@ const CreatePage: FC = () => {
 
   const resendVerification = useCallback(async () => {
     if (!tempPerson?.email) return
-    const verification = await createVerification(tempPerson.personId, tempGallery?.name || '', tempPerson.email, tempPerson.name)
+    const verification = await createVerification(tempPerson.personId, tempGallery?.name || '', tempPerson.email, tempPerson.name, tempGallery?.theKnot, tempGallery?.zola)
     setVerificationId(verification.id)
   }, [tempPerson, tempGallery])
 
@@ -184,6 +192,8 @@ const CreatePage: FC = () => {
       router.push('/galleries')
     }
   }
+
+  if (sessionLoading) return null
 
   // Show validation if needed
   if (verificationId && tempPerson) {

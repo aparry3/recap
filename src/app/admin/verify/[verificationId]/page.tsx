@@ -1,58 +1,23 @@
-"use client"
-import React, { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { useParams } from 'next/navigation';
-import AdminVerification from '@/components/AdminVerification';
-import useLocalStorage, { setCookie } from '@/helpers/hooks/localStorage';
+import { Column, Container, Text } from 'react-web-layout-components';
+import styles from '@/app/verification/[verificationId]/Verification.module.scss';
 
-const AdminVerificationPage: React.FC = () => {
-  const router = useRouter();
-  const params = useParams();
-  const verificationId = params.verificationId as string;
-  const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading');
-  const [errorMessage, setErrorMessage] = useState('');
-  const [personName, setPersonName] = useState('');
-  const [_, setPersonId] = useLocalStorage<string>('personId', '');
-
-  useEffect(() => {
-    const verifyAdmin = async () => {
-      try {
-        const response = await fetch(`/api/admin/verify/${verificationId}`);
-        const data = await response.json();
-
-        if (!response.ok) {
-          setStatus('error');
-          setErrorMessage(data.error || 'Verification failed');
-          return;
-        }
-
-        // Set the personId cookie and localStorage
-        setPersonId(data.personId);
-        setCookie('personId', data.personId);
-        setPersonName(data.name);
-        setStatus('success');
-
-        // Redirect to admin page after 2 seconds
-        setTimeout(() => {
-          router.push('/admin');
-        }, 2000);
-      } catch (error) {
-        console.error('Verification error:', error);
-        setStatus('error');
-        setErrorMessage('An error occurred during verification');
-      }
-    };
-
-    verifyAdmin();
-  }, [verificationId, router, setPersonId]);
-
+export default async function AdminVerificationPage({
+  params,
+}: {
+  params: Promise<{verificationId: string}>;
+}) {
+  const {verificationId} = await params;
   return (
-    <AdminVerification 
-      status={status} 
-      errorMessage={errorMessage}
-      personName={personName}
-    />
+    <Container as="main" className={styles.page}>
+      <Column className={styles.card}>
+        <Text size={1.1} className={styles.eyebrow}>Our Wedding Recap</Text>
+        <Text size={2.2} weight={600}>Admin sign in</Text>
+        <Text size={1.1}>Confirm to securely continue to the admin dashboard.</Text>
+        <form action={`/api/admin/verify/${verificationId}`} method="post">
+          <button type="submit" className={styles.button}>Continue to Admin</button>
+        </form>
+        <Text size={0.9}>Sign-in links expire after 24 hours and can only be used once.</Text>
+      </Column>
+    </Container>
   );
-};
-
-export default AdminVerificationPage;
+}

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { requireAdmin } from '@/lib/admin/middleware';
+import { adminErrorResponse, logUnexpectedAdminError, requireAdmin } from '@/lib/admin/middleware';
 import { db } from '@/lib/db';
 
 export const dynamic = 'force-dynamic';
@@ -38,10 +38,7 @@ export async function GET(request: NextRequest) {
       recentActivity: [] // Empty array for now since we removed admin actions
     });
   } catch (error) {
-    console.error('Admin stats error:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch admin stats' },
-      { status: 500 }
-    );
+    logUnexpectedAdminError('Admin stats error:', error);
+    return adminErrorResponse(error, 'Failed to fetch admin stats');
   }
 }

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { requireAdmin } from '@/lib/admin/middleware';
+import { adminErrorResponse, AdminAuthorizationError, logUnexpectedAdminError, requireAdmin } from '@/lib/admin/middleware';
 import { selectGalleriesForAdmin, insertGallery } from '@/lib/db/galleryService';
 import { createDefaultAlbums } from '@/lib/db/albumService';
 import { selectPersonByEmail, insertPerson, insertGalleryPerson, insertVerification } from '@/lib/db/personService';
@@ -17,16 +17,25 @@ export async function GET(request: NextRequest) {
     const page = parseInt(searchParams.get('page') || '1');
     const search = searchParams.get('search') || '';
     const statusParam = (searchParams.get('status') || 'active') as 'active' | 'deleted';
+    const scope = searchParams.get('scope') === 'all' ? 'all' : 'owned';
 
-    const result = await selectGalleriesForAdmin(admin.id, page, search, 20, statusParam);
+    if (scope === 'all' && !admin.isSuperAdmin) {
+      throw new AdminAuthorizationError('Super-admin access is required', 403);
+    }
+
+    const result = await selectGalleriesForAdmin(admin.id, page, search, 20, statusParam, scope);
+
+    if (scope === 'all') {
+      return NextResponse.json({
+        ...result,
+        galleries: result.galleries.map(({password: _password, ...gallery}) => gallery),
+      });
+    }
 
     return NextResponse.json(result);
   } catch (error) {
-    console.error('Admin galleries error:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch galleries' },
-      { status: 500 }
-    );
+    logUnexpectedAdminError('Admin galleries error:', error);
+    return adminErrorResponse(error, 'Failed to fetch galleries');
   }
 }
 
@@ -126,10 +135,7 @@ export async function POST(request: NextRequest) {
     });
 
   } catch (error) {
-    console.error('Admin create gallery error:', error);
-    return NextResponse.json(
-      { error: 'Failed to create gallery' },
-      { status: 500 }
-    );
+    logUnexpectedAdminError('Admin create gallery error:', error);
+    return adminErrorResponse(error, 'Failed to create gallery');
   }
 }

@@ -1,12 +1,22 @@
 'use client';
-import React, { useEffect, useState } from 'react';
+import React, { FormEvent, useEffect, useState } from 'react';
 import { Container, Row, Column, Text } from 'react-web-layout-components';
 import styles from './page.module.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch, faPlus, faUserPlus, faEye, faLink, faCheck } from '@fortawesome/free-solid-svg-icons';
 import Button from '@/components/Button';
-import { useRouter } from 'next/navigation';
-import { fetchAdminGalleries, fetchAdminUsers, fetchAdminDeletedGalleries, deleteAdminGallery, restoreAdminGallery } from '@/helpers/api/adminClient';
+import {
+  AdminSession,
+  GalleryWithStats,
+  fetchAdminGalleries,
+  fetchAdminUsers,
+  fetchAdminDeletedGalleries,
+  fetchAdminSession,
+  fetchAllAdminGalleries,
+  requestAdminSignIn,
+  deleteAdminGallery,
+  restoreAdminGallery,
+} from '@/helpers/api/adminClient';
 import Loading from '@/components/Loading';
 import CreateGalleryModal from './CreateGalleryModal';
 import CreateAdminModal from './CreateAdminModal';
@@ -14,17 +24,6 @@ import { formatLocaleDateString } from '@/helpers/dates';
 import Toast from './Toast';
 import ConfirmDelete from '@/components/ConfirmDelete';
 import { faTrash, faUndo } from '@fortawesome/free-solid-svg-icons';
-
-interface GalleryWithStats {
-  id: string;
-  name: string;
-  path: string;
-  password: string;
-  created: string;
-  weddingDate?: string;
-  contributorsCount: number;
-  photosCount: number;
-}
 
 interface UserWithAccess {
   id: string;
@@ -36,7 +35,13 @@ interface UserWithAccess {
 }
 
 export default function AdminDashboard() {
+  const [session, setSession] = useState<AdminSession>();
+  const [sessionResolved, setSessionResolved] = useState(false);
   const [galleries, setGalleries] = useState<GalleryWithStats[]>([]);
+  const [allGalleries, setAllGalleries] = useState<GalleryWithStats[]>([]);
+  const [allGalleriesTotal, setAllGalleriesTotal] = useState(0);
+  const [allGalleriesPage, setAllGalleriesPage] = useState(1);
+  const [allGallerySearch, setAllGallerySearch] = useState('');
   const [adminUsers, setAdminUsers] = useState<UserWithAccess[]>([]);
   const [loading, setLoading] = useState(true);
   const [gallerySearch, setGallerySearch] = useState('');
@@ -51,8 +56,26 @@ export default function AdminDashboard() {
   const [deletedGalleries, setDeletedGalleries] = useState<GalleryWithStats[]>([]);
   const [showConfirmDelete, setShowConfirmDelete] = useState(false);
   const [galleryToDelete, setGalleryToDelete] = useState<GalleryWithStats | null>(null);
+  const [signInEmail, setSignInEmail] = useState('');
+  const [signInMessage, setSignInMessage] = useState('');
+  const [signInError, setSignInError] = useState('');
+  const [signInLoading, setSignInLoading] = useState(false);
 
   useEffect(() => {
+    const loadSession = async () => {
+      try {
+        setSession(await fetchAdminSession());
+      } catch (error) {
+        console.error('Failed to check admin session:', error);
+      } finally {
+        setSessionResolved(true);
+      }
+    };
+    loadSession();
+  }, []);
+
+  useEffect(() => {
+    if (!session) return;
     const loadData = async () => {
       try {
         setLoading(true);
@@ -61,8 +84,6 @@ export default function AdminDashboard() {
           fetchAdminUsers(1),
           fetchAdminDeletedGalleries(1, gallerySearch)
         ]);
-        console.log('Galleries data:', galleriesData);
-        console.log('Admin users data:', usersData);
         setGalleries(galleriesData.galleries);
         setAdminUsers(usersData.users);
         setDeletedGalleries(deletedData.galleries);
@@ -74,7 +95,24 @@ export default function AdminDashboard() {
     };
 
     loadData();
-  }, [gallerySearch]);
+  }, [gallerySearch, session]);
+
+  useEffect(() => {
+    if (!session?.isSuperAdmin) return;
+    const loadAllGalleries = async () => {
+      try {
+        const data = await fetchAllAdminGalleries(allGalleriesPage, allGallerySearch);
+        setAllGalleries(data.galleries);
+        setAllGalleriesTotal(data.total);
+      } catch (error) {
+        console.error('Failed to load the super-admin gallery overview:', error);
+        showToast('Failed to load all galleries', 'error');
+      }
+    };
+    loadAllGalleries();
+    // showToast is stable for the lifetime of this client page.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [allGalleriesPage, allGallerySearch, session]);
 
   const handleGalleryCreated = () => {
     // Reload galleries after creating a new one
@@ -122,6 +160,7 @@ export default function AdminDashboard() {
   };
 
   const handleCopyLink = async (gallery: GalleryWithStats) => {
+    if (!gallery.password) return;
     const url = `${window.location.origin}/${gallery.path}?password=${gallery.password}`;
     try {
       await navigator.clipboard.writeText(url);
@@ -136,6 +175,7 @@ export default function AdminDashboard() {
   };
 
   const handleViewGallery = (gallery: GalleryWithStats) => {
+    if (!gallery.password) return;
     window.open(`/${gallery.path}?password=${gallery.password}`, '_blank');
   };
 
@@ -172,8 +212,54 @@ export default function AdminDashboard() {
     }
   };
 
-  if (loading) {
+  const handleSignIn = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setSignInLoading(true);
+    setSignInError('');
+    setSignInMessage('');
+    try {
+      const result = await requestAdminSignIn(signInEmail);
+      setSignInMessage(result.message);
+    } catch (error) {
+      setSignInError(error instanceof Error ? error.message : 'Failed to send a sign-in link');
+    } finally {
+      setSignInLoading(false);
+    }
+  };
+
+  if (!sessionResolved || (session && loading)) {
     return <Loading />;
+  }
+
+  if (!session) {
+    return (
+      <Column as="main" className={styles.signInPage}>
+        <Column className={styles.signInCard}>
+          <Text size={1} className={styles.eyebrow}>Our Wedding Recap</Text>
+          <Text size={2.3} weight={600}>Admin sign in</Text>
+          <Text size={1.05} className={styles.subtitle}>
+            Enter your admin email and we’ll send you a secure sign-in link.
+          </Text>
+          <form className={styles.signInForm} onSubmit={handleSignIn}>
+            <label htmlFor="admin-email">Email address</label>
+            <input
+              id="admin-email"
+              className={styles.searchInput}
+              type="email"
+              autoComplete="email"
+              value={signInEmail}
+              onChange={(event) => setSignInEmail(event.target.value)}
+              required
+            />
+            <Button type="submit" disabled={signInLoading}>
+              <Text>{signInLoading ? 'Sending…' : 'Email me a sign-in link'}</Text>
+            </Button>
+          </form>
+          {signInMessage && <Text className={styles.signInSuccess}>{signInMessage}</Text>}
+          {signInError && <Text className={styles.signInError}>{signInError}</Text>}
+        </Column>
+      </Column>
+    );
   }
 
   return (
@@ -181,22 +267,118 @@ export default function AdminDashboard() {
       <Container className={styles.header}>
         <Row className={styles.titleRow}>
           <Column className={styles.title}>
-            <Text size={2.5} weight={600}>Admin Dashboard</Text>
+            <Row className={styles.headingWithBadge}>
+              <Text size={2.5} weight={600}>Admin Dashboard</Text>
+              {session.isSuperAdmin && <span className={styles.superAdminBadge}>Super Admin</span>}
+            </Row>
             <Text size={1.1} className={styles.subtitle}>
-              Manage galleries and administrators
+              {session.isSuperAdmin
+                ? 'Platform overview and gallery administration'
+                : 'Manage galleries and administrators'}
             </Text>
           </Column>
         </Row>
       </Container>
 
       <Column className={styles.content}>
+        {session.isSuperAdmin && (
+          <Column className={styles.section}>
+            <Row className={styles.sectionHeader}>
+              <Column>
+                <Text size={1.8} weight={600}>All Galleries</Text>
+                <Text size={1} className={styles.sectionSubtitle}>
+                  Read-only platform overview. Gallery passwords and access actions are not exposed here.
+                </Text>
+              </Column>
+            </Row>
+
+            <Container className={styles.searchContainer}>
+              <Container className={styles.searchWrapper}>
+                <FontAwesomeIcon icon={faSearch} className={styles.searchIcon} />
+                <input
+                  className={styles.searchInput}
+                  placeholder="Search all galleries..."
+                  value={allGallerySearch}
+                  onChange={(event) => {
+                    setAllGallerySearch(event.target.value);
+                    setAllGalleriesPage(1);
+                  }}
+                  type="search"
+                />
+              </Container>
+            </Container>
+
+            <Container className={styles.tableContainer}>
+              <table className={`${styles.table} ${styles.overviewTable}`}>
+                <thead>
+                  <tr>
+                    <th>Gallery</th>
+                    <th>Owner</th>
+                    <th>Wedding Date</th>
+                    <th>Albums</th>
+                    <th>Images</th>
+                    <th>Users</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {allGalleries.length === 0 ? (
+                    <tr>
+                      <td colSpan={6} className={styles.emptyCell}>No galleries found</td>
+                    </tr>
+                  ) : allGalleries.map((gallery) => (
+                    <tr key={gallery.id}>
+                      <td data-label="Gallery">
+                        <div>{gallery.name}</div>
+                        <div className={styles.galleryPath}>/{gallery.path}</div>
+                      </td>
+                      <td data-label="Owner">
+                        <div>{gallery.ownerName || 'Unknown owner'}</div>
+                        {gallery.ownerEmail && <div className={styles.galleryPath}>{gallery.ownerEmail}</div>}
+                      </td>
+                      <td data-label="Wedding Date">
+                        {gallery.weddingDate ? formatLocaleDateString(gallery.weddingDate) : 'Not set'}
+                      </td>
+                      <td data-label="Albums">{gallery.albumsCount}</td>
+                      <td data-label="Images">{gallery.photosCount}</td>
+                      <td data-label="Users">{gallery.contributorsCount}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </Container>
+
+            <Row className={styles.pagination}>
+              <Text size={0.9} className={styles.totalCount}>
+                {allGalleriesTotal} {allGalleriesTotal === 1 ? 'gallery' : 'galleries'}
+              </Text>
+              <Row className={styles.paginationButtons}>
+                <button
+                  className={styles.pageButton}
+                  disabled={allGalleriesPage === 1}
+                  onClick={() => setAllGalleriesPage((page) => Math.max(1, page - 1))}
+                >
+                  Previous
+                </button>
+                <Text size={0.9}>Page {allGalleriesPage} of {Math.max(1, Math.ceil(allGalleriesTotal / 20))}</Text>
+                <button
+                  className={styles.pageButton}
+                  disabled={allGalleriesPage >= Math.ceil(allGalleriesTotal / 20)}
+                  onClick={() => setAllGalleriesPage((page) => page + 1)}
+                >
+                  Next
+                </button>
+              </Row>
+            </Row>
+          </Column>
+        )}
+
         {/* Galleries Section */}
         <Column className={styles.section}>
           <Row className={styles.sectionHeader}>
             <Column>
-              <Text size={1.8} weight={600}>Galleries</Text>
+              <Text size={1.8} weight={600}>Your Galleries</Text>
               <Text size={1} className={styles.sectionSubtitle}>
-                Manage wedding galleries and their settings
+                Manage galleries created through your admin account
               </Text>
             </Column>
           </Row>
@@ -222,12 +404,13 @@ export default function AdminDashboard() {
           </Container>
 
           <Container className={styles.tableContainer}>
-            <table className={`${styles.table} ${styles.galleryTable}`}>
+            <table className={`${styles.table} ${styles.ownedGalleryTable}`}>
               <thead>
                 <tr>
                   <th>Gallery</th>
                   <th>Wedding Date</th>
                   <th>Contributors</th>
+                  <th>Albums</th>
                   <th>Photos</th>
                   <th>Status</th>
                   <th>Actions</th>
@@ -236,7 +419,7 @@ export default function AdminDashboard() {
               <tbody>
                 {galleries.length === 0 ? (
                   <tr>
-                    <td colSpan={6} style={{ textAlign: 'center', padding: '2rem' }}>
+                    <td colSpan={7} style={{ textAlign: 'center', padding: '2rem' }}>
                       No galleries found
                     </td>
                   </tr>
@@ -253,6 +436,7 @@ export default function AdminDashboard() {
                         </td>
                         <td data-label="Wedding Date">{gallery.weddingDate ? formatLocaleDateString(gallery.weddingDate) : new Date(gallery.created).toLocaleDateString()}</td>
                         <td data-label="Contributors">{gallery.contributorsCount}</td>
+                        <td data-label="Albums">{gallery.albumsCount}</td>
                         <td data-label="Photos">{gallery.photosCount}</td>
                         <td data-label="Status">
                           <span className={`${styles.status} ${styles[status]}`}>

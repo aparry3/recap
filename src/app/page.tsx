@@ -5,8 +5,8 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { circleVideoIcon, downloadIcon, photoFilmIcon, shareNodesIcon, zipIcon } from '@/lib/icons';
-import { cookies } from 'next/headers';
 import { selectPersonWithGalleryStatus } from '@/lib/db/personService';
+import { getAuthenticatedPersonId } from '@/lib/auth/session';
 import Footer from './components/Footer';
 import MobileHeader from './components/MobileHeader';
 
@@ -16,8 +16,7 @@ const Header: FC = async () => {
     let hasGalleries = false;
     let isAdmin = false;
 
-    const cookieStore = await cookies();
-    const personId = cookieStore.get('personId')?.value;
+    const personId = await getAuthenticatedPersonId();
     if (personId) {
         try {
             const personWithStatus = await selectPersonWithGalleryStatus(personId);

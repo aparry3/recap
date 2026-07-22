@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { requireAdmin } from '@/lib/admin/middleware';
+import { adminErrorResponse, logUnexpectedAdminError, requireAdmin } from '@/lib/admin/middleware';
 import { updatePerson } from '@/lib/db/personService';
 
 export async function DELETE(
@@ -22,10 +22,7 @@ export async function DELETE(
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error('Remove admin error:', error);
-    return NextResponse.json(
-      { error: 'Failed to remove admin' },
-      { status: 500 }
-    );
+    logUnexpectedAdminError('Remove admin error:', error);
+    return adminErrorResponse(error, 'Failed to remove admin');
   }
 }

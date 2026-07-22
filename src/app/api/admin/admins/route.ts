@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { requireAdmin } from '@/lib/admin/middleware';
+import { adminErrorResponse, logUnexpectedAdminError, requireAdmin } from '@/lib/admin/middleware';
 import { db } from '@/lib/db';
 import { updatePerson, insertPerson, selectPersonByEmail, insertVerification } from '@/lib/db/personService';
 import { emailClient } from '@/lib/email';
@@ -17,11 +17,8 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(admins);
   } catch (error) {
-    console.error('Admin list error:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch admin list' },
-      { status: 500 }
-    );
+    logUnexpectedAdminError('Admin list error:', error);
+    return adminErrorResponse(error, 'Failed to fetch admin list');
   }
 }
 
@@ -124,10 +121,7 @@ export async function POST(request: NextRequest) {
       emailSent
     }, { status: isNewUser ? 201 : 200 });
   } catch (error) {
-    console.error('Create admin error:', error);
-    return NextResponse.json(
-      { error: 'Failed to create admin' },
-      { status: 500 }
-    );
+    logUnexpectedAdminError('Create admin error:', error);
+    return adminErrorResponse(error, 'Failed to create admin');
   }
 }

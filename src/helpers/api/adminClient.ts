@@ -5,11 +5,21 @@ export interface GalleryWithStats {
   id: string;
   name: string;
   path: string;
-  password: string;
+  password?: string;
   created: string;
   weddingDate?: string;
   contributorsCount: number;
   photosCount: number;
+  albumsCount: number;
+  ownerName?: string;
+  ownerEmail?: string;
+  canManage: boolean;
+}
+
+export interface AdminSession {
+  isAdmin: true;
+  isSuperAdmin: boolean;
+  person: {id: string; name: string; email?: string};
 }
 
 export interface UserWithAccess {
@@ -52,6 +62,41 @@ export const fetchAdminDeletedGalleries = async (
     throw new Error('Failed to fetch deleted galleries');
   }
   return response.json();
+};
+
+export const fetchAllAdminGalleries = async (
+  page: number = 1,
+  search?: string
+): Promise<{ galleries: GalleryWithStats[]; page: number; limit: number; total: number }> => {
+  const params = new URLSearchParams({
+    page: page.toString(),
+    ...(search && {search}),
+    status: 'active',
+    scope: 'all',
+  });
+  const response = await fetch(`/api/admin/galleries?${params}`);
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.error || 'Failed to fetch all galleries');
+  return data;
+};
+
+export const fetchAdminSession = async (): Promise<AdminSession | undefined> => {
+  const response = await fetch('/api/admin/session');
+  if (response.status === 401 || response.status === 403) return undefined;
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.error || 'Failed to check admin session');
+  return data;
+};
+
+export const requestAdminSignIn = async (email: string): Promise<{message: string}> => {
+  const response = await fetch('/api/admin/sign-in', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({email}),
+  });
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.error || 'Failed to send a sign-in link');
+  return data;
 };
 
 export const fetchAdminUsers = async (

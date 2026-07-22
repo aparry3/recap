@@ -56,6 +56,16 @@ export const fetchPerson = async (personId: string): Promise<Person> => {
     }
 }
 
+export const fetchAuthenticatedPerson = async (): Promise<Person | undefined> => {
+    const response = await fetch('/api/auth/session')
+    if (response.status === 401) return undefined
+    const data = await response.json()
+    if (!response.ok || !data.person) {
+        throw new Error(data.error || 'We could not check your session')
+    }
+    return data.person
+}
+
 export const fetchGalleryPeople = async (galleryId: string): Promise<GalleryPersonData[]> => {
     const data = await fetch(`/api/galleries/${galleryId}/people`).then(res => res.json())
     return data.people
@@ -80,10 +90,10 @@ export const fetchVerification = async (verificationId: string): Promise<Verific
     }
 }
 
-export const createVerification = async (personId: string, galleryName: string, email: string, name: string): Promise<Verification> => {
+export const createVerification = async (personId: string, galleryName: string, email: string, name: string, theKnot?: string, zola?: string): Promise<Verification> => {
     const res = await fetch(`/api/verifications`, {
         method: 'POST',
-        body: JSON.stringify({personId, galleryName, email, name})
+        body: JSON.stringify({personId, galleryName, email, name, theKnot, zola})
     })
     const data = await res.json()
     if (!res.ok || !data.verification) {

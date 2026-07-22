@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { consumeVerification, selectVerification, selectPerson } from '@/lib/db/personService';
 import { setAuthSessionCookie } from '@/lib/auth/session';
 
-export async function GET(
+export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ verificationId: string }> }
 ) {
@@ -43,17 +43,10 @@ export async function GET(
       );
     }
     
-    // Mark verification as used
+    // Consume only after confirming this link belongs to an admin.
     await consumeVerification(verificationId);
     await setAuthSessionCookie(person.id);
-    
-    // Return success with personId for frontend to set cookie
-    return NextResponse.json({
-      success: true,
-      personId: person.id,
-      name: person.name,
-      email: person.email
-    });
+    return NextResponse.redirect(new URL('/admin', request.url), 303);
     
   } catch (error) {
     console.error('Admin verification error:', error);
