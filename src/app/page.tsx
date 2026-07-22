@@ -48,7 +48,7 @@ const Header: FC = async () => {
         <Container as='header' className={styles.header} justify='space-between'>
             <Container className={styles.wordmarkContainer} padding={0.5}>
                 <Link href="/">
-                    <Image src='/branding/wordmark.png' alt='wordmark' height={50} width={150} style={{objectFit: 'contain'}}/>
+                    <Image src='/branding/wordmark.png' alt='wordmark' height={86} width={256} style={{width: '150px', height: 'auto', objectFit: 'contain'}}/>
                 </Link>
             </Container>
             <Container className={styles.action} padding={0.5}>
@@ -93,7 +93,7 @@ const Hero = () => {
                 </Container>
             </Column>
             <Container id="product" style={{ width: '100%'}} padding={1}>
-                <Image src='/product/screenshots.png' alt='Recap wedding photo gallery app screenshots' height={718} width={1369} style={{width: '100%', height: 'auto'}}/>
+                <Image src='/product/screenshots.png' alt='Recap wedding photo gallery app screenshots' height={737} width={1519} style={{width: '100%', height: 'auto'}}/>
             </Container>
         </Column>
     )
@@ -207,14 +207,14 @@ const Examples = () => {
                             </Container>  
                         </Column>
                         <Container className={styles.exampleMedia} padding>
-                            <Image className={styles.exampleImage} src='/product/SaveTheDates.png' alt='QR code on wedding save the dates' height={200} width={200}/>
+                            <Image className={styles.exampleImage} src='/product/SaveTheDates.png' alt='QR code on wedding save the dates' height={789} width={883}/>
                         </Container>          
                     </Container>
                 </Container>
                 <Container className={styles.exampleContainer}>
                     <Container className={`${styles.example} ${styles.reverse}`} padding={2}>
                         <Container className={styles.exampleMedia} padding>
-                        <Image className={styles.exampleImage} src='/product/Placecards.png' alt='QR code on wedding placecards' height={200} width={200}/>
+                        <Image className={styles.exampleImage} src='/product/Placecards.png' alt='QR code on wedding placecards' height={742} width={837}/>
                         </Container>          
                         <Column className={styles.exampleDetails}>
                             <Container className={styles.exampleTitle} padding>
@@ -245,7 +245,7 @@ const Examples = () => {
                             </Container>  
                         </Column>
                         <Container className={styles.exampleMedia} padding>
-                        <Image className={styles.exampleImage} src='/product/ThankYous.png' alt='QR code on wedding thank you cards' height={200} width={200}/>
+                        <Image className={styles.exampleImage} src='/product/ThankYous.png' alt='QR code on wedding thank you cards' height={640} width={673}/>
                         </Container>          
                     </Container>
                 </Container>
@@ -509,14 +509,14 @@ const Website = () => {
                 <Container className={styles.weddingWebsiteImageContainer} padding={1}>
                     <Link href="/create" className={styles.weddingWebsiteLink}>
                         <Container id="product" className={styles.weddingWebsiteImage} padding={1}>
-                            <Image src='/branding/TheKnot.png' alt='Recap integrates with The Knot wedding websites' className={styles.image} height={572} width={940}/>
+                            <Image src='/branding/TheKnot.png' alt='Recap integrates with The Knot wedding websites' className={styles.weddingWebsiteLogo} height={200} width={906}/>
                         </Container>
                     </Link>
                 </Container>
                 <Container className={styles.weddingWebsiteImageContainer} padding={1}>
                     <Link href="/create" className={styles.weddingWebsiteLink}>
                         <Container className={styles.weddingWebsiteImage} padding={1}>
-                            <Image src='/branding/Zola.png' alt='Recap integrates with Zola wedding websites' className={styles.image} height={572} width={940}/>
+                            <Image src='/branding/Zola.png' alt='Recap integrates with Zola wedding websites' className={styles.weddingWebsiteLogo} height={200} width={1304}/>
                         </Container>
                     </Link>
                 </Container>
@@ -534,7 +534,7 @@ const Notifications = () => {
                 <Text className={styles.subheadingText} as='h2'>Opt-in notifications keep everyone engaged and excited when new photos are shared. Send gentle reminders to encourage sharing before, during, and after your special day.</Text>
             </Container>
             <Container className={styles.notificationMedia} padding>
-                <Image className={styles.notificationImage} src='/product/NotiGroup.png' alt='Recap wedding photo notification system on mobile devices' height={200} width={200}/>
+                <Image className={styles.notificationImage} src='/product/NotiGroup.png' alt='Recap wedding photo notification system on mobile devices' height={376} width={679}/>
             </Container>          
         </Column>
     )
