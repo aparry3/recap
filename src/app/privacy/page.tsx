@@ -73,7 +73,7 @@ const PrivacyPage = () => {
                         Email and text wedding updates are optional. If you opt in to SMS, Our Wedding Recap may send no more than 10 business-initiated automated wedding update texts per gallery, including the enrollment confirmation. Message frequency varies. If you message Our Wedding Recap, we may send additional service responses to your request. Message and data rates may apply. You can change gallery email or text preferences at any time, unsubscribe from email, or reply STOP to stop text messages. Reply HELP for text-message assistance.
                     </Text>
                     <Text as="p">
-                        We do not sell mobile information. We do not share mobile information, including SMS opt-in data or consent, with third parties or affiliates for their marketing or promotional purposes. We may provide contact, consent, and delivery information to service providers such as Twilio and SendGrid only as necessary to deliver and support the messaging service, comply with law, prevent abuse, and honor delivery or opt-out requests.
+                        We do not sell mobile information. We do not share mobile information, including SMS opt-in data or consent, with third parties or affiliates for their marketing or promotional purposes. We may provide contact, consent, and delivery information to service providers such as Twilio and Resend only as necessary to deliver and support the messaging service, comply with law, prevent abuse, and honor delivery or opt-out requests.
                     </Text>
                 </Column>
 

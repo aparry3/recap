@@ -93,25 +93,29 @@ requireValue('TWILIO_MESSAGING_SERVICE_SID', { pattern: /^MG[0-9a-f]{32}$/i, pat
 requireValue('TWILIO_API_KEY', { pattern: /^SK[0-9a-f]{32}$/i, patternMessage: 'must be an SK-prefixed Twilio API Key SID' })
 requireValue('TWILIO_API_SECRET', { minLength: 20 })
 
-requireValue('SENDGRID_API_KEY', { pattern: /^SG\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+$/, patternMessage: 'must look like a SendGrid API key' })
-const sendgridEmail = requireEmail('SENDGRID_EMAIL')
-const sendgridFromName = requireValue('SENDGRID_FROM_NAME')
-requireEmail('SENDGRID_REPLY_TO_EMAIL')
-const inboundEmail = requireEmail('SENDGRID_INBOUND_EMAIL')
+requireValue('RESEND_API_KEY', { pattern: /^re_[A-Za-z0-9_]+$/, patternMessage: 'must look like a Resend API key (re_…)' })
+const fromEmail = requireEmail('EMAIL_FROM_ADDRESS')
+const fromName = requireValue('EMAIL_FROM_NAME')
+requireEmail('EMAIL_REPLY_TO')
+const inboundEmail = requireEmail('EMAIL_INBOUND_ADDRESS')
 requireEmail('ORDER_NOTIFICATION_EMAIL')
-requireValue('SENDGRID_REMINDER_UNSUBSCRIBE_GROUP_ID', { pattern: /^[1-9]\d*$/, patternMessage: 'must be a positive integer' })
-requireValue('SENDGRID_EVENT_WEBHOOK_VERIFICATION_KEY', { minLength: 64 })
-requireValue('SENDGRID_INBOUND_PARSE_VERIFICATION_KEY', { minLength: 64 })
+const eventWebhookSecret = requireValue('RESEND_EVENT_WEBHOOK_SECRET', { pattern: /^whsec_.+/, patternMessage: 'must be a whsec_-prefixed webhook signing secret', minLength: 20 })
+const inboundWebhookSecret = requireValue('RESEND_INBOUND_WEBHOOK_SECRET', { pattern: /^whsec_.+/, patternMessage: 'must be a whsec_-prefixed webhook signing secret', minLength: 20 })
 
-if (sendgridFromName && sendgridFromName !== 'Our Wedding Recap') {
-  fail('SENDGRID_FROM_NAME identity', 'must exactly match Our Wedding Recap')
-} else if (sendgridFromName) {
-  pass('SENDGRID_FROM_NAME identity', 'matches the campaign sender identity')
+if (fromName && fromName !== 'Our Wedding Recap') {
+  fail('EMAIL_FROM_NAME identity', 'must exactly match Our Wedding Recap')
+} else if (fromName) {
+  pass('EMAIL_FROM_NAME identity', 'matches the campaign sender identity')
 }
-if (sendgridEmail && inboundEmail && sendgridEmail.toLowerCase() === inboundEmail.toLowerCase()) {
-  fail('SendGrid address separation', 'SENDGRID_EMAIL and SENDGRID_INBOUND_EMAIL must be different')
-} else if (sendgridEmail && inboundEmail) {
-  pass('SendGrid address separation', 'outbound and Inbound Parse addresses are distinct')
+if (fromEmail && inboundEmail && fromEmail.toLowerCase() === inboundEmail.toLowerCase()) {
+  fail('Email address separation', 'EMAIL_FROM_ADDRESS and EMAIL_INBOUND_ADDRESS must be different')
+} else if (fromEmail && inboundEmail) {
+  pass('Email address separation', 'outbound and inbound receiving addresses are distinct')
+}
+if (eventWebhookSecret && inboundWebhookSecret && eventWebhookSecret === inboundWebhookSecret) {
+  fail('Webhook secret separation', 'the event and inbound webhook endpoints must use their own signing secrets')
+} else if (eventWebhookSecret && inboundWebhookSecret) {
+  pass('Webhook secret separation', 'event and inbound webhook secrets are distinct')
 }
 
 const signingSecrets = ['AUTH_SESSION_SECRET', 'PREFERENCE_TOKEN_SECRET', 'CRON_SECRET']
@@ -185,25 +189,33 @@ async function checkPublicPage(pathname, marker) {
   }
 }
 
+// Fill from the MX record Resend's dashboard specifies when enabling receiving
+// on the inbound subdomain (Settings > Domains). Leave empty until then.
+const RESEND_INBOUND_MX_EXCHANGE = ''
+
 async function checkDns() {
   const rootDomain = 'ourweddingrecap.com'
   try {
     const records = await resolveMx(rootDomain)
-    records.length ? pass('Root-domain MX', 'published; do not replace it with SendGrid Inbound Parse') : fail('Root-domain MX', 'no records found')
+    records.length ? pass('Root-domain MX', 'published; keep Google Workspace here — do not replace it with Resend receiving') : fail('Root-domain MX', 'no records found')
   } catch {
     fail('Root-domain MX', 'DNS lookup failed')
   }
 
   const inboundHost = inboundEmail?.split('@')[1]
   if (inboundHost) {
-    try {
-      const records = await resolveMx(inboundHost)
-      const hasSendGrid = records.some((record) => record.exchange.replace(/\.$/, '').toLowerCase() === 'mx.sendgrid.net')
-      hasSendGrid
-        ? pass('Inbound Parse MX', `${inboundHost} routes to mx.sendgrid.net`)
-        : fail('Inbound Parse MX', `${inboundHost} does not route to mx.sendgrid.net`)
-    } catch {
-      fail('Inbound Parse MX', `DNS lookup failed for ${inboundHost}`)
+    if (!RESEND_INBOUND_MX_EXCHANGE) {
+      warn('Inbound receiving MX', `set RESEND_INBOUND_MX_EXCHANGE in this script from the Resend dashboard to verify ${inboundHost}`)
+    } else {
+      try {
+        const records = await resolveMx(inboundHost)
+        const hasResend = records.some((record) => record.exchange.replace(/\.$/, '').toLowerCase() === RESEND_INBOUND_MX_EXCHANGE.toLowerCase())
+        hasResend
+          ? pass('Inbound receiving MX', `${inboundHost} routes to ${RESEND_INBOUND_MX_EXCHANGE}`)
+          : fail('Inbound receiving MX', `${inboundHost} does not route to ${RESEND_INBOUND_MX_EXCHANGE}`)
+      } catch {
+        fail('Inbound receiving MX', `DNS lookup failed for ${inboundHost}`)
+      }
     }
   }
 

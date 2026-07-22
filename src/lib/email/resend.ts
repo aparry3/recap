@@ -3,7 +3,7 @@ import type { WebhookEventPayload } from 'resend'
 import { DeliveryStatus } from '@/lib/types/Reminder'
 
 // Delivery-status events that indicate the destination should stop receiving
-// email everywhere, mirroring SendGrid's bounce/spamreport handling.
+// email everywhere.
 export const SUPPRESSING_EVENT_TYPES = new Set(['email.bounced', 'email.complained'])
 
 export function mapResendEventToDeliveryStatus(type: string): DeliveryStatus | null {
@@ -13,8 +13,8 @@ export function mapResendEventToDeliveryStatus(type: string): DeliveryStatus | n
     'email.delivery_delayed': 'unknown',
     'email.bounced': 'failed',
     'email.complained': 'failed',
-    // Unlike SendGrid's `dropped`, `email.failed` covers transient send-side
-    // errors rather than a suppression verdict, so it never opts anyone out.
+    // `email.failed` covers transient send-side errors rather than a
+    // suppression verdict, so it never opts anyone out.
     'email.failed': 'failed',
     'email.suppressed': 'suppressed',
   }

@@ -116,7 +116,7 @@ recap/
 │       │   └── Gallery.ts, Person.ts, Media.ts, Album.ts, Like.ts, Tag.ts, WeddingEvent.ts
 │       ├── admin/middleware.ts       # Admin auth middleware
 │       ├── aws/s3.ts                 # S3 client + presigned URLs + multipart upload
-│       ├── email.ts                  # SendGrid client + email templates
+│       ├── email.ts                  # Resend email client + templates
 │       ├── email/templates/          # HTML email templates
 │       ├── web.ts                    # Wedding website scraping (Cheerio)
 │       └── icons/                    # SVG icon components
