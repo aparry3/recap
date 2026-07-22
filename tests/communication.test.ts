@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { CONSENT_DISCLOSURE_VERSION, normalizeEmail, normalizeUsPhone, smsReservationExceedsLimit } from '@/lib/db/communicationService'
-import { createPreferenceToken, verifyPreferenceToken } from '@/lib/preferences'
+import { createPreferenceToken, oneClickUnsubscribeUrl, preferenceUrl, verifyPreferenceToken } from '@/lib/preferences'
 import { createAuthSessionToken, verifyAuthSessionToken } from '@/lib/auth/session'
 import { newGuestPersonSchema, personContactUpdateSchema } from '@/lib/validation/person'
 
@@ -31,6 +31,21 @@ describe('signed tokens', () => {
     const token = createPreferenceToken('gallery-1', 'person-1')
     expect(verifyPreferenceToken(token)).toMatchObject({ galleryId: 'gallery-1', personId: 'person-1' })
     expect(verifyPreferenceToken(`${token}tampered`)).toBeNull()
+  })
+
+  it('derives the one-click unsubscribe endpoint from the preference URL', () => {
+    // Vitest inherits Vite's built-in BASE_URL ('/'), so pin a real origin.
+    const originalBaseUrl = process.env.BASE_URL
+    process.env.BASE_URL = 'https://www.ourweddingrecap.com'
+    try {
+      const pageUrl = preferenceUrl('gallery-1', 'person-1')
+      const unsubscribeUrl = oneClickUnsubscribeUrl(pageUrl)
+      const token = pageUrl.split('/').pop() as string
+      expect(unsubscribeUrl).toBe(`https://www.ourweddingrecap.com/api/preferences/${token}/unsubscribe`)
+      expect(verifyPreferenceToken(token)).toMatchObject({ galleryId: 'gallery-1', personId: 'person-1' })
+    } finally {
+      process.env.BASE_URL = originalBaseUrl
+    }
   })
 
   it('round trips auth sessions and rejects tampering', () => {

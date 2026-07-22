@@ -41,7 +41,7 @@ export function getReminderEmailTemplate(input: {
           </td></tr>
           <tr><td style="padding:22px 36px 30px;background:#faf8f4;text-align:center;color:#746d64;font-family:Arial,sans-serif;font-size:12px;line-height:1.5;">
             <p style="margin:0 0 8px;">You received this because you opted in to email updates for this gallery.</p>
-            <p style="margin:0 0 8px;"><a href="${escapeHtml(input.preferenceUrl)}" style="color:#5f6650;">Manage communication preferences</a> · <a href="<%asm_group_unsubscribe_raw_url%>" style="color:#5f6650;">Unsubscribe from Our Wedding Recap reminder emails</a></p>
+            <p style="margin:0 0 8px;"><a href="${escapeHtml(input.preferenceUrl)}" style="color:#5f6650;">Manage preferences or unsubscribe</a></p>
             <p style="margin:0;">${postalAddress}</p>
           </td></tr>
         </table>

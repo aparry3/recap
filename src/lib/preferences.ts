@@ -46,3 +46,10 @@ export function preferenceUrl(galleryId: string, personId: string): string {
   const baseUrl = process.env.BASE_URL || process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'
   return `${baseUrl}/preferences/${createPreferenceToken(galleryId, personId)}`
 }
+
+export function oneClickUnsubscribeUrl(preferencePageUrl: string): string {
+  const url = new URL(preferencePageUrl)
+  const token = url.pathname.split('/').filter(Boolean).pop()
+  if (!token) throw new Error('Preference URL does not contain a token')
+  return new URL(`/api/preferences/${token}/unsubscribe`, url.origin).toString()
+}
