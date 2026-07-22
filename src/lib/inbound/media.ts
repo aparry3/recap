@@ -5,6 +5,7 @@ import { completeInboundMedia, insertInboundMedia } from '@/lib/db/mediaService'
 import { Media } from '@/lib/types/Media'
 
 export const MAX_INBOUND_MEDIA_BYTES = 30 * 1024 * 1024
+export const MAX_INBOUND_EMAIL_MEDIA_BYTES = 2 * 1024 * 1024
 
 const IMAGE_TYPES = new Set([
   'image/jpeg',
@@ -65,6 +66,14 @@ export function normalizeInboundContentType(contentType?: string | null): string
 export function isSupportedInboundContentType(contentType?: string | null): boolean {
   const normalized = normalizeInboundContentType(contentType)
   return IMAGE_TYPES.has(normalized) || VIDEO_TYPES.has(normalized)
+}
+
+export function isSupportedInboundEmailContentType(contentType?: string | null): boolean {
+  return IMAGE_TYPES.has(normalizeInboundContentType(contentType))
+}
+
+export function isWithinInboundEmailMediaLimit(byteLength: number): boolean {
+  return Number.isFinite(byteLength) && byteLength > 0 && byteLength <= MAX_INBOUND_EMAIL_MEDIA_BYTES
 }
 
 export function inboundFileExtension(contentType: string): string {

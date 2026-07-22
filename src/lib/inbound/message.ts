@@ -1,4 +1,34 @@
+import { brandCommunication } from '@/lib/brand'
 import type { InboundGalleryDestination } from '@/lib/db/personService'
+
+export type TwilioKeyword = 'stop' | 'start' | 'help'
+
+const TWILIO_STOP_KEYWORDS = new Set([
+  'STOP',
+  'STOPALL',
+  'UNSUBSCRIBE',
+  'CANCEL',
+  'END',
+  'QUIT',
+  'REVOKE',
+  'OPTOUT',
+])
+const TWILIO_START_KEYWORDS = new Set(['START', 'YES', 'UNSTOP'])
+const TWILIO_HELP_KEYWORDS = new Set(['HELP', 'INFO'])
+
+export function classifyTwilioKeyword(body?: string | null, optOutType?: string | null): TwilioKeyword | null {
+  const providerType = optOutType?.trim().toUpperCase()
+  if (providerType === 'STOP') return 'stop'
+  if (providerType === 'START') return 'start'
+  if (providerType === 'HELP') return 'help'
+
+  const command = body?.trim().toUpperCase()
+  if (!command) return null
+  if (TWILIO_STOP_KEYWORDS.has(command)) return 'stop'
+  if (TWILIO_START_KEYWORDS.has(command)) return 'start'
+  if (TWILIO_HELP_KEYWORDS.has(command)) return 'help'
+  return null
+}
 
 export function galleryUrl(destination: InboundGalleryDestination): string {
   const configuredBaseUrl = process.env.BASE_URL
@@ -9,23 +39,33 @@ export function galleryUrl(destination: InboundGalleryDestination): string {
 }
 
 export function buildInboundReply(input: {
+  provider: 'twilio' | 'sendgrid'
   destination: InboundGalleryDestination | null
   attachmentCount: number
   uploadedCount: number
 }): string {
   if (!input.destination) {
-    return 'We could not match this contact to a Recap gallery. Join the gallery with this phone number or email first, then send your photos or videos again.'
+    return brandCommunication('We could not match this contact to a Recap gallery. Join the gallery with this phone number or email first, then send your photos or videos again.')
   }
   const name = input.destination.gallery.name
   const url = galleryUrl(input.destination)
   if (input.uploadedCount > 0) {
     const noun = input.uploadedCount === 1 ? 'photo/video' : 'photos/videos'
-    return `Added ${input.uploadedCount} ${noun} to ${name}. Keep replying with more anytime. View the gallery: ${url}`
+    const nextUpload = input.provider === 'sendgrid'
+      ? 'Email one photo under 2 MB at a time, or use the gallery for videos, larger photos, or multiple files.'
+      : 'Keep replying with more anytime.'
+    return brandCommunication(`Added ${input.uploadedCount} ${noun} to ${name}. ${nextUpload} View the gallery: ${url}`)
   }
   if (input.attachmentCount > 0) {
-    return `We could not find a supported photo or video in that message. Please send an image or video attachment to add it to ${name}. View the gallery: ${url}`
+    const expectedMedia = input.provider === 'sendgrid'
+      ? 'Please email one supported photo under 2 MB, or use the gallery for videos, larger photos, or multiple files.'
+      : 'Please send an image or video attachment.'
+    return brandCommunication(`We could not find supported media in that message. ${expectedMedia} Add it to ${name}: ${url}`)
   }
-  return `Thanks for messaging Recap. Reply with photos or videos to add them to ${name}. View the gallery: ${url}`
+  const replyInstructions = input.provider === 'sendgrid'
+    ? 'Reply with one photo under 2 MB, or use the gallery for videos, larger photos, or multiple files.'
+    : 'Reply with photos or videos.'
+  return brandCommunication(`Thanks for messaging Recap. ${replyInstructions} Add them to ${name}: ${url}`)
 }
 
 export function extractEmailAddress(value?: string | null): string | null {

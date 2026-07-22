@@ -18,13 +18,13 @@ const PrivacyPage = () => {
                     Privacy Policy
                 </Text>
                 <Text as="p" className={styles.lastUpdated}>
-                    Last Updated: {new Date().toLocaleDateString()}
+                    Last Updated: July 21, 2026
                 </Text>
 
                 <Column className={styles.section}>
                     <Text as="h2" size={1.8} weight={600}>1. Introduction</Text>
                     <Text as="p">
-                        At Recap, we take your privacy seriously. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our wedding photo sharing platform.
+                        Parry Technology and Media, LLC, doing business as Our Wedding Recap (“Our Wedding Recap,” “Recap,” “we,” “us,” or “our”), is the company responsible for Recap. Our Wedding Recap is a brand of Parry Technology and Media, LLC, and Recap is an Our Wedding Recap service. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our wedding photo sharing platform.
                     </Text>
                 </Column>
 
@@ -70,10 +70,10 @@ const PrivacyPage = () => {
                 <Column className={styles.section}>
                     <Text as="h2" size={1.8} weight={600}>5. Email and Text Message Updates</Text>
                     <Text as="p">
-                        Email and text wedding updates are optional. We record your channel-specific consent and use your contact information to deliver gallery reminders, service confirmations, and preference links. You can change gallery email or text preferences at any time, unsubscribe from email, or reply STOP to a text message. Reply HELP for text-message assistance.
+                        Email and text wedding updates are optional. If you opt in to SMS, Recap may send no more than 10 business-initiated automated wedding update texts per gallery, including the enrollment confirmation. Message frequency varies. If you message Recap, we may send additional service responses to your request. Message and data rates may apply. You can change gallery email or text preferences at any time, unsubscribe from email, or reply STOP to stop text messages. Reply HELP for text-message assistance.
                     </Text>
                     <Text as="p">
-                        We do not sell mobile information or share it with third parties for their own marketing. We may provide contact and delivery information to communications vendors such as Twilio and SendGrid only as needed to operate the service, comply with law, prevent abuse, and honor delivery or opt-out requests.
+                        We do not sell mobile information. We do not share mobile information, including SMS opt-in data or consent, with third parties or affiliates for their marketing or promotional purposes. We may provide contact, consent, and delivery information to service providers such as Twilio and SendGrid only as necessary to deliver and support the messaging service, comply with law, prevent abuse, and honor delivery or opt-out requests.
                     </Text>
                 </Column>
 
@@ -115,7 +115,7 @@ const PrivacyPage = () => {
                 <Column className={styles.section}>
                     <Text as="h2" size={1.8} weight={600}>10. Contact Us</Text>
                     <Text as="p">
-                        If you have any questions about this Privacy Policy, please contact us at aaron@ourweddingrecap.com
+                        For questions about this Privacy Policy or our privacy practices, contact Parry Technology and Media, LLC d/b/a Our Wedding Recap at aaron@ourweddingrecap.com.
                     </Text>
                 </Column>
             </Column>

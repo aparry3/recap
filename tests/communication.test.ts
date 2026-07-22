@@ -1,10 +1,14 @@
 import { describe, expect, it } from 'vitest'
-import { normalizeEmail, normalizeUsPhone, smsReservationExceedsLimit } from '@/lib/db/communicationService'
+import { CONSENT_DISCLOSURE_VERSION, normalizeEmail, normalizeUsPhone, smsReservationExceedsLimit } from '@/lib/db/communicationService'
 import { createPreferenceToken, verifyPreferenceToken } from '@/lib/preferences'
 import { createAuthSessionToken, verifyAuthSessionToken } from '@/lib/auth/session'
 import { newGuestPersonSchema, personContactUpdateSchema } from '@/lib/validation/person'
 
 describe('communication normalization', () => {
+  it('records the current materially revised SMS disclosure version', () => {
+    expect(CONSENT_DISCLOSURE_VERSION).toBe('guest-reminders-us-v2')
+  })
+
   it('normalizes email addresses', () => {
     expect(normalizeEmail('  Guest@Example.COM ')).toBe('guest@example.com')
     expect(normalizeEmail('')).toBeNull()

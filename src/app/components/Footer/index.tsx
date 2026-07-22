@@ -28,7 +28,7 @@ const Footer: FC = () => {
                     <Text>The ultimate wedding photo sharing platform that collects every moment from every guest in one beautiful gallery. No app required, unlimited uploads, and easy organization of all your cherished memories.</Text>
                 </Row>    
                 <Row className={styles.brandingRow}>
-                    <Text style={{ opacity: 0.7 }}>Recap is a property of Parry Technology and Media LLC</Text>
+                    <Text style={{ opacity: 0.7 }}>Our Wedding Recap is a brand of Parry Technology and Media, LLC. Recap is an Our Wedding Recap service.</Text>
                 </Row>
                 <Row className={styles.brandingRow}>
                     <Link href="/terms" className={styles.link}>
@@ -37,6 +37,10 @@ const Footer: FC = () => {
                     <Text style={{ margin: '0 0.5rem' }}>|</Text>
                     <Link href="/privacy" className={styles.link}>
                         <Text>Privacy Policy</Text>
+                    </Link>
+                    <Text style={{ margin: '0 0.5rem' }}>|</Text>
+                    <Link href="/sms-consent" className={styles.link}>
+                        <Text>SMS Consent</Text>
                     </Link>
                 </Row>
             </Column>

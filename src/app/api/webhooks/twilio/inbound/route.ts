@@ -1,7 +1,7 @@
 import { optOutDestinationGlobally, unsuppressDestination } from '@/lib/db/communicationService'
 import { selectLatestGalleryForDestination } from '@/lib/db/personService'
 import { buildInboundSourceId, inboundFileExtension, isSupportedInboundContentType, normalizeInboundContentType, uploadInboundMedia } from '@/lib/inbound/media'
-import { buildInboundReply, escapeXml } from '@/lib/inbound/message'
+import { buildInboundReply, classifyTwilioKeyword, escapeXml } from '@/lib/inbound/message'
 import { downloadTwilioMedia, validateTwilioWebhook } from '@/lib/sms'
 import { NextRequest, NextResponse } from 'next/server'
 
@@ -24,19 +24,17 @@ export async function POST(request: NextRequest) {
   }
 
   const from = params.From
-  const command = params.Body?.trim().toUpperCase()
+  const keyword = classifyTwilioKeyword(params.Body, params.OptOutType)
   if (!from) return twiml()
-  if (['STOP', 'STOPALL', 'UNSUBSCRIBE', 'CANCEL', 'END', 'QUIT'].includes(command)) {
+  if (keyword === 'stop') {
     await optOutDestinationGlobally('sms', from, 'twilio_stop')
     return twiml()
   }
-  if (['START', 'UNSTOP'].includes(command)) {
+  if (keyword === 'start') {
     await unsuppressDestination('sms', from)
-    return twiml('Recap texts are available again. Re-enable updates for a gallery from its communication preferences page.')
+    return twiml()
   }
-  if (command === 'HELP' || command === 'INFO') {
-    return twiml('Recap wedding gallery updates and uploads. Reply with photos/videos to add them to your latest gallery. Reply STOP to stop. Visit ourweddingrecap.com for support.')
-  }
+  if (keyword === 'help') return twiml()
   if (process.env.MESSAGING_ENABLED !== 'true') return twiml()
 
   const destination = await selectLatestGalleryForDestination('sms', from)
@@ -73,5 +71,5 @@ export async function POST(request: NextRequest) {
     return new NextResponse('Inbound media processing failed', { status: 500 })
   }
 
-  return twiml(buildInboundReply({ destination, attachmentCount, uploadedCount }))
+  return twiml(buildInboundReply({ provider: 'twilio', destination, attachmentCount, uploadedCount }))
 }

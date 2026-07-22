@@ -3,6 +3,9 @@ import {
   buildInboundSourceId,
   inboundFileExtension,
   isSupportedInboundContentType,
+  isSupportedInboundEmailContentType,
+  isWithinInboundEmailMediaLimit,
+  MAX_INBOUND_EMAIL_MEDIA_BYTES,
   normalizeInboundContentType,
 } from '@/lib/inbound/media'
 
@@ -12,8 +15,16 @@ describe('inbound media metadata', () => {
     expect(normalizeInboundContentType('video/mpeg4')).toBe('video/mp4')
     expect(isSupportedInboundContentType('image/png')).toBe(true)
     expect(isSupportedInboundContentType('video/quicktime')).toBe(true)
+    expect(isSupportedInboundEmailContentType('image/heic')).toBe(true)
+    expect(isSupportedInboundEmailContentType('video/quicktime')).toBe(false)
     expect(isSupportedInboundContentType('application/pdf')).toBe(false)
     expect(inboundFileExtension('video/quicktime')).toBe('mov')
+  })
+
+  it('uses a conservative per-email media limit below Vercel request limits', () => {
+    expect(isWithinInboundEmailMediaLimit(MAX_INBOUND_EMAIL_MEDIA_BYTES)).toBe(true)
+    expect(isWithinInboundEmailMediaLimit(MAX_INBOUND_EMAIL_MEDIA_BYTES + 1)).toBe(false)
+    expect(isWithinInboundEmailMediaLimit(0)).toBe(false)
   })
 
   it('creates deterministic provider attachment keys that include the content', () => {

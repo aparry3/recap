@@ -125,7 +125,7 @@ export async function sendConsentConfirmations(
           gallery,
           person,
           deliveryId: delivery.id,
-          body: `You're subscribed to up to 10 automated ${gallery.name} updates from Recap. Msg & data rates may apply.`,
+          body: `You're subscribed to up to 10 automated ${gallery.name} wedding updates. Msg & data rates may apply.`,
         })
       }
     } catch (error) {

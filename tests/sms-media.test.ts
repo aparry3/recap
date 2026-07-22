@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { downloadTwilioMedia } from '@/lib/sms'
+import { buildTwilioStatusCallbackUrl, downloadTwilioMedia } from '@/lib/sms'
 
 afterEach(() => {
   vi.unstubAllGlobals()
@@ -7,6 +7,32 @@ afterEach(() => {
   delete process.env.TWILIO_API_SECRET
   delete process.env.TWILIO_ACCOUNT_SID
   delete process.env.TWILIO_AUTH_TOKEN
+  delete process.env.BASE_URL
+  delete process.env.VERCEL_ENV
+  delete process.env.VERCEL_AUTOMATION_BYPASS_SECRET
+})
+
+describe('Twilio status callback URLs', () => {
+  it('adds the Vercel automation bypass only for protected preview deployments', () => {
+    process.env.BASE_URL = 'https://staging.ourweddingrecap.com'
+    process.env.VERCEL_ENV = 'preview'
+    process.env.VERCEL_AUTOMATION_BYPASS_SECRET = 'preview-secret'
+
+    const callback = new URL(buildTwilioStatusCallbackUrl('delivery-1'))
+    expect(callback.pathname).toBe('/api/webhooks/twilio/status')
+    expect(callback.searchParams.get('deliveryId')).toBe('delivery-1')
+    expect(callback.searchParams.get('x-vercel-protection-bypass')).toBe('preview-secret')
+  })
+
+  it('never leaks a configured bypass secret into a production callback', () => {
+    process.env.BASE_URL = 'https://www.ourweddingrecap.com'
+    process.env.VERCEL_ENV = 'production'
+    process.env.VERCEL_AUTOMATION_BYPASS_SECRET = 'preview-secret'
+
+    const callback = new URL(buildTwilioStatusCallbackUrl('delivery-2'))
+    expect(callback.searchParams.get('deliveryId')).toBe('delivery-2')
+    expect(callback.searchParams.has('x-vercel-protection-bypass')).toBe(false)
+  })
 })
 
 describe('Twilio media downloads', () => {

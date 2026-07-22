@@ -177,7 +177,7 @@ const PersonPage: FC<{person?: Person | NewPersonData, galleryName?: string, onS
             <Column className={styles.consentCopy}>
               <label htmlFor="sms-reminder-consent"><Text weight={600}>Text me wedding updates</Text></label>
               <Text size={0.85}>
-                By checking this box, you agree to receive up to 10 automated texts about this gallery. Message and data rates may apply. Reply STOP to stop or HELP for help. Consent is optional and is not a condition of purchase. See our <a href="/terms" target="_blank">Terms</a> and <a href="/privacy" target="_blank">Privacy Policy</a>.
+                By checking this box, you agree to receive up to 10 automated wedding update texts about this gallery, including a confirmation. If you message Recap, we may send additional service responses to your request. Message and data rates may apply. Reply STOP to stop or HELP for help. Consent is optional and is not a condition of purchase. See our <a href="/terms" target="_blank">Terms</a> and <a href="/privacy" target="_blank">Privacy Policy</a>.
               </Text>
             </Column>
           </Row>
@@ -187,7 +187,7 @@ const PersonPage: FC<{person?: Person | NewPersonData, galleryName?: string, onS
             </Button>
           </Container>
           <Container className={styles.copyright}>
-            <Text style={{ opacity: 0.7 }}>Recap is a property of Parry Technology and Media LLC</Text>
+            <Text style={{ opacity: 0.7 }}>Our Wedding Recap is a brand of Parry Technology and Media, LLC. Recap is an Our Wedding Recap service.</Text>
           </Container>
         </Form>
       </Container>

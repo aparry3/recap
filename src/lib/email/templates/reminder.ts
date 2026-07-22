@@ -20,7 +20,7 @@ export function getReminderEmailTemplate(input: {
   galleryUrl: string
   preferenceUrl: string
 }): string {
-  const postalAddress = escapeHtml(process.env.BUSINESS_POSTAL_ADDRESS || 'Parry Technology and Media LLC, United States')
+  const postalAddress = escapeHtml(process.env.BUSINESS_POSTAL_ADDRESS || 'Parry Technology and Media, LLC, doing business as Our Wedding Recap, United States')
   return `<!doctype html>
 <html>
   <body style="margin:0;background:#f5f0e9;font-family:Georgia,'Times New Roman',serif;color:#2f2a25;">
@@ -28,13 +28,13 @@ export function getReminderEmailTemplate(input: {
       <tr><td align="center">
         <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:620px;background:#ffffff;border-radius:16px;overflow:hidden;box-shadow:0 8px 28px rgba(47,42,37,.08);">
           <tr><td style="background:#5f6650;padding:26px 32px;color:#ffffff;text-align:center;">
-            <div style="font-size:13px;letter-spacing:3px;text-transform:uppercase;opacity:.85;">Recap</div>
+            <div style="font-size:13px;letter-spacing:2px;text-transform:uppercase;opacity:.85;">Recap by Our Wedding Recap</div>
             <div style="font-size:30px;margin-top:8px;">${escapeHtml(input.galleryName)}</div>
           </td></tr>
           <tr><td style="padding:34px 36px 22px;">
             <p style="margin:0 0 18px;font-size:20px;">Hi ${escapeHtml(input.recipientName)},</p>
             ${paragraphs(input.body)}
-            <p style="margin:22px 0 18px;line-height:1.6;color:#2f2a25;font-size:18px;"><strong>Have photos or videos ready?</strong> Reply directly to this email with them and Recap will add them to your gallery.</p>
+            <p style="margin:22px 0 18px;line-height:1.6;color:#2f2a25;font-size:18px;"><strong>Have a photo ready?</strong> Reply with one photo under 2 MB and Recap will add it to your gallery. Use the gallery link for videos, larger photos, or multiple files.</p>
             <p style="text-align:center;margin:30px 0;">
               <a href="${escapeHtml(input.galleryUrl)}" style="display:inline-block;background:#5f6650;color:#ffffff;text-decoration:none;padding:14px 24px;border-radius:8px;font-size:17px;">View &amp; upload photos</a>
             </p>

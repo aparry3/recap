@@ -1,7 +1,9 @@
+import { brandCommunication } from '@/lib/brand'
+
 const GSM_EXTENDED_CHARACTERS = new Set(['^', '{', '}', '\\', '[', ']', '~', '|'])
 
 export function buildReminderSmsBody(body: string, galleryUrl: string): string {
-  return `${body.trim()}\n\nView & upload: ${galleryUrl}\nOr reply here with photos/videos to add them. Reply STOP to stop, HELP for help.`
+  return brandCommunication(`${body.trim()}\n\nView & upload: ${galleryUrl}\nOr reply here with photos/videos to add them. Reply STOP to stop, HELP for help.`)
 }
 
 /** Conservative segment estimate: non-ASCII content is treated as UCS-2. */

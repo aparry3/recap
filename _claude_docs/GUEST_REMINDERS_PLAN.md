@@ -79,6 +79,8 @@ Each reminder has one absolute send timestamp. There is no calendar model, event
 
 Implemented in PR #89. The application defaults to `MESSAGING_ENABLED=false`; do not enable production delivery until each rollout item is complete.
 
+Use [COMMUNICATION_PROVIDER_SETUP.md](./COMMUNICATION_PROVIDER_SETUP.md) for the copy/paste Twilio campaign values, SendGrid/DNS configuration, environment scoping, and end-to-end launch checklist.
+
 - [ ] Run `migrations/20260718000000_guest_reminders.ts` against the target database.
 - [ ] Configure the OpenAI, Twilio, SendGrid, signing, cron, base URL, and postal-address variables in `.env.example`.
 - [ ] Configure the Twilio Messaging Service inbound webhook at `/api/webhooks/twilio/inbound`.

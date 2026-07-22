@@ -2,7 +2,7 @@ import { createHash } from 'crypto'
 import { EventWebhook } from '@sendgrid/eventwebhook'
 import { selectLatestGalleryForDestination } from '@/lib/db/personService'
 import { sendGridClient } from '@/lib/email'
-import { buildInboundSourceId, isSupportedInboundContentType, normalizeInboundContentType, uploadInboundMedia } from '@/lib/inbound/media'
+import { buildInboundSourceId, isSupportedInboundEmailContentType, isWithinInboundEmailMediaLimit, normalizeInboundContentType, uploadInboundMedia } from '@/lib/inbound/media'
 import { buildInboundReply, extractEnvelopeSender, extractMessageId, hasPassingSpf, isAutomatedEmail, safeReplySubject } from '@/lib/inbound/message'
 import { NextRequest, NextResponse } from 'next/server'
 
@@ -76,11 +76,12 @@ export async function POST(request: NextRequest) {
       const providerMessageId = extractMessageId(headers)
         || createHash('sha256').update(new Uint8Array(rawArrayBuffer)).digest('hex')
       for (const [key, file] of attachments) {
+        if (!isWithinInboundEmailMediaLimit(file.size)) continue
         const metadata = attachmentInfo[key] || {}
         const fileContentType = normalizeInboundContentType(file.type)
         const metadataContentType = normalizeInboundContentType(metadata.type)
-        const contentType = isSupportedInboundContentType(fileContentType) ? fileContentType : metadataContentType
-        if (!isSupportedInboundContentType(contentType)) continue
+        const contentType = isSupportedInboundEmailContentType(fileContentType) ? fileContentType : metadataContentType
+        if (!isSupportedInboundEmailContentType(contentType)) continue
         const data = new Uint8Array(await file.arrayBuffer())
         await uploadInboundMedia({
           provider: 'sendgrid',
@@ -99,6 +100,7 @@ export async function POST(request: NextRequest) {
       email: sender,
       subject: safeReplySubject(field(formData, 'subject')),
       body: buildInboundReply({
+        provider: 'sendgrid',
         destination,
         attachmentCount: attachments.length,
         uploadedCount,

@@ -15,16 +15,23 @@ function getClient(): Twilio {
 }
 
 export async function sendSms(input: { to: string; body: string; deliveryId: string }): Promise<string> {
-  if (!process.env.BASE_URL) throw new Error('BASE_URL is required for Twilio status callbacks')
-  const statusCallback = new URL('/api/webhooks/twilio/status', process.env.BASE_URL)
-  statusCallback.searchParams.set('deliveryId', input.deliveryId)
   const message = await getClient().messages.create({
     to: input.to,
     messagingServiceSid: process.env.TWILIO_MESSAGING_SERVICE_SID,
     body: input.body,
-    statusCallback: statusCallback.toString(),
+    statusCallback: buildTwilioStatusCallbackUrl(input.deliveryId),
   })
   return message.sid
+}
+
+export function buildTwilioStatusCallbackUrl(deliveryId: string): string {
+  if (!process.env.BASE_URL) throw new Error('BASE_URL is required for Twilio status callbacks')
+  const statusCallback = new URL('/api/webhooks/twilio/status', process.env.BASE_URL)
+  if (process.env.VERCEL_ENV === 'preview' && process.env.VERCEL_AUTOMATION_BYPASS_SECRET) {
+    statusCallback.searchParams.set('x-vercel-protection-bypass', process.env.VERCEL_AUTOMATION_BYPASS_SECRET)
+  }
+  statusCallback.searchParams.set('deliveryId', deliveryId)
+  return statusCallback.toString()
 }
 
 export function validateTwilioWebhook(signature: string | null, url: string, params: Record<string, string>): boolean {

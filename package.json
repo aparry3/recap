@@ -13,7 +13,8 @@
     "start": "next start",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
-    "test": "vitest run"
+    "test": "vitest run",
+    "communications:check": "node scripts/check-communications-config.mjs"
   },
   "keywords": [],
   "author": "",
