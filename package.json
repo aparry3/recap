@@ -1,29 +1,28 @@
 {
   "name": "recap",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "private": true,
+  "description": "Collaborative wedding photo galleries",
+  "author": "Parry Technology and Media LLC",
   "packageManager": "pnpm@10.34.5",
   "engines": {
     "node": "24.x"
   },
   "scripts": {
-    "dev": "source .env.local && next dev",
+    "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
-    "communications:check": "node scripts/check-communications-config.mjs"
+    "communications:check": "node scripts/check-communications-config.mjs",
+    "db:migrate": "tsx migrate.ts up",
+    "db:rollback": "tsx migrate.ts down"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
   "dependencies": {
     "@agntz/sdk": "0.0.1",
     "@aws-sdk/client-s3": "^3.1088.0",
     "@aws-sdk/s3-request-presigner": "^3.1088.0",
-    "@fortawesome/fontawesome-common-types": "^6.6.0",
     "@fortawesome/fontawesome-svg-core": "^6.6.0",
     "@fortawesome/free-brands-svg-icons": "^6.7.1",
     "@fortawesome/free-regular-svg-icons": "^6.7.1",
@@ -34,8 +33,6 @@
     "@sendgrid/mail": "^8.1.6",
     "@stripe/react-stripe-js": "^3.10.0",
     "@stripe/stripe-js": "^2.4.0",
-    "@types/pg": "^8.20.0",
-    "autoprefixer": "^10.5.4",
     "cheerio": "^1.0.0",
     "dexie": "^4.4.4",
     "jszip": "^3.10.1",
@@ -48,9 +45,9 @@
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-web-layout-components": "^1.0.7",
+    "server-only": "0.0.1",
     "sharp": "^0.35.3",
     "stripe": "^14.17.0",
-    "tailwindcss": "^3.4.14",
     "twilio": "^6.0.2",
     "uuid": "^11.1.1",
     "zod": "^4.4.3"
@@ -59,12 +56,16 @@
     "@next/bundle-analyzer": "^15.5.20",
     "@types/luxon": "^3.7.2",
     "@types/pdf-parse": "^1.1.5",
+    "@types/pg": "^8.20.0",
     "@types/qrcode": "^1.5.5",
     "@types/react": "^18.3.28",
     "@types/react-dom": "^18.3.7",
+    "autoprefixer": "^10.5.4",
     "eslint": "^9.39.5",
     "eslint-config-next": "^15.5.20",
     "sass": "^1.101.0",
+    "tailwindcss": "^3.4.14",
+    "tsx": "^4.23.1",
     "typescript": "^5.9.3",
     "vitest": "^4.1.10"
   }
