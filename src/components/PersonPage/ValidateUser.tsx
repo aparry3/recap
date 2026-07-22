@@ -1,5 +1,5 @@
 'use client';
-import React, { FC, useEffect } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { Column, Container, Row, Text } from 'react-web-layout-components';
 import Image from 'next/image';
 import styles from './Create.module.scss';
@@ -9,7 +9,8 @@ import { Person } from '@/lib/types/Person';
 import { fetchVerification, updatePerson } from '@/helpers/api/personClient';
 
 
-const ValidateUser: FC<{verificationId: string, person: {personId: string, name: string, email?: string, phone?: string}, confirm: (person: Person) => void, onBack: () => void, skip: () => void}> = ({person, verificationId, confirm, onBack, skip}) => {
+const ValidateUser: FC<{verificationId: string, person: {personId: string, name: string, email?: string, phone?: string}, confirm: (person: Person) => void, onBack: () => void, resend?: () => Promise<void> | void, newUser?: boolean}> = ({person, verificationId, confirm, onBack, resend, newUser = false}) => {
+  const [resendState, setResendState] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle')
 
   useEffect(() => {
     const checkVerification = async () => {
@@ -22,7 +23,7 @@ const ValidateUser: FC<{verificationId: string, person: {personId: string, name:
             phone: person.phone,
           });
           confirm(_person); // Call confirm with the verified person data
-          
+
         }
       } catch (error) {
         console.error("Error checking verification status:", error);
@@ -37,6 +38,19 @@ const ValidateUser: FC<{verificationId: string, person: {personId: string, name:
 
   }, [verificationId, confirm]);
 
+  const handleResend = async () => {
+    if (!resend || resendState === 'sending' || resendState === 'sent') return
+    setResendState('sending')
+    try {
+      await resend()
+      setResendState('sent')
+      setTimeout(() => setResendState('idle'), 30000)
+    } catch (error) {
+      console.error('Error resending verification email:', error)
+      setResendState('error')
+    }
+  }
+
   return (
     <Column as='main' className={styles.personPage} justify='center'>
       <Row className={styles.headerBar}>
@@ -49,29 +63,32 @@ const ValidateUser: FC<{verificationId: string, person: {personId: string, name:
           <Image src='/branding/wordmark.png' alt='wordmark' layout='intrinsic' height={100} width={100}/>
         </Row>
         <Column as='header' className={styles.heading}>
-          <Text size={1.8}>Welcome back, {person.name}!</Text>
+          <Text size={1.8}>{newUser ? `Almost there, ${person.name}!` : `Welcome back, ${person.name}!`}</Text>
         </Column>
       </Column>
       <Container className={styles.contentContainer}>
         <Column className={styles.content}>
           <Container className={styles.validationTextContainer}>
             <Text className={styles.validationText}>
-              Check your inbox! We’ve sent a verification email to <Text weight={700}>{person.email}</Text>. Follow the link to sync the gallery.
+              Check your inbox! We’ve sent a verification email to <Text weight={700}>{person.email}</Text>. Click the link in the email to continue — this page will update automatically.
             </Text>
           </Container>
-          <Container className={styles.validationTextContainer}>
-            <Text className={styles.validationText}>
-              Didn’t get an email?
-            </Text>
-            <Text className={`${styles.validationText} ${styles.validationLink}`}>
-              Click here to resend.
-            </Text>
-          </Container>
-          <Container className={styles.validationTextContainer}>
-            <Text className={`${styles.validationText} ${styles.validationLink}`} onClick={skip}>
-              Skip
-            </Text>
-          </Container>
+          {resend && (
+            <Container className={styles.validationTextContainer}>
+              <Text className={styles.validationText}>
+                Didn’t get an email?
+              </Text>
+              {resendState === 'sent' ? (
+                <Text className={styles.validationText} weight={700}>
+                  Verification email resent!
+                </Text>
+              ) : (
+                <Text className={`${styles.validationText} ${styles.validationLink}`} onClick={handleResend}>
+                  {resendState === 'sending' ? 'Sending…' : resendState === 'error' ? 'Something went wrong. Try again.' : 'Click here to resend.'}
+                </Text>
+              )}
+            </Container>
+          )}
         </Column>
       </Container>
     </Column>

@@ -3,10 +3,14 @@ import { GalleryPersonData, NewPersonData, Person, PersonUpdate, Verification } 
 
 
 export const createPerson = async (newPerson: NewPersonData, galleryId?: string, emailOptIn?: boolean, smsOptIn?: boolean, admin?: string): Promise<Person> => {
-    const data = await fetch(`/api/people${admin ? `?admin=${admin}` : ''}`, {
+    const res = await fetch(`/api/people${admin ? `?admin=${admin}` : ''}`, {
         method: 'POST',
-        body: JSON.stringify({...newPerson}) 
-    }).then(res => res.json())
+        body: JSON.stringify({...newPerson})
+    })
+    const data = await res.json()
+    if (!res.ok || !data.person) {
+        throw new Error(data.error || 'We could not create your account. Please try again.')
+    }
     const person = data.person
     if (galleryId) {
         await createGalleryPerson(galleryId, person.id, emailOptIn, smsOptIn)
@@ -77,9 +81,13 @@ export const fetchVerification = async (verificationId: string): Promise<Verific
 }
 
 export const createVerification = async (personId: string, galleryName: string, email: string, name: string): Promise<Verification> => {
-    const data = await fetch(`/api/verifications`, {
+    const res = await fetch(`/api/verifications`, {
         method: 'POST',
-        body: JSON.stringify({personId, galleryName, email, name}) 
-    }).then(res => res.json())
+        body: JSON.stringify({personId, galleryName, email, name})
+    })
+    const data = await res.json()
+    if (!res.ok || !data.verification) {
+        throw new Error(data.error || 'We could not send the verification email. Please try again.')
+    }
     return data.verification
 }
