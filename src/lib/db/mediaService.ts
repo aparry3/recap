@@ -22,7 +22,7 @@ export const insertMedia = async (newMediaData: NewMediaData): Promise<Media> =>
 }
 
 export interface InboundMediaData extends NewMediaData {
-  source: 'twilio' | 'sendgrid'
+  source: 'twilio' | 'resend'
   sourceId: string
 }
 

@@ -39,7 +39,7 @@ export function galleryUrl(destination: InboundGalleryDestination): string {
 }
 
 export function buildInboundReply(input: {
-  provider: 'twilio' | 'sendgrid'
+  provider: 'twilio' | 'resend'
   destination: InboundGalleryDestination | null
   attachmentCount: number
   uploadedCount: number
@@ -51,18 +51,18 @@ export function buildInboundReply(input: {
   const url = galleryUrl(input.destination)
   if (input.uploadedCount > 0) {
     const noun = input.uploadedCount === 1 ? 'photo/video' : 'photos/videos'
-    const nextUpload = input.provider === 'sendgrid'
+    const nextUpload = input.provider === 'resend'
       ? 'Email one photo under 2 MB at a time, or use the gallery for videos, larger photos, or multiple files.'
       : 'Keep replying with more anytime.'
     return brandCommunication(`Added ${input.uploadedCount} ${noun} to ${name}. ${nextUpload} View the gallery: ${url}`)
   }
   if (input.attachmentCount > 0) {
-    const expectedMedia = input.provider === 'sendgrid'
+    const expectedMedia = input.provider === 'resend'
       ? 'Please email one supported photo under 2 MB, or use the gallery for videos, larger photos, or multiple files.'
       : 'Please send an image or video attachment.'
     return brandCommunication(`We could not find supported media in that message. ${expectedMedia} Add it to ${name}: ${url}`)
   }
-  const replyInstructions = input.provider === 'sendgrid'
+  const replyInstructions = input.provider === 'resend'
     ? 'Reply with one photo under 2 MB, or use the gallery for videos, larger photos, or multiple files.'
     : 'Reply with photos or videos.'
   return brandCommunication(`Thanks for messaging Our Wedding Recap. ${replyInstructions} Add them to ${name}: ${url}`)
@@ -75,33 +75,12 @@ export function extractEmailAddress(value?: string | null): string | null {
   return match?.[0]?.trim().toLowerCase() || null
 }
 
-export function extractEnvelopeSender(envelope?: string | null, fallbackFrom?: string | null): string | null {
-  if (envelope) {
-    try {
-      const parsed = JSON.parse(envelope) as { from?: string }
-      const sender = extractEmailAddress(parsed.from)
-      if (sender) return sender
-    } catch {
-      // Fall through to the decoded From header.
-    }
-  }
-  return extractEmailAddress(fallbackFrom)
-}
-
 export function isAutomatedEmail(headers?: string | null): boolean {
   if (!headers) return false
   const autoSubmitted = headers.match(/^auto-submitted:\s*(.+)$/im)?.[1]?.trim().toLowerCase()
   if (autoSubmitted && autoSubmitted !== 'no') return true
   const precedence = headers.match(/^precedence:\s*(.+)$/im)?.[1]?.trim().toLowerCase()
   return Boolean(precedence && ['bulk', 'junk', 'list'].includes(precedence))
-}
-
-export function hasPassingSpf(value?: string | null): boolean {
-  return value?.trim().toLowerCase() === 'pass'
-}
-
-export function extractMessageId(headers?: string | null): string | null {
-  return headers?.match(/^message-id:\s*(.+)$/im)?.[1]?.trim() || null
 }
 
 export function safeReplySubject(subject?: string | null): string {

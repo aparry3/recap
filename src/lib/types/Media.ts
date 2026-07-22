@@ -14,7 +14,7 @@ export interface MediaTable {
     contentType: string
     created?: Date
     uploaded?: boolean
-    source?: 'twilio' | 'sendgrid'
+    source?: 'twilio' | 'sendgrid' | 'resend'
     sourceId?: string
 }
 

@@ -53,9 +53,6 @@ importers:
       '@next/third-parties':
         specifier: ^15.5.20
         version: 15.5.20(next@15.5.20(@opentelemetry/api@1.9.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.101.0))(react@18.3.1)
-      '@sendgrid/eventwebhook':
-        specifier: ^8.0.0
-        version: 8.0.0
       cheerio:
         specifier: ^1.0.0
         version: 1.2.0
@@ -1287,10 +1284,6 @@ packages:
   '@rushstack/eslint-patch@1.16.1':
     resolution: {integrity: sha512-TvZbIpeKqGQQ7X0zSCvPH9riMSFQFSggnfBjFZ1mEoILW+UuXCKwOoPcgjMwiUtRqFZ8jWhPJc4um14vC6I4ag==}
 
-  '@sendgrid/eventwebhook@8.0.0':
-    resolution: {integrity: sha512-gZpBNoxB3/RfXWJdeltw8JUYp8yLR+GUiDpkcN+ry7msybk2va76vYAtzi1JKri3gxHhEMLo/3uRI2o1YIZU2g==}
-    engines: {node: '>=12.*'}
-
   '@smithy/core@3.29.4':
     resolution: {integrity: sha512-G1GRglAabzEhqghJMBAd54FkRS7SAFGHEwbhcI9r+O+LIMuFsLyXkLZkCoFSgAglRu8s/URVXJB0hglq3ZipIg==}
     engines: {node: '>=18.0.0'}
@@ -1709,10 +1702,6 @@ packages:
     resolution: {integrity: sha512-AjYpR78kDWAY3Efj+cDTFH9t9SCoL7OoTp1BOb0mQV7S+6CiLwnWM3FyxhJtdPufDFKzmCSFoUncKjWgJEZTCQ==}
     engines: {node: '>=6.0.0'}
     hasBin: true
-
-  big-integer@1.6.52:
-    resolution: {integrity: sha512-QxD8cf2eVqJOOz63z6JIN9BzvVs/dlySa5HGSBH5xtR8dPteIRQnBxxKqkNTiT6jbDTF6jAfrd4oMcND9RGbQg==}
-    engines: {node: '>=0.6'}
 
   binary-extensions@2.3.0:
     resolution: {integrity: sha512-Ceh+7ox5qe7LJuLHoY0feh3pHuUDHAcRUeyL2VYghZwfpkNIy/+8Ocg0a3UuSoYzavmylwuLWQOf3hl0jjMMIw==}
@@ -2511,9 +2500,6 @@ packages:
     resolution: {integrity: sha512-/imKNG4EbWNrVjoNC/1H5/9GFy+tqjGBHCaSsN+P2RnPqjsLmv6UD3Ej+Kj8nBWaRAwyk7kK5ZUc+OEatnTR3A==}
     hasBin: true
 
-  js-sha256@0.9.0:
-    resolution: {integrity: sha512-sga3MHh9sgQN2+pJ9VYZ+1LPwXOxuBJBA5nrR5/ofPfuiJBE2hnjsaN8se8JznOmGLN2p49Pe5U/ttafcs/apA==}
-
   js-tokens@10.0.0:
     resolution: {integrity: sha512-lM/UBzQmfJRo9ABXbPWemivdCW8V2G8FHaHdypQaIy523snUjog0W71ayWXTjiR+ixeMyVHN2XcpnTd/liPg/Q==}
 
@@ -3289,9 +3275,6 @@ packages:
 
   standardwebhooks@1.0.0:
     resolution: {integrity: sha512-BbHGOQK9olHPMvQNHWul6MYlrRTAOKn03rOe4A8O3CLWhNf4YHBqq2HJKKC+sfqpxiBY52pNeesD6jIiLDz8jg==}
-
-  starkbank-ecdsa@1.2.0:
-    resolution: {integrity: sha512-/az8TkKmzHUxH5SYYtTGhjg7F3w/AgnWNmXa/eXKNxwA4vcHK6zPK+Cgjrz7WfhQ+ZARfJxZbUexfm+F3nOdZg==}
 
   std-env@4.2.0:
     resolution: {integrity: sha512-oCUKSupKTHX53EyjDtuZQ64pjLJ6yYCtpmEw0goYxtjG9KpbRe8KAsl2tBUGU9DyMcJ0RwJ8GqJAFzMXcXW1Rw==}
@@ -4620,10 +4603,6 @@ snapshots:
 
   '@rushstack/eslint-patch@1.16.1': {}
 
-  '@sendgrid/eventwebhook@8.0.0':
-    dependencies:
-      starkbank-ecdsa: 1.2.0
-
   '@smithy/core@3.29.4':
     dependencies:
       '@smithy/types': 4.16.1
@@ -5089,8 +5068,6 @@ snapshots:
   balanced-match@4.0.4: {}
 
   baseline-browser-mapping@2.10.43: {}
-
-  big-integer@1.6.52: {}
 
   binary-extensions@2.3.0: {}
 
@@ -6065,8 +6042,6 @@ snapshots:
 
   jiti@1.21.7: {}
 
-  js-sha256@0.9.0: {}
-
   js-tokens@10.0.0:
     optional: true
 
@@ -6882,11 +6857,6 @@ snapshots:
     dependencies:
       '@stablelib/base64': 1.0.1
       fast-sha256: 1.3.0
-
-  starkbank-ecdsa@1.2.0:
-    dependencies:
-      big-integer: 1.6.52
-      js-sha256: 0.9.0
 
   std-env@4.2.0: {}
 

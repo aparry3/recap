@@ -3,9 +3,7 @@ import {
   buildInboundReply,
   classifyTwilioKeyword,
   escapeXml,
-  extractEnvelopeSender,
-  extractMessageId,
-  hasPassingSpf,
+  extractEmailAddress,
   isAutomatedEmail,
   safeReplySubject,
 } from '@/lib/inbound/message'
@@ -43,7 +41,7 @@ describe('inbound message replies', () => {
   })
 
   it('directs email uploads above the conservative ingress limit to the gallery', () => {
-    const reply = buildInboundReply({ provider: 'sendgrid', destination, attachmentCount: 1, uploadedCount: 0 })
+    const reply = buildInboundReply({ provider: 'resend', destination, attachmentCount: 1, uploadedCount: 0 })
     expect(reply).toContain('one supported photo under 2 MB')
     expect(reply).toContain('use the gallery for videos, larger photos, or multiple files')
   })
@@ -72,22 +70,19 @@ describe('Twilio provider keywords', () => {
 })
 
 describe('inbound email parsing', () => {
-  it('prefers the authenticated SMTP envelope sender', () => {
-    expect(extractEnvelopeSender('{"from":"Guest@Example.COM","to":["uploads@example.com"]}', 'Other <other@example.com>'))
-      .toBe('guest@example.com')
-    expect(extractEnvelopeSender('invalid', 'Guest Name <guest@example.com>')).toBe('guest@example.com')
+  it('extracts the sender address from a display-name From header', () => {
+    expect(extractEmailAddress('Guest Name <Guest@Example.COM>')).toBe('guest@example.com')
+    expect(extractEmailAddress('guest@example.com')).toBe('guest@example.com')
+    expect(extractEmailAddress('not an address')).toBeNull()
   })
 
   it('recognizes retry and loop-prevention headers', () => {
     expect(isAutomatedEmail('Auto-Submitted: auto-replied')).toBe(true)
     expect(isAutomatedEmail('Precedence: bulk')).toBe(true)
     expect(isAutomatedEmail('Auto-Submitted: no')).toBe(false)
-    expect(hasPassingSpf(' PASS ')).toBe(true)
-    expect(hasPassingSpf('fail')).toBe(false)
   })
 
-  it('extracts message IDs and sanitizes reply subjects', () => {
-    expect(extractMessageId('Message-ID: <message-1@example.com>')).toBe('<message-1@example.com>')
+  it('sanitizes reply subjects', () => {
     expect(safeReplySubject('Photos\r\nBcc: attacker@example.com')).toBe('Re: Photos Bcc: attacker@example.com')
   })
 
