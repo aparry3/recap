@@ -34,6 +34,9 @@ async function runMigration(action: string) {
       if (error) {
         throw error;
       }
+      if (!results?.length) {
+        console.log('database is already up to date');
+      }
     } else if (action === 'down') {
       const { error, results } = await migrator.migrateDown();
       results?.forEach((it) => {
@@ -60,4 +63,4 @@ async function runMigration(action: string) {
   }
 }
 
-runMigration(action);
+void runMigration(action);

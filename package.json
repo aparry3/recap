@@ -11,6 +11,8 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "build:deploy": "pnpm db:migrate && pnpm build",
+    "build:vercel": "node scripts/vercel-build.mjs",
     "start": "next start",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
