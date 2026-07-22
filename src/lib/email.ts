@@ -158,7 +158,7 @@ export class SendGridClient {
           name: senderName
         },
         ...supportReplyTo(replyToEmail),
-        subject: `Verify your email for ${templateData.galleryName}`,
+        subject: `Verify your email for ${templateData.galleryName || COMMUNICATION_BRAND_NAME}`,
         html: getUserVerificationEmailTemplate({
           name: templateData.name,
           galleryName: templateData.galleryName,
