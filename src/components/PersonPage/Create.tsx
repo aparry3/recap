@@ -11,7 +11,7 @@ import { leftIcon } from '@/lib/icons';
 import { useRouter } from 'next/navigation';
 
 
-const CreatePage: FC<{person?: Person | NewPersonData, login: () => void, isAdmin?: boolean, onSubmit: (galleryName: string,name: string, email: string, theKnot?: string, zola?: string) => void}> = ({login, person, onSubmit, isAdmin = false}) => {
+const CreatePage: FC<{person?: Person | NewPersonData, login: () => void, isAdmin?: boolean, submitError?: string, onSubmit: (galleryName: string,name: string, email: string, theKnot?: string, zola?: string) => void}> = ({login, person, onSubmit, isAdmin = false, submitError}) => {
     const router = useRouter()
   const [name, setName] = useState(person?.name || '');
   const [galleryName, setGalleryName] = useState('');
@@ -68,8 +68,8 @@ const CreatePage: FC<{person?: Person | NewPersonData, login: () => void, isAdmi
 
 
   const submitDisabled = useMemo(() => {
-    return !name || !galleryName|| emailError
-  }, [emailError, name, galleryName])
+    return !name || !galleryName || !email || emailError
+  }, [email, emailError, name, galleryName])
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -99,10 +99,15 @@ const CreatePage: FC<{person?: Person | NewPersonData, login: () => void, isAdmi
           <Text size={2.5} weight={500}>New Gallery</Text>
         </Column>
         <Container className={styles.buttonContainer} padding={[2, 0]}>
-          <Button className={styles.button} onClick={handleButtonPress} disabled={!name || !email}>
+          <Button className={styles.button} onClick={handleButtonPress} disabled={submitDisabled}>
             <Text size={1.2} weight={600}>Submit</Text>
           </Button>
         </Container>
+        {submitError && (
+          <Container padding={[0, 1]}>
+            <Text>{submitError}</Text>
+          </Container>
+        )}
         {!isAdmin && (
         <Column as='header' className={styles.header}>
           <Text size={1.1}>or</Text>
@@ -157,6 +162,11 @@ const CreatePage: FC<{person?: Person | NewPersonData, login: () => void, isAdmi
                   <Text>Please enter a valid email address</Text>
               </Row>
               )}
+              {!isAdmin && (
+              <Row style={{width: '100%'}}>
+                  <Text size={0.9} style={{opacity: 0.7}}>We’ll email you a verification link to confirm your gallery.</Text>
+              </Row>
+              )}
           </Column>
           <Column className={styles.inputContainer} padding={0.5}>
             <Container className={styles.galleryNamePrompt}>
@@ -179,6 +189,11 @@ const CreatePage: FC<{person?: Person | NewPersonData, login: () => void, isAdmi
               onChange={handleZolaChange}
             />
           </Column>
+          {submitError && (
+          <Row style={{width: '100%'}}>
+              <Text>{submitError}</Text>
+          </Row>
+          )}
           <Container className={styles.buttonContainer}>
             <Button className={styles.button} onClick={handleButtonPress} disabled={submitDisabled}>
               <Text size={1.2} weight={600}>{isAdmin ? 'Create for User' : 'Submit'}</Text>

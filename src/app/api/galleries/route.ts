@@ -1,8 +1,8 @@
 // src/app/api/galleries/route.ts
 import { createDefaultAlbums } from '@/lib/db/albumService';
 import { insertGallery } from '@/lib/db/galleryService';
-import { insertGalleryPerson, insertVerification, selectPerson } from '@/lib/db/personService';
-import { sendGridClient } from '@/lib/email';
+import { insertGalleryPerson, selectPerson } from '@/lib/db/personService';
+import { emailClient } from '@/lib/email';
 import { NewGalleryData } from '@/lib/types/Gallery';
 import { handleWeddingWebsites } from '@/lib/web';
 import { NextResponse } from 'next/server';
@@ -40,11 +40,10 @@ export const POST = async (req: Request) => {
     
     try {
         await insertGalleryPerson(gallery.id, gallery.personId)
-        const verification = await insertVerification(gallery.personId, gallery.id)
-        
-        await Promise.all([
-            sendGridClient.sendCreationEmail(person.email, person.name, `${process.env.BASE_URL}/${gallery.path}`, gallery.password),
-            sendGridClient.sendOrderNotification({
+
+        const [creationEmailSent, orderNotificationSent] = await Promise.all([
+            emailClient.sendCreationEmail(person.email, person.name, `${process.env.BASE_URL}/${gallery.path}`, gallery.password),
+            emailClient.sendOrderNotification({
                 customerName: person.name,
                 customerEmail: person.email,
                 galleryName: gallery.name,
@@ -52,8 +51,10 @@ export const POST = async (req: Request) => {
                 orderDate: new Date().toISOString()
             })
         ])
+        if (!creationEmailSent || !orderNotificationSent) {
+            console.error(`Gallery ${gallery.id} created but email delivery failed: creationEmail=${creationEmailSent} orderNotification=${orderNotificationSent}`)
+        }
 
-        
     } catch (error: any) {
 
         return NextResponse.json({gallery, error: error.message}, {status: 209})

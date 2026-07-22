@@ -16,7 +16,7 @@ pnpm dev          # Starts at http://localhost:3000
 A **collaborative wedding photo gallery** web app. Couples create a password-protected gallery, share a QR code/link with guests, and guests upload photos/videos directly from their phones. No app download required.
 
 **Key user flows:**
-1. **Couple** creates gallery (via `/create`, pays with Stripe) → gets link + QR code
+1. **Couple** creates gallery (via `/create`, free — email verification required) → gets link + QR code
 2. **Guest** visits gallery URL → enters password → enters name/email → uploads photos
 3. **Admin** manages galleries via `/admin` dashboard
 
@@ -53,9 +53,8 @@ recap/
 │   │   │   ├── people/               # Person CRUD + galleries
 │   │   │   ├── likes/                # Like toggle/check/count
 │   │   │   ├── verifications/        # Email verification
-│   │   │   ├── admin/                # Admin-only endpoints
-│   │   │   └── create-payment-intent/
-│   │   ├── create/                   # Gallery creation flow (with Stripe)
+│   │   │   └── admin/                # Admin-only endpoints
+│   │   ├── create/                   # Gallery creation flow (email verification, free)
 │   │   ├── galleries/                # "My Galleries" page
 │   │   ├── howto/                    # Help/FAQ
 │   │   ├── privacy/ & terms/         # Legal pages
@@ -117,7 +116,7 @@ recap/
 │       │   └── Gallery.ts, Person.ts, Media.ts, Album.ts, Like.ts, Tag.ts, WeddingEvent.ts
 │       ├── admin/middleware.ts       # Admin auth middleware
 │       ├── aws/s3.ts                 # S3 client + presigned URLs + multipart upload
-│       ├── email.ts                  # SendGrid client + email templates
+│       ├── email.ts                  # Resend email client + templates
 │       ├── email/templates/          # HTML email templates
 │       ├── web.ts                    # Wedding website scraping (Cheerio)
 │       └── icons/                    # SVG icon components

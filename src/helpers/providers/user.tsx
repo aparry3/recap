@@ -55,18 +55,23 @@ export const UserProvider: React.FC<{
 
     const submitPerson = useCallback(async (name: string, email?: string, phone?: string, emailOptIn?: boolean, smsOptIn?: boolean) => {
         setLoading(true)
-        if (email) {
-          const _person = await fetchPersonByEmail(email)
-          if (_person) {
-            const verification = await createVerification(_person.id, gallery.name, email, name)
-            setVerificationId(verification.id)
-            setTempPerson({personId: _person.id, email, name, phone, emailOptIn, smsOptIn})
-            setLoading(false)
-            setShowValidate(true)
-            return
+        try {
+          if (email) {
+            const _person = await fetchPersonByEmail(email)
+            if (_person) {
+              const verification = await createVerification(_person.id, gallery.name, email, name)
+              setVerificationId(verification.id)
+              setTempPerson({personId: _person.id, email, name, phone, emailOptIn, smsOptIn})
+              setLoading(false)
+              setShowValidate(true)
+              return
+            }
           }
+          await _createPerson(name, email, phone, emailOptIn, smsOptIn)
+        } catch (error) {
+          console.error('Error submitting person:', error)
+          setLoading(false)
         }
-        await _createPerson(name, email, phone, emailOptIn, smsOptIn)
     }, [gallery.name])
 
     const cancelValidate = () => {
@@ -74,12 +79,11 @@ export const UserProvider: React.FC<{
       setTempPerson(undefined)
     }
 
-    const skipValidate = useCallback(async () => {
-      if (tempPerson) {
-        await _createPerson(tempPerson.name, tempPerson.email, tempPerson.phone, tempPerson.emailOptIn, tempPerson.smsOptIn)
-      }
-      setShowValidate(false)  
-    }, [tempPerson, _createPerson])
+    const resendVerification = useCallback(async () => {
+      if (!tempPerson?.email) return
+      const verification = await createVerification(tempPerson.personId, gallery.name, tempPerson.email, tempPerson.name)
+      setVerificationId(verification.id)
+    }, [tempPerson, gallery.name])
 
     const confirmValidate = async (person: Person) => {
       setPerson(person)
@@ -100,7 +104,7 @@ export const UserProvider: React.FC<{
         </Container>
       )}
       {showValidate && tempPerson &&(
-        <ValidateUser verificationId={verificationId} person={tempPerson} confirm={confirmValidate} onBack={cancelValidate} skip={skipValidate}/>
+        <ValidateUser verificationId={verificationId} person={tempPerson} confirm={confirmValidate} onBack={cancelValidate} resend={resendVerification}/>
       )}
     </UserContext.Provider>
   );

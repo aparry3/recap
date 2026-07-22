@@ -118,7 +118,7 @@ async function videoPreview(): Promise<{ preview: Buffer; width: number; height:
 }
 
 export interface UploadInboundMediaInput {
-  provider: 'twilio' | 'sendgrid'
+  provider: 'twilio' | 'resend'
   sourceId: string
   galleryId: string
   personId: string

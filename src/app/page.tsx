@@ -6,7 +6,6 @@ import Image from 'next/image';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { circleVideoIcon, downloadIcon, photoFilmIcon, shareNodesIcon, zipIcon } from '@/lib/icons';
 import { cookies } from 'next/headers';
-import { redirect } from 'next/navigation';
 import { selectPersonWithGalleryStatus } from '@/lib/db/personService';
 import Footer from './components/Footer';
 import MobileHeader from './components/MobileHeader';
@@ -15,7 +14,7 @@ import MobileHeader from './components/MobileHeader';
 const Header: FC = async () => {
     let isAuthenticated = false;
     let hasGalleries = false;
-    let shouldRedirectToAdmin = false;
+    let isAdmin = false;
 
     const cookieStore = await cookies();
     const personId = cookieStore.get('personId')?.value;
@@ -23,26 +22,17 @@ const Header: FC = async () => {
         try {
             const personWithStatus = await selectPersonWithGalleryStatus(personId);
             if (personWithStatus) {
-                // Check admin status first
-                if (personWithStatus.isAdmin) {
-                    shouldRedirectToAdmin = true;
-                } else {
-                    isAuthenticated = true;
-                    hasGalleries = personWithStatus.hasGalleries;
-                }
+                isAuthenticated = true;
+                isAdmin = personWithStatus.isAdmin;
+                hasGalleries = personWithStatus.hasGalleries;
             }
         } catch (error) {
             console.error(`Error checking user status:`, error);
         }
     }
 
-    // Handle redirect outside of try-catch
-    if (shouldRedirectToAdmin) {
-        redirect('/admin');
-    }
-
-    const buttonText = isAuthenticated && hasGalleries ? 'Galleries' : 'Get Started';
-    const buttonHref = isAuthenticated && hasGalleries ? '/galleries' : '/create';
+    const buttonText = isAdmin ? 'Dashboard' : isAuthenticated && hasGalleries ? 'Galleries' : 'Get Started';
+    const buttonHref = isAdmin ? '/admin' : isAuthenticated && hasGalleries ? '/galleries' : '/create';
     
     return (
         <Container as='header' className={styles.header} justify='space-between'>

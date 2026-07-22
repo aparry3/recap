@@ -17,8 +17,9 @@ export const getUserVerificationEmailTemplate = ({
     verificationUrl
 }: UserVerificationEmailData): string => {
     const safeName = escapeHtml(name);
-    const safeGalleryName = escapeHtml(galleryName);
+    const safeGalleryName = escapeHtml(galleryName || 'Our Wedding Recap');
     const safeVerificationUrl = escapeHtml(verificationUrl);
+    const galleryLabel = galleryName ? `the ${safeGalleryName} gallery` : 'your galleries';
     return `<!DOCTYPE html>
 <html>
 <head>
@@ -46,10 +47,10 @@ export const getUserVerificationEmailTemplate = ({
                     <tr>
                         <td style="padding: 40px 20px;">
                             <p style="margin: 0 0 20px; font-size: 18px;">Hi ${safeName},</p>
-                            
-                            <p style="margin: 0 0 25px; font-size: 16px;">It looks like you've been here before. Click here to verify your email address and add this gallery to your profile.</p>
-                            
-                            <p style="margin: 0 0 25px; font-size: 16px;">Click to confirm your email address for the ${safeGalleryName} gallery:</p>
+
+                            <p style="margin: 0 0 25px; font-size: 16px;">To keep your galleries secure, we just need to confirm this email address belongs to you.</p>
+
+                            <p style="margin: 0 0 25px; font-size: 16px;">Click to confirm your email address for ${galleryLabel}:</p>
 
                             <!-- CTA Button -->
                             <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 0 0 30px;">
@@ -68,7 +69,7 @@ export const getUserVerificationEmailTemplate = ({
                             <p style="margin: 0 0 15px; font-size: 16px;">Once your email is verified, you'll be able to:</p>
                             
                             <ul style="margin: 0 0 30px; padding-left: 20px;">
-                                <li style="margin-bottom: 10px; font-size: 16px;">Access the ${safeGalleryName} gallery from your profile</li>
+                                <li style="margin-bottom: 10px; font-size: 16px;">Access ${galleryLabel} from your profile</li>
                                 <li style="margin-bottom: 10px; font-size: 16px;">Upload photos and videos to the gallery</li>
                                 <li style="margin-bottom: 10px; font-size: 16px;">Receive notifications when new content is added</li>
                                 <li style="margin-bottom: 10px; font-size: 16px;">Get reminders about important gallery events</li>
