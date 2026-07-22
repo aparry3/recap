@@ -11,12 +11,16 @@
     "dev": "source .env.local && next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "communications:check": "node scripts/check-communications-config.mjs"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@agntz/sdk": "0.0.1",
     "@aws-sdk/client-s3": "^3.1088.0",
     "@aws-sdk/s3-request-presigner": "^3.1088.0",
     "@fortawesome/fontawesome-common-types": "^6.6.0",
@@ -25,8 +29,8 @@
     "@fortawesome/free-regular-svg-icons": "^6.7.1",
     "@fortawesome/free-solid-svg-icons": "^6.7.1",
     "@fortawesome/react-fontawesome": "^3.4.0",
-    "@google/generative-ai": "^0.22.0",
     "@next/third-parties": "^15.5.20",
+    "@sendgrid/eventwebhook": "^8.0.0",
     "@sendgrid/mail": "^8.1.6",
     "@stripe/react-stripe-js": "^3.10.0",
     "@stripe/stripe-js": "^2.4.0",
@@ -36,24 +40,32 @@
     "dexie": "^4.4.4",
     "jszip": "^3.10.1",
     "kysely": "^0.28.17",
+    "luxon": "^3.7.2",
     "next": "^15.5.20",
+    "pdf-parse": "1.1.1",
     "pg": "^8.22.0",
     "qrcode": "^1.5.4",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-web-layout-components": "^1.0.7",
+    "sharp": "^0.35.3",
     "stripe": "^14.17.0",
     "tailwindcss": "^3.4.14",
-    "uuid": "^11.1.1"
+    "twilio": "^6.0.2",
+    "uuid": "^11.1.1",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "@next/bundle-analyzer": "^15.5.20",
+    "@types/luxon": "^3.7.2",
+    "@types/pdf-parse": "^1.1.5",
     "@types/qrcode": "^1.5.5",
     "@types/react": "^18.3.28",
     "@types/react-dom": "^18.3.7",
     "eslint": "^9.39.5",
     "eslint-config-next": "^15.5.20",
     "sass": "^1.101.0",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.10"
   }
 }

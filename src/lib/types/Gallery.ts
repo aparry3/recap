@@ -1,4 +1,4 @@
-import { Insertable, Selectable, Updateable } from "kysely"
+import { Generated, Insertable, Selectable, Updateable } from "kysely"
 import { WeddingEvent } from "./WeddingEvent"
 
 export interface GalleryTable {
@@ -13,6 +13,7 @@ export interface GalleryTable {
     theknot?: string
     createdBy?: string  // Add this line - tracks who created the gallery
     deletedAt?: Date | null    // Soft-delete timestamp
+    timezone: string
 }
 
 export interface GalleryMediaTable {
@@ -25,6 +26,7 @@ export interface GalleryPersonTable {
     personId: string
     coverPhotoId?: string
     receiveMessages?: boolean
+    joinedAt: Generated<Date>
 }
 
 export type GalleryWithImagesAndEvents =Gallery & {images: string[], events?: WeddingEvent[]}
@@ -33,7 +35,7 @@ export type GalleryWithImagesAndEvents =Gallery & {images: string[], events?: We
 export type Gallery = Selectable<GalleryTable>
 export type GalleryUpdate = Updateable<GalleryTable>
 export type NewGallery = Insertable<GalleryTable>
-export type NewGalleryData = Omit<NewGallery, 'id'|'personId'|'created'> & {personId?: string, createdBy?: string}
+export type NewGalleryData = Omit<NewGallery, 'id'|'personId'|'created'|'timezone'> & {personId?: string, createdBy?: string, timezone?: string}
 
 export type GalleryMedia = Selectable<GalleryMediaTable>
 export type GalleryMediaUpdate = Updateable<GalleryMediaTable>

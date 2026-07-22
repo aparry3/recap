@@ -2,39 +2,39 @@ import { Gallery } from "@/lib/types/Gallery";
 import { GalleryPersonData, NewPersonData, Person, PersonUpdate, Verification } from "@/lib/types/Person";
 
 
-export const createPerson = async (newPerson: NewPersonData, galleryId?: string, receiveMessages?: boolean, admin?: string): Promise<Person> => {
+export const createPerson = async (newPerson: NewPersonData, galleryId?: string, emailOptIn?: boolean, smsOptIn?: boolean, admin?: string): Promise<Person> => {
     const data = await fetch(`/api/people${admin ? `?admin=${admin}` : ''}`, {
         method: 'POST',
         body: JSON.stringify({...newPerson}) 
     }).then(res => res.json())
     const person = data.person
     if (galleryId) {
-        await createGalleryPerson(galleryId, person.id, receiveMessages)
+        await createGalleryPerson(galleryId, person.id, emailOptIn, smsOptIn)
     }
     return person
 }
 
-export const createGalleryPerson = async (galleryId: string, personId: string, receiveMessages?: boolean): Promise<Person> => {
+export const createGalleryPerson = async (galleryId: string, personId: string, emailOptIn?: boolean, smsOptIn?: boolean): Promise<Person> => {
     const data = await fetch(`/api/galleries/${galleryId}/people`, {
         method: 'POST',
-        body: JSON.stringify({personId, galleryId, receiveMessages}) 
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({personId, galleryId, emailOptIn: Boolean(emailOptIn), smsOptIn: Boolean(smsOptIn)})
     }).then(res => res.json())
     return data.person
 }
 
 
-export const updatePerson = async (personId: string, personUpdate: PersonUpdate & {receiveMessages?: boolean}): Promise<Person> => {
-    const {receiveMessages, ...rest} = personUpdate
+export const updatePerson = async (personId: string, personUpdate: PersonUpdate): Promise<Person> => {
     const data = await fetch(`/api/people/${personId}`, {
         method: 'PUT',
-        body: JSON.stringify({...rest}) 
+        body: JSON.stringify({...personUpdate})
     }).then(res => res.json())
     return data.person
 }
 
 export const fetchPersonByEmail = async (email: string): Promise<Person | undefined> => {
     try {
-        const data = await fetch(`/api/people?email=${email}`).then(res => res.json())
+        const data = await fetch(`/api/people?email=${encodeURIComponent(email)}`).then(res => res.json())
         return data.person
     } catch (error) {
         console.log(error)
@@ -83,4 +83,3 @@ export const createVerification = async (personId: string, galleryName: string, 
     }).then(res => res.json())
     return data.verification
 }
-

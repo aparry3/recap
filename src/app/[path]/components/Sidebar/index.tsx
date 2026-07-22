@@ -17,7 +17,7 @@ interface SidebarProps {
     onInfoClick: () => void
 }
 const SidebarContent: FC<Omit<SidebarProps, 'open'>> = ({onInfoClick}) => {
-    const {personId} = useUser()
+    const {personId, person} = useUser()
     const {handlePageChange, page, setShowSidebar, tab, setTab} = useNavigation()
     const {openSettings} = useGallery()
     const router = useRouter()
@@ -131,7 +131,7 @@ const SidebarContent: FC<Omit<SidebarProps, 'open'>> = ({onInfoClick}) => {
         )}
      </Column>
      <Column className={styles.menu}>
-     {personId === gallery.personId && (
+     {(personId === gallery.personId || person?.isAdmin) && (
         <Container className={styles.menuItemContainer}>
             <Row className={styles.menuItem} onClick={openSettings}>
                 <Container className={styles.menuIcon}>

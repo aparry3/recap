@@ -1,0 +1,195 @@
+.page {
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at 85% 5%, rgba(202, 155, 140, 0.18), transparent 32rem),
+    var(--background-light);
+  color: var(--text-dark);
+}
+
+.header {
+  padding: 1rem 2rem;
+  border-bottom: 1px solid var(--background-medium);
+  background: rgba(255, 255, 255, 0.72);
+}
+
+.content {
+  width: min(100% - 2rem, 820px);
+  margin: 0 auto;
+  padding: 4rem 0;
+  gap: 2.75rem;
+}
+
+.intro {
+  gap: 1rem;
+}
+
+.eyebrow,
+.demoLabel {
+  margin: 0;
+  color: var(--primary-dark);
+  font-family: Arial, sans-serif;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+}
+
+.title {
+  max-width: 700px;
+  margin: 0;
+  color: var(--primary-dark);
+  line-height: 1.05;
+}
+
+.lede {
+  max-width: 720px;
+  margin: 0;
+  line-height: 1.65;
+}
+
+.section,
+.demoSection {
+  gap: 1rem;
+
+  h2 {
+    margin: 0;
+    color: var(--primary-dark);
+  }
+}
+
+.steps {
+  margin: 0;
+  padding-left: 1.5rem;
+
+  li {
+    padding-left: 0.35rem;
+    margin-bottom: 0.75rem;
+    line-height: 1.55;
+  }
+}
+
+.formCard {
+  gap: 1.4rem;
+  padding: 1.75rem;
+  border: 1px solid rgba(95, 102, 80, 0.22);
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 14px 40px rgba(47, 42, 37, 0.08);
+}
+
+.field {
+  gap: 0.45rem;
+
+  label {
+    font-weight: 600;
+  }
+
+  input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0.8rem 0.9rem;
+    border: 1px solid rgba(47, 42, 37, 0.3);
+    border-radius: 7px;
+    background: #faf8f4;
+    color: var(--text-dark);
+    font-size: 1rem;
+  }
+}
+
+.checkboxRow {
+  align-items: flex-start;
+  gap: 0.8rem;
+
+  > input {
+    flex: 0 0 auto;
+    width: 1.15rem;
+    height: 1.15rem;
+    margin-top: 0.15rem;
+  }
+}
+
+.consentCopy {
+  gap: 0.35rem;
+
+  label {
+    font-weight: 700;
+  }
+
+  p {
+    margin: 0;
+    line-height: 1.55;
+  }
+
+  a {
+    color: var(--primary-dark);
+    font-weight: 600;
+  }
+}
+
+.note {
+  margin: 0;
+  padding-left: 1rem;
+  border-left: 3px solid var(--primary-dark);
+  font-size: 0.95rem;
+  line-height: 1.55;
+}
+
+.details {
+  margin: 0;
+  border-top: 1px solid var(--background-medium);
+
+  > div {
+    display: grid;
+    grid-template-columns: minmax(150px, 0.35fr) 1fr;
+    gap: 1rem;
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--background-medium);
+  }
+
+  dt {
+    font-weight: 700;
+  }
+
+  dd {
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  a {
+    color: var(--primary-dark);
+    font-weight: 600;
+  }
+}
+
+.policyLinks {
+  justify-content: center;
+  gap: 0.75rem;
+  padding-top: 1rem;
+
+  a {
+    color: var(--primary-dark);
+    font-weight: 600;
+  }
+}
+
+@media (max-width: 600px) {
+  .header {
+    padding: 0.9rem 1rem;
+  }
+
+  .content {
+    padding: 2.5rem 0;
+  }
+
+  .title {
+    font-size: 2.15rem !important;
+  }
+
+  .formCard {
+    padding: 1.2rem;
+  }
+
+  .details > div {
+    grid-template-columns: 1fr;
+    gap: 0.35rem;
+  }
+}

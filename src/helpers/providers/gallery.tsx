@@ -493,6 +493,11 @@ const GalleryProvider: React.FC<{ children: React.ReactNode, gallery: Gallery}> 
     ])
     const fileIds = new Set(files.map(f => f.id))
     const deleteImagePromises = unfinishedImages.map(async image => {
+      // Provider webhooks own retry/recovery for inbound media. These records do
+      // not have a browser IndexedDB entry and must not be mistaken for orphans.
+      if (image.source) {
+        return
+      }
       if (fileIds.has(image.id)) {
         return
       }
@@ -568,7 +573,7 @@ const GalleryProvider: React.FC<{ children: React.ReactNode, gallery: Gallery}> 
     }
   }, [galleryImages]);
   
-  const handleSubmitGallery = async (galleryName: string, theKnot?: string, zola?: string) => {
+  const handleSubmitGallery = async (galleryName: string, theKnot?: string, zola?: string, timezone?: string) => {
     setShowSettings(false)
     setTotalUploads(1)
     setTotalUploads(0)
@@ -580,7 +585,8 @@ const GalleryProvider: React.FC<{ children: React.ReactNode, gallery: Gallery}> 
       name: galleryName,
       path: `${galleryName.toLowerCase().replaceAll(' ', '-')}`,
       zola,
-      theknot: theKnot
+      theknot: theKnot,
+      timezone: timezone || gallery.timezone
     })
     if (_newGallery.images.length > 0) {
       setGalleryImages(_newGallery.images.join(','))

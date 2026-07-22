@@ -22,8 +22,8 @@ export interface VerificationTable {
     personId: string
     galleryId?: string
     verified: boolean
+    expiresAt: Date
 }
 
 export type Verification = Selectable<VerificationTable>
-export type VerificationUpdate = Updateable<VerificationTable>
 export type NewVerification = Insertable<VerificationTable>

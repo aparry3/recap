@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { requireAdmin } from '@/lib/admin/middleware';
 import { selectGalleriesForAdmin, insertGallery } from '@/lib/db/galleryService';
 import { createDefaultAlbums } from '@/lib/db/albumService';
-import { selectPersonByEmail, insertPerson, insertGalleryPerson } from '@/lib/db/personService';
+import { selectPersonByEmail, insertPerson, insertGalleryPerson, insertVerification } from '@/lib/db/personService';
 import { generateRandomString } from '@/helpers/utils';
 import { sendGridClient } from '@/lib/email';
 import { handleWeddingWebsites } from '@/lib/web';
@@ -94,6 +94,7 @@ export async function POST(request: NextRequest) {
 
     // Add person to gallery
     await insertGalleryPerson(gallery.id, person.id);
+    const verification = await insertVerification(person.id, gallery.id)
 
     console.log('person', person)
     // Send welcome email
@@ -105,6 +106,11 @@ export async function POST(request: NextRequest) {
         `${process.env.BASE_URL}/${gallery.path}`,
         gallery.password
       );
+      await sendGridClient.sendVerificationEmail(person.email!, {
+        galleryName: gallery.name,
+        name: person.name,
+        buttonUrl: `${process.env.BASE_URL}/verification/${verification.id}`,
+      })
       emailStatus = 'sent';
     } catch (emailError) {
       console.error('Email send error:', emailError);

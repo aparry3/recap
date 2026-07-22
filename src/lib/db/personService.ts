@@ -1,18 +1,37 @@
 import { db } from ".";
 import { Gallery, GalleryPerson } from "../types/Gallery";
-import { Person, NewPerson, PersonUpdate, NewPersonData, GalleryPersonData, Verification, NewVerification, VerificationUpdate } from "../types/Person";
+import { Person, NewPerson, PersonUpdate, NewPersonData, GalleryPersonData, Verification, NewVerification } from "../types/Person";
 import {v4 as uuidv4} from 'uuid';
+import { sql } from 'kysely';
 import { selectGalleryPersonMedia } from "./mediaService";
+import { normalizeEmail, normalizeUsPhone, optOutPersonChannelConsents } from './communicationService';
 
 const CLOUDFRONT_URL = process.env.AWS_CLOUDFRONT_URL || ''
 export const insertPerson = async (newPersonData: NewPersonData): Promise<Person> => {
-    const newPerson = {...newPersonData, id: uuidv4()} as NewPerson
+    const newPerson = {
+      ...newPersonData,
+      email: normalizeEmail(newPersonData.email) ?? undefined,
+      phone: normalizeUsPhone(newPersonData.phone) ?? undefined,
+      id: uuidv4(),
+    } as NewPerson
     const person = await db.insertInto('person').values(newPerson).returningAll().executeTakeFirstOrThrow();
     return person;
 }
 
 export const updatePerson = async (personId: string, personUpdate: PersonUpdate): Promise<Person> => {
-  const person = await db.updateTable('person').set(personUpdate).where('id', '=', personId).returningAll().executeTakeFirstOrThrow();
+  const currentPerson = await selectPerson(personId)
+  if (personUpdate.email !== undefined && normalizeEmail(personUpdate.email) !== normalizeEmail(currentPerson.email)) {
+    await optOutPersonChannelConsents(personId, 'email', 'contact_changed')
+  }
+  if (personUpdate.phone !== undefined && normalizeUsPhone(personUpdate.phone) !== normalizeUsPhone(currentPerson.phone)) {
+    await optOutPersonChannelConsents(personId, 'sms', 'contact_changed')
+  }
+  const normalizedUpdate: PersonUpdate = {
+    ...personUpdate,
+    ...(personUpdate.email !== undefined ? {email: normalizeEmail(personUpdate.email) ?? undefined} : {}),
+    ...(personUpdate.phone !== undefined ? {phone: normalizeUsPhone(personUpdate.phone) ?? undefined} : {}),
+  }
+  const person = await db.updateTable('person').set(normalizedUpdate).where('id', '=', personId).returningAll().executeTakeFirstOrThrow();
   return person;
 }
 
@@ -22,8 +41,64 @@ export const selectPerson = async (personId: string): Promise<Person> => {
 }
 
 export const selectPersonByEmail = async (email: string): Promise<Person> => {
-  const person = await db.selectFrom('person').where('email', '=', email).selectAll().executeTakeFirstOrThrow();
+  const normalizedEmail = normalizeEmail(email)
+  if (!normalizedEmail) throw new Error('Email is required')
+  const person = await db.selectFrom('person')
+    .where(sql<boolean>`lower(trim(${sql.ref('person.email')})) = ${normalizedEmail}`)
+    .selectAll()
+    .executeTakeFirstOrThrow();
   return person;
+}
+
+export interface InboundGalleryDestination {
+  person: Pick<Person, 'id' | 'name' | 'email' | 'phone'>
+  gallery: Pick<Gallery, 'id' | 'name' | 'path'>
+}
+
+/** Selects the gallery this contact joined most recently, across duplicate person records. */
+export const selectLatestGalleryForDestination = async (
+  channel: 'email' | 'sms',
+  destination: string,
+): Promise<InboundGalleryDestination | null> => {
+  const normalized = channel === 'email' ? normalizeEmail(destination) : normalizeUsPhone(destination)
+  if (!normalized) return null
+
+  const destinationMatch = channel === 'email'
+    ? sql<boolean>`lower(trim(${sql.ref('person.email')})) = ${normalized}`
+    : sql<boolean>`right(regexp_replace(${sql.ref('person.phone')}, '[^0-9]', '', 'g'), 10) = ${normalized.slice(-10)}`
+  const row = await db.selectFrom('person')
+    .innerJoin('galleryPerson', 'galleryPerson.personId', 'person.id')
+    .innerJoin('gallery', 'gallery.id', 'galleryPerson.galleryId')
+    .where(destinationMatch)
+    .where('gallery.deletedAt', 'is', null)
+    .select([
+      'person.id as personId',
+      'person.name as personName',
+      'person.email as personEmail',
+      'person.phone as personPhone',
+      'gallery.id as galleryId',
+      'gallery.name as galleryName',
+      'gallery.path as galleryPath',
+    ])
+    .orderBy('galleryPerson.joinedAt', 'desc')
+    .orderBy('gallery.created', 'desc')
+    .orderBy('person.created', 'desc')
+    .executeTakeFirst()
+  if (!row) return null
+
+  return {
+    person: {
+      id: row.personId,
+      name: row.personName,
+      email: row.personEmail ?? undefined,
+      phone: row.personPhone ?? undefined,
+    },
+    gallery: {
+      id: row.galleryId,
+      name: row.galleryName,
+      path: row.galleryPath,
+    },
+  }
 }
 
 
@@ -53,7 +128,14 @@ export const selectPeopleMedia = async (galleryId: string): Promise<GalleryPerso
 }
 
 export const insertGalleryPerson = async (galleryId: string, personId: string, receiveMessages?: boolean): Promise<GalleryPerson> => {
-  const galleryPerson = await db.insertInto('galleryPerson').values({galleryId, personId, receiveMessages}).returningAll().executeTakeFirstOrThrow();
+  const inserted = await db.insertInto('galleryPerson').values({galleryId, personId, receiveMessages})
+    .onConflict((oc) => oc.columns(['galleryId', 'personId']).doNothing())
+    .returningAll().executeTakeFirst();
+  const galleryPerson = inserted ?? await db.selectFrom('galleryPerson')
+    .where('galleryId', '=', galleryId)
+    .where('personId', '=', personId)
+    .selectAll()
+    .executeTakeFirstOrThrow();
   return galleryPerson;
 }
 
@@ -73,7 +155,12 @@ export const selectPersonGalleries = async (personId: string): Promise<Gallery[]
 }
 
 export const insertVerification = async (personId: string, galleryId?: string): Promise<Verification> => {
-  const newVerification = {personId, id: uuidv4(), verified: false} as NewVerification
+  const newVerification = {
+    personId,
+    id: uuidv4(),
+    verified: false,
+    expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
+  } as NewVerification
   if (galleryId) {
     newVerification.galleryId = galleryId
   }
@@ -81,12 +168,17 @@ export const insertVerification = async (personId: string, galleryId?: string): 
   return verification;
 }
 
-export const updateVerification = async (verificationId: string, verified: boolean): Promise<Verification> => {
-  const newVerification = {verified} as VerificationUpdate
-  const verification = await db.updateTable('verification').set(newVerification).where('id', '=', verificationId).returningAll().executeTakeFirstOrThrow();
-  return verification;
+export const consumeVerification = async (verificationId: string): Promise<Verification> => {
+  const verification = await db.updateTable('verification')
+    .set({verified: true})
+    .where('id', '=', verificationId)
+    .where('verified', '=', false)
+    .where('expiresAt', '>', new Date())
+    .returningAll()
+    .executeTakeFirst()
+  if (!verification) throw new Error('This verification link is invalid, expired, or has already been used')
+  return verification
 }
-
 
 export const selectVerification = async (verificationId: string): Promise<Verification> => {
   const verification = await db.selectFrom('verification').where('id', '=', verificationId).selectAll().executeTakeFirstOrThrow();
@@ -137,4 +229,3 @@ export const selectPersonWithGalleryStatus = async (personId: string): Promise<P
     throw error;
   }
 }
-

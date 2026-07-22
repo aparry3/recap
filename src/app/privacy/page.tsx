@@ -18,13 +18,13 @@ const PrivacyPage = () => {
                     Privacy Policy
                 </Text>
                 <Text as="p" className={styles.lastUpdated}>
-                    Last Updated: {new Date().toLocaleDateString()}
+                    Last Updated: July 21, 2026
                 </Text>
 
                 <Column className={styles.section}>
                     <Text as="h2" size={1.8} weight={600}>1. Introduction</Text>
                     <Text as="p">
-                        At Recap, we take your privacy seriously. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our wedding photo sharing platform.
+                        Parry Technology and Media, LLC, doing business as Our Wedding Recap (“Our Wedding Recap,” “Recap,” “we,” “us,” or “our”), is the company responsible for Recap. Our Wedding Recap is a brand of Parry Technology and Media, LLC, and Recap is an Our Wedding Recap service. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our wedding photo sharing platform.
                     </Text>
                 </Column>
 
@@ -34,7 +34,7 @@ const PrivacyPage = () => {
                         We collect information that you provide directly to us, including:
                     </Text>
                     <ul>
-                        <li>Account information (name, email address)</li>
+                        <li>Account information (name, email address, and optional phone number)</li>
                         <li>Wedding gallery information</li>
                         <li>Photos and media content</li>
                         <li>Communication preferences</li>
@@ -68,14 +68,24 @@ const PrivacyPage = () => {
                 </Column>
 
                 <Column className={styles.section}>
-                    <Text as="h2" size={1.8} weight={600}>5. Data Security</Text>
+                    <Text as="h2" size={1.8} weight={600}>5. Email and Text Message Updates</Text>
+                    <Text as="p">
+                        Email and text wedding updates are optional. If you opt in to SMS, Recap may send no more than 10 business-initiated automated wedding update texts per gallery, including the enrollment confirmation. Message frequency varies. If you message Recap, we may send additional service responses to your request. Message and data rates may apply. You can change gallery email or text preferences at any time, unsubscribe from email, or reply STOP to stop text messages. Reply HELP for text-message assistance.
+                    </Text>
+                    <Text as="p">
+                        We do not sell mobile information. We do not share mobile information, including SMS opt-in data or consent, with third parties or affiliates for their marketing or promotional purposes. We may provide contact, consent, and delivery information to service providers such as Twilio and SendGrid only as necessary to deliver and support the messaging service, comply with law, prevent abuse, and honor delivery or opt-out requests.
+                    </Text>
+                </Column>
+
+                <Column className={styles.section}>
+                    <Text as="h2" size={1.8} weight={600}>6. Data Security</Text>
                     <Text as="p">
                         We implement appropriate technical and organizational measures to protect your personal information against unauthorized access, alteration, disclosure, or destruction.
                     </Text>
                 </Column>
 
                 <Column className={styles.section}>
-                    <Text as="h2" size={1.8} weight={600}>6. Your Rights</Text>
+                    <Text as="h2" size={1.8} weight={600}>7. Your Rights</Text>
                     <Text as="p">
                         You have the right to:
                     </Text>
@@ -89,23 +99,23 @@ const PrivacyPage = () => {
                 </Column>
 
                 <Column className={styles.section}>
-                    <Text as="h2" size={1.8} weight={600}>7. Cookies and Tracking</Text>
+                    <Text as="h2" size={1.8} weight={600}>8. Cookies and Tracking</Text>
                     <Text as="p">
                         We use cookies and similar tracking technologies to track activity on our Service and hold certain information. You can instruct your browser to refuse all cookies or to indicate when a cookie is being sent.
                     </Text>
                 </Column>
 
                 <Column className={styles.section}>
-                    <Text as="h2" size={1.8} weight={600}>8. Changes to This Policy</Text>
+                    <Text as="h2" size={1.8} weight={600}>9. Changes to This Policy</Text>
                     <Text as="p">
                         We may update our Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy on this page and updating the “Last Updated” date.
                     </Text>
                 </Column>
 
                 <Column className={styles.section}>
-                    <Text as="h2" size={1.8} weight={600}>9. Contact Us</Text>
+                    <Text as="h2" size={1.8} weight={600}>10. Contact Us</Text>
                     <Text as="p">
-                        If you have any questions about this Privacy Policy, please contact us at aaron@ourweddingrecap.com
+                        For questions about this Privacy Policy or our privacy practices, contact Parry Technology and Media, LLC d/b/a Our Wedding Recap at aaron@ourweddingrecap.com.
                     </Text>
                 </Column>
             </Column>

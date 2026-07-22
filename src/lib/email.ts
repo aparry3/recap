@@ -3,10 +3,14 @@ import { getWelcomeEmailTemplate } from './email/templates/welcome';
 import { getOrderNotificationTemplate } from './email/templates/order_notification';
 import { getAdminInvitationEmailTemplate } from './email/templates/admin-invitation';
 import { getUserVerificationEmailTemplate } from './email/templates/user-verification';
+import { getReminderEmailTemplate } from './email/templates/reminder';
+import { COMMUNICATION_BRAND_NAME } from './brand';
 
 function configureSendGrid(requireOrderNotificationEmail = false) {
   const apiKey = process.env.SENDGRID_API_KEY;
   const senderEmail = process.env.SENDGRID_EMAIL;
+  const senderName = process.env.SENDGRID_FROM_NAME?.trim() || COMMUNICATION_BRAND_NAME;
+  const replyToEmail = process.env.SENDGRID_REPLY_TO_EMAIL?.trim();
   const orderNotificationEmail = process.env.ORDER_NOTIFICATION_EMAIL;
 
   if (!apiKey || !senderEmail || (requireOrderNotificationEmail && !orderNotificationEmail)) {
@@ -17,8 +21,31 @@ function configureSendGrid(requireOrderNotificationEmail = false) {
 
   return {
     senderEmail,
+    senderName,
+    replyToEmail,
     orderNotificationEmail,
   };
+}
+
+function supportReplyTo(replyToEmail?: string) {
+  return replyToEmail
+    ? { replyTo: { email: replyToEmail, name: 'Our Wedding Recap support' } }
+    : {};
+}
+
+function requireInboundEmail(): string {
+  const inboundEmail = process.env.SENDGRID_INBOUND_EMAIL;
+  if (!inboundEmail) throw new Error('SENDGRID_INBOUND_EMAIL is required for reply-to uploads');
+  return inboundEmail;
+}
+
+function escapeHtml(value: string): string {
+  return value
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#039;');
 }
 
 export interface TemplateData {
@@ -47,16 +74,90 @@ export interface AdminInvitationData {
     verificationUrl: string;
 }
 
+export interface ReminderEmailData {
+  email: string;
+  name: string;
+  galleryName: string;
+  galleryUrl: string;
+  preferenceUrl: string;
+  subject: string;
+  body: string;
+  deliveryId: string;
+}
+
+export interface InboundReplyEmailData {
+  email: string;
+  subject: string;
+  body: string;
+}
+
 export class SendGridClient {
+  async sendReminderEmail(data: ReminderEmailData): Promise<string> {
+    const { senderEmail, senderName } = configureSendGrid();
+    const inboundEmail = requireInboundEmail();
+    const unsubscribeGroupId = process.env.SENDGRID_REMINDER_UNSUBSCRIBE_GROUP_ID
+    const postalAddress = process.env.BUSINESS_POSTAL_ADDRESS
+    if (!postalAddress) throw new Error('BUSINESS_POSTAL_ADDRESS is required for reminder email')
+    if (!unsubscribeGroupId) throw new Error('SENDGRID_REMINDER_UNSUBSCRIBE_GROUP_ID is required for reminder email')
+    const groupId = Number(unsubscribeGroupId)
+    if (!Number.isInteger(groupId) || groupId <= 0) throw new Error('SENDGRID_REMINDER_UNSUBSCRIBE_GROUP_ID must be a positive integer')
+    const [response] = await sgMail.send({
+      to: data.email,
+      from: { email: senderEmail, name: senderName },
+      replyTo: { email: inboundEmail, name: 'Recap uploads' },
+      subject: data.subject,
+      text: `${data.body}\n\nView and upload photos: ${data.galleryUrl}\nOr reply to this email with one photo under 2 MB. Use the gallery link for videos, larger photos, or multiple files.\nManage preferences or unsubscribe: ${data.preferenceUrl}\n\n${postalAddress}`,
+      html: getReminderEmailTemplate({
+        galleryName: data.galleryName,
+        recipientName: data.name,
+        body: data.body,
+        galleryUrl: data.galleryUrl,
+        preferenceUrl: data.preferenceUrl,
+      }),
+      customArgs: { delivery_id: data.deliveryId },
+      asm: { groupId },
+    });
+    const messageId = response.headers['x-message-id'];
+    return Array.isArray(messageId) ? messageId[0] : String(messageId || data.deliveryId);
+  }
+
+  async sendInboundReply(data: InboundReplyEmailData): Promise<string> {
+    const { senderEmail, senderName } = configureSendGrid();
+    const inboundEmail = requireInboundEmail();
+    const [response] = await sgMail.send({
+      to: data.email,
+      from: { email: senderEmail, name: senderName },
+      replyTo: { email: inboundEmail, name: 'Recap uploads' },
+      subject: data.subject,
+      text: data.body,
+      html: `<div style="font-family:Georgia,'Times New Roman',serif;color:#2f2a25;font-size:18px;line-height:1.6;max-width:620px;margin:0 auto;padding:28px;"><p>${escapeHtml(data.body).replaceAll('\n', '<br>')}</p></div>`,
+      trackingSettings: {
+        clickTracking: { enable: false, enableText: false },
+        openTracking: { enable: false },
+      },
+    });
+    const messageId = response.headers['x-message-id'];
+    return Array.isArray(messageId) ? messageId[0] : String(messageId || 'submitted');
+  }
+
+  async sendReminderConfirmation(data: Omit<ReminderEmailData, 'subject' | 'body'>): Promise<string> {
+    return this.sendReminderEmail({
+      ...data,
+      subject: `You're subscribed to ${data.galleryName} updates`,
+      body: `You're all set to receive wedding reminders and gallery updates by email.`,
+    });
+  }
+
   async sendVerificationEmail(email: string, templateData: TemplateData): Promise<boolean> {
     try {
-      const { senderEmail } = configureSendGrid();
+      const { senderEmail, senderName, replyToEmail } = configureSendGrid();
       const response = await sgMail.send({
         to: email,
         from: {
           email: senderEmail,
-          name: 'Recap'
+          name: senderName
         },
+        ...supportReplyTo(replyToEmail),
         subject: `Verify your email for ${templateData.galleryName}`,
         html: getUserVerificationEmailTemplate({
           name: templateData.name,
@@ -76,13 +177,14 @@ export class SendGridClient {
 
   async sendCreationEmail(email: string, name: string, galleryUrl: string, password: string): Promise<boolean> {
     try {
-      const { senderEmail } = configureSendGrid();
+      const { senderEmail, senderName, replyToEmail } = configureSendGrid();
       const response = await sgMail.send({
         to: email,
         from: {
           email: senderEmail,
-          name: 'Recap'
+          name: senderName
         },
+        ...supportReplyTo(replyToEmail),
         subject: 'Your Recap Gallery is Ready! 🎉',
         html: getWelcomeEmailTemplate({
           name,
@@ -102,13 +204,14 @@ export class SendGridClient {
 
   async sendOrderNotification(data: OrderNotificationData): Promise<boolean> {
     try {
-      const { senderEmail, orderNotificationEmail } = configureSendGrid(true);
+      const { senderEmail, senderName, replyToEmail, orderNotificationEmail } = configureSendGrid(true);
       const response = await sgMail.send({
         to: orderNotificationEmail!,
         from: {
           email: senderEmail,
-          name: 'Recap'
+          name: senderName
         },
+        ...supportReplyTo(replyToEmail),
         subject: `New Gallery Order - ${data.galleryName}`,
         html: getOrderNotificationTemplate(data),
       }).catch(err => {
@@ -124,13 +227,14 @@ export class SendGridClient {
 
   async sendAdminInvitationEmail(data: AdminInvitationData): Promise<boolean> {
     try {
-      const { senderEmail } = configureSendGrid();
+      const { senderEmail, senderName, replyToEmail } = configureSendGrid();
       const response = await sgMail.send({
         to: data.email,
         from: {
           email: senderEmail,
-          name: 'Recap'
+          name: senderName
         },
+        ...supportReplyTo(replyToEmail),
         subject: "You've been added as an admin to Recap!",
         html: getAdminInvitationEmailTemplate({
           name: data.name,

@@ -75,7 +75,7 @@ const CreatePage: FC = () => {
 
     let _person: Person
     if (!targetPerson || targetPerson.email !== _email) {
-      _person = await createPerson({name: _name, email: _email, isAdmin: false}, undefined, undefined, isAdmin ? person?.id : undefined)
+      _person = await createPerson({name: _name, email: _email, isAdmin: false}, undefined, undefined, undefined, isAdmin ? person?.id : undefined)
       // Never update personId when admin is creating for someone else
       // Only update if it's the current user creating their own gallery
       if (!isAdmin || !person || (_email === person?.email)) {

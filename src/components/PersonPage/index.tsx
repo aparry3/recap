@@ -6,14 +6,13 @@ import Input from '@/components/Input';
 import styles from './Create.module.scss';
 import Button from '@/components/Button';
 import { Person, NewPersonData } from '@/lib/types/Person';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { checkSquareIcon, squareIcon } from '@/lib/icons';
 
-const PersonPage: FC<{person?: Person | NewPersonData, galleryName?: string, onSubmit: (name: string, email?: string, phone?: string, receiveMessages?: boolean) => void}> = ({person, galleryName, onSubmit}) => {
+const PersonPage: FC<{person?: Person | NewPersonData, galleryName?: string, onSubmit: (name: string, email?: string, phone?: string, emailOptIn?: boolean, smsOptIn?: boolean) => void}> = ({person, galleryName, onSubmit}) => {
   const [name, setName] = useState(person?.name || '');
   const [phone, setPhone] = useState(person?.phone || '');
   const [email, setEmail] = useState(person?.email || '');
-  const [receiveMessages, setReceiveMessages] = useState(true);
+  const [emailOptIn, setEmailOptIn] = useState(false);
+  const [smsOptIn, setSmsOptIn] = useState(false);
 
   const formatPhoneNumber = (digitsStr: string) => {
     // Remove any non-digit characters (defensive; our input should already be digits)
@@ -34,10 +33,7 @@ const PersonPage: FC<{person?: Person | NewPersonData, galleryName?: string, onS
     // Convert to number if digits exist; otherwise, set to null.
     const numericValue = digits;
     setPhone(numericValue);
-    // If phone number is entered, default opt-in to true
-    if (numericValue.length > 0) {
-      setReceiveMessages(true);
-    }
+    if (!numericValue.length) setSmsOptIn(false);
   };
 
   // Derive the display value: if we have a number, convert it back to a string and format.
@@ -61,7 +57,7 @@ const PersonPage: FC<{person?: Person | NewPersonData, galleryName?: string, onS
 
   const handleButtonPress = () => {
     // Perform any necessary actions with the form data
-    onSubmit(name, email, phone, receiveMessages);
+    onSubmit(name, email, phone, emailOptIn, smsOptIn);
   };
 
   const emailError = useMemo(() => {
@@ -73,14 +69,16 @@ const PersonPage: FC<{person?: Person | NewPersonData, galleryName?: string, onS
   } , [email])
 
 
+  const phoneError = useMemo(() => Boolean(phone) && phone.replace(/\D/g, '').length !== 10, [phone])
+
   const submitDisabled = useMemo(() => {
-    return !name || emailError
-  }, [emailError, name])
+    return !name || emailError || phoneError || (emailOptIn && !email) || (smsOptIn && !phone)
+  }, [email, emailError, emailOptIn, name, phone, phoneError, smsOptIn])
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     // Perform any necessary actions with the form data
-    if (!submitDisabled) onSubmit(name, email, phone, receiveMessages);
+    if (!submitDisabled) onSubmit(name, email, phone, emailOptIn, smsOptIn);
 };
 
 
@@ -105,7 +103,7 @@ const PersonPage: FC<{person?: Person | NewPersonData, galleryName?: string, onS
           )}
         </Column>
         <Container className={styles.buttonContainer} padding={[2, 0]}>
-          <Button className={styles.button} onClick={handleButtonPress} type='submit' disabled={!name || !email}>
+          <Button className={styles.button} onClick={handleButtonPress} type='submit' disabled={submitDisabled}>
             <Text size={1.2} weight={600}>Submit</Text>
           </Button>
         </Container>
@@ -147,24 +145,41 @@ const PersonPage: FC<{person?: Person | NewPersonData, galleryName?: string, onS
                 value={displayPhone}
                 onChange={handlePhoneChange}
               />
-              {false && (
+              {phoneError && (
               <Row style={{width: '100%'}}>
-                  <Text>Please enter a valid phone number</Text>
+                  <Text>Please enter a valid 10-digit US phone number</Text>
               </Row>
               )}
           </Column>
           <Row className={`${styles.inputContainer} ${styles.checkboxRow}`}>
-            <Container 
-              onClick={() => phone && setReceiveMessages(!receiveMessages)}
-              className={`${styles.checkboxContainer} ${!phone ? styles.disabled : ''}`}
-            >
-              <FontAwesomeIcon 
-                icon={receiveMessages ? checkSquareIcon : squareIcon} 
-                className={styles.checkboxIcon}
-                size="lg"
-              />
-            </Container>
-            <Text>Opt in to text messages</Text>
+            <input
+              id="email-reminder-consent"
+              type="checkbox"
+              checked={emailOptIn}
+              disabled={!email}
+              onChange={(event) => setEmailOptIn(event.target.checked)}
+              className={styles.checkboxInput}
+            />
+            <Column className={styles.consentCopy}>
+              <label htmlFor="email-reminder-consent"><Text weight={600}>Email me wedding updates</Text></label>
+              <Text size={0.9}>Receive reminders and gallery updates by email. Unsubscribe at any time.</Text>
+            </Column>
+          </Row>
+          <Row className={`${styles.inputContainer} ${styles.checkboxRow}`}>
+            <input
+              id="sms-reminder-consent"
+              type="checkbox"
+              checked={smsOptIn}
+              disabled={!phone || phoneError}
+              onChange={(event) => setSmsOptIn(event.target.checked)}
+              className={styles.checkboxInput}
+            />
+            <Column className={styles.consentCopy}>
+              <label htmlFor="sms-reminder-consent"><Text weight={600}>Text me wedding updates</Text></label>
+              <Text size={0.85}>
+                By checking this box, you agree to receive up to 10 automated wedding update texts about this gallery, including a confirmation. If you message Recap, we may send additional service responses to your request. Message and data rates may apply. Reply STOP to stop or HELP for help. Consent is optional and is not a condition of purchase. See our <a href="/terms" target="_blank">Terms</a> and <a href="/privacy" target="_blank">Privacy Policy</a>.
+              </Text>
+            </Column>
           </Row>
           <Container className={styles.buttonContainer}>
             <Button className={styles.button} onClick={handleButtonPress} type='submit' disabled={submitDisabled}>
@@ -172,7 +187,7 @@ const PersonPage: FC<{person?: Person | NewPersonData, galleryName?: string, onS
             </Button>
           </Container>
           <Container className={styles.copyright}>
-            <Text style={{ opacity: 0.7 }}>Recap is a property of Parry Technology and Media LLC</Text>
+            <Text style={{ opacity: 0.7 }}>Our Wedding Recap is a brand of Parry Technology and Media, LLC. Recap is an Our Wedding Recap service.</Text>
           </Container>
         </Form>
       </Container>

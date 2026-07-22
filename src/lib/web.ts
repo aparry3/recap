@@ -1,23 +1,13 @@
 import * as cheerio from 'cheerio';
-import { Gallery, NewGalleryData } from './types/Gallery';
-import { WeddingEvent, WeddingEventDetails } from './types/WeddingEvent';
-import gemini from './gemini';
-import { insertEvents } from './db/eventService';
+import { Gallery } from './types/Gallery';
+import { WeddingEvent } from './types/WeddingEvent';
 
 export const handleWeddingWebsites = async (gallery: Gallery): Promise<{images: string[], events: WeddingEvent[]}> => {
   let images: string[] = []
-  let details: WeddingEventDetails[] = []
-  let events: WeddingEvent[] = []
+  const events: WeddingEvent[] = []
 
   const photoUrl = gallery.theknot ? `${gallery.theknot}/photos` : `${gallery.zola}/photo`
-  const eventUrl = gallery.theknot ? gallery.theknot : `${gallery.zola}/event`
-
-  const [webContent, _images] = await Promise.all([getUrlBody(eventUrl), getUrlImages(photoUrl)])
-  images = _images
-  if (webContent) {
-      details = await gemini.extractEvents(webContent)
-      events = await insertEvents(gallery.id, details)
-  }
+  images = await getUrlImages(photoUrl)
   return {images, events}
 
 }
@@ -31,6 +21,10 @@ export const getUrlHtml = async (url: string) => {
 
 export const getUrlBody = async (url: string): Promise<string> => {
     const html = await getUrlHtml(url)
+    return getHtmlBodyText(html)
+}
+
+export const getHtmlBodyText = (html: string): string => {
     try {
         const $ = cheerio.load(html);
   
@@ -43,7 +37,7 @@ export const getUrlBody = async (url: string): Promise<string> => {
         console.error(err.message)
         return ""
       }
-    }
+}
 
     export const getUrlImages = async (url: string): Promise<string[]> => {
       const html = await getUrlHtml(url);

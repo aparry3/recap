@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { selectVerification, updateVerification, selectPerson } from '@/lib/db/personService';
+import { consumeVerification, selectVerification, selectPerson } from '@/lib/db/personService';
+import { setAuthSessionCookie } from '@/lib/auth/session';
 
 export async function GET(
   request: NextRequest,
@@ -26,6 +27,12 @@ export async function GET(
         { status: 400 }
       );
     }
+    if (verification.expiresAt <= new Date()) {
+      return NextResponse.json(
+        { error: 'This verification link has expired' },
+        { status: 400 }
+      );
+    }
     
     // Verify the person has admin privileges
     const person = await selectPerson(verification.personId);
@@ -37,7 +44,8 @@ export async function GET(
     }
     
     // Mark verification as used
-    await updateVerification(verificationId, true);
+    await consumeVerification(verificationId);
+    await setAuthSessionCookie(person.id);
     
     // Return success with personId for frontend to set cookie
     return NextResponse.json({

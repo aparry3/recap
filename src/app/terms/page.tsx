@@ -18,13 +18,13 @@ const TermsPage = () => {
                     Terms and Conditions
                 </Text>
                 <Text as="p" className={styles.lastUpdated}>
-                    Last Updated: {new Date().toLocaleDateString()}
+                    Last Updated: July 21, 2026
                 </Text>
 
                 <Column className={styles.section}>
                     <Text as="h2" size={1.8} weight={600}>1. Acceptance of Terms</Text>
                     <Text as="p">
-                        By accessing and using Recap (“the Service”), you accept and agree to be bound by the terms and provision of this agreement. If you do not agree to abide by the above, please do not use this service.
+                        These Terms form an agreement between you and Parry Technology and Media, LLC, doing business as Our Wedding Recap (“Our Wedding Recap,” “Recap,” “we,” “us,” or “our”). Our Wedding Recap is a brand of Parry Technology and Media, LLC, and Recap is an Our Wedding Recap service. By accessing or using Recap (“the Service”), you agree to be bound by these Terms. If you do not agree, please do not use the Service.
                     </Text>
                 </Column>
 
@@ -63,23 +63,30 @@ const TermsPage = () => {
                 </Column>
 
                 <Column className={styles.section}>
-                    <Text as="h2" size={1.8} weight={600}>6. Limitation of Liability</Text>
+                    <Text as="h2" size={1.8} weight={600}>6. Optional Email and SMS Updates</Text>
                     <Text as="p">
-                        Recap shall not be liable for any indirect, incidental, special, consequential, or punitive damages resulting from your use of or inability to use the Service.
+                        Guests may separately opt in to email and SMS wedding updates. SMS consent is optional and is not a condition of purchasing or using Recap. Recap may send no more than 10 business-initiated automated wedding update texts per gallery to an opted-in guest, including the enrollment confirmation. If a guest messages Recap, Recap may send additional service responses to that request. Message frequency varies, and message and data rates may apply. Reply STOP to stop and HELP for help, or use the linked communication-preferences page.
                     </Text>
                 </Column>
 
                 <Column className={styles.section}>
-                    <Text as="h2" size={1.8} weight={600}>7. Changes to Terms</Text>
+                    <Text as="h2" size={1.8} weight={600}>7. Limitation of Liability</Text>
+                    <Text as="p">
+                        To the fullest extent permitted by law, Parry Technology and Media, LLC, doing business as Our Wedding Recap, shall not be liable for any indirect, incidental, special, consequential, or punitive damages resulting from your use of or inability to use the Service.
+                    </Text>
+                </Column>
+
+                <Column className={styles.section}>
+                    <Text as="h2" size={1.8} weight={600}>8. Changes to Terms</Text>
                     <Text as="p">
                         Recap reserves the right to modify these terms at any time. Users will be notified of any changes, and continued use of the Service constitutes acceptance of the modified terms.
                     </Text>
                 </Column>
 
                 <Column className={styles.section}>
-                    <Text as="h2" size={1.8} weight={600}>8. Contact Information</Text>
+                    <Text as="h2" size={1.8} weight={600}>9. Contact Information</Text>
                     <Text as="p">
-                        For any questions regarding these Terms and Conditions, please contact us at aaron@ourweddingrecap.com
+                        For questions regarding these Terms, contact Parry Technology and Media, LLC d/b/a Our Wedding Recap at aaron@ourweddingrecap.com.
                     </Text>
                 </Column>
             </Column>
