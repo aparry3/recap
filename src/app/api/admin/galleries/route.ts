@@ -4,7 +4,7 @@ import { selectGalleriesForAdmin, insertGallery } from '@/lib/db/galleryService'
 import { createDefaultAlbums } from '@/lib/db/albumService';
 import { selectPersonByEmail, insertPerson, insertGalleryPerson, insertVerification } from '@/lib/db/personService';
 import { generateRandomString } from '@/helpers/utils';
-import { sendGridClient } from '@/lib/email';
+import { emailClient } from '@/lib/email';
 import { handleWeddingWebsites } from '@/lib/web';
 import { NewGalleryData } from '@/lib/types/Gallery';
 import { Person } from '@/lib/types/Person';
@@ -100,13 +100,13 @@ export async function POST(request: NextRequest) {
     // Send welcome email
     let emailStatus = 'not_sent';
     try {
-      await sendGridClient.sendCreationEmail(
+      await emailClient.sendCreationEmail(
         person.email!,
         person.name,
         `${process.env.BASE_URL}/${gallery.path}`,
         gallery.password
       );
-      await sendGridClient.sendVerificationEmail(person.email!, {
+      await emailClient.sendVerificationEmail(person.email!, {
         galleryName: gallery.name,
         name: person.name,
         buttonUrl: `${process.env.BASE_URL}/verification/${verification.id}`,

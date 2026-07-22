@@ -20,7 +20,7 @@ import { CommunicationConsent } from '@/lib/types/Communication'
 import { Gallery } from '@/lib/types/Gallery'
 import { Person } from '@/lib/types/Person'
 import { Reminder } from '@/lib/types/Reminder'
-import { sendGridClient } from '@/lib/email'
+import { emailClient } from '@/lib/email'
 import { preferenceUrl } from '@/lib/preferences'
 import { sendSms } from '@/lib/sms'
 import { buildReminderSmsBody } from '@/lib/reminders/message'
@@ -54,8 +54,8 @@ async function submitEmail(input: {
     deliveryId: input.deliveryId,
   }
   const providerMessageId = input.confirmation
-    ? await sendGridClient.sendReminderConfirmation(data)
-    : await sendGridClient.sendReminderEmail({ ...data, subject: input.subject, body: input.body })
+    ? await emailClient.sendReminderConfirmation(data)
+    : await emailClient.sendReminderEmail({ ...data, subject: input.subject, body: input.body })
   await updateDelivery(input.deliveryId, { status: 'submitted', providerMessageId, submittedAt: new Date() })
 }
 

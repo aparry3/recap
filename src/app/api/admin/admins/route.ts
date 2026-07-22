@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { requireAdmin } from '@/lib/admin/middleware';
 import { db } from '@/lib/db';
 import { updatePerson, insertPerson, selectPersonByEmail, insertVerification } from '@/lib/db/personService';
-import { sendGridClient } from '@/lib/email';
+import { emailClient } from '@/lib/email';
 
 export async function GET(request: NextRequest) {
   try {
@@ -105,7 +105,7 @@ export async function POST(request: NextRequest) {
       const verification = await insertVerification(personResult!.id);
       const verificationUrl = `${process.env.BASE_URL}/admin/verify/${verification.id}`;
       
-      emailSent = await sendGridClient.sendAdminInvitationEmail({
+      emailSent = await emailClient.sendAdminInvitationEmail({
         name: personResult!.name,
         email: personResult!.email!,
         verificationUrl

@@ -1,7 +1,7 @@
 import { createHash } from 'crypto'
 import { EventWebhook } from '@sendgrid/eventwebhook'
 import { selectLatestGalleryForDestination } from '@/lib/db/personService'
-import { sendGridClient } from '@/lib/email'
+import { emailClient } from '@/lib/email'
 import { buildInboundSourceId, isSupportedInboundEmailContentType, isWithinInboundEmailMediaLimit, normalizeInboundContentType, uploadInboundMedia } from '@/lib/inbound/media'
 import { buildInboundReply, extractEnvelopeSender, extractMessageId, hasPassingSpf, isAutomatedEmail, safeReplySubject } from '@/lib/inbound/message'
 import { NextRequest, NextResponse } from 'next/server'
@@ -96,7 +96,7 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    await sendGridClient.sendInboundReply({
+    await emailClient.sendInboundReply({
       email: sender,
       subject: safeReplySubject(field(formData, 'subject')),
       body: buildInboundReply({

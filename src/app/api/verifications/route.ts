@@ -1,7 +1,7 @@
 // src/app/api/people/route.ts
 import { normalizeEmail } from '@/lib/db/communicationService';
 import { insertVerification, selectPerson } from '@/lib/db/personService';
-import { sendGridClient } from '@/lib/email';
+import { emailClient } from '@/lib/email';
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
 
@@ -21,7 +21,7 @@ export const POST = async (req: Request) => {
             return NextResponse.json({error: 'The email address does not match this account'}, {status: 403})
         }
         const verification = await insertVerification(personId)
-        const sent = await sendGridClient.sendVerificationEmail(person.email, {
+        const sent = await emailClient.sendVerificationEmail(person.email, {
             galleryName: galleryName,
             name: person.name,
             buttonUrl: `${process.env.BASE_URL}/verification/${verification.id}`
