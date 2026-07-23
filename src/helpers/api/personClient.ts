@@ -109,8 +109,8 @@ export const createVerification = async (
             email,
             name,
             createGallery: Boolean(gallery),
-            theKnot: gallery?.theKnot,
-            zola: gallery?.zola,
+            ...(gallery?.theKnot?.trim() ? {theKnot: gallery.theKnot.trim()} : {}),
+            ...(gallery?.zola?.trim() ? {zola: gallery.zola.trim()} : {}),
         })
     })
     const data = await res.json()

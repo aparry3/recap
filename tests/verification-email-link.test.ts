@@ -77,4 +77,24 @@ describe('verification email links', () => {
     const emailData = mocks.sendVerificationEmail.mock.calls[0][1]
     expect(new URL(emailData.buttonUrl).searchParams.has('gallery')).toBe(false)
   })
+
+  it('supports gallery requests from a create page opened before the API rollout', async () => {
+    const request = new NextRequest('https://ourweddingrecap.com/api/verifications', {
+      method: 'POST',
+      body: JSON.stringify({
+        personId,
+        galleryName: 'Taylor & Morgan',
+        email: 'taylor@example.com',
+        name: 'Taylor',
+        theKnot: '',
+        zola: '',
+      }),
+    })
+
+    const response = await POST(request)
+
+    expect(response.status).toBe(200)
+    const emailData = mocks.sendVerificationEmail.mock.calls[0][1]
+    expect(new URL(emailData.buttonUrl).searchParams.get('gallery')).toBeTruthy()
+  })
 })
