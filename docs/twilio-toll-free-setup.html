@@ -1,0 +1,633 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Twilio Toll-Free Setup — Our Wedding Recap</title>
+<style>
+  :root {
+    --bg: #faf7f2;
+    --card: #ffffff;
+    --ink: #29221d;
+    --muted: #6f645b;
+    --line: #e6ddd2;
+    --accent: #a05c4a;
+    --accent-ink: #ffffff;
+    --code-bg: #f4efe7;
+    --warn-bg: #fdf3dc;
+    --warn-line: #e8c56f;
+    --good-bg: #edf5ea;
+    --good-line: #9dc08f;
+    --info-bg: #eef2f5;
+    --info-line: #a9bcc9;
+    --mark-bg: #ffe9a8;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #171310;
+      --card: #211c17;
+      --ink: #ece5dc;
+      --muted: #a89c90;
+      --line: #3a322a;
+      --accent: #d29a82;
+      --accent-ink: #241a14;
+      --code-bg: #2a241d;
+      --warn-bg: #33290f;
+      --warn-line: #8a6d1e;
+      --good-bg: #1e2b1a;
+      --good-line: #4c6b40;
+      --info-bg: #1d252b;
+      --info-line: #3f5666;
+      --mark-bg: #6b5410;
+    }
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font: 16px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+  h1, h2, h3, .stepnum { font-family: "Iowan Old Style", Palatino, "Palatino Linotype", Georgia, serif; }
+  a { color: var(--accent); }
+  mark { background: var(--mark-bg); color: inherit; padding: 0 3px; border-radius: 3px; }
+
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 0 20px 80px; display: flex; gap: 40px; }
+  main { flex: 1; min-width: 0; max-width: 780px; }
+
+  nav.toc {
+    width: 230px; flex-shrink: 0; position: sticky; top: 24px; align-self: flex-start;
+    font-size: 13.5px; padding-top: 56px;
+  }
+  nav.toc ol { list-style: none; padding: 0; margin: 0; }
+  nav.toc li { margin: 0; }
+  nav.toc a { display: block; padding: 5px 10px; color: var(--muted); text-decoration: none; border-left: 2px solid var(--line); }
+  nav.toc a:hover { color: var(--accent); border-left-color: var(--accent); }
+  nav.toc .tocTitle { font-weight: 600; color: var(--ink); padding: 0 10px 8px; }
+  #progressLabel { font-size: 12px; color: var(--muted); padding: 10px; }
+  @media (max-width: 900px) { nav.toc { display: none; } }
+
+  header.hero { padding: 56px 0 8px; }
+  .eyebrow { letter-spacing: .14em; font-size: 12px; font-weight: 700; color: var(--accent); text-transform: uppercase; }
+  h1 { font-size: 40px; line-height: 1.15; margin: 10px 0 12px; font-weight: 600; }
+  .lede { font-size: 18px; color: var(--muted); max-width: 62ch; }
+  .metaline { font-size: 13px; color: var(--muted); margin-top: 14px; }
+
+  section { margin-top: 56px; }
+  .stephead { display: flex; align-items: baseline; gap: 16px; border-bottom: 2px solid var(--line); padding-bottom: 10px; margin-bottom: 20px; }
+  .stepnum { font-size: 44px; color: var(--accent); font-weight: 600; line-height: 1; }
+  h2 { font-size: 27px; margin: 0; font-weight: 600; }
+  h3 { font-size: 20px; margin: 28px 0 10px; font-weight: 600; }
+  p { margin: 12px 0; }
+  ul, ol { padding-left: 24px; }
+  li { margin: 6px 0; }
+  .small { font-size: 13.5px; color: var(--muted); }
+
+  .callout { border: 1px solid; border-left-width: 5px; border-radius: 8px; padding: 14px 16px; margin: 18px 0; font-size: 15px; }
+  .callout p { margin: 6px 0; }
+  .callout.warn { background: var(--warn-bg); border-color: var(--warn-line); }
+  .callout.good { background: var(--good-bg); border-color: var(--good-line); }
+  .callout.info { background: var(--info-bg); border-color: var(--info-line); }
+  .callout .ctitle { font-weight: 700; display: block; margin-bottom: 4px; }
+
+  .field { background: var(--card); border: 1px solid var(--line); border-radius: 10px; margin: 14px 0; overflow: hidden; }
+  .fieldHead { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 10px 14px; border-bottom: 1px solid var(--line); }
+  .fieldLabel { font-weight: 650; font-size: 14px; }
+  .fieldLabel .tw { color: var(--muted); font-weight: 400; font-size: 12.5px; }
+  pre.val {
+    margin: 0; padding: 14px 16px; background: var(--code-bg);
+    font: 14px/1.55 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    white-space: pre-wrap; word-break: break-word;
+  }
+  .fieldNote { padding: 10px 14px; font-size: 13.5px; color: var(--muted); border-top: 1px solid var(--line); }
+  .fieldNote p { margin: 4px 0; }
+
+  button.copy {
+    border: 1px solid var(--accent); background: transparent; color: var(--accent);
+    font: 600 12.5px/1 -apple-system, sans-serif; padding: 7px 12px; border-radius: 999px; cursor: pointer;
+    flex-shrink: 0;
+  }
+  button.copy:hover { background: var(--accent); color: var(--accent-ink); }
+  button.copy.copied { background: var(--accent); color: var(--accent-ink); }
+
+  .check { display: flex; gap: 10px; align-items: flex-start; padding: 8px 12px; border-radius: 8px; }
+  .check:hover { background: var(--code-bg); }
+  .check input { margin-top: 5px; accent-color: var(--accent); width: 16px; height: 16px; flex-shrink: 0; }
+  .check label { cursor: pointer; }
+  .checklist { border: 1px solid var(--line); border-radius: 10px; background: var(--card); padding: 10px; margin: 16px 0; }
+
+  table { border-collapse: collapse; width: 100%; margin: 14px 0; font-size: 14.5px; background: var(--card); }
+  th, td { border: 1px solid var(--line); padding: 9px 12px; text-align: left; vertical-align: top; }
+  th { background: var(--code-bg); font-weight: 650; }
+  .tablewrap { overflow-x: auto; }
+
+  details { border: 1px solid var(--line); border-radius: 10px; background: var(--card); margin: 12px 0; }
+  details summary { cursor: pointer; padding: 11px 14px; font-weight: 600; font-size: 14px; color: var(--accent); }
+  details .field { margin: 0; border: none; border-top: 1px solid var(--line); border-radius: 0; }
+
+  .crumb { font-family: ui-monospace, Menlo, monospace; font-size: 13px; background: var(--code-bg); border: 1px solid var(--line); border-radius: 6px; padding: 2px 7px; white-space: nowrap; }
+  kbd.key { font: 600 12px ui-monospace, monospace; border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 5px; padding: 1px 6px; background: var(--card); }
+
+  footer { margin-top: 70px; padding-top: 20px; border-top: 1px solid var(--line); font-size: 13px; color: var(--muted); }
+
+  @media print {
+    nav.toc, button.copy { display: none !important; }
+    body { background: #fff; color: #000; }
+    .wrap { display: block; }
+    section { break-inside: avoid-page; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<nav class="toc" aria-label="Contents">
+  <div class="tocTitle">Contents</div>
+  <ol>
+    <li><a href="#overview">How this fits together</a></li>
+    <li><a href="#prep">1 · Before you start</a></li>
+    <li><a href="#buy">2 · Buy the toll-free number</a></li>
+    <li><a href="#screens">3 · Host the opt-in screenshots</a></li>
+    <li><a href="#tfv">4 · Submit toll-free verification</a></li>
+    <li><a href="#service">5 · Create the Messaging Service</a></li>
+    <li><a href="#env">6 · Wire it into the app</a></li>
+    <li><a href="#test">7 · After approval: test</a></li>
+    <li><a href="#templates">8 · Message templates</a></li>
+    <li><a href="#reference">9 · Costs, timeline, rejections</a></li>
+    <li><a href="#appendix">Appendix: small nits</a></li>
+  </ol>
+  <div id="progressLabel"></div>
+</nav>
+
+<main>
+
+<header class="hero">
+  <div class="eyebrow">Our Wedding Recap · Twilio</div>
+  <h1>Toll-free number &amp; messaging setup</h1>
+  <p class="lede">Everything to buy the number, pass toll-free verification on the first try, configure the Messaging Service, and turn on guest texting — with copy-paste values for every form field.</p>
+  <p class="metaline">Prepared July 23, 2026 · ourweddingrecap.com · Values below were pulled from the live codebase (privacy, terms, <span class="crumb">/sms-consent</span>, and the SMS code), so they match what a Twilio reviewer will actually see.</p>
+</header>
+
+<div class="callout warn">
+  <span class="ctitle">⚠ One thing to settle before anything else: the exact legal name</span>
+  <p>Your website's Terms, Privacy Policy, join-page footer, and <span class="crumb">/sms-consent</span> page all say <strong>“Parry Technology and Media, LLC.”</strong> Your note to me said “Perry Technology Media, LLC.” These must match — and the one you enter in Twilio must match your state formation documents / IRS records <em>exactly</em> (spelling, “and,” comma, “LLC”). This guide uses <strong>Parry Technology and Media, LLC</strong> everywhere because that's what the site says. If the registered name is actually different, fix the site first, then use the registered spelling in Twilio. A legal-name/website mismatch is a classic verification rejection.</p>
+</div>
+
+<section id="overview">
+  <div class="stephead"><h2>How this fits together</h2></div>
+  <p>Three Twilio pieces, in the order you'll touch them:</p>
+  <ol>
+    <li><strong>A toll-free number</strong> (8XX) — the number guests see and reply to. About $2–3/month.</li>
+    <li><strong>Toll-free verification (TFV)</strong> — a one-time compliance review of your brand, use case, and opt-in flow. For toll-free numbers this <em>replaces</em> the “A2P 10DLC campaign” you may have read about — there is no campaign registration, no EIN-based brand vetting, and no monthly campaign fees. TFV is the whole “campaign” step. <strong>Until it's approved, US/Canada texts from the number are blocked</strong> (error 30032), so we submit this early and do everything else while it's in review.</li>
+    <li><strong>A Messaging Service</strong> — the container that holds the number, receives inbound messages via webhook, and handles STOP/HELP. The app already expects one: it sends via <span class="crumb">TWILIO_MESSAGING_SERVICE_SID</span> (src/lib/sms.ts).</li>
+  </ol>
+  <div class="callout good">
+    <span class="ctitle">You're in better shape than most applicants</span>
+    <p>The site already has everything reviewers ask for: a dedicated <a href="https://ourweddingrecap.com/sms-consent">ourweddingrecap.com/sms-consent</a> program page, SMS sections in the <a href="https://ourweddingrecap.com/privacy">Privacy Policy</a> (§5, including the required “we do not share mobile information…” clause) and <a href="https://ourweddingrecap.com/terms">Terms</a> (§6), an unchecked consent checkbox with full CTIA language on the join form, a hard cap of 10 automated texts per guest per gallery enforced in code, and STOP/START/HELP handling. The copy-paste answers below just point the reviewer at all of it.</p>
+  </div>
+</section>
+
+<section id="prep">
+  <div class="stephead"><span class="stepnum">1</span><h2>Before you start</h2></div>
+  <p>Have these ready — the verification form asks for all of them:</p>
+  <div class="checklist">
+    <div class="check"><input type="checkbox" id="c1"><label for="c1">A Twilio account that's <strong>upgraded</strong> (paid, not trial) — trial accounts can't complete toll-free messaging. Add a payment method under <span class="crumb">Billing</span>.</label></div>
+    <div class="check"><input type="checkbox" id="c2"><label for="c2">The <strong>registered business address</strong> for Parry Technology and Media, LLC (as filed with your state).</label></div>
+    <div class="check"><input type="checkbox" id="c3"><label for="c3">A <strong>contact phone number</strong> for you (your mobile is fine).</label></div>
+    <div class="check"><input type="checkbox" id="c4"><label for="c4">Access to <span class="crumb">aaron@ourweddingrecap.com</span> — use the domain email, not Gmail, everywhere in the form. A contact email on the same domain as the website quietly boosts reviewer confidence.</label></div>
+    <div class="check"><input type="checkbox" id="c5"><label for="c5">Two screenshots of the opt-in flow, hosted at public URLs (step 3 walks through this).</label></div>
+    <div class="check"><input type="checkbox" id="c6"><label for="c6">Confirmed the production site is live and the pages a reviewer will click actually load: <span class="crumb">/</span>, <span class="crumb">/sms-consent</span>, <span class="crumb">/privacy</span>, <span class="crumb">/terms</span>.</label></div>
+  </div>
+  <p class="small">You do <em>not</em> need an EIN, DUNS number, or company documents for toll-free verification — that's a 10DLC thing.</p>
+</section>
+
+<section id="buy">
+  <div class="stephead"><span class="stepnum">2</span><h2>Buy the toll-free number</h2></div>
+  <ol>
+    <li>Console → <span class="crumb">Phone Numbers → Manage → Buy a number</span> (or <a href="https://console.twilio.com/us1/develop/phone-numbers/manage/search">console.twilio.com/…/manage/search</a>).</li>
+    <li>Country <strong>United States</strong>, and switch the number-type filter to <strong>Toll-free</strong>.</li>
+    <li>Check capabilities: the number must show <strong>SMS and MMS</strong> (guests text photos/videos to it — MMS is load-bearing, not optional). Voice doesn't matter.</li>
+    <li>Any 8XX prefix works (833/844/855/866/877/888). If you want something memorable, use the search box to look for digit patterns.</li>
+    <li>Buy it (~$2–3/month, shown before purchase) and note the number in E.164 form, e.g. <span class="crumb">+18885551234</span>.</li>
+  </ol>
+  <div class="callout info">
+    <span class="ctitle">Skip the number's own webhook config</span>
+    <p>Don't set messaging webhooks on the number itself. In step 5 the number joins a Messaging Service, and the service's inbound settings take over.</p>
+  </div>
+  <div class="checklist">
+    <div class="check"><input type="checkbox" id="c7"><label for="c7">Toll-free number purchased (SMS + MMS capable).</label></div>
+  </div>
+</section>
+
+<section id="screens">
+  <div class="stephead"><span class="stepnum">3</span><h2>Host the opt-in screenshots</h2></div>
+  <p>The verification form asks for public image URLs proving how a guest consents. Reviewers reject blurry, cropped, or login-walled evidence, so make these two screenshots:</p>
+  <ol>
+    <li><strong>The real join form.</strong> Open any gallery on the production site, start the join flow, and capture the screen showing the <em>“Your Phone (Optional)”</em> field, the unchecked <em>“Text me wedding updates”</em> checkbox, and the full disclosure paragraph beside it (the one with “up to 10 automated wedding update texts… Message and data rates may apply… Reply STOP… Terms / Privacy Policy”). Phone-width is fine; make sure every word of the disclosure is legible.</li>
+    <li><strong>The program page.</strong> A full-page capture of <a href="https://ourweddingrecap.com/sms-consent">ourweddingrecap.com/sms-consent</a>.</li>
+  </ol>
+  <p>Then make them publicly reachable by dropping them into the app's <span class="crumb">public/</span> folder and deploying:</p>
+  <div class="field">
+    <div class="fieldHead"><span class="fieldLabel">Terminal — add screenshots to the repo</span><button class="copy" type="button">Copy</button></div>
+    <pre class="val">mkdir -p public/compliance
+cp ~/Desktop/sms-opt-in-form.png public/compliance/sms-opt-in-form.png
+cp ~/Desktop/sms-consent-page.png public/compliance/sms-consent-page.png
+git add public/compliance && git commit -m "Add SMS opt-in evidence for toll-free verification" && git push</pre>
+    <div class="fieldNote">After the Vercel deploy, confirm both URLs load in an incognito window:<br>
+    <span class="crumb">https://ourweddingrecap.com/compliance/sms-opt-in-form.png</span><br>
+    <span class="crumb">https://ourweddingrecap.com/compliance/sms-consent-page.png</span></div>
+  </div>
+  <div class="checklist">
+    <div class="check"><input type="checkbox" id="c8"><label for="c8">Both screenshot URLs load publicly (test in incognito).</label></div>
+  </div>
+</section>
+
+<section id="tfv">
+  <div class="stephead"><span class="stepnum">4</span><h2>Submit toll-free verification</h2></div>
+  <p>Console → <span class="crumb">Messaging → Compliance → Toll-Free Verification</span> → <strong>Verify a number</strong> (there's also a “Verify this number” banner on the number's own page). Twilio occasionally renames or reorders fields — match them by meaning. Copy-paste each value; anything <mark>highlighted</mark> is yours to fill in.</p>
+
+  <h3>Business information</h3>
+  <div class="field">
+    <div class="fieldHead"><span class="fieldLabel">Business name <span class="tw">(legal entity)</span></span><button class="copy" type="button">Copy</button></div>
+    <pre class="val">Parry Technology and Media, LLC</pre>
+    <div class="fieldNote">The legal name only — the “Our Wedding Recap” brand goes in the use-case summary and additional info, where the DBA relationship is explained. Must match your state registration exactly (see the warning at the top).</div>
+  </div>
+  <div class="field">
+    <div class="fieldHead"><span class="fieldLabel">Business website</span><button class="copy" type="button">Copy</button></div>
+    <pre class="val">https://ourweddingrecap.com</pre>
+    <div class="fieldNote">Must be live and obviously the brand sending the texts. It is — the wordmark and footer (“Our Wedding Recap is owned and operated by Parry Technology and Media, LLC.”) tie brand to entity.</div>
+  </div>
+  <div class="field">
+    <div class="fieldHead"><span class="fieldLabel">Business address</span><button class="copy" type="button">Copy</button></div>
+    <pre class="val"><mark>[Registered street address]</mark>
+<mark>[City]</mark>, <mark>[State]</mark> <mark>[ZIP]</mark>
+United States</pre>
+    <div class="fieldNote">Use the LLC's registered address (registered agent or principal office as filed). A home address is fine if that's what's on file.</div>
+  </div>
+
+  <h3>Business contact</h3>
+  <div class="field">
+    <div class="fieldHead"><span class="fieldLabel">First name / Last name</span><button class="copy" type="button">Copy</button></div>
+    <pre class="val">Aaron
+Parry</pre>
+  </div>
+  <div class="field">
+    <div class="fieldHead"><span class="fieldLabel">Email</span><button class="copy" type="button">Copy</button></div>
+    <pre class="val">aaron@ourweddingrecap.com</pre>
+    <div class="fieldNote">Status updates and any reviewer questions land here — watch this inbox for the week after submitting.</div>
+  </div>
+  <div class="field">
+    <div class="fieldHead"><span class="fieldLabel">Phone number</span><button class="copy" type="button">Copy</button></div>
+    <pre class="val"><mark>[Your mobile, e.g. +1 555 555 0100]</mark></pre>
+  </div>
+
+  <h3>Messaging volume</h3>
+  <div class="field">
+    <div class="fieldHead"><span class="fieldLabel">Estimated monthly volume</span></div>
+    <pre class="val">1,000</pre>
+    <div class="fieldNote">Honest for the current stage: one 150-guest wedding running the full program is roughly 900 messages. Pick 10,000 instead if you expect several weddings per month soon — the estimate sets carrier expectations and isn't a billing tier, but a wild overshoot invites scrutiny. You can raise it later by editing the verification.</div>
+  </div>
+
+  <h3>Use case</h3>
+  <div class="field">
+    <div class="fieldHead"><span class="fieldLabel">Use case category</span></div>
+    <pre class="val">Events &amp; Planning</pre>
+    <div class="fieldNote">If the dropdown doesn't have it, pick (in order of preference): <strong>Notifications</strong>, <strong>Customer Care</strong>, or <strong>Mixed</strong>. Never “Marketing.”</div>
+  </div>
+  <div class="field">
+    <div class="fieldHead"><span class="fieldLabel">Use case summary / description</span><button class="copy" type="button">Copy</button></div>
+    <pre class="val">Our Wedding Recap (https://ourweddingrecap.com), operated by Parry Technology and Media, LLC, hosts private photo- and video-sharing galleries for weddings. Wedding guests who join a couple's gallery may optionally opt in to SMS updates for that specific wedding by entering their own phone number and checking a separate, unchecked consent box on the gallery join form. Opted-in guests receive automated wedding updates: an enrollment confirmation, a welcome message, schedule reminders for the wedding weekend and wedding day, and a post-event thank-you. Every message includes a link to view the gallery and upload photos. Messaging is capped in software at 10 business-initiated messages per guest per gallery. Guests may also text photos or videos to this number to add them to their gallery and receive a short service reply. All recipients are self-enrolled wedding guests in the US; no marketing or promotional content is sent. The opt-in experience is documented at https://ourweddingrecap.com/sms-consent.</pre>
+  </div>
+  <div class="field">
+    <div class="fieldHead"><span class="fieldLabel">Production message sample #1 <span class="tw">(enrollment confirmation — sent automatically today)</span></span><button class="copy" type="button">Copy</button></div>
+    <pre class="val">Our Wedding Recap: You're subscribed to up to 10 automated Smith &amp; Johnson wedding updates. Msg &amp; data rates may apply.
+
+View &amp; upload: https://ourweddingrecap.com/smith-johnson
+Or reply here with photos/videos to add them. Reply STOP to stop, HELP for help.</pre>
+    <div class="fieldNote">This is the exact string the code produces (brand prefix + confirmation body + standard footer). If the form only allows one sample, use this one — it shows brand, frequency cap, pricing disclosure, and STOP/HELP all in a single message.</div>
+  </div>
+  <div class="field">
+    <div class="fieldHead"><span class="fieldLabel">Production message sample #2 <span class="tw">(wedding-weekend reminder)</span></span><button class="copy" type="button">Copy</button></div>
+    <pre class="val">Our Wedding Recap: It's wedding weekend! We can't wait to celebrate with you. The plan:
+- Welcome drinks: Fri 8:00 PM, Acme Hotel Lobby Bar
+- Ceremony: Sat 3:00 PM, St. Mary's Chapel
+- Cocktail hour &amp; reception: Sat 5:00 PM, The Grandview Ballroom
+
+View &amp; upload: https://ourweddingrecap.com/smith-johnson
+Or reply here with photos/videos to add them. Reply STOP to stop, HELP for help.</pre>
+  </div>
+  <div class="field">
+    <div class="fieldHead"><span class="fieldLabel">Production message sample #3 <span class="tw">(day-after thank-you)</span></span><button class="copy" type="button">Copy</button></div>
+    <pre class="val">Our Wedding Recap: What a weekend! Thank you for celebrating with us - having you there made it unforgettable. The gallery is filling up with everyone's photos and videos. Take a look, and add yours from the weekend.
+
+View &amp; upload: https://ourweddingrecap.com/smith-johnson
+Or reply here with photos/videos to add them. Reply STOP to stop, HELP for help.</pre>
+  </div>
+
+  <h3>Opt-in</h3>
+  <div class="field">
+    <div class="fieldHead"><span class="fieldLabel">Opt-in type</span></div>
+    <pre class="val">Web Form</pre>
+  </div>
+  <div class="field">
+    <div class="fieldHead"><span class="fieldLabel">Opt-in workflow description</span><button class="copy" type="button">Copy</button></div>
+    <pre class="val">SMS opt-in happens on the gallery join form at the couple's unique gallery URL on https://ourweddingrecap.com. A guest joining a wedding gallery enters their name; the phone field is labeled "Your Phone (Optional)". To receive texts, the guest must both provide their own mobile number and check a separate, unchecked checkbox labeled "Text me wedding updates". The disclosure beside the checkbox states: up to 10 automated wedding update texts for that gallery including a confirmation; additional service responses only if the guest messages us; "Message and data rates may apply"; "Reply STOP to stop or HELP for help"; consent is optional and not a condition of purchase; with links to Terms (https://ourweddingrecap.com/terms) and Privacy Policy (https://ourweddingrecap.com/privacy). On submit, the consent is recorded and a single enrollment confirmation SMS is sent. Keyword opt-in is not supported; texting the number first does not create a subscription. The full opt-in experience is documented for reviewers at https://ourweddingrecap.com/sms-consent.</pre>
+  </div>
+  <div class="field">
+    <div class="fieldHead"><span class="fieldLabel">Opt-in image URL(s)</span><button class="copy" type="button">Copy</button></div>
+    <pre class="val">https://ourweddingrecap.com/compliance/sms-opt-in-form.png
+https://ourweddingrecap.com/compliance/sms-consent-page.png</pre>
+    <div class="fieldNote">From step 3. If the form accepts only one URL, use the first (the real form beats the documentation page as evidence).</div>
+  </div>
+
+  <h3>Additional information <span class="small">(optional field — fill it anyway)</span></h3>
+  <div class="field">
+    <div class="fieldHead"><span class="fieldLabel">Additional information</span><button class="copy" type="button">Copy</button></div>
+    <pre class="val">Legal entity: Parry Technology and Media, LLC. "Our Wedding Recap" is the company's consumer brand (DBA) used on the website and in every message; each SMS begins with "Our Wedding Recap:" and ends with "Reply STOP to stop, HELP for help." Program documentation for reviewers: https://ourweddingrecap.com/sms-consent. SMS-specific disclosures: Privacy Policy section 5, "Email and Text Message Updates," including the clause "We do not share mobile information, including SMS opt-in data or consent, with third parties or affiliates for their marketing or promotional purposes" (https://ourweddingrecap.com/privacy), and Terms section 6 (https://ourweddingrecap.com/terms). Outbound messaging is capped in software at 10 automated messages per guest per wedding gallery. STOP/HELP/START are honored by both Twilio opt-out handling and our application, which keeps a suppression list.</pre>
+    <div class="fieldNote">This paragraph preempts the two most common reviewer questions: “why doesn't the website name match the legal name?” and “where are the CTIA disclosures?”</div>
+  </div>
+
+  <p>Submit, then leave it alone — editing a pending request restarts the review clock. Status appears on the same Compliance page; expect <strong>1–5 business days</strong>, occasionally up to two weeks.</p>
+  <div class="checklist">
+    <div class="check"><input type="checkbox" id="c9"><label for="c9">Verification submitted; confirmation email received at aaron@ourweddingrecap.com.</label></div>
+  </div>
+</section>
+
+<section id="service">
+  <div class="stephead"><span class="stepnum">5</span><h2>Create the Messaging Service <span class="small">(while verification is in review)</span></h2></div>
+  <ol>
+    <li>Console → <span class="crumb">Messaging → Services</span> → <strong>Create Messaging Service</strong>.</li>
+    <li><strong>Step 1 — name &amp; use case:</strong>
+      <div class="field">
+        <div class="fieldHead"><span class="fieldLabel">Messaging Service friendly name</span><button class="copy" type="button">Copy</button></div>
+        <pre class="val">Our Wedding Recap</pre>
+        <div class="fieldNote">Carriers can surface this name; keep it the brand. For “What do you want to use messaging for?” choose <strong>Notify my users</strong>.</div>
+      </div>
+    </li>
+    <li><strong>Step 2 — sender pool:</strong> Add sender → Phone number → select your new toll-free number.</li>
+    <li><strong>Step 3 — integration (inbound messages):</strong> select <strong>Send a webhook</strong>.
+      <div class="field">
+        <div class="fieldHead"><span class="fieldLabel">Request URL <span class="tw">(HTTP POST)</span></span><button class="copy" type="button">Copy</button></div>
+        <pre class="val">https://ourweddingrecap.com/api/webhooks/twilio/inbound</pre>
+        <div class="fieldNote"><p><strong>The host must match the app's <span class="crumb">BASE_URL</span> env var character-for-character</strong> (scheme, www or no www). The route rebuilds this URL from <span class="crumb">BASE_URL</span> to check Twilio's signature — a mismatch means every inbound message 401s. Check what production uses (Vercel → Settings → Environment Variables, or <span class="crumb">vercel env ls</span>) before pasting.</p><p>Leave the fallback URL and the service-level “Callback URL” for status empty — the app attaches its own status callback (<span class="crumb">/api/webhooks/twilio/status</span>) to each outbound message.</p></div>
+      </div>
+    </li>
+    <li><strong>Step 4 — compliance:</strong> it will point you at the toll-free verification you already submitted. Finish setup.</li>
+  </ol>
+
+  <h3>Service settings to confirm (service → Properties / Integration / Opt-out management)</h3>
+  <ul>
+    <li><strong>Opt-out management: enabled</strong> (default). Twilio auto-answers STOP/HELP and still forwards the message to the webhook, where the app records the suppression — you want both layers.</li>
+    <li><strong>Smart encoding: on</strong> — silently converts curly quotes and other non-GSM characters couples paste in, which keeps messages at 153 chars/segment instead of 67.</li>
+    <li><strong>Sticky sender: on</strong> (default) — irrelevant with one number, harmless later.</li>
+    <li>Copy the <strong>Messaging Service SID</strong> (starts with <span class="crumb">MG</span>) from the service's Properties page — you need it in step 6.</li>
+  </ul>
+
+  <h3>Optional: custom STOP / HELP / START replies</h3>
+  <p>Under <span class="crumb">Opt-out management → Advanced opt-out</span>, replace Twilio's generic auto-replies with branded ones. Keep the keyword lists at their defaults (they already match what the app recognizes: STOP, STOPALL, UNSUBSCRIBE, CANCEL, END, QUIT, REVOKE, OPTOUT / START, YES, UNSTOP / HELP, INFO).</p>
+  <div class="field">
+    <div class="fieldHead"><span class="fieldLabel">Opt-out (STOP) reply</span><button class="copy" type="button">Copy</button></div>
+    <pre class="val">Our Wedding Recap: You're unsubscribed and will receive no more messages from this number. Reply START to rejoin. Help: aaron@ourweddingrecap.com</pre>
+  </div>
+  <div class="field">
+    <div class="fieldHead"><span class="fieldLabel">Help (HELP) reply</span><button class="copy" type="button">Copy</button></div>
+    <pre class="val">Our Wedding Recap: Wedding gallery updates, up to 10 per gallery. Msg &amp; data rates may apply. Info: ourweddingrecap.com/sms-consent. Reply STOP to stop.</pre>
+  </div>
+  <div class="field">
+    <div class="fieldHead"><span class="fieldLabel">Opt-in (START) reply</span><button class="copy" type="button">Copy</button></div>
+    <pre class="val">Our Wedding Recap: You're resubscribed to wedding updates. Up to 10 msgs per gallery. Msg &amp; data rates may apply. Reply STOP to stop, HELP for help.</pre>
+  </div>
+  <div class="checklist">
+    <div class="check"><input type="checkbox" id="c10"><label for="c10">Messaging Service created, number in the sender pool, inbound webhook set.</label></div>
+    <div class="check"><input type="checkbox" id="c11"><label for="c11">Messaging Service SID (MG…) copied.</label></div>
+  </div>
+</section>
+
+<section id="env">
+  <div class="stephead"><span class="stepnum">6</span><h2>Wire it into the app</h2></div>
+  <p>Vercel → project → <span class="crumb">Settings → Environment Variables</span> (Production). The code reads these:</p>
+  <div class="tablewrap"><table>
+    <tr><th>Variable</th><th>Value</th><th>Where it comes from</th></tr>
+    <tr><td><span class="crumb">TWILIO_ACCOUNT_SID</span></td><td>AC…</td><td>Console home → Account Info</td></tr>
+    <tr><td><span class="crumb">TWILIO_AUTH_TOKEN</span></td><td>(secret)</td><td>Console home → Account Info. Also used to validate webhook signatures.</td></tr>
+    <tr><td><span class="crumb">TWILIO_MESSAGING_SERVICE_SID</span></td><td>MG…</td><td>Step 5. Outbound sends fail without it.</td></tr>
+    <tr><td><span class="crumb">TWILIO_API_KEY</span> / <span class="crumb">TWILIO_API_SECRET</span></td><td>SK… / (secret)</td><td>Optional but recommended: Console → Account → API keys &amp; tokens → Create API key (Standard). Used to download guest MMS media; falls back to SID/token if absent.</td></tr>
+    <tr><td><span class="crumb">MESSAGING_ENABLED</span></td><td>true</td><td><strong>Feature flag — currently defaults to false.</strong> Until it's true, consent confirmations, reminders, and inbound MMS ingestion all no-op. Flip it when you're ready to go live (after verification approval).</td></tr>
+    <tr><td><span class="crumb">BASE_URL</span></td><td>https://ourweddingrecap.com</td><td>Must already be set in prod — confirm it matches the webhook host exactly (step 5).</td></tr>
+  </table></div>
+  <p>Redeploy after saving — env changes only apply to new deployments. You can sanity-check the config with the repo's checker: <span class="crumb">node scripts/check-communications-config.mjs</span>.</p>
+  <div class="checklist">
+    <div class="check"><input type="checkbox" id="c12"><label for="c12">All env vars set in Vercel Production and redeployed.</label></div>
+  </div>
+</section>
+
+<section id="test">
+  <div class="stephead"><span class="stepnum">7</span><h2>After approval: end-to-end test</h2></div>
+  <p>When the verification status reads <strong>Verified</strong> (you'll also get an email), run through this with your own phone on a real gallery:</p>
+  <div class="checklist">
+    <div class="check"><input type="checkbox" id="t1"><label for="t1">Join a test gallery, enter your phone, check “Text me wedding updates” → the enrollment confirmation arrives, from your toll-free number.</label></div>
+    <div class="check"><input type="checkbox" id="t2"><label for="t2">Text a photo to the number → it appears in the gallery and you get the “Added 1 photo/video…” reply.</label></div>
+    <div class="check"><input type="checkbox" id="t3"><label for="t3">Send a video → same, and confirm larger files behave (30 MB is the app's ceiling on Twilio media).</label></div>
+    <div class="check"><input type="checkbox" id="t4"><label for="t4">Reply <kbd class="key">HELP</kbd> → branded help reply arrives.</label></div>
+    <div class="check"><input type="checkbox" id="t5"><label for="t5">Reply <kbd class="key">STOP</kbd> → opt-out confirmation arrives; schedule a test reminder and confirm you do <em>not</em> get it.</label></div>
+    <div class="check"><input type="checkbox" id="t6"><label for="t6">Reply <kbd class="key">START</kbd> → resubscribed; reminders flow again.</label></div>
+    <div class="check"><input type="checkbox" id="t7"><label for="t7">Schedule a reminder from the gallery admin and confirm delivery + status lands via <span class="crumb">/api/webhooks/twilio/status</span> (check the delivery record, or Twilio Console → Monitor → Logs → Messaging for both directions).</label></div>
+  </div>
+</section>
+
+<section id="templates">
+  <div class="stephead"><span class="stepnum">8</span><h2>Message templates, workshopped</h2></div>
+  <p>How the plumbing shapes the writing — three things the app adds to <em>every</em> reminder automatically:</p>
+  <ul>
+    <li>The prefix <strong>“Our Wedding Recap: ”</strong> — so never write “powered by Our Wedding Recap” in a body; it would appear twice.</li>
+    <li>The footer with the gallery link and compliance line: <em>“View &amp; upload: [gallery link] / Or reply here with photos/videos to add them. Reply STOP to stop, HELP for help.”</em> — so never put “click here” or a URL in a body, and don't restate STOP.</li>
+    <li>A hard cap of 10 automated texts per guest per gallery (confirmation included) — a full program below uses 5–6, leaving headroom.</li>
+  </ul>
+  <p>Writing rules that keep costs down and delivery clean: plain apostrophes and hyphens, no emoji and no curly “smart” quotes (one non-GSM character switches the whole message to 67-char segments — roughly double the cost across 150 guests), and speak in the couple's voice (“we,” “our”) since guests experience these as coming from the couple. Each template below is the <strong>body to paste into the Recap reminder composer</strong>; expand it to see exactly what the guest's phone will show.</p>
+
+  <h3>Enrollment confirmation <span class="small">(automatic — nothing to write)</span></h3>
+  <p class="small">Sent the moment a guest opts in: “You're subscribed to up to 10 automated [Gallery Name] wedding updates. Msg &amp; data rates may apply.” plus the footer. ≈2 segments.</p>
+
+  <h3>1 · Welcome, on signup <span class="small">(≈3 segments)</span></h3>
+  <div class="field">
+    <div class="fieldHead"><span class="fieldLabel">Body — paste into the reminder composer</span><button class="copy" type="button">Copy</button></div>
+    <pre class="val">Welcome to the <mark>[Smith &amp; Johnson]</mark> wedding! We're so glad you'll be celebrating with us. The gallery is open - take a look at our favorite memories from over the years, and add a few of your own.</pre>
+    <div class="fieldNote">Your draft said “powered by Our Wedding Recap” and “upload your own pictures and videos here” — both are supplied automatically (prefix + footer), so the body stays purely warm. “A few of your own” invites without nagging.</div>
+  </div>
+  <details><summary>What the guest receives</summary>
+    <div class="field"><pre class="val">Our Wedding Recap: Welcome to the Smith &amp; Johnson wedding! We're so glad you'll be celebrating with us. The gallery is open - take a look at our favorite memories from over the years, and add a few of your own.
+
+View &amp; upload: https://ourweddingrecap.com/smith-johnson
+Or reply here with photos/videos to add them. Reply STOP to stop, HELP for help.</pre></div>
+  </details>
+
+  <h3>2 · Wedding-weekend welcome <span class="small">(send Thursday evening or Friday morning · ≈4 segments)</span></h3>
+  <div class="field">
+    <div class="fieldHead"><span class="fieldLabel">Body</span><button class="copy" type="button">Copy</button></div>
+    <pre class="val">It's wedding weekend! We can't wait to celebrate with you. The plan:
+- Welcome drinks: <mark>[Fri 8:00 PM, Acme Hotel Lobby Bar]</mark>
+- Ceremony: <mark>[Sat 3:00 PM, St. Mary's Chapel]</mark>
+- Cocktail hour &amp; reception: <mark>[Sat 5:00 PM, The Grandview Ballroom]</mark>
+In town with time to spare? We love <mark>[the harbor walk, the Saturday farmers market, and lobster rolls at Sally's]</mark>.</pre>
+    <div class="fieldNote">Hyphen bullets survive SMS on every handset (•, –, and emoji don't, reliably). One line per event, time before place, and the things-to-do list reads as a personal recommendation — “we love” — rather than a concierge printout. Cut that last line entirely for a leaner 3-segment message.</div>
+  </div>
+  <details><summary>What the guest receives</summary>
+    <div class="field"><pre class="val">Our Wedding Recap: It's wedding weekend! We can't wait to celebrate with you. The plan:
+- Welcome drinks: Fri 8:00 PM, Acme Hotel Lobby Bar
+- Ceremony: Sat 3:00 PM, St. Mary's Chapel
+- Cocktail hour &amp; reception: Sat 5:00 PM, The Grandview Ballroom
+In town with time to spare? We love the harbor walk, the Saturday farmers market, and lobster rolls at Sally's.
+
+View &amp; upload: https://ourweddingrecap.com/smith-johnson
+Or reply here with photos/videos to add them. Reply STOP to stop, HELP for help.</pre></div>
+  </details>
+
+  <h3>3 · Wedding day <span class="small">(send that morning · ≈3 segments)</span></h3>
+  <div class="field">
+    <div class="fieldHead"><span class="fieldLabel">Body</span><button class="copy" type="button">Copy</button></div>
+    <pre class="val">It's wedding day! One more look at the details:
+- Ceremony: <mark>[3:00 PM, St. Mary's Chapel - please be seated by 2:45]</mark>
+- Cocktail hour &amp; reception: <mark>[5:00 PM, The Grandview Ballroom]</mark>
+Everything from the weekend so far is in the gallery - and anything you capture today, add it there. We want to see the day through your eyes.</pre>
+    <div class="fieldNote">“We want to see the day through your eyes” does the real work — it gives guests a reason to upload beyond being asked. The footer's “Or reply here with photos/videos” turns this into a one-step action: they can just text you their shots.</div>
+  </div>
+  <details><summary>What the guest receives</summary>
+    <div class="field"><pre class="val">Our Wedding Recap: It's wedding day! One more look at the details:
+- Ceremony: 3:00 PM, St. Mary's Chapel - please be seated by 2:45
+- Cocktail hour &amp; reception: 5:00 PM, The Grandview Ballroom
+Everything from the weekend so far is in the gallery - and anything you capture today, add it there. We want to see the day through your eyes.
+
+View &amp; upload: https://ourweddingrecap.com/smith-johnson
+Or reply here with photos/videos to add them. Reply STOP to stop, HELP for help.</pre></div>
+  </details>
+
+  <h3>4 · Day after — the important one <span class="small">(send Sunday around noon · ≈3 segments)</span></h3>
+  <div class="field">
+    <div class="fieldHead"><span class="fieldLabel">Body — couple's voice (recommended)</span><button class="copy" type="button">Copy</button></div>
+    <pre class="val">What a weekend! Thank you for celebrating with us - having you there made it unforgettable. The gallery is already filling up with everyone's photos and videos. Take a look at the memories, and add yours from the weekend - each one is something we'll keep forever.</pre>
+    <div class="fieldNote">Structure: thanks first and specific (“having you there”), then social proof (“already filling up” — people add photos where photos already are), then the ask framed as a gift to the couple, which is your strongest upload motivator. Send around midday when guests are at brunch or the airport, scrolling their camera rolls.</div>
+  </div>
+  <div class="field">
+    <div class="fieldHead"><span class="fieldLabel">Alternative — host/planner voice <span class="tw">(if someone else runs the gallery)</span></span><button class="copy" type="button">Copy</button></div>
+    <pre class="val">Thank you for celebrating <mark>[Emma &amp; Jake]</mark> this weekend! The couple is so grateful you were part of it. Relive the memories in the gallery, and add your photos and videos - every moment guests captured is one the couple will treasure.</pre>
+  </div>
+  <details><summary>What the guest receives (couple's voice)</summary>
+    <div class="field"><pre class="val">Our Wedding Recap: What a weekend! Thank you for celebrating with us - having you there made it unforgettable. The gallery is already filling up with everyone's photos and videos. Take a look at the memories, and add yours from the weekend - each one is something we'll keep forever.
+
+View &amp; upload: https://ourweddingrecap.com/smith-johnson
+Or reply here with photos/videos to add them. Reply STOP to stop, HELP for help.</pre></div>
+  </details>
+
+  <h3>Optional extras <span class="small">(still inside the 10-message cap)</span></h3>
+  <div class="field">
+    <div class="fieldHead"><span class="fieldLabel">One week out — build anticipation</span><button class="copy" type="button">Copy</button></div>
+    <pre class="val">One week to go! We can't believe it's almost here. While you pack, take a scroll through the gallery - <mark>[a few photos from the proposal just went up]</mark>. See you soon!</pre>
+  </div>
+  <div class="field">
+    <div class="fieldHead"><span class="fieldLabel">One month later — the resurfacing nudge</span><button class="copy" type="button">Copy</button></div>
+    <pre class="val">One month since the big day! We're still smiling. The full gallery is up - <mark>[the professional photos just landed]</mark> - and it's not complete without yours. If you have photos or videos still on your phone, we'd love them.</pre>
+    <div class="fieldNote">Highest-value follow-up after the day-after text: it catches everything guests never got around to uploading.</div>
+  </div>
+</section>
+
+<section id="reference">
+  <div class="stephead"><span class="stepnum">9</span><h2>Costs, timeline, and if verification bounces</h2></div>
+  <h3>What it costs <span class="small">(ballpark — confirm at twilio.com/en-us/sms/pricing/us)</span></h3>
+  <ul>
+    <li>Number: ~$2–3/month.</li>
+    <li>Outbound SMS: ~$0.008 per segment + ~$0.003 toll-free carrier fee. A 150-guest wedding running the full 6-message program is roughly 2,500–3,000 segments ≈ <strong>$30–40 per wedding</strong> — worth knowing for pricing galleries later.</li>
+    <li>Inbound SMS/MMS (guests texting photos): a cent or two each; negligible.</li>
+    <li>Toll-free verification itself: free. No 10DLC brand/campaign fees ever, on this path.</li>
+  </ul>
+  <h3>Timeline &amp; states</h3>
+  <ul>
+    <li>Review typically lands in <strong>1–5 business days</strong>; allow two weeks of buffer before the first real wedding. Status flows In Review → Verified (or Rejected/Update Required) on the Compliance page, with email updates.</li>
+    <li>Until Verified, US and Canada messages from the number are blocked outright (error 30032) — don't schedule anything before approval.</li>
+    <li>Verified toll-free throughput is plenty for this use (hundreds of guests dispatch in well under a minute; the app batches sends 10 at a time anyway).</li>
+    <li>Coverage is US + Canada. The app only enrolls US numbers today (it normalizes to US format), so international guests simply won't get texts — the gallery link via email covers them.</li>
+  </ul>
+  <h3>If it's rejected</h3>
+  <p>Rejections name a reason; you edit the same submission and resubmit. The usual suspects, pre-answered:</p>
+  <div class="tablewrap"><table>
+    <tr><th>Rejection reason</th><th>Fix</th></tr>
+    <tr><td>Opt-in evidence insufficient / unclear</td><td>Retake the join-form screenshot so the entire disclosure paragraph is sharp and readable in one frame; confirm both URLs open in incognito (no auth wall).</td></tr>
+    <tr><td>Website doesn't match business name</td><td>Point to the footer line “owned and operated by Parry Technology and Media, LLC” (on the create page, Terms, Privacy, and /sms-consent) — and restate the DBA sentence from Additional Information.</td></tr>
+    <tr><td>Use case too vague / looks like marketing</td><td>Resubmit emphasizing: self-enrolled event guests only, 10-message cap, no promotional content, opt-in documented at /sms-consent.</td></tr>
+    <tr><td>Privacy policy missing SMS language</td><td>Already covered (§5 has the no-sharing clause) — reply citing https://ourweddingrecap.com/privacy section 5 verbatim.</td></tr>
+    <tr><td>Sample messages missing brand or STOP</td><td>Use the three samples from step 4 unmodified — every one carries both.</td></tr>
+  </table></div>
+  <p class="small">If a rejection cites anything else, the reason code arrives by email — search it on Twilio's “Toll-Free Verification rejection reasons” support page, fix, resubmit. Second-round reviews are usually fast.</p>
+</section>
+
+<section id="appendix">
+  <div class="stephead"><h2>Appendix: small nits noticed along the way</h2></div>
+  <ul>
+    <li><strong>“Wedding wedding.”</strong> The confirmation reads “…automated <em>[Gallery Name]</em> wedding updates.” A gallery named “Smith &amp; Johnson Wedding” produces “automated Smith &amp; Johnson Wedding wedding updates.” Either steer couples toward gallery names without a trailing “Wedding,” or drop the word “wedding” from the confirmation copy in <span class="crumb">src/lib/reminders/dispatch.ts</span>.</li>
+    <li><strong>Volume estimate drift.</strong> If bookings grow past ~10 weddings/month, edit the verification's volume estimate upward — cheap insurance against carrier filtering at the new scale.</li>
+    <li><strong>Keep the evidence fresh.</strong> If the join form's consent wording ever changes, retake and redeploy the screenshots in <span class="crumb">public/compliance/</span> — stale evidence is a headache during any future re-review.</li>
+    <li><strong>Don't delete the number.</strong> Verification attaches to the specific number. Releasing it means re-verifying a new one from scratch.</li>
+  </ul>
+</section>
+
+<footer>
+  Prepared with values sourced from the Recap codebase on July 23, 2026 — join form (src/components/PersonPage/index.tsx), SMS assembly (src/lib/reminders/message.ts, src/lib/brand.ts), confirmation copy (src/lib/reminders/dispatch.ts), webhooks (src/app/api/webhooks/twilio/*), and the /sms-consent, /privacy, and /terms pages. Checklist state saves in this browser. Print works too — copy buttons hide themselves.
+</footer>
+
+</main>
+</div>
+
+<script>
+(function () {
+  function flash(btn) {
+    var prev = btn.textContent;
+    btn.textContent = 'Copied ✓';
+    btn.classList.add('copied');
+    setTimeout(function () { btn.textContent = prev; btn.classList.remove('copied'); }, 1600);
+  }
+  function copyText(text, btn) {
+    if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(text).then(function () { flash(btn); }, function () { fallback(text, btn); });
+    } else { fallback(text, btn); }
+  }
+  function fallback(text, btn) {
+    var ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand('copy'); flash(btn); } catch (e) {}
+    document.body.removeChild(ta);
+  }
+  document.querySelectorAll('button.copy').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var field = btn.closest('.field');
+      var pre = field && field.querySelector('pre.val');
+      if (pre) copyText(pre.textContent.trim(), btn);
+    });
+  });
+
+  var KEY = 'owr-twilio-setup-v1';
+  var saved = {};
+  try { saved = JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (e) {}
+  var boxes = document.querySelectorAll('.check input[type="checkbox"]');
+  function updateProgress() {
+    var done = 0;
+    boxes.forEach(function (b) { if (b.checked) done++; });
+    var el = document.getElementById('progressLabel');
+    if (el) el.textContent = done + ' of ' + boxes.length + ' steps checked';
+  }
+  boxes.forEach(function (box) {
+    if (saved[box.id]) box.checked = true;
+    box.addEventListener('change', function () {
+      saved[box.id] = box.checked;
+      try { localStorage.setItem(KEY, JSON.stringify(saved)); } catch (e) {}
+      updateProgress();
+    });
+  });
+  updateProgress();
+})();
+</script>
+</body>
+</html>
