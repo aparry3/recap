@@ -194,12 +194,13 @@
   <div class="checklist">
     <div class="check"><input type="checkbox" id="c1"><label for="c1">A Twilio account that's <strong>upgraded</strong> (paid, not trial) — trial accounts can't complete toll-free messaging. Add a payment method under <span class="crumb">Billing</span>.</label></div>
     <div class="check"><input type="checkbox" id="c2"><label for="c2">The <strong>registered business address</strong> for Parry Technology and Media, LLC (as filed with your state).</label></div>
+    <div class="check"><input type="checkbox" id="c2b"><label for="c2b">The LLC's <strong>EIN</strong> and the entity name <em>exactly</em> as registered with the state/IRS — the form's business-type question must be answered as an LLC, and carriers cross-check registration records (see the rejection table).</label></div>
     <div class="check"><input type="checkbox" id="c3"><label for="c3">A <strong>contact phone number</strong> for you (your mobile is fine).</label></div>
     <div class="check"><input type="checkbox" id="c4"><label for="c4">Access to <span class="crumb">aaron@ourweddingrecap.com</span> — use the domain email, not Gmail, everywhere in the form. A contact email on the same domain as the website quietly boosts reviewer confidence.</label></div>
     <div class="check"><input type="checkbox" id="c5"><label for="c5">The opt-in evidence page at <span class="crumb">/opt-in</span> loads publicly (step 3 walks through this).</label></div>
     <div class="check"><input type="checkbox" id="c6"><label for="c6">Confirmed the production site is live and the pages a reviewer will click actually load: <span class="crumb">/</span>, <span class="crumb">/sms-consent</span>, <span class="crumb">/privacy</span>, <span class="crumb">/terms</span>.</label></div>
   </div>
-  <p class="small">You do <em>not</em> need an EIN, DUNS number, or company documents for toll-free verification — that's a 10DLC thing.</p>
+  <p class="small">You do <em>not</em> need a DUNS number or company documents for toll-free verification. You <em>do</em> need the EIN: since 2026 the form asks for business type, and a registered LLC that answers “Sole Proprietor” (or omits its registration number where asked) is auto-flagged — error 30915, “Entity Misclassification.”</p>
 </section>
 
 <section id="buy">
@@ -248,6 +249,11 @@ https://ourweddingrecap.com/compliance/sms-consent-page.png</pre>
     <div class="fieldHead"><span class="fieldLabel">Business name <span class="tw">(legal entity)</span></span><button class="copy" type="button">Copy</button></div>
     <pre class="val">Parry Technology and Media, LLC</pre>
     <div class="fieldNote">The legal name only — the “Our Wedding Recap” brand goes in the use-case summary and additional info, where the DBA relationship is explained. Must match your state registration exactly (see the warning at the top).</div>
+  </div>
+  <div class="field">
+    <div class="fieldHead"><span class="fieldLabel">Business type <span class="tw">(entity type)</span></span></div>
+    <pre class="val">Limited Liability Company (LLC)</pre>
+    <div class="fieldNote">Whatever the form calls this — business type, entity type, business identity — pick the LLC / private-company option, <strong>never “Sole Proprietor.”</strong> Carriers cross-check registration data: a sole-prop answer from a registered LLC is rejected with error 30915, “Entity Misclassification (Legal Entity Type Mismatch).” If a Business Registration Number is requested, give the LLC's EIN (type: EIN / United States).</div>
   </div>
   <div class="field">
     <div class="fieldHead"><span class="fieldLabel">Business website</span><button class="copy" type="button">Copy</button></div>
@@ -548,6 +554,7 @@ Or reply here with photos/videos to add them. Reply STOP to stop, HELP for help.
   <p>Rejections name a reason; you edit the same submission and resubmit. The usual suspects, pre-answered:</p>
   <div class="tablewrap"><table>
     <tr><th>Rejection reason</th><th>Fix</th></tr>
+    <tr><td>Entity Misclassification (Legal Entity Type Mismatch) — error 30915</td><td>The submission was classified “Sole Proprietor,” but Parry Technology and Media, LLC is a registered entity. Edit the verification: business type = Limited Liability Company, business name exactly as state-registered, EIN in the business-registration field if asked. Keep name, website, and EIN consistent, then resubmit.</td></tr>
     <tr><td>Opt-in evidence insufficient / unclear</td><td>Retake the join-form screenshot so the entire disclosure paragraph is sharp and readable in one frame; confirm the submitted evidence URLs open in incognito (no auth wall).</td></tr>
     <tr><td>Website doesn't match business name</td><td>Point to the footer line “owned and operated by Parry Technology and Media, LLC” (on the create page, Terms, Privacy, and /sms-consent) — and restate the DBA sentence from Additional Information.</td></tr>
     <tr><td>Use case too vague / looks like marketing</td><td>Resubmit emphasizing: self-enrolled event guests only, low-volume software-capped updates, no promotional content, opt-in documented at /sms-consent.</td></tr>
