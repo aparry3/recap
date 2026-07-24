@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 
 const SmsConsentPage = () => {
   return (
-    <Container className={styles.page}>
+    <Column className={styles.page}>
       <Container className={styles.header}>
         <Link href="/" aria-label="Our Wedding Recap home">
           <Image src="/branding/wordmark.png" alt="Our Wedding Recap" width={100} height={40} />
@@ -80,7 +80,7 @@ const SmsConsentPage = () => {
           <Link href="/privacy">Privacy Policy</Link>
         </Row>
       </Column>
-    </Container>
+    </Column>
   )
 }
 

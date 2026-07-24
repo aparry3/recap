@@ -222,24 +222,20 @@
 
 <section id="screens">
   <div class="stephead"><span class="stepnum">3</span><h2>Host the opt-in screenshots</h2></div>
-  <p>The verification form asks for public image URLs proving how a guest consents. Reviewers reject blurry, cropped, or login-walled evidence, so make these two screenshots:</p>
+  <p>The verification form asks for public image URLs proving how a guest consents. Reviewers reject blurry, cropped, or login-walled evidence. <strong>Both screenshots are already captured from the real product UI and committed to the repo</strong> under <span class="crumb">public/compliance/</span>, and the page at <a href="https://ourweddingrecap.com/opt-in">ourweddingrecap.com/opt-in</a> presents them alongside the step-by-step opt-in workflow and the verbatim consent language:</p>
   <ol>
-    <li><strong>The real join form.</strong> Open any gallery on the production site, start the join flow, and capture the screen showing the <em>“Your Phone (Optional)”</em> field, the unchecked <em>“Text me wedding updates”</em> checkbox, and the full disclosure paragraph beside it (the one with “up to 10 automated wedding update texts… Message and data rates may apply… Reply STOP… Terms / Privacy Policy”). Phone-width is fine; make sure every word of the disclosure is legible.</li>
-    <li><strong>The program page.</strong> A full-page capture of <a href="https://ourweddingrecap.com/sms-consent">ourweddingrecap.com/sms-consent</a>.</li>
+    <li><strong><span class="crumb">sms-opt-in-form.png</span> — the real join form.</strong> Phone-width capture of the gallery join screen showing the <em>“Your Phone (Optional)”</em> field filled with a sample number, the unchecked <em>“Text me wedding updates”</em> checkbox, the full disclosure paragraph beside it, and the “owned and operated by Parry Technology and Media, LLC” footer.</li>
+    <li><strong><span class="crumb">sms-consent-page.png</span> — the program page.</strong> Full-page capture of <a href="https://ourweddingrecap.com/sms-consent">ourweddingrecap.com/sms-consent</a>.</li>
   </ol>
-  <p>Then make them publicly reachable by dropping them into the app's <span class="crumb">public/</span> folder and deploying:</p>
+  <p>If the consent wording ever changes, retake both screenshots and replace the files in <span class="crumb">public/compliance/</span> (any sharp browser screenshot works).</p>
   <div class="field">
-    <div class="fieldHead"><span class="fieldLabel">Terminal — add screenshots to the repo</span><button class="copy" type="button">Copy</button></div>
-    <pre class="val">mkdir -p public/compliance
-cp ~/Desktop/sms-opt-in-form.png public/compliance/sms-opt-in-form.png
-cp ~/Desktop/sms-consent-page.png public/compliance/sms-consent-page.png
-git add public/compliance && git commit -m "Add SMS opt-in evidence for toll-free verification" && git push</pre>
-    <div class="fieldNote">After the Vercel deploy, confirm both URLs load in an incognito window:<br>
-    <span class="crumb">https://ourweddingrecap.com/compliance/sms-opt-in-form.png</span><br>
-    <span class="crumb">https://ourweddingrecap.com/compliance/sms-consent-page.png</span></div>
+    <div class="fieldHead"><span class="fieldLabel">After the next deploy — confirm these load in an incognito window</span><button class="copy" type="button">Copy</button></div>
+    <pre class="val">https://ourweddingrecap.com/compliance/sms-opt-in-form.png
+https://ourweddingrecap.com/compliance/sms-consent-page.png
+https://ourweddingrecap.com/opt-in</pre>
   </div>
   <div class="checklist">
-    <div class="check"><input type="checkbox" id="c8"><label for="c8">Both screenshot URLs load publicly (test in incognito).</label></div>
+    <div class="check"><input type="checkbox" id="c8"><label for="c8">Both screenshot URLs and the /opt-in page load publicly (test in incognito).</label></div>
   </div>
 </section>
 
@@ -332,13 +328,13 @@ Or reply here with photos/videos to add them. Reply STOP to stop, HELP for help.
   </div>
   <div class="field">
     <div class="fieldHead"><span class="fieldLabel">Opt-in workflow description</span><button class="copy" type="button">Copy</button></div>
-    <pre class="val">SMS opt-in happens on the gallery join form at the couple's unique gallery URL on https://ourweddingrecap.com. A guest joining a wedding gallery enters their name; the phone field is labeled "Your Phone (Optional)". To receive texts, the guest must both provide their own mobile number and check a separate, unchecked checkbox labeled "Text me wedding updates". The disclosure beside the checkbox states: up to 10 automated wedding update texts for that gallery including a confirmation; additional service responses only if the guest messages us; "Message and data rates may apply"; "Reply STOP to stop or HELP for help"; consent is optional and not a condition of purchase; with links to Terms (https://ourweddingrecap.com/terms) and Privacy Policy (https://ourweddingrecap.com/privacy). On submit, the consent is recorded and a single enrollment confirmation SMS is sent. Keyword opt-in is not supported; texting the number first does not create a subscription. The full opt-in experience is documented for reviewers at https://ourweddingrecap.com/sms-consent.</pre>
+    <pre class="val">SMS opt-in happens on the gallery join form at the couple's unique gallery URL on https://ourweddingrecap.com. A guest joining a wedding gallery enters their name; the phone field is labeled "Your Phone (Optional)". To receive texts, the guest must both provide their own mobile number and check a separate, unchecked checkbox labeled "Text me wedding updates". The disclosure beside the checkbox states: up to 10 automated wedding update texts for that gallery including a confirmation; additional service responses only if the guest messages us; "Message and data rates may apply"; "Reply STOP to stop or HELP for help"; consent is optional and not a condition of purchase; with links to Terms (https://ourweddingrecap.com/terms) and Privacy Policy (https://ourweddingrecap.com/privacy). On submit, the consent is recorded and a single enrollment confirmation SMS is sent. Keyword opt-in is not supported; texting the number first does not create a subscription. The full opt-in experience is documented for reviewers at https://ourweddingrecap.com/sms-consent and, with annotated screenshots of the live product, at https://ourweddingrecap.com/opt-in.</pre>
   </div>
   <div class="field">
     <div class="fieldHead"><span class="fieldLabel">Opt-in image URL(s)</span><button class="copy" type="button">Copy</button></div>
     <pre class="val">https://ourweddingrecap.com/compliance/sms-opt-in-form.png
 https://ourweddingrecap.com/compliance/sms-consent-page.png</pre>
-    <div class="fieldNote">From step 3. If the form accepts only one URL, use the first (the real form beats the documentation page as evidence).</div>
+    <div class="fieldNote">From step 3. If the form accepts only one URL, use the first (the real form beats the documentation page as evidence). If it accepts more, add https://ourweddingrecap.com/opt-in as a third — it shows both screenshots in the context of the full workflow.</div>
   </div>
 
   <h3>Additional information <span class="small">(optional field — fill it anyway)</span></h3>
