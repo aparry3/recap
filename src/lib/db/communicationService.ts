@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from 'uuid'
 import { db } from '.'
 import { CommunicationChannel, CommunicationConsent, ConsentStatus } from '../types/Communication'
 
-export const CONSENT_DISCLOSURE_VERSION = 'guest-reminders-us-v2'
+export const CONSENT_DISCLOSURE_VERSION = 'guest-reminders-us-v3'
 export const SMS_MESSAGE_LIMIT = 10
 
 export function smsReservationExceedsLimit(countIncludingReservation: number): boolean {

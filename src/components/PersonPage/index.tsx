@@ -177,7 +177,7 @@ const PersonPage: FC<{person?: Person | NewPersonData, galleryName?: string, onS
             <Column className={styles.consentCopy}>
               <label htmlFor="sms-reminder-consent"><Text weight={600}>Text me wedding updates</Text></label>
               <Text size={0.85}>
-                By checking this box, you agree to receive up to 10 automated wedding update texts about this gallery, including a confirmation. If you message Our Wedding Recap, we may send additional service responses to your request. Message and data rates may apply. Reply STOP to stop or HELP for help. Consent is optional and is not a condition of purchase. See our <a href="/terms" target="_blank">Terms</a> and <a href="/privacy" target="_blank">Privacy Policy</a>.
+                By checking this box, you agree to receive automated wedding update texts about this gallery, including a confirmation. Message frequency varies. If you message Our Wedding Recap, we may send additional service responses to your request. Message and data rates may apply. Reply STOP to stop or HELP for help. Consent is optional and is not a condition of purchase. See our <a href="/terms" target="_blank">Terms</a> and <a href="/privacy" target="_blank">Privacy Policy</a>.
               </Text>
             </Column>
           </Row>

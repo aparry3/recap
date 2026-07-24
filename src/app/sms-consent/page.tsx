@@ -52,7 +52,7 @@ const SmsConsentPage = () => {
               <Column className={styles.consentCopy}>
                 <label htmlFor="sms-demo-consent">Text me wedding updates</label>
                 <Text as="p">
-                  By checking this box, you agree to receive up to 10 automated wedding update texts about this gallery, including a confirmation. If you message Our Wedding Recap, we may send additional service responses to your request. Message and data rates may apply. Reply STOP to stop or HELP for help. Consent is optional and is not a condition of purchase. See our <Link href="/terms">Terms</Link> and <Link href="/privacy">Privacy Policy</Link>.
+                  By checking this box, you agree to receive automated wedding update texts about this gallery, including a confirmation. Message frequency varies. If you message Our Wedding Recap, we may send additional service responses to your request. Message and data rates may apply. Reply STOP to stop or HELP for help. Consent is optional and is not a condition of purchase. See our <Link href="/terms">Terms</Link> and <Link href="/privacy">Privacy Policy</Link>.
                 </Text>
               </Column>
             </Row>
@@ -67,7 +67,7 @@ const SmsConsentPage = () => {
           <dl className={styles.details}>
             <div><dt>Program and sender</dt><dd>Our Wedding Recap</dd></div>
             <div><dt>Owner and operator</dt><dd>Parry Technology and Media, LLC</dd></div>
-            <div><dt>Message frequency</dt><dd>Up to 10 business-initiated automated wedding updates per gallery, including the enrollment confirmation. Additional service responses may be sent only after a guest messages Our Wedding Recap.</dd></div>
+            <div><dt>Message frequency</dt><dd>Message frequency varies. Business-initiated automated updates cluster around the wedding — an enrollment confirmation, schedule reminders, and a post-event thank-you. Additional service responses may be sent only after a guest messages Our Wedding Recap.</dd></div>
             <div><dt>Cost</dt><dd>Message and data rates may apply.</dd></div>
             <div><dt>Opt out</dt><dd>Reply STOP to stop. Guests can also disable SMS from their signed communication-preferences page.</dd></div>
             <div><dt>Help</dt><dd>Reply HELP or email <a href="mailto:aaron@ourweddingrecap.com">aaron@ourweddingrecap.com</a>.</dd></div>

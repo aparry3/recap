@@ -66,7 +66,7 @@ export default function PreferenceCenter({ token }: { token: string }) {
               <label htmlFor="sms-reminders">SMS reminders {data.person.phone ? `to ${data.person.phone}` : '(no phone available)'}</label>
             </Row>
             {data.suppressions.sms && <Text size={0.9}>Reply START from this phone, then reload this page to make SMS available again.</Text>}
-            <Text size={0.9}>SMS updates are limited to 10 messages for this gallery. Message and data rates may apply. Reply STOP to stop or HELP for help.</Text>
+            <Text size={0.9}>Message and data rates may apply. Reply STOP to stop or HELP for help.</Text>
             <Button onClick={save} disabled={saving}>{saving ? 'Saving…' : 'Save preferences'}</Button>
           </Column>
         )}
