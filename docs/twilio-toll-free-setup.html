@@ -148,7 +148,7 @@
     <li><a href="#overview">How this fits together</a></li>
     <li><a href="#prep">1 · Before you start</a></li>
     <li><a href="#buy">2 · Buy the toll-free number</a></li>
-    <li><a href="#screens">3 · Host the opt-in screenshots</a></li>
+    <li><a href="#screens">3 · Confirm the opt-in evidence is live</a></li>
     <li><a href="#tfv">4 · Submit toll-free verification</a></li>
     <li><a href="#service">5 · Create the Messaging Service</a></li>
     <li><a href="#env">6 · Wire it into the app</a></li>
@@ -196,7 +196,7 @@
     <div class="check"><input type="checkbox" id="c2"><label for="c2">The <strong>registered business address</strong> for Parry Technology and Media, LLC (as filed with your state).</label></div>
     <div class="check"><input type="checkbox" id="c3"><label for="c3">A <strong>contact phone number</strong> for you (your mobile is fine).</label></div>
     <div class="check"><input type="checkbox" id="c4"><label for="c4">Access to <span class="crumb">aaron@ourweddingrecap.com</span> — use the domain email, not Gmail, everywhere in the form. A contact email on the same domain as the website quietly boosts reviewer confidence.</label></div>
-    <div class="check"><input type="checkbox" id="c5"><label for="c5">Two screenshots of the opt-in flow, hosted at public URLs (step 3 walks through this).</label></div>
+    <div class="check"><input type="checkbox" id="c5"><label for="c5">The opt-in evidence page at <span class="crumb">/opt-in</span> loads publicly (step 3 walks through this).</label></div>
     <div class="check"><input type="checkbox" id="c6"><label for="c6">Confirmed the production site is live and the pages a reviewer will click actually load: <span class="crumb">/</span>, <span class="crumb">/sms-consent</span>, <span class="crumb">/privacy</span>, <span class="crumb">/terms</span>.</label></div>
   </div>
   <p class="small">You do <em>not</em> need an EIN, DUNS number, or company documents for toll-free verification — that's a 10DLC thing.</p>
@@ -221,21 +221,21 @@
 </section>
 
 <section id="screens">
-  <div class="stephead"><span class="stepnum">3</span><h2>Host the opt-in screenshots</h2></div>
-  <p>The verification form asks for public image URLs proving how a guest consents. Reviewers reject blurry, cropped, or login-walled evidence. <strong>Both screenshots are already captured from the real product UI and committed to the repo</strong> under <span class="crumb">public/compliance/</span>, and the page at <a href="https://ourweddingrecap.com/opt-in">ourweddingrecap.com/opt-in</a> presents them alongside the step-by-step opt-in workflow and the verbatim consent language:</p>
+  <div class="stephead"><span class="stepnum">3</span><h2>Confirm the opt-in evidence is live</h2></div>
+  <p>The verification form asks for public URLs proving how a guest consents. Reviewers reject blurry, cropped, or login-walled evidence. <strong>The evidence is already built and live:</strong> <a href="https://ourweddingrecap.com/opt-in">ourweddingrecap.com/opt-in</a> is the page to submit — it presents both real-UI screenshots alongside the step-by-step opt-in workflow and the verbatim consent language. The raw screenshots it shows are committed under <span class="crumb">public/compliance/</span> and stay available as direct image URLs in case the form wants those:</p>
   <ol>
     <li><strong><span class="crumb">sms-opt-in-form.png</span> — the real join form.</strong> Phone-width capture of the gallery join screen showing the <em>“Your Phone (Optional)”</em> field filled with a sample number, the unchecked <em>“Text me wedding updates”</em> checkbox, the full disclosure paragraph beside it, and the “owned and operated by Parry Technology and Media, LLC” footer.</li>
     <li><strong><span class="crumb">sms-consent-page.png</span> — the program page.</strong> Full-page capture of <a href="https://ourweddingrecap.com/sms-consent">ourweddingrecap.com/sms-consent</a>.</li>
   </ol>
   <p>If the consent wording ever changes, retake both screenshots and replace the files in <span class="crumb">public/compliance/</span> (any sharp browser screenshot works).</p>
   <div class="field">
-    <div class="fieldHead"><span class="fieldLabel">After the next deploy — confirm these load in an incognito window</span><button class="copy" type="button">Copy</button></div>
-    <pre class="val">https://ourweddingrecap.com/compliance/sms-opt-in-form.png
-https://ourweddingrecap.com/compliance/sms-consent-page.png
-https://ourweddingrecap.com/opt-in</pre>
+    <div class="fieldHead"><span class="fieldLabel">Confirm these load in an incognito window</span><button class="copy" type="button">Copy</button></div>
+    <pre class="val">https://ourweddingrecap.com/opt-in
+https://ourweddingrecap.com/compliance/sms-opt-in-form.png
+https://ourweddingrecap.com/compliance/sms-consent-page.png</pre>
   </div>
   <div class="checklist">
-    <div class="check"><input type="checkbox" id="c8"><label for="c8">Both screenshot URLs and the /opt-in page load publicly (test in incognito).</label></div>
+    <div class="check"><input type="checkbox" id="c8"><label for="c8">The /opt-in page and both screenshot URLs load publicly (test in incognito).</label></div>
   </div>
 </section>
 
@@ -297,11 +297,11 @@ Parry</pre>
   </div>
   <div class="field">
     <div class="fieldHead"><span class="fieldLabel">Production message sample #1 <span class="tw">(enrollment confirmation — sent automatically today)</span></span><button class="copy" type="button">Copy</button></div>
-    <pre class="val">Our Wedding Recap: You're subscribed to up to 10 automated Smith &amp; Johnson wedding updates. Msg &amp; data rates may apply.
+    <pre class="val">Our Wedding Recap: Welcome to the Smith &amp; Johnson wedding gallery! You've opted in to receiving SMS updates about the wedding! Msg &amp; data rates may apply.
 
 View &amp; upload: https://ourweddingrecap.com/smith-johnson
 Or reply here with photos/videos to add them. Reply STOP to stop, HELP for help.</pre>
-    <div class="fieldNote">This is the exact string the code produces (brand prefix + confirmation body + standard footer). If the form only allows one sample, use this one — it shows brand, frequency cap, pricing disclosure, and STOP/HELP all in a single message.</div>
+    <div class="fieldNote">This is the exact string the code produces (brand prefix + confirmation body + standard footer). If the form only allows one sample, use this one — it shows brand, opt-in acknowledgment, pricing disclosure, and STOP/HELP all in a single message.</div>
   </div>
   <div class="field">
     <div class="fieldHead"><span class="fieldLabel">Production message sample #2 <span class="tw">(wedding-weekend reminder)</span></span><button class="copy" type="button">Copy</button></div>
@@ -332,9 +332,8 @@ Or reply here with photos/videos to add them. Reply STOP to stop, HELP for help.
   </div>
   <div class="field">
     <div class="fieldHead"><span class="fieldLabel">Opt-in image URL(s)</span><button class="copy" type="button">Copy</button></div>
-    <pre class="val">https://ourweddingrecap.com/compliance/sms-opt-in-form.png
-https://ourweddingrecap.com/compliance/sms-consent-page.png</pre>
-    <div class="fieldNote">From step 3. If the form accepts only one URL, use the first (the real form beats the documentation page as evidence). If it accepts more, add https://ourweddingrecap.com/opt-in as a third — it shows both screenshots in the context of the full workflow.</div>
+    <pre class="val">https://ourweddingrecap.com/opt-in</pre>
+    <div class="fieldNote">The evidence page from step 3 — both real-UI screenshots plus the step-by-step workflow and the verbatim consent language, all on one page. If the form accepts multiple URLs (or rejects a non-image URL), add the raw screenshots too: https://ourweddingrecap.com/compliance/sms-opt-in-form.png and https://ourweddingrecap.com/compliance/sms-consent-page.png.</div>
   </div>
 
   <h3>Additional information <span class="small">(optional field — fill it anyway)</span></h3>
@@ -388,11 +387,11 @@ https://ourweddingrecap.com/compliance/sms-consent-page.png</pre>
   </div>
   <div class="field">
     <div class="fieldHead"><span class="fieldLabel">Help (HELP) reply</span><button class="copy" type="button">Copy</button></div>
-    <pre class="val">Our Wedding Recap: Wedding gallery updates, up to 10 per gallery. Msg &amp; data rates may apply. Info: ourweddingrecap.com/sms-consent. Reply STOP to stop.</pre>
+    <pre class="val">Our Wedding Recap: Wedding gallery updates. Msg &amp; data rates may apply. Info: ourweddingrecap.com/sms-consent. Reply STOP to stop.</pre>
   </div>
   <div class="field">
     <div class="fieldHead"><span class="fieldLabel">Opt-in (START) reply</span><button class="copy" type="button">Copy</button></div>
-    <pre class="val">Our Wedding Recap: You're resubscribed to wedding updates. Up to 10 msgs per gallery. Msg &amp; data rates may apply. Reply STOP to stop, HELP for help.</pre>
+    <pre class="val">Our Wedding Recap: You're resubscribed to wedding updates. Msg &amp; data rates may apply. Reply STOP to stop, HELP for help.</pre>
   </div>
   <div class="checklist">
     <div class="check"><input type="checkbox" id="c10"><label for="c10">Messaging Service created, number in the sender pool, inbound webhook set.</label></div>
@@ -443,7 +442,7 @@ https://ourweddingrecap.com/compliance/sms-consent-page.png</pre>
   <p>Writing rules that keep costs down and delivery clean: plain apostrophes and hyphens, no emoji and no curly “smart” quotes (one non-GSM character switches the whole message to 67-char segments — roughly double the cost across 150 guests), and speak in the couple's voice (“we,” “our”) since guests experience these as coming from the couple. Each template below is the <strong>body to paste into the Recap reminder composer</strong>; expand it to see exactly what the guest's phone will show.</p>
 
   <h3>Enrollment confirmation <span class="small">(automatic — nothing to write)</span></h3>
-  <p class="small">Sent the moment a guest opts in: “You're subscribed to up to 10 automated [Gallery Name] wedding updates. Msg &amp; data rates may apply.” plus the footer. ≈2 segments.</p>
+  <p class="small">Sent the moment a guest opts in: “Welcome to the [Gallery Name] wedding gallery! You've opted in to receiving SMS updates about the wedding! Msg &amp; data rates may apply.” plus the footer. ≈2 segments.</p>
 
   <h3>1 · Welcome, on signup <span class="small">(≈3 segments)</span></h3>
   <div class="field">
@@ -547,7 +546,7 @@ Or reply here with photos/videos to add them. Reply STOP to stop, HELP for help.
   <p>Rejections name a reason; you edit the same submission and resubmit. The usual suspects, pre-answered:</p>
   <div class="tablewrap"><table>
     <tr><th>Rejection reason</th><th>Fix</th></tr>
-    <tr><td>Opt-in evidence insufficient / unclear</td><td>Retake the join-form screenshot so the entire disclosure paragraph is sharp and readable in one frame; confirm both URLs open in incognito (no auth wall).</td></tr>
+    <tr><td>Opt-in evidence insufficient / unclear</td><td>Retake the join-form screenshot so the entire disclosure paragraph is sharp and readable in one frame; confirm the submitted evidence URLs open in incognito (no auth wall).</td></tr>
     <tr><td>Website doesn't match business name</td><td>Point to the footer line “owned and operated by Parry Technology and Media, LLC” (on the create page, Terms, Privacy, and /sms-consent) — and restate the DBA sentence from Additional Information.</td></tr>
     <tr><td>Use case too vague / looks like marketing</td><td>Resubmit emphasizing: self-enrolled event guests only, 10-message cap, no promotional content, opt-in documented at /sms-consent.</td></tr>
     <tr><td>Privacy policy missing SMS language</td><td>Already covered (§5 has the no-sharing clause) — reply citing https://ourweddingrecap.com/privacy section 5 verbatim.</td></tr>
