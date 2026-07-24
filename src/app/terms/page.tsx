@@ -65,7 +65,7 @@ const TermsPage = () => {
                 <Column className={styles.section}>
                     <Text as="h2" size={1.8} weight={600}>6. Optional Email and SMS Updates</Text>
                     <Text as="p">
-                        Guests may separately opt in to email and SMS wedding updates. SMS consent is optional and is not a condition of purchasing or using Our Wedding Recap. Our Wedding Recap may send no more than 10 business-initiated automated wedding update texts per gallery to an opted-in guest, including the enrollment confirmation. If a guest messages Our Wedding Recap, we may send additional service responses to that request. Message frequency varies, and message and data rates may apply. Reply STOP to stop and HELP for help, or use the linked communication-preferences page.
+                        Guests may separately opt in to email and SMS wedding updates. SMS consent is optional and is not a condition of purchasing or using Our Wedding Recap. Our Wedding Recap may send business-initiated automated wedding update texts to an opted-in guest about the gallery they joined, including the enrollment confirmation. If a guest messages Our Wedding Recap, we may send additional service responses to that request. Message frequency varies, and message and data rates may apply. Reply STOP to stop and HELP for help, or use the linked communication-preferences page.
                     </Text>
                 </Column>
 
