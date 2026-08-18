@@ -1,4 +1,4 @@
-import { insertVerification, selectPersonByEmail } from '@/lib/db/personService';
+import { insertVerification, selectAdminPersonByEmail } from '@/lib/db/personService';
 import { emailClient } from '@/lib/email';
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
@@ -12,8 +12,8 @@ export async function POST(request: Request) {
   try {
     const {email} = requestSchema.parse(await request.json());
     try {
-      const person = await selectPersonByEmail(email);
-      if (person.isAdmin && person.email) {
+      const person = await selectAdminPersonByEmail(email);
+      if (person.email) {
         const verification = await insertVerification(person.id);
         const sent = await emailClient.sendAdminSignInEmail({
           name: person.name,

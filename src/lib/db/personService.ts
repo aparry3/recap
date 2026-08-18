@@ -52,6 +52,16 @@ export const selectPersonByEmail = async (email: string): Promise<Person> => {
   return person;
 }
 
+export const selectAdminPersonByEmail = async (email: string): Promise<Person> => {
+  const normalizedEmail = normalizeEmail(email)
+  if (!normalizedEmail) throw new Error('Email is required')
+  return db.selectFrom('person')
+    .where(sql<boolean>`lower(trim(${sql.ref('person.email')})) = ${normalizedEmail}`)
+    .where('isAdmin', '=', true)
+    .selectAll()
+    .executeTakeFirstOrThrow()
+}
+
 export interface InboundGalleryDestination {
   person: Pick<Person, 'id' | 'name' | 'email' | 'phone'>
   gallery: Pick<Gallery, 'id' | 'name' | 'path'>
